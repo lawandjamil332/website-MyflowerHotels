@@ -4,10 +4,13 @@ import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
+import { Branches } from './collections/Branches'
 import { Categories } from './collections/Categories'
+import { Enquiries } from './collections/Enquiries'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
+import { Rooms } from './collections/Rooms'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
@@ -75,7 +78,7 @@ export default buildConfig({
     defaultLocale: 'en',
     fallback: true,
   },
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Branches, Rooms, Enquiries, Pages, Posts, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins,

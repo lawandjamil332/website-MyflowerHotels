@@ -25,9 +25,13 @@ export const Media: CollectionConfig = {
   },
   fields: [
     {
+      // Required and localized: screen readers and Google both depend on this,
+      // and a photo described only in English is no use on the Kurdish and
+      // Arabic versions of the site.
       name: 'alt',
       type: 'text',
-      //required: true,
+      required: true,
+      localized: true,
     },
     {
       name: 'caption',

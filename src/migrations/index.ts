@@ -1,9 +1,15 @@
 import * as migration_20260724_190205_initial from './20260724_190205_initial';
+import * as migration_20260724_224314_branches_rooms_enquiries from './20260724_224314_branches_rooms_enquiries';
 
 export const migrations = [
   {
     up: migration_20260724_190205_initial.up,
     down: migration_20260724_190205_initial.down,
-    name: '20260724_190205_initial'
+    name: '20260724_190205_initial',
+  },
+  {
+    up: migration_20260724_224314_branches_rooms_enquiries.up,
+    down: migration_20260724_224314_branches_rooms_enquiries.down,
+    name: '20260724_224314_branches_rooms_enquiries'
   },
 ];

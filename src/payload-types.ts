@@ -67,6 +67,9 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    branches: Branch;
+    rooms: Room;
+    enquiries: Enquiry;
     pages: Page;
     posts: Post;
     media: Media;
@@ -89,6 +92,9 @@ export interface Config {
     };
   };
   collectionsSelect: {
+    branches: BranchesSelect<false> | BranchesSelect<true>;
+    rooms: RoomsSelect<false> | RoomsSelect<true>;
+    enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -150,6 +156,298 @@ export interface UserAuthOperations {
     email: string;
     password: string;
   };
+}
+/**
+ * Each hotel in the group. The homepage lists these in the order set below.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "branches".
+ */
+export interface Branch {
+  id: number;
+  name: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * One line, shown under the name on the branch card.
+   */
+  tagline?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * The full-width photo at the top of the branch page. Landscape works best.
+   */
+  heroImage: number | Media;
+  /**
+   * Exterior, lobby, restaurant, views.
+   */
+  gallery?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  address?: string | null;
+  city?: string | null;
+  /**
+   * In Google Maps, right-click the spot and click the numbers to copy.
+   */
+  latitude?: number | null;
+  longitude?: number | null;
+  /**
+   * Opens the pin directly. Paste the share link from Google Maps.
+   */
+  googleMapsUrl?: string | null;
+  phone?: string | null;
+  /**
+   * Full international format, e.g. +9647501234567.
+   */
+  whatsapp?: string | null;
+  email?: string | null;
+  amenities?:
+    ('wifi' | 'parking' | 'restaurant' | 'gym' | 'pool' | 'airport_shuttle' | 'family_rooms' | 'generator')[] | null;
+  checkInTime?: string | null;
+  checkOutTime?: string | null;
+  /**
+   * Optional. Shows an "instant reservation" button when filled in.
+   */
+  bookingComUrl?: string | null;
+  /**
+   * Lower numbers appear first on the homepage.
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "media".
+ */
+export interface Media {
+  id: number;
+  alt: string;
+  caption?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  folder?: (number | null) | FolderInterface;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    thumbnail?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    square?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    small?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    medium?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    large?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    xlarge?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+    og?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-folders".
+ */
+export interface FolderInterface {
+  id: number;
+  name: string;
+  folder?: (number | null) | FolderInterface;
+  documentsAndFolders?: {
+    docs?: (
+      | {
+          relationTo?: 'payload-folders';
+          value: number | FolderInterface;
+        }
+      | {
+          relationTo?: 'media';
+          value: number | Media;
+        }
+    )[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  folderType?: 'media'[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Room types. Each one belongs to a branch.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rooms".
+ */
+export interface Room {
+  id: number;
+  name: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  branch: number | Branch;
+  /**
+   * At least three. The first is used as the cover.
+   */
+  images: {
+    image: number | Media;
+    id?: string | null;
+  }[];
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Nightly rate to show as "from".
+   */
+  priceFrom?: number | null;
+  currency?: ('IQD' | 'USD') | null;
+  maxGuests?: number | null;
+  bedType?: ('single' | 'double' | 'twin' | 'king' | 'suite') | null;
+  sizeSqm?: number | null;
+  amenities?:
+    | (
+        | 'air_conditioning'
+        | 'private_bathroom'
+        | 'wifi'
+        | 'tv'
+        | 'minibar'
+        | 'safe'
+        | 'kettle'
+        | 'desk'
+        | 'balcony'
+        | 'city_view'
+        | 'bathtub'
+        | 'room_service'
+      )[]
+    | null;
+  /**
+   * Uncheck to hide this room from the website without deleting it.
+   */
+  isAvailable?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Enquiries sent from the website. Newest first.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries".
+ */
+export interface Enquiry {
+  id: number;
+  name: string;
+  phone: string;
+  email?: string | null;
+  /**
+   * Which hotel the guest is asking about.
+   */
+  branch?: (number | null) | Branch;
+  /**
+   * Set automatically when the enquiry comes from a room page.
+   */
+  room?: (number | null) | Room;
+  checkIn?: string | null;
+  checkOut?: string | null;
+  guests?: number | null;
+  message?: string | null;
+  status?: ('new' | 'contacted' | 'closed') | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -269,125 +567,6 @@ export interface Post {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media".
- */
-export interface Media {
-  id: number;
-  alt?: string | null;
-  caption?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  folder?: (number | null) | FolderInterface;
-  updatedAt: string;
-  createdAt: string;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
-  sizes?: {
-    thumbnail?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    square?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    small?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    medium?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    large?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    xlarge?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-    og?: {
-      url?: string | null;
-      width?: number | null;
-      height?: number | null;
-      mimeType?: string | null;
-      filesize?: number | null;
-      filename?: string | null;
-    };
-  };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-folders".
- */
-export interface FolderInterface {
-  id: number;
-  name: string;
-  folder?: (number | null) | FolderInterface;
-  documentsAndFolders?: {
-    docs?: (
-      | {
-          relationTo?: 'payload-folders';
-          value: number | FolderInterface;
-        }
-      | {
-          relationTo?: 'media';
-          value: number | Media;
-        }
-    )[];
-    hasNextPage?: boolean;
-    totalDocs?: number;
-  };
-  folderType?: 'media'[] | null;
-  updatedAt: string;
-  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -963,6 +1142,18 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
+        relationTo: 'branches';
+        value: number | Branch;
+      } | null)
+    | ({
+        relationTo: 'rooms';
+        value: number | Room;
+      } | null)
+    | ({
+        relationTo: 'enquiries';
+        value: number | Enquiry;
+      } | null)
+    | ({
         relationTo: 'pages';
         value: number | Page;
       } | null)
@@ -1043,6 +1234,83 @@ export interface PayloadMigration {
   batch?: number | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "branches_select".
+ */
+export interface BranchesSelect<T extends boolean = true> {
+  name?: T;
+  generateSlug?: T;
+  slug?: T;
+  tagline?: T;
+  description?: T;
+  heroImage?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  address?: T;
+  city?: T;
+  latitude?: T;
+  longitude?: T;
+  googleMapsUrl?: T;
+  phone?: T;
+  whatsapp?: T;
+  email?: T;
+  amenities?: T;
+  checkInTime?: T;
+  checkOutTime?: T;
+  bookingComUrl?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rooms_select".
+ */
+export interface RoomsSelect<T extends boolean = true> {
+  name?: T;
+  generateSlug?: T;
+  slug?: T;
+  branch?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  description?: T;
+  priceFrom?: T;
+  currency?: T;
+  maxGuests?: T;
+  bedType?: T;
+  sizeSqm?: T;
+  amenities?: T;
+  isAvailable?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries_select".
+ */
+export interface EnquiriesSelect<T extends boolean = true> {
+  name?: T;
+  phone?: T;
+  email?: T;
+  branch?: T;
+  room?: T;
+  checkIn?: T;
+  checkOut?: T;
+  guests?: T;
+  message?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
