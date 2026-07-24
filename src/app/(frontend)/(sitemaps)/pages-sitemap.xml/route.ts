@@ -3,6 +3,9 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { unstable_cache } from 'next/cache'
 
+
+// Built where the database is unreachable; render on request instead.
+export const dynamic = 'force-dynamic'
 const getPagesSitemap = unstable_cache(
   async () => {
     const payload = await getPayload({ config })

@@ -4,7 +4,7 @@
   "description": "Hotel group website — three branches in Erbil",
   "type": "module",
   "scripts": {
-    "build": "npm run migrate && cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=4096\" next build",
+    "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=4096\" next build",
     "postbuild": "next-sitemap --config next-sitemap.config.cjs",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev",
     "dev:prod": "cross-env NODE_OPTIONS=--no-deprecation rm -rf .next && npm run build && npm run start",
@@ -15,7 +15,7 @@
     "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation eslint . --fix",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "reinstall": "rm -rf node_modules package-lock.json && npm install",
-    "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
+    "start": "npm run migrate && cross-env NODE_OPTIONS=--no-deprecation next start",
     "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate"
   },
   "dependencies": {

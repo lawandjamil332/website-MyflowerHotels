@@ -16,6 +16,12 @@ import { draftMode } from 'next/headers'
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
 
+// Render at request time rather than pre-rendering at build. The build runs
+// where the database is not reachable, and pre-rendering would query it.
+// It also means content edited in the admin panel shows up immediately
+// instead of waiting for the next deploy.
+export const dynamic = 'force-dynamic'
+
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
 
