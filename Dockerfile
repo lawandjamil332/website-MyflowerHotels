@@ -9,8 +9,11 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
-# Install dependencies based on the preferred package manager
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+# Install dependencies based on the preferred package manager.
+# .npmrc must be copied too: it sets legacy-peer-deps, which is how the
+# lockfile was generated. Without it `npm ci` expects peer packages the
+# lockfile deliberately omits and fails with EUSAGE.
+COPY package.json .npmrc yarn.lock* package-lock.json* pnpm-lock.yaml* ./
 RUN \
   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
   elif [ -f package-lock.json ]; then npm ci; \

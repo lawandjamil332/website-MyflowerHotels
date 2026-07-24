@@ -1,0 +1,22 @@
+# Keep secrets out of the image. Without this, `COPY . .` bakes .env into a
+# layer, where anyone who can pull the image can read it.
+.env
+.env.*
+!.env.example
+
+# Installed fresh inside the image; copying the host copy is slow and can
+# carry the wrong platform's native binaries (e.g. sharp).
+node_modules
+.next
+
+# Not needed to build or run
+.git
+.github
+.vscode
+README.md
+Dockerfile
+docker-compose.yml
+*.log
+
+# NOTE: .npmrc is deliberately NOT ignored. It carries legacy-peer-deps,
+# which the lockfile was generated with; without it `npm ci` fails.
