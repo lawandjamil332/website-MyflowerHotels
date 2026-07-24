@@ -15,8 +15,9 @@
     "lint:fix": "cross-env NODE_OPTIONS=--no-deprecation eslint . --fix",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "reinstall": "rm -rf node_modules package-lock.json && npm install",
-    "start": "npm run migrate && cross-env NODE_OPTIONS=--no-deprecation next start",
-    "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate"
+    "start": "npm run check-env && npm run migrate && cross-env NODE_OPTIONS=--no-deprecation next start",
+    "migrate": "cross-env NODE_OPTIONS=--no-deprecation payload migrate",
+    "check-env": "node scripts/check-env.mjs"
   },
   "dependencies": {
     "@payloadcms/admin-bar": "3.86.0",
