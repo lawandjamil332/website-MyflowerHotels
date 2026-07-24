@@ -116,10 +116,12 @@ export interface Config {
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('en' | 'ku' | 'ar') | ('en' | 'ku' | 'ar')[];
   globals: {
+    settings: Setting;
     header: Header;
     footer: Footer;
   };
   globalsSelect: {
+    settings: SettingsSelect<false> | SettingsSelect<true>;
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
   };
@@ -1891,6 +1893,38 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   createdAt?: T;
 }
 /**
+ * Logo, group name and the contact details shown site-wide.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings".
+ */
+export interface Setting {
+  id: number;
+  siteName?: string | null;
+  /**
+   * Shown in the header. A transparent PNG or SVG works best.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Used when a link to the site is shared on WhatsApp or Facebook.
+   */
+  socialShareImage?: (number | null) | Media;
+  phone?: string | null;
+  /**
+   * Full international format, e.g. +9647501234567. Powers the floating WhatsApp button.
+   */
+  whatsapp?: string | null;
+  email?: string | null;
+  social?: {
+    facebook?: string | null;
+    instagram?: string | null;
+    tiktok?: string | null;
+    youtube?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header".
  */
@@ -1947,6 +1981,29 @@ export interface Footer {
     | null;
   updatedAt?: string | null;
   createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings_select".
+ */
+export interface SettingsSelect<T extends boolean = true> {
+  siteName?: T;
+  logo?: T;
+  socialShareImage?: T;
+  phone?: T;
+  whatsapp?: T;
+  email?: T;
+  social?:
+    | T
+    | {
+        facebook?: T;
+        instagram?: T;
+        tiktok?: T;
+        youtube?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

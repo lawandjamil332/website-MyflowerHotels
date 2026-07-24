@@ -43,8 +43,13 @@
   --breakpoint-lg: 64rem;
   --breakpoint-xl: 80rem;
   --breakpoint-2xl: 86rem;
-  --font-mono: var(--font-geist-mono);
-  --font-sans: var(--font-geist-sans);
+  /* One family across three scripts. Latin glyphs come from IBM Plex; Arabic
+     and Kurdish glyphs are absent there, so the browser falls through to IBM
+     Plex Sans Arabic per-glyph — the two are designed together, so the
+     Kurdish and Arabic versions do not read as an afterthought. */
+  --font-sans: 'IBM Plex Sans', 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  --font-display: 'IBM Plex Serif', 'IBM Plex Sans Arabic', Georgia, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
 @layer utilities {

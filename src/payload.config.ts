@@ -13,6 +13,7 @@ import { Posts } from './collections/Posts'
 import { Rooms } from './collections/Rooms'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
+import { Settings } from './globals/Settings/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
@@ -80,7 +81,7 @@ export default buildConfig({
   },
   collections: [Branches, Rooms, Enquiries, Pages, Posts, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
+  globals: [Settings, Header, Footer],
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,
