@@ -1,4 +1,5 @@
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
+import { s3Storage } from '@payloadcms/storage-s3'
 import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
@@ -23,7 +24,33 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
   return doc?.slug ? `${url}/${doc.slug}` : url
 }
 
+// Media must live in the Railway Storage Bucket, not on the container's
+// filesystem — Railway wipes the filesystem on every redeploy, which would
+// silently delete every uploaded photo. The plugin is only enabled when the
+// bucket credentials exist, so local development keeps writing to disk.
+const storagePlugins: Plugin[] = process.env.S3_BUCKET
+  ? [
+      s3Storage({
+        collections: {
+          media: true,
+        },
+        bucket: process.env.S3_BUCKET,
+        config: {
+          endpoint: process.env.S3_ENDPOINT,
+          region: process.env.S3_REGION || 'auto',
+          credentials: {
+            accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
+            secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+          },
+          // Bucket-in-path addressing; required by most S3-compatible stores.
+          forcePathStyle: true,
+        },
+      }),
+    ]
+  : []
+
 export const plugins: Plugin[] = [
+  ...storagePlugins,
   redirectsPlugin({
     collections: ['pages', 'posts'],
     overrides: {
