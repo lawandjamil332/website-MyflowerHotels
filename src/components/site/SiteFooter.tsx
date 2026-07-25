@@ -124,6 +124,24 @@ export async function SiteFooter({
         </div>
       </div>
 
+      {/* The name at architectural scale across the foot of the page. It is
+          the last thing a guest sees, and at this size it registers as a mark
+          rather than a line of small print. */}
+      <div className={cn(shell, 'overflow-hidden pt-4')} aria-hidden="true">
+        <p
+          className="font-display leading-[0.8] whitespace-nowrap text-white/[0.07] select-none"
+          style={{
+            // Sized from the name's own length so it fills the width and stops
+            // there. A fixed viewport size would clip "Myflower Hotels"
+            // mid-word and leave a short name marooned in the middle.
+            fontSize: `clamp(2.75rem, ${Math.min(15, 205 / Math.max(siteName.length, 7)).toFixed(2)}vw, 13rem)`,
+            letterSpacing: '0',
+          }}
+        >
+          {siteName}
+        </p>
+      </div>
+
       <div className="border-t border-white/10">
         <div
           className={cn(

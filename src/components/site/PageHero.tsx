@@ -1,6 +1,5 @@
-import Image from 'next/image'
-
 import { cn } from '@/utilities/ui'
+import { PhotoFrame, monogramOf } from './PhotoFrame'
 import { shell } from './ui'
 
 /**
@@ -31,32 +30,45 @@ export function PageHero({
     <section
       className={cn(
         'relative flex items-end overflow-hidden bg-ink',
-        size === 'tall' ? 'min-h-[68vh] sm:min-h-[78vh]' : 'min-h-[48vh] sm:min-h-[56vh]',
+        size === 'tall' ? 'min-h-[72vh] sm:min-h-[82vh]' : 'min-h-[52vh] sm:min-h-[60vh]',
       )}
     >
+      <PhotoFrame
+        src={imageUrl}
+        alt={imageAlt || title}
+        sizes="100vw"
+        monogram={monogramOf(title)}
+        priority
+        tone="ink"
+        imageClassName="ken-burns"
+      />
       {imageUrl ? (
-        <>
-          <Image
-            src={imageUrl}
-            alt={imageAlt || title}
-            fill
-            sizes="100vw"
-            priority
-            className="ken-burns object-cover"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/45"
-          />
-        </>
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/45"
+        />
       ) : null}
 
-      <div className={cn(shell, 'relative pt-32 pb-14 sm:pb-20')}>
-        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-        <h1 className="font-display mt-5 max-w-4xl text-4xl leading-[1.06] text-balance text-white sm:text-6xl lg:text-7xl">
+      <div className={cn(shell, 'relative pt-36 pb-16 sm:pb-20')}>
+        {eyebrow && (
+          <p className="eyebrow rise" style={{ animationDelay: '0.15s' }}>
+            {eyebrow}
+          </p>
+        )}
+        <h1
+          className="font-display display-xl rise mt-6 max-w-4xl text-balance text-white"
+          style={{ animationDelay: '0.28s' }}
+        >
           {title}
         </h1>
-        {lead && <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/75">{lead}</p>}
+        {lead && (
+          <p
+            className="rise mt-7 max-w-xl text-lg leading-relaxed text-white/75"
+            style={{ animationDelay: '0.42s' }}
+          >
+            {lead}
+          </p>
+        )}
         {children}
       </div>
     </section>

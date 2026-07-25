@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 
 import type { Branch } from '@/payload-types'
@@ -6,6 +5,7 @@ import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { cn } from '@/utilities/ui'
+import { PhotoFrame, monogramOf } from './PhotoFrame'
 
 /**
  * A single hotel as a photographic panel. Used where the full switcher would
@@ -37,22 +37,22 @@ export function BranchCard({
         className,
       )}
     >
-      {hero ? (
-        <Image
-          src={hero}
-          alt={mediaAlt(branch.heroImage) || branch.name}
-          fill
-          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          className="object-cover transition-transform duration-1000 ease-luxe group-hover:scale-105"
-          priority={priority}
-        />
-      ) : null}
+      <PhotoFrame
+        src={hero}
+        alt={mediaAlt(branch.heroImage) || branch.name}
+        sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+        monogram={monogramOf(branch.name)}
+        priority={priority}
+        imageClassName="transition-transform duration-1000 ease-luxe group-hover:scale-105"
+      />
 
       {/* Enough scrim for white text to stay legible over any photograph. */}
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"
-      />
+      {hero && (
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"
+        />
+      )}
 
       <div className="relative p-6 sm:p-7">
         {(typeof index === 'number' || branch.city) && (

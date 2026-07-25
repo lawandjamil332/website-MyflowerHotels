@@ -286,6 +286,117 @@ html[data-theme='light'] {
 }
 
 @layer components {
+  /* Display sizes scale with the viewport rather than stepping at
+     breakpoints, so a headline is as large as the screen can carry at every
+     width in between. Leading is set below 1 at the top of the scale —
+     Cormorant's capitals are short, and normal leading leaves a hole under a
+     two-line headline. */
+  .display-hero {
+    font-size: clamp(3rem, 9vw, 9rem);
+    line-height: 0.94;
+  }
+
+  .display-xl {
+    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    line-height: 1.02;
+  }
+
+  .display-lg {
+    font-size: clamp(1.9rem, 3.6vw, 3.25rem);
+    line-height: 1.1;
+  }
+
+  /* Naskh sets on a taller body with deep descenders; the tight Latin
+     leading above would collide the lines. */
+  [dir='rtl'] .display-hero {
+    line-height: 1.22;
+  }
+
+  [dir='rtl'] .display-xl {
+    line-height: 1.3;
+  }
+
+  [dir='rtl'] .display-lg {
+    line-height: 1.4;
+  }
+
+  /* Opening curtain. Driven entirely by CSS so a failed or slow hydration
+     can never leave a guest staring at a covered page — the animation lifts
+     it either way. An inline script in <head> marks repeat visits within the
+     session so it plays once, not on every navigation. */
+  .overture {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-ink);
+    animation: overture-lift 1.5s var(--ease-luxe) 0.35s forwards;
+  }
+
+  .overture-mark {
+    color: var(--color-bone);
+    opacity: 0;
+    animation: overture-mark 1.1s var(--ease-luxe) 0.1s forwards;
+  }
+
+  @keyframes overture-mark {
+    0% {
+      opacity: 0;
+      transform: translateY(0.75rem);
+    }
+    45% {
+      opacity: 1;
+      transform: none;
+    }
+    100% {
+      opacity: 0;
+      transform: none;
+    }
+  }
+
+  @keyframes overture-lift {
+    to {
+      transform: translateY(-101%);
+      visibility: hidden;
+    }
+  }
+
+  /* No curtain without scripting (it would never have been marked as seen),
+     for repeat views in the same session, or when motion is unwelcome. */
+  html:not(.js) .overture,
+  html.overture-seen .overture {
+    display: none;
+  }
+
+  /* Staggered entrance for the hero's lines. Pure CSS, so it runs on the
+     server-rendered markup without waiting for React. */
+  .rise {
+    animation: rise 1.3s var(--ease-luxe) both;
+  }
+
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(1.75rem);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .overture {
+      display: none;
+    }
+
+    .rise {
+      animation: none;
+    }
+  }
+
   /* Small uppercase label above a heading. Used everywhere a section needs
      naming without a second competing headline. */
   .eyebrow {

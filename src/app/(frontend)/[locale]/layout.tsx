@@ -64,13 +64,22 @@ export default async function LocaleLayout({ children, params }: Args) {
             every section renders visible instead of staying blank. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `document.documentElement.classList.add('js')`,
+            __html: `document.documentElement.classList.add('js');try{if(sessionStorage.getItem('overture'))document.documentElement.classList.add('overture-seen');else sessionStorage.setItem('overture','1')}catch(e){}`,
           }}
         />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>
       <body className="bg-bone text-ink antialiased">
+        {/* Lifts off the page on the first view of a session. Marked
+            aria-hidden because it is scenery — the page beneath it is already
+            complete and readable to a screen reader. */}
+        <div className="overture" aria-hidden="true">
+          <span className="overture-mark font-display text-2xl tracking-[0.3em] uppercase sm:text-3xl">
+            {settings.siteName || 'Myflower Hotels'}
+          </span>
+        </div>
+
         <Providers>
           <AdminBar adminBarProps={{ preview: isEnabled }} />
 

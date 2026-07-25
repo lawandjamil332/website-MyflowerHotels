@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 
 import type { Branch, Room } from '@/payload-types'
@@ -7,6 +6,7 @@ import type { Dictionary } from '@/i18n/dictionaries'
 import { mediaUrl, mediaAlt } from '@/utilities/media'
 import { formatNumber, formatPrice } from '@/utilities/format'
 import { cn } from '@/utilities/ui'
+import { PhotoFrame, monogramOf } from './PhotoFrame'
 
 /**
  * Rooms are sold on the photograph and two numbers: what it costs and how
@@ -43,16 +43,14 @@ export function RoomCard({
       className="group block focus-visible:ring-1 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:outline-none"
     >
       <div className="relative aspect-4/3 overflow-hidden bg-sand">
-        {url ? (
-          <Image
-            src={url}
-            alt={mediaAlt(cover) || room.name}
-            fill
-            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            priority={priority}
-            className="object-cover transition-transform duration-1000 ease-luxe group-hover:scale-105"
-          />
-        ) : null}
+        <PhotoFrame
+          src={url}
+          alt={mediaAlt(cover) || room.name}
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          monogram={monogramOf(room.name)}
+          priority={priority}
+          imageClassName="transition-transform duration-1000 ease-luxe group-hover:scale-105"
+        />
         {room.isAvailable === false && (
           <span className="absolute top-4 start-4 bg-ink/85 px-3 py-1.5 text-[0.6rem] tracking-[0.2em] text-bone uppercase rtl:tracking-normal">
             {t.room.unavailable}

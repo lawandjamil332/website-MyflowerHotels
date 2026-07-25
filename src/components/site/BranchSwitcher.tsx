@@ -1,6 +1,5 @@
 'use client'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 
@@ -8,6 +7,7 @@ import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
 import type { BranchTeaser } from '@/utilities/teasers'
 import { cn } from '@/utilities/ui'
+import { PhotoFrame, monogramOf } from './PhotoFrame'
 
 /**
  * The homepage's centrepiece, and the one thing this group has that a
@@ -39,18 +39,21 @@ export function BranchSwitcher({
       <div className="hidden gap-14 lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-stretch">
         <div className="relative aspect-4/5 overflow-hidden bg-sand">
           {branches.map((branch, i) => (
-            <Image
+            <div
               key={branch.id}
-              src={branch.imageUrl || '/website-template-OG.webp'}
-              alt={branch.imageAlt}
-              fill
-              sizes="50vw"
-              priority={i === 0}
               className={cn(
-                'object-cover transition-all duration-1000 ease-luxe',
+                'absolute inset-0 transition-all duration-1000 ease-luxe',
                 i === active ? 'scale-100 opacity-100' : 'scale-105 opacity-0',
               )}
-            />
+            >
+              <PhotoFrame
+                src={branch.imageUrl}
+                alt={branch.imageAlt}
+                sizes="50vw"
+                monogram={monogramOf(branch.name)}
+                priority={i === 0}
+              />
+            </div>
           ))}
           <div
             aria-hidden="true"
@@ -130,20 +133,20 @@ export function BranchSwitcher({
               branches.length % 2 === 1 && i === branches.length - 1 && 'sm:col-span-2 sm:aspect-16/9',
             )}
           >
+            <PhotoFrame
+              src={branch.imageUrl}
+              alt={branch.imageAlt}
+              sizes="(min-width: 640px) 50vw, 100vw"
+              monogram={monogramOf(branch.name)}
+              priority={i === 0}
+              imageClassName="transition-transform duration-1000 ease-luxe group-hover:scale-105"
+            />
             {branch.imageUrl && (
-              <Image
-                src={branch.imageUrl}
-                alt={branch.imageAlt}
-                fill
-                sizes="(min-width: 640px) 50vw, 100vw"
-                priority={i === 0}
-                className="object-cover transition-transform duration-1000 ease-luxe group-hover:scale-105"
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"
               />
             )}
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"
-            />
             <div className="relative p-6 sm:p-7">
               <p className="text-[0.65rem] tracking-[0.24em] text-brass-bright uppercase rtl:tracking-normal">
                 {String(i + 1).padStart(2, '0')}

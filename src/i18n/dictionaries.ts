@@ -20,6 +20,7 @@ export type Dictionary = {
     scrollCue: string
     collectionEyebrow: string
     chooseBranch: string
+    interlude: string
     chooseBranchLead: string
     introEyebrow: string
     introTitle: string
@@ -96,6 +97,7 @@ const en: Dictionary = {
     collectionEyebrow: 'The collection',
     chooseBranch: 'Three hotels in Erbil',
     chooseBranchLead: 'Choose the one that suits your stay.',
+    interlude: 'Three addresses in one city.',
     introEyebrow: 'Our hospitality',
     introTitle: 'A family house, kept for guests',
     introBody:
@@ -216,6 +218,7 @@ const ku: Dictionary = {
     collectionEyebrow: 'کۆمەڵەکەمان',
     chooseBranch: 'سێ هۆتێل لە هەولێر',
     chooseBranchLead: 'ئەوەی گونجاوە بۆ مانەوەت هەڵبژێرە.',
+    interlude: 'سێ ناونیشان لە یەک شاردا.',
     introEyebrow: 'میوانداریمان',
     introTitle: 'ماڵێکی خێزانی، بۆ میوان',
     introBody:
@@ -335,6 +338,7 @@ const ar: Dictionary = {
     collectionEyebrow: 'مجموعتنا',
     chooseBranch: 'ثلاثة فنادق في أربيل',
     chooseBranchLead: 'اختر ما يناسب إقامتك.',
+    interlude: 'ثلاثة عناوين في مدينة واحدة.',
     introEyebrow: 'ضيافتنا',
     introTitle: 'بيت عائلي، مفتوح للضيوف',
     introBody:
