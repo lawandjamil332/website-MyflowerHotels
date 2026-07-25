@@ -102,13 +102,19 @@ export default async function ContactPage({ params }: Args) {
                           {branch.email}
                         </a>
                       )}
-                      {!openingSoon && (branch.checkInTime || branch.checkOutTime) && (
-                        <p className="pt-1 text-xs text-muted-ink">
-                          {branch.checkInTime && `${t.branch.checkIn} ${branch.checkInTime}`}
-                          {branch.checkInTime && branch.checkOutTime && '  ·  '}
-                          {branch.checkOutTime && `${t.branch.checkOut} ${branch.checkOutTime}`}
-                        </p>
-                      )}
+                      {!openingSoon &&
+                        (branch.checkInAnyTime || branch.checkInTime || branch.checkOutTime) && (
+                          <p className="pt-1 text-xs text-muted-ink">
+                            {(branch.checkInAnyTime || branch.checkInTime) &&
+                              `${t.branch.checkIn} ${
+                                branch.checkInAnyTime ? t.branch.anyTime : branch.checkInTime
+                              }`}
+                            {(branch.checkInAnyTime || branch.checkInTime) &&
+                              branch.checkOutTime &&
+                              '  ·  '}
+                            {branch.checkOutTime && `${t.branch.checkOut} ${branch.checkOutTime}`}
+                          </p>
+                        )}
                     </div>
 
                     <div className="flex flex-col gap-2.5">

@@ -128,15 +128,16 @@ export default async function BranchPage({ params }: Args) {
                   </p>
                 )}
 
-                {!openingSoon && (branch.checkInTime || branch.checkOutTime) && (
+                {!openingSoon &&
+                  (branch.checkInAnyTime || branch.checkInTime || branch.checkOutTime) && (
                   <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-line pt-6">
-                    {branch.checkInTime && (
+                    {(branch.checkInAnyTime || branch.checkInTime) && (
                       <div>
                         <dt className="text-[0.6rem] tracking-[0.2em] text-muted-ink uppercase rtl:tracking-normal">
                           {t.branch.checkIn}
                         </dt>
                         <dd className="font-display mt-1.5 text-xl text-ink">
-                          {branch.checkInTime}
+                          {branch.checkInAnyTime ? t.branch.anyTime : branch.checkInTime}
                         </dd>
                       </div>
                     )}

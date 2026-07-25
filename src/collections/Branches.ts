@@ -194,17 +194,37 @@ export const Branches: CollectionConfig = {
           options: branchAmenityOptions,
         },
         {
+          // Reception here is staffed around the clock, which is worth saying
+          // plainly. It cannot be a time typed into a text box: the field is
+          // not localized, so "24 hours" would appear in English on the
+          // Kurdish and Arabic pages. A checkbox lets the site say it in
+          // whichever language the guest is reading.
+          name: 'checkInAnyTime',
+          type: 'checkbox',
+          label: 'Check-in at any hour (24-hour reception)',
+          defaultValue: true,
+        },
+        {
           type: 'row',
           fields: [
             {
               name: 'checkInTime',
               type: 'text',
-              admin: { width: '50%', placeholder: '14:00' },
+              admin: {
+                width: '50%',
+                placeholder: '14:00',
+                condition: (data) => !data?.checkInAnyTime,
+                description: 'Only needed when check-in is not available around the clock.',
+              },
             },
             {
               name: 'checkOutTime',
               type: 'text',
-              admin: { width: '50%', placeholder: '12:00' },
+              admin: {
+                width: '50%',
+                placeholder: '12:00',
+                description: 'On a 24-hour clock, so midday is 12:00 and midnight is 00:00.',
+              },
             },
           ],
         },

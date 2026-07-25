@@ -4,6 +4,7 @@ import * as migration_20260724_225255_site_settings from './20260724_225255_site
 import * as migration_20260725_102759_branch_contact_and_brand_details from './20260725_102759_branch_contact_and_brand_details';
 import * as migration_20260725_103525_branch_opening_status from './20260725_103525_branch_opening_status';
 import * as migration_20260725_110500_seed_hotels from './20260725_110500_seed_hotels';
+import * as migration_20260725_160439_branch_check_in_any_time from './20260725_160439_branch_check_in_any_time';
 
 export const migrations = [
   {
@@ -29,11 +30,16 @@ export const migrations = [
   {
     up: migration_20260725_103525_branch_opening_status.up,
     down: migration_20260725_103525_branch_opening_status.down,
-    name: '20260725_103525_branch_opening_status'
+    name: '20260725_103525_branch_opening_status',
   },
   {
     up: migration_20260725_110500_seed_hotels.up,
     down: migration_20260725_110500_seed_hotels.down,
     name: '20260725_110500_seed_hotels',
+  },
+  {
+    up: migration_20260725_160439_branch_check_in_any_time.up,
+    down: migration_20260725_160439_branch_check_in_any_time.down,
+    name: '20260725_160439_branch_check_in_any_time'
   },
 ];

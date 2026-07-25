@@ -48,6 +48,7 @@ export type Dictionary = {
     location: string
     checkIn: string
     checkOut: string
+    anyTime: string
     getDirections: string
     enquire: string
     bookNow: string
@@ -162,6 +163,7 @@ const en: Dictionary = {
     location: 'Where to find us',
     checkIn: 'Check-in',
     checkOut: 'Check-out',
+    anyTime: '24 hours',
     getDirections: 'Get directions',
     enquire: 'Enquire about a stay',
     bookNow: 'Book instantly',
@@ -305,6 +307,7 @@ const ku: Dictionary = {
     location: 'شوێنمان',
     checkIn: 'چوونەژوورەوە',
     checkOut: 'چوونەدەرەوە',
+    anyTime: '24 کاتژمێر',
     getDirections: 'ڕێنمایی بۆ گەیشتن',
     enquire: 'داواکاری بۆ مانەوە',
     bookNow: 'حیجزی خێرا',
@@ -448,6 +451,7 @@ const ar: Dictionary = {
     location: 'موقعنا',
     checkIn: 'تسجيل الوصول',
     checkOut: 'تسجيل المغادرة',
+    anyTime: '24 ساعة',
     getDirections: 'الحصول على الاتجاهات',
     enquire: 'استفسر عن الإقامة',
     bookNow: 'احجز فوراً',

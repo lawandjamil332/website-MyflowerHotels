@@ -234,7 +234,14 @@ export interface Branch {
   instagram?: string | null;
   amenities?:
     ('wifi' | 'parking' | 'restaurant' | 'gym' | 'pool' | 'airport_shuttle' | 'family_rooms' | 'generator')[] | null;
+  checkInAnyTime?: boolean | null;
+  /**
+   * Only needed when check-in is not available around the clock.
+   */
   checkInTime?: string | null;
+  /**
+   * On a 24-hour clock, so midday is 12:00 and midnight is 00:00.
+   */
   checkOutTime?: string | null;
   /**
    * Optional. Shows an "instant reservation" button when filled in.
@@ -1285,6 +1292,7 @@ export interface BranchesSelect<T extends boolean = true> {
   facebook?: T;
   instagram?: T;
   amenities?: T;
+  checkInAnyTime?: T;
   checkInTime?: T;
   checkOutTime?: T;
   bookingComUrl?: T;

@@ -66,7 +66,7 @@ export function HotelSchema({
             }
           : undefined,
       starRating: stars ? { '@type': 'Rating', ratingValue: Number(stars) } : undefined,
-      checkinTime: branch.checkInTime ?? undefined,
+      checkinTime: branch.checkInAnyTime ? '00:00' : (branch.checkInTime ?? undefined),
       checkoutTime: branch.checkOutTime ?? undefined,
       amenityFeature: branch.amenities?.length
         ? branch.amenities.map((a) => ({
