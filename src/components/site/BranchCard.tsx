@@ -6,6 +6,7 @@ import type { Dictionary } from '@/i18n/dictionaries'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { cn } from '@/utilities/ui'
 import { branchLocative } from '@/utilities/teasers'
+import { OpeningMark, isOpeningSoon, openingLabel } from './OpeningMark'
 import { PhotoFrame, monogramOf } from './PhotoFrame'
 
 /**
@@ -64,6 +65,13 @@ export function BranchCard({
           </p>
         )}
         <h3 className="font-display mt-3 text-3xl leading-tight text-white">{branch.name}</h3>
+        {isOpeningSoon(branch) && (
+          <OpeningMark
+            label={openingLabel(branch, t.branch.openingSoon)}
+            tone="light"
+            className="mt-3"
+          />
+        )}
         {branch.tagline && (
           <p className="mt-2 max-w-sm text-sm leading-relaxed text-white/75">{branch.tagline}</p>
         )}

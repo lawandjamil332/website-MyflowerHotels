@@ -9,6 +9,7 @@ import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { branchLocative } from '@/utilities/teasers'
 import { cn } from '@/utilities/ui'
+import { OpeningMark, isOpeningSoon, openingLabel } from '@/components/site/OpeningMark'
 import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
@@ -43,6 +44,7 @@ export default async function ContactPage({ params }: Args) {
               const tel = toTelHref(branch.phone)
               const telAlt = toTelHref(branch.phoneAlt)
               const maps = toMapsHref(branch.googleMapsUrl, branch.latitude, branch.longitude)
+              const openingSoon = isOpeningSoon(branch)
 
               return (
                 <Reveal as="li" key={branch.id} delay={(i % 3) * 100}>
@@ -59,6 +61,12 @@ export default async function ContactPage({ params }: Args) {
                           {branchLocative(branch)}
                         </p>
                       )}
+                      {openingSoon && (
+                        <OpeningMark
+                          label={openingLabel(branch, t.branch.openingSoon)}
+                          className="mt-4"
+                        />
+                      )}
                     </div>
 
                     <div className="space-y-3 text-sm">
@@ -67,7 +75,7 @@ export default async function ContactPage({ params }: Args) {
                           {branch.address}
                         </p>
                       )}
-                      {tel && (
+                      {!openingSoon && tel && (
                         <a
                           href={tel}
                           dir="ltr"
@@ -76,7 +84,7 @@ export default async function ContactPage({ params }: Args) {
                           {branch.phone}
                         </a>
                       )}
-                      {telAlt && (
+                      {!openingSoon && telAlt && (
                         <a
                           href={telAlt}
                           dir="ltr"
@@ -85,7 +93,7 @@ export default async function ContactPage({ params }: Args) {
                           {branch.phoneAlt}
                         </a>
                       )}
-                      {branch.email && (
+                      {!openingSoon && branch.email && (
                         <a
                           href={`mailto:${branch.email}`}
                           className="link-line block w-fit text-muted-ink hover:text-ink"
@@ -93,7 +101,7 @@ export default async function ContactPage({ params }: Args) {
                           {branch.email}
                         </a>
                       )}
-                      {(branch.checkInTime || branch.checkOutTime) && (
+                      {!openingSoon && (branch.checkInTime || branch.checkOutTime) && (
                         <p className="pt-1 text-xs text-muted-ink">
                           {branch.checkInTime && `${t.branch.checkIn} ${branch.checkInTime}`}
                           {branch.checkInTime && branch.checkOutTime && '  ·  '}
@@ -103,7 +111,7 @@ export default async function ContactPage({ params }: Args) {
                     </div>
 
                     <div className="flex flex-col gap-2.5">
-                      {wa && (
+                      {!openingSoon && wa && (
                         <a
                           href={wa}
                           target="_blank"
@@ -138,9 +146,7 @@ export default async function ContactPage({ params }: Args) {
           <Reveal className="mt-16 border border-line bg-card p-8 sm:p-10">
             <p className="eyebrow">{t.home.ctaEyebrow}</p>
             <h2 className="font-display mt-4 text-2xl text-ink sm:text-3xl">{t.home.ctaTitle}</h2>
-            <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted-ink">
-              {t.home.ctaLead}
-            </p>
+            <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted-ink">{t.home.ctaLead}</p>
             <div className="mt-7 flex flex-wrap gap-3">
               {toWhatsAppHref(settings.whatsapp) && (
                 <a

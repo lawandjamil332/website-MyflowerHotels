@@ -10,6 +10,7 @@ import { branchLocative } from '@/utilities/teasers'
 import { cn } from '@/utilities/ui'
 import { AmenityList } from '@/components/site/AmenityList'
 import { Gallery, type GalleryItem } from '@/components/site/Gallery'
+import { OpeningMark, isOpeningSoon, openingLabel } from '@/components/site/OpeningMark'
 import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
 import { RoomCard } from '@/components/site/RoomCard'
@@ -41,6 +42,10 @@ export default async function BranchPage({ params }: Args) {
   const wa = toWhatsAppHref(branch.whatsapp, `${t.branch.enquire} — ${branch.name}`)
   const tel = toTelHref(branch.phone)
   const telAlt = toTelHref(branch.phoneAlt)
+  // Not open yet: the page still shows the hotel, but must not offer a phone
+  // line nobody is answering or a room list that does not exist.
+  const openingSoon = isOpeningSoon(branch)
+  const opening = openingLabel(branch, t.branch.openingSoon)
 
   const gallery: GalleryItem[] = (branch.gallery ?? [])
     .filter((g) => mediaUrl(g.image))
@@ -66,7 +71,9 @@ export default async function BranchPage({ params }: Args) {
         imageUrl={mediaUrl(branch.heroImage, 'xlarge')}
         imageAlt={mediaAlt(branch.heroImage)}
         size="tall"
-      />
+      >
+        {openingSoon && <OpeningMark label={opening} tone="light" className="mt-7" />}
+      </PageHero>
 
       {/* Overview beside a standing reservation card. The card is what the
           page exists for, so it stays in view as the guest reads. */}
@@ -97,8 +104,15 @@ export default async function BranchPage({ params }: Args) {
           <aside>
             <Reveal delay={120} className="lg:sticky lg:top-28">
               <div className="border border-line bg-card p-7 sm:p-8">
-                <p className="eyebrow">{t.branch.stayEyebrow}</p>
-                <h2 className="font-display mt-4 text-2xl text-ink">{t.branch.contactTitle}</h2>
+                <p className="eyebrow">{openingSoon ? opening : t.branch.stayEyebrow}</p>
+                <h2 className="font-display mt-4 text-2xl text-ink">
+                  {openingSoon ? t.branch.openingSoon : t.branch.contactTitle}
+                </h2>
+                {openingSoon && (
+                  <p className="mt-4 text-sm leading-relaxed text-muted-ink">
+                    {t.branch.openingBody}
+                  </p>
+                )}
 
                 {branch.address && (
                   <p className="mt-5 text-sm leading-relaxed whitespace-pre-line text-muted-ink">
@@ -106,7 +120,7 @@ export default async function BranchPage({ params }: Args) {
                   </p>
                 )}
 
-                {(branch.checkInTime || branch.checkOutTime) && (
+                {!openingSoon && (branch.checkInTime || branch.checkOutTime) && (
                   <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-line pt-6">
                     {branch.checkInTime && (
                       <div>
@@ -132,7 +146,7 @@ export default async function BranchPage({ params }: Args) {
                 )}
 
                 <div className="mt-7 flex flex-col gap-2.5">
-                  {wa && (
+                  {!openingSoon && wa && (
                     <a
                       href={wa}
                       target="_blank"
@@ -143,17 +157,17 @@ export default async function BranchPage({ params }: Args) {
                       {t.branch.enquire}
                     </a>
                   )}
-                  {tel && (
+                  {!openingSoon && tel && (
                     <a href={tel} dir="ltr" className={cn(btnOutline, btnSmall, 'w-full')}>
                       {branch.phone}
                     </a>
                   )}
-                  {telAlt && (
+                  {!openingSoon && telAlt && (
                     <a href={telAlt} dir="ltr" className={cn(btnOutline, btnSmall, 'w-full')}>
                       {branch.phoneAlt}
                     </a>
                   )}
-                  {branch.bookingComUrl && (
+                  {!openingSoon && branch.bookingComUrl && (
                     <a
                       href={branch.bookingComUrl}
                       target="_blank"
@@ -165,7 +179,7 @@ export default async function BranchPage({ params }: Args) {
                   )}
                 </div>
 
-                {branch.email && (
+                {!openingSoon && branch.email && (
                   <a
                     href={`mailto:${branch.email}`}
                     className="link-line mt-6 block w-fit text-sm text-muted-ink hover:text-ink"
@@ -221,24 +235,26 @@ export default async function BranchPage({ params }: Args) {
         </section>
       )}
 
-      <section className={cn(shell, sectionY)}>
-        <SectionHeading
-          eyebrow={t.home.roomsEyebrow}
-          title={t.branch.rooms}
-          className="mb-12 lg:mb-16"
-        />
-        {rooms.length > 0 ? (
-          <div className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-            {rooms.map((room, i) => (
-              <Reveal key={room.id} delay={(i % 3) * 110}>
-                <RoomCard room={room} locale={locale} t={t} />
-              </Reveal>
-            ))}
-          </div>
-        ) : (
-          <p className="text-muted-ink">{t.branch.noRooms}</p>
-        )}
-      </section>
+      {!openingSoon && (
+        <section className={cn(shell, sectionY)}>
+          <SectionHeading
+            eyebrow={t.home.roomsEyebrow}
+            title={t.branch.rooms}
+            className="mb-12 lg:mb-16"
+          />
+          {rooms.length > 0 ? (
+            <div className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+              {rooms.map((room, i) => (
+                <Reveal key={room.id} delay={(i % 3) * 110}>
+                  <RoomCard room={room} locale={locale} t={t} />
+                </Reveal>
+              ))}
+            </div>
+          ) : (
+            <p className="text-muted-ink">{t.branch.noRooms}</p>
+          )}
+        </section>
+      )}
 
       {(embedSrc || maps || branch.address) && (
         <section className="border-t border-line bg-sand">

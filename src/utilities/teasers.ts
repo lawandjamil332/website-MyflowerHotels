@@ -13,6 +13,8 @@ export type BranchTeaser = {
   tagline: string
   city: string
   neighbourhood: string
+  openingSoon: boolean
+  openingNote: string
   imageUrl: string
   imageAlt: string
 }
@@ -24,6 +26,8 @@ export const toBranchTeaser = (branch: Branch): BranchTeaser => ({
   tagline: branch.tagline ?? '',
   city: branch.city ?? '',
   neighbourhood: branch.neighbourhood ?? '',
+  openingSoon: branch.status === 'openingSoon',
+  openingNote: branch.openingNote ?? '',
   imageUrl: mediaUrl(branch.heroImage, 'xlarge'),
   imageAlt: mediaAlt(branch.heroImage) || branch.name,
 })

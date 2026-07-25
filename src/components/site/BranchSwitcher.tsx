@@ -7,6 +7,7 @@ import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
 import type { BranchTeaser } from '@/utilities/teasers'
 import { cn } from '@/utilities/ui'
+import { OpeningMark } from './OpeningMark'
 import { PhotoFrame, monogramOf } from './PhotoFrame'
 
 /**
@@ -117,14 +118,21 @@ export function BranchSwitcher({
                   )}
                 </span>
 
-                <span
-                  className={cn(
-                    'text-[0.65rem] tracking-[0.22em] whitespace-nowrap uppercase transition-all duration-700 ease-luxe rtl:tracking-normal',
-                    i === active ? 'text-brass opacity-100' : 'text-muted-ink opacity-0',
-                  )}
-                >
-                  {t.common.viewDetails}
-                </span>
+                {branch.openingSoon ? (
+                  <OpeningMark
+                    label={branch.openingNote || t.branch.openingSoon}
+                    className="whitespace-nowrap"
+                  />
+                ) : (
+                  <span
+                    className={cn(
+                      'text-[0.65rem] tracking-[0.22em] whitespace-nowrap uppercase transition-all duration-700 ease-luxe rtl:tracking-normal',
+                      i === active ? 'text-brass opacity-100' : 'text-muted-ink opacity-0',
+                    )}
+                  >
+                    {t.common.viewDetails}
+                  </span>
+                )}
               </Link>
             </li>
           ))}
@@ -165,6 +173,13 @@ export function BranchSwitcher({
                   : ''}
               </p>
               <h3 className="font-display mt-3 text-3xl leading-tight text-white">{branch.name}</h3>
+              {branch.openingSoon && (
+                <OpeningMark
+                  label={branch.openingNote || t.branch.openingSoon}
+                  tone="light"
+                  className="mt-3"
+                />
+              )}
               {branch.tagline && (
                 <p className="mt-2 max-w-sm text-sm leading-relaxed text-white/75">
                   {branch.tagline}

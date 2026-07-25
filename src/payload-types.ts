@@ -195,7 +195,7 @@ export interface Branch {
   /**
    * The full-width photo at the top of the branch page. Landscape works best.
    */
-  heroImage: number | Media;
+  heroImage?: (number | null) | Media;
   /**
    * Exterior, lobby, restaurant, views.
    */
@@ -240,6 +240,14 @@ export interface Branch {
    * Optional. Shows an "instant reservation" button when filled in.
    */
   bookingComUrl?: string | null;
+  /**
+   * Set to "Opening soon" and the hotel is shown with its photo and a notice instead of phone numbers and rooms.
+   */
+  status?: ('open' | 'openingSoon') | null;
+  /**
+   * Optional. Replaces the default "Opening soon" wording.
+   */
+  openingNote?: string | null;
   /**
    * Lower numbers appear first on the homepage.
    */
@@ -1280,6 +1288,8 @@ export interface BranchesSelect<T extends boolean = true> {
   checkInTime?: T;
   checkOutTime?: T;
   bookingComUrl?: T;
+  status?: T;
+  openingNote?: T;
   order?: T;
   updatedAt?: T;
   createdAt?: T;

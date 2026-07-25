@@ -54,7 +54,6 @@ export const Branches: CollectionConfig = {
       name: 'heroImage',
       type: 'upload',
       relationTo: 'media',
-      required: true,
       admin: {
         description: 'The full-width photo at the top of the branch page. Landscape works best.',
       },
@@ -218,6 +217,34 @@ export const Branches: CollectionConfig = {
           },
         },
       ],
+    },
+    {
+      // A hotel that is announced but not yet taking guests still belongs on
+      // the site — it is the strongest thing a growing group can show. It
+      // just must not offer a phone number nobody is answering.
+      name: 'status',
+      type: 'select',
+      defaultValue: 'open',
+      options: [
+        { label: 'Open', value: 'open' },
+        { label: 'Opening soon', value: 'openingSoon' },
+      ],
+      admin: {
+        position: 'sidebar',
+        description:
+          'Set to "Opening soon" and the hotel is shown with its photo and a notice instead of phone numbers and rooms.',
+      },
+    },
+    {
+      name: 'openingNote',
+      type: 'text',
+      localized: true,
+      admin: {
+        position: 'sidebar',
+        placeholder: 'Opening spring 2026',
+        condition: (data) => data?.status === 'openingSoon',
+        description: 'Optional. Replaces the default "Opening soon" wording.',
+      },
     },
     {
       name: 'order',

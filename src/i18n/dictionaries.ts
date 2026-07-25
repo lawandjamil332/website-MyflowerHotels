@@ -35,6 +35,8 @@ export type Dictionary = {
     ctaLead: string
   }
   branch: {
+    openingSoon: string
+    openingBody: string
     overviewEyebrow: string
     stayEyebrow: string
     galleryEyebrow: string
@@ -126,6 +128,9 @@ const en: Dictionary = {
       'Send the dates and the number of guests. We will confirm availability and the rate.',
   },
   branch: {
+    openingSoon: 'Opening soon',
+    openingBody:
+      'This hotel is not open yet. Send us a message and we will tell you as soon as it is taking guests.',
     overviewEyebrow: 'The hotel',
     stayEyebrow: 'Your stay',
     galleryEyebrow: 'In pictures',
@@ -246,6 +251,9 @@ const ku: Dictionary = {
     ctaLead: 'ڕێککەوت و ژمارەی میوانەکان بنێرە. بەردەستبوون و نرخەکەت بۆ پشتڕاست دەکەینەوە.',
   },
   branch: {
+    openingSoon: 'بەم زووانە دەکرێتەوە',
+    openingBody:
+      'ئەم هۆتێلە هێشتا نەکراوەتەوە. نامەیەکمان بۆ بنێرە و هەرکە میوانی وەرگرت ئاگادارت دەکەینەوە.',
     overviewEyebrow: 'هۆتێلەکە',
     stayEyebrow: 'مانەوەکەت',
     galleryEyebrow: 'بە وێنە',
@@ -366,6 +374,9 @@ const ar: Dictionary = {
     ctaLead: 'أرسل التواريخ وعدد الضيوف، ونؤكد لك التوفر والسعر.',
   },
   branch: {
+    openingSoon: 'يفتتح قريباً',
+    openingBody:
+      'هذا الفندق لم يفتتح بعد. راسلنا وسنخبرك فور بدء استقباله للنزلاء.',
     overviewEyebrow: 'الفندق',
     stayEyebrow: 'إقامتك',
     galleryEyebrow: 'بالصور',
