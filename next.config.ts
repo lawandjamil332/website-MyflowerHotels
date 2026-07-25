@@ -22,6 +22,14 @@ const nextConfig: NextConfig = {
       {
         pathname: '/api/media/file/**',
       },
+      {
+        // The brand artwork shipped in /public — the logo in both surface
+        // variants and the flower on its own. Without this, next/image
+        // refuses to serve them and every page throws at runtime, which the
+        // production build does not catch because the check happens per
+        // request.
+        pathname: '/*.png',
+      },
     ],
     qualities: [100],
     remotePatterns: [

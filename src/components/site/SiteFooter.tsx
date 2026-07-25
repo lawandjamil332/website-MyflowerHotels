@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 
 import type { Locale } from '@/i18n/config'
@@ -7,7 +8,6 @@ import { getBranches } from '@/utilities/branches'
 import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { cn } from '@/utilities/ui'
 import { LocaleSwitcher } from './LocaleSwitcher'
-import { Lotus } from './Lotus'
 import { Stars } from './Stars'
 import { shell } from './ui'
 
@@ -50,8 +50,13 @@ export async function SiteFooter({
       <div className={cn(shell, 'py-20 sm:py-24')}>
         <div className="grid gap-14 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:gap-10">
           <div>
-            <Lotus className="mb-5 h-8 w-8 text-brass" />
-            <p className="font-display text-2xl tracking-[0.22em] uppercase">{siteName}</p>
+            <Image
+              src="/logo-light.png"
+              alt={siteName}
+              width={228}
+              height={147}
+              className="h-16 w-auto object-contain"
+            />
             <Stars count={settings.stars} className="mt-4" />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/50">
               {t.home.heroEyebrow}

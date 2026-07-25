@@ -28,7 +28,6 @@ import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
 import { dir, isLocale, locales, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
-import { Lotus } from '@/components/site/Lotus'
 import { SiteHeader } from '@/components/site/SiteHeader'
 import { SiteFooter } from '@/components/site/SiteFooter'
 import { WhatsAppButton } from '@/components/site/WhatsAppButton'
@@ -78,11 +77,15 @@ export default async function LocaleLayout({ children, params }: Args) {
             aria-hidden because it is scenery — the page beneath it is already
             complete and readable to a screen reader. */}
         <div className="overture" aria-hidden="true">
-          <span className="overture-mark flex flex-col items-center gap-5">
-            <Lotus className="h-10 w-10 text-brass sm:h-12 sm:w-12" />
-            <span className="font-display text-xl tracking-[0.3em] text-bone uppercase sm:text-2xl">
-              {settings.siteName || 'My Flower Hotels'}
-            </span>
+          <span className="overture-mark block">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo-light.png"
+              alt=""
+              width={228}
+              height={147}
+              className="h-20 w-auto object-contain sm:h-28"
+            />
           </span>
         </div>
 

@@ -19,12 +19,18 @@ export function SiteHeader({
   t: Dictionary
   settings: SiteSettings
 }) {
+  const uploaded = mediaUrl(settings.logo, 'small')
+
   return (
     <HeaderBar
       locale={locale}
       t={t}
       siteName={settings.siteName || 'My Flower Hotels'}
-      logoUrl={mediaUrl(settings.logo, 'small')}
+      // An uploaded logo wins. Otherwise the group's own artwork ships with
+      // the site, in two versions: full colour for the solid bar, and one with
+      // the wordmark lifted to bone for while the bar is over a photograph.
+      logoUrl={uploaded || '/logo.png'}
+      logoLightUrl={uploaded ? '' : '/logo-light.png'}
       logoAlt={mediaAlt(settings.logo)}
       whatsappHref={toWhatsAppHref(settings.whatsapp)}
     />

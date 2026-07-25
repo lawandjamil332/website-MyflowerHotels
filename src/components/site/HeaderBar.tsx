@@ -16,6 +16,7 @@ type Props = {
   t: Dictionary
   siteName: string
   logoUrl: string
+  logoLightUrl?: string
   logoAlt: string
   whatsappHref: string
 }
@@ -26,7 +27,15 @@ type Props = {
  * full-bleed — a header with its own background permanently pinned above the
  * image is the single clearest tell of a template.
  */
-export function HeaderBar({ locale, t, siteName, logoUrl, logoAlt, whatsappHref }: Props) {
+export function HeaderBar({
+  locale,
+  t,
+  siteName,
+  logoUrl,
+  logoLightUrl,
+  logoAlt,
+  whatsappHref,
+}: Props) {
   const pathname = usePathname()
   const [solid, setSolid] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -104,15 +113,18 @@ export function HeaderBar({ locale, t, siteName, logoUrl, logoAlt, whatsappHref 
           >
             {logoUrl ? (
               <Image
-                src={logoUrl}
+                // The dark-surface artwork already carries a legible wordmark,
+                // so it must not be run through a filter — that would flatten
+                // the flower to a white silhouette and throw the brand away.
+                src={onDark && logoLightUrl ? logoLightUrl : logoUrl}
                 alt={logoAlt || siteName}
-                width={180}
-                height={48}
+                width={228}
+                height={147}
                 priority
                 className={cn(
                   'w-auto object-contain transition-all duration-700 ease-luxe',
-                  solid && !menuOpen ? 'h-8' : 'h-10',
-                  onDark && 'brightness-0 invert',
+                  solid && !menuOpen ? 'h-11' : 'h-14 sm:h-16',
+                  onDark && !logoLightUrl && 'brightness-0 invert',
                 )}
               />
             ) : (

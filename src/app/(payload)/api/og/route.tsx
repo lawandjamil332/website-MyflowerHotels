@@ -18,15 +18,22 @@ export const runtime = 'nodejs'
 const font = async (file: string) =>
   readFile(path.join(process.cwd(), 'node_modules/@fontsource', file))
 
+/** The group's own flower, inlined so the renderer needs no network. */
+const markDataUri = async () => {
+  const png = await readFile(path.join(process.cwd(), 'public', 'mark.png'))
+  return `data:image/png;base64,${png.toString('base64')}`
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const title = (searchParams.get('title') || 'My Flower Hotels').slice(0, 80)
   const eyebrow = (searchParams.get('eyebrow') || 'Erbil · Kurdistan Region, Iraq').slice(0, 60)
 
   try {
-    const [display, body] = await Promise.all([
+    const [display, body, mark] = await Promise.all([
       font('cormorant-garamond/files/cormorant-garamond-latin-500-normal.woff'),
       font('ibm-plex-sans/files/ibm-plex-sans-latin-400-normal.woff'),
+      markDataUri(),
     ])
 
     return new ImageResponse(
@@ -42,13 +49,8 @@ export async function GET(request: Request) {
             padding: '72px 80px',
           }}
         >
-          <svg width="64" height="64" viewBox="0 0 64 64" fill="#c2a06a">
-            <path d="M 32 9 C 38.6 22.6 38.6 38.4 32 52 C 25.4 38.4 25.4 22.6 32 9 Z" />
-            <path d="M 12 22 C 24 28 31 40 30 52 C 18 46 11 34 12 22 Z" />
-            <path d="M 52 22 C 53 34 46 46 34 52 C 33 40 40 28 52 22 Z" />
-            <path d="M 3 36 C 15 36 26 44 29 53 C 17 54 6 46 3 36 Z" />
-            <path d="M 61 36 C 58 46 47 54 35 53 C 38 44 49 36 61 36 Z" />
-          </svg>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={mark} alt="" width={86} height={86} />
 
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div
