@@ -6,6 +6,7 @@ import * as migration_20260725_103525_branch_opening_status from './20260725_103
 import * as migration_20260725_110500_seed_hotels from './20260725_110500_seed_hotels';
 import * as migration_20260725_160439_branch_check_in_any_time from './20260725_160439_branch_check_in_any_time';
 import * as migration_20260725_221500_seed_photos from './20260725_221500_seed_photos';
+import * as migration_20260725_230500_photos_multi_select from './20260725_230500_photos_multi_select';
 
 export const migrations = [
   {

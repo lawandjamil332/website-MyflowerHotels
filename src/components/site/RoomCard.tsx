@@ -26,7 +26,7 @@ export function RoomCard({
   showBranch?: boolean
   priority?: boolean
 }) {
-  const cover = room.images?.[0]?.image
+  const cover = room.images?.[0]
   const url = mediaUrl(cover, 'large')
   const price = formatPrice(room.priceFrom, room.currency, locale)
   const branch = typeof room.branch === 'object' ? (room.branch as Branch) : null

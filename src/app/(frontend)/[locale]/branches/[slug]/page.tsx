@@ -55,11 +55,11 @@ export default async function BranchPage({ params }: Args) {
   const opening = openingLabel(branch, t.branch.openingSoon)
 
   const gallery: GalleryItem[] = (branch.gallery ?? [])
-    .filter((g) => mediaUrl(g.image))
+    .filter((g) => mediaUrl(g))
     .map((g) => ({
-      url: mediaUrl(g.image, 'large'),
-      full: mediaUrl(g.image, 'xlarge') || mediaUrl(g.image),
-      alt: mediaAlt(g.image) || branch.name,
+      url: mediaUrl(g, 'large'),
+      full: mediaUrl(g, 'xlarge') || mediaUrl(g),
+      alt: mediaAlt(g) || branch.name,
     }))
 
   // Google's embed works from plain coordinates without an API key, so the

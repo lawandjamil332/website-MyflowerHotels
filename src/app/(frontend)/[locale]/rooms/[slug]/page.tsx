@@ -34,7 +34,7 @@ export default async function RoomPage({ params }: Args) {
   if (!room) notFound()
 
   const branch = (typeof room.branch === 'object' ? room.branch : null) as Branch | null
-  const images = (room.images ?? []).filter((i) => mediaUrl(i.image))
+  const images = (room.images ?? []).filter((i) => mediaUrl(i))
   const price = formatPrice(room.priceFrom, room.currency, locale)
 
   // Pre-fills the WhatsApp message with the room, so the guest does not have
@@ -55,9 +55,9 @@ export default async function RoomPage({ params }: Args) {
   // The opening photograph carries the hero, so the mosaic below shows the
   // rest rather than repeating it.
   const gallery: GalleryItem[] = images.slice(1).map((item) => ({
-    url: mediaUrl(item.image, 'large'),
-    full: mediaUrl(item.image, 'xlarge') || mediaUrl(item.image),
-    alt: mediaAlt(item.image) || room.name,
+    url: mediaUrl(item, 'large'),
+    full: mediaUrl(item, 'xlarge') || mediaUrl(item),
+    alt: mediaAlt(item) || room.name,
   }))
 
   return (
@@ -66,8 +66,8 @@ export default async function RoomPage({ params }: Args) {
       <PageHero
         eyebrow={branch?.name ?? t.room.detailsEyebrow}
         title={room.name}
-        imageUrl={mediaUrl(images[0]?.image, 'xlarge')}
-        imageAlt={mediaAlt(images[0]?.image)}
+        imageUrl={mediaUrl(images[0], 'xlarge')}
+        imageAlt={mediaAlt(images[0])}
         size="tall"
       >
         {room.isAvailable === false && (
@@ -207,7 +207,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
     title: room.name,
     openGraph: {
       title: room.name,
-      images: shareImage(mediaUrl(room.images?.[0]?.image, 'og'), room.name, branchName),
+      images: shareImage(mediaUrl(room.images?.[0], 'og'), room.name, branchName),
     },
   }
 }

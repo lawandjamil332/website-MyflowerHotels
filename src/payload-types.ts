@@ -197,14 +197,9 @@ export interface Branch {
    */
   heroImage?: (number | null) | Media;
   /**
-   * Exterior, lobby, restaurant, views.
+   * Exterior, lobby, restaurant, views. Select or drag in several at once, and drag to reorder.
    */
-  gallery?:
-    | {
-        image: number | Media;
-        id?: string | null;
-      }[]
-    | null;
+  gallery?: (number | Media)[] | null;
   address?: string | null;
   city?: string | null;
   /**
@@ -397,12 +392,9 @@ export interface Room {
   slug: string;
   branch: number | Branch;
   /**
-   * At least three. The first is used as the cover.
+   * Select or drag in several at once. At least three. The first is the cover — drag to reorder.
    */
-  images: {
-    image: number | Media;
-    id?: string | null;
-  }[];
+  images: (number | Media)[];
   description?: {
     root: {
       type: string;
@@ -1273,12 +1265,7 @@ export interface BranchesSelect<T extends boolean = true> {
   tagline?: T;
   description?: T;
   heroImage?: T;
-  gallery?:
-    | T
-    | {
-        image?: T;
-        id?: T;
-      };
+  gallery?: T;
   address?: T;
   city?: T;
   neighbourhood?: T;
@@ -1311,12 +1298,7 @@ export interface RoomsSelect<T extends boolean = true> {
   generateSlug?: T;
   slug?: T;
   branch?: T;
-  images?:
-    | T
-    | {
-        image?: T;
-        id?: T;
-      };
+  images?: T;
   description?: T;
   priceFrom?: T;
   currency?: T;

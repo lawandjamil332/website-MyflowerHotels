@@ -87,19 +87,13 @@ export const Branches: CollectionConfig = {
     },
     {
       name: 'gallery',
-      type: 'array',
-      labels: { singular: 'Photo', plural: 'Photos' },
+      type: 'upload',
+      relationTo: 'media',
+      hasMany: true,
       admin: {
-        description: 'Exterior, lobby, restaurant, views.',
+        description:
+          'Exterior, lobby, restaurant, views. Select or drag in several at once, and drag to reorder.',
       },
-      fields: [
-        {
-          name: 'image',
-          type: 'upload',
-          relationTo: 'media',
-          required: true,
-        },
-      ],
     },
     {
       type: 'collapsible',

@@ -90,7 +90,7 @@ export function RoomSchema({
   locale: Locale
 }) {
   const base = getServerSideURL()
-  const image = mediaUrl(room.images?.[0]?.image, 'og') || mediaUrl(room.images?.[0]?.image)
+  const image = mediaUrl(room.images?.[0], 'og') || mediaUrl(room.images?.[0])
 
   return json(
     clean({

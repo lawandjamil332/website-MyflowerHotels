@@ -30,7 +30,7 @@ export function RoomFeature({
   index: number
   priority?: boolean
 }) {
-  const cover = room.images?.[0]?.image
+  const cover = room.images?.[0]
   const price = formatPrice(room.priceFrom, room.currency, locale)
   const branch = typeof room.branch === 'object' ? (room.branch as Branch) : null
   const flipped = index % 2 === 1

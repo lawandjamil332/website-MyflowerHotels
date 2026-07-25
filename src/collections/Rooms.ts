@@ -40,22 +40,19 @@ export const Rooms: CollectionConfig = {
       },
     },
     {
+      // A multi-select upload rather than a list of one-photo rows. As rows,
+      // adding ten pictures meant ten separate add-then-upload cycles; here
+      // the whole selection goes in at once and can be dragged into order.
       name: 'images',
-      type: 'array',
+      type: 'upload',
+      relationTo: 'media',
+      hasMany: true,
       required: true,
       minRows: 3,
-      labels: { singular: 'Photo', plural: 'Photos' },
       admin: {
-        description: 'At least three. The first is used as the cover.',
+        description:
+          'Select or drag in several at once. At least three. The first is the cover — drag to reorder.',
       },
-      fields: [
-        {
-          name: 'image',
-          type: 'upload',
-          relationTo: 'media',
-          required: true,
-        },
-      ],
     },
     {
       name: 'description',
