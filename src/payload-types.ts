@@ -212,12 +212,12 @@ export interface Branch {
    */
   neighbourhood?: string | null;
   /**
-   * In Google Maps, right-click the spot and click the numbers to copy.
+   * Filled in automatically from the Google Maps link above. Only type these in by hand if the map does not appear.
    */
   latitude?: number | null;
   longitude?: number | null;
   /**
-   * Opens the pin directly. Paste the share link from Google Maps.
+   * Paste the Share link from Google Maps. The map on the hotel's page appears by itself — the coordinates below fill in from this link when you save.
    */
   googleMapsUrl?: string | null;
   phone?: string | null;

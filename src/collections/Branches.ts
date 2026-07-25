@@ -4,6 +4,11 @@ import { slugField } from 'payload'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { branchAmenityOptions } from '../fields/amenities'
+import {
+  coordsFromMapsUrl,
+  isShortMapsLink,
+  resolveShortMapsLink,
+} from '../utilities/mapsUrl'
 
 /**
  * The three properties. Prose is localized so each branch reads naturally in
@@ -29,6 +34,28 @@ export const Branches: CollectionConfig = {
     description: 'Each hotel in the group. The homepage lists these in the order set below.',
   },
   defaultSort: 'order',
+  hooks: {
+    beforeChange: [
+      async ({ data }) => {
+        // The map on the branch page is drawn from latitude and longitude, but
+        // what staff have to hand is whatever Google's Share button copied.
+        // Read the numbers out of the link so pasting it is enough, and never
+        // overwrite coordinates somebody has entered deliberately.
+        if (!data?.googleMapsUrl) return data
+        if (typeof data.latitude === 'number' && typeof data.longitude === 'number') return data
+
+        let coords = coordsFromMapsUrl(data.googleMapsUrl)
+        if (!coords && isShortMapsLink(data.googleMapsUrl)) {
+          coords = await resolveShortMapsLink(data.googleMapsUrl)
+        }
+        if (coords) {
+          data.latitude = coords.latitude
+          data.longitude = coords.longitude
+        }
+        return data
+      },
+    ],
+  },
   fields: [
     {
       name: 'name',
@@ -110,7 +137,8 @@ export const Branches: CollectionConfig = {
               admin: {
                 width: '50%',
                 placeholder: '36.191',
-                description: 'In Google Maps, right-click the spot and click the numbers to copy.',
+                description:
+                  'Filled in automatically from the Google Maps link above. Only type these in by hand if the map does not appear.',
               },
             },
             {
@@ -125,7 +153,8 @@ export const Branches: CollectionConfig = {
           type: 'text',
           label: 'Google Maps URL',
           admin: {
-            description: 'Opens the pin directly. Paste the share link from Google Maps.',
+            description:
+              'Paste the Share link from Google Maps. The map on the hotel\'s page appears by itself — the coordinates below fill in from this link when you save.',
           },
         },
       ],
