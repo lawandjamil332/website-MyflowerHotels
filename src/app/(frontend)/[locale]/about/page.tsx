@@ -24,7 +24,7 @@ export default async function AboutPage({ params }: Args) {
 
   const t = getDictionary(locale)
   const [settings, branches] = await Promise.all([getSettings(locale), getBranches(locale)])
-  const siteName = settings.siteName || 'Myflower Hotels'
+  const siteName = settings.siteName || 'My Flower Hotels'
 
   // Falls back through the branches, so the page still opens on a photograph
   // before anyone has uploaded a share image in settings.

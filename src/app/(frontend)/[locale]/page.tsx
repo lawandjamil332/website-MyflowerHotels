@@ -39,7 +39,7 @@ export default async function HomePage({ params }: Args) {
   // and this avoids a stock image standing in for the group's real hotels.
   const heroBranch = branches[0]
   const heroUrl = mediaUrl(heroBranch?.heroImage, 'xlarge')
-  const siteName = settings.siteName || 'Myflower Hotels'
+  const siteName = settings.siteName || 'My Flower Hotels'
   const tel = toTelHref(settings.phone)
   const wa = toWhatsAppHref(settings.whatsapp)
 
@@ -292,7 +292,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const locale = (isLocale(raw) ? raw : 'en') as Locale
   const settings = await getSettings(locale)
   const t = getDictionary(locale)
-  const siteName = settings.siteName || 'Myflower Hotels'
+  const siteName = settings.siteName || 'My Flower Hotels'
 
   return {
     title: siteName,

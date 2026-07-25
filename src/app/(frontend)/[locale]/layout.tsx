@@ -76,7 +76,7 @@ export default async function LocaleLayout({ children, params }: Args) {
             complete and readable to a screen reader. */}
         <div className="overture" aria-hidden="true">
           <span className="overture-mark font-display text-2xl tracking-[0.3em] uppercase sm:text-3xl">
-            {settings.siteName || 'Myflower Hotels'}
+            {settings.siteName || 'My Flower Hotels'}
           </span>
         </div>
 

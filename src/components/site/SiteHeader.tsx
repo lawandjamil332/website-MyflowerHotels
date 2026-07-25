@@ -23,7 +23,7 @@ export function SiteHeader({
     <HeaderBar
       locale={locale}
       t={t}
-      siteName={settings.siteName || 'Myflower Hotels'}
+      siteName={settings.siteName || 'My Flower Hotels'}
       logoUrl={mediaUrl(settings.logo, 'small')}
       logoAlt={mediaAlt(settings.logo)}
       whatsappHref={toWhatsAppHref(settings.whatsapp)}

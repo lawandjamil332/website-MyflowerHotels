@@ -22,7 +22,7 @@ export const Settings: GlobalConfig = {
       name: 'siteName',
       type: 'text',
       localized: true,
-      defaultValue: 'Myflower Hotels',
+      defaultValue: 'My Flower Hotels',
     },
     {
       type: 'row',

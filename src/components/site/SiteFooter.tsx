@@ -27,7 +27,7 @@ export async function SiteFooter({
   t: Dictionary
   settings: SiteSettings
 }) {
-  const siteName = settings.siteName || 'Myflower Hotels'
+  const siteName = settings.siteName || 'My Flower Hotels'
   const tel = toTelHref(settings.phone)
   const wa = toWhatsAppHref(settings.whatsapp)
   const social = settings.social ?? {}
@@ -139,7 +139,7 @@ export async function SiteFooter({
           className="font-display leading-[0.8] whitespace-nowrap text-white/[0.07] select-none"
           style={{
             // Sized from the name's own length so it fills the width and stops
-            // there. A fixed viewport size would clip "Myflower Hotels"
+            // there. A fixed viewport size would clip "My Flower Hotels"
             // mid-word and leave a short name marooned in the middle.
             fontSize: `clamp(2.75rem, ${Math.min(15, 205 / Math.max(siteName.length, 7)).toFixed(2)}vw, 13rem)`,
             letterSpacing: '0',
