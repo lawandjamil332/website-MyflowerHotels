@@ -5,6 +5,7 @@ import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { cn } from '@/utilities/ui'
+import { branchLocative } from '@/utilities/teasers'
 import { PhotoFrame, monogramOf } from './PhotoFrame'
 
 /**
@@ -55,11 +56,11 @@ export function BranchCard({
       )}
 
       <div className="relative p-6 sm:p-7">
-        {(typeof index === 'number' || branch.city) && (
+        {(typeof index === 'number' || branchLocative(branch)) && (
           <p className="text-[0.65rem] tracking-[0.24em] text-brass-bright uppercase rtl:tracking-normal">
             {typeof index === 'number' ? String(index + 1).padStart(2, '0') : ''}
-            {typeof index === 'number' && branch.city ? ' · ' : ''}
-            {branch.city ?? ''}
+            {typeof index === 'number' && branchLocative(branch) ? ' · ' : ''}
+            {branchLocative(branch)}
           </p>
         )}
         <h3 className="font-display mt-3 text-3xl leading-tight text-white">{branch.name}</h3>

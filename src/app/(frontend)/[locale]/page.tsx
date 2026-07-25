@@ -5,6 +5,7 @@ import type { Metadata } from 'next'
 
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
+import { fillCount } from '@/i18n/count'
 import { getBranches, getFeaturedRooms } from '@/utilities/branches'
 import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
@@ -16,6 +17,7 @@ import { PhotoFrame, monogramOf } from '@/components/site/PhotoFrame'
 import { Reveal } from '@/components/site/Reveal'
 import { RoomFeature } from '@/components/site/RoomFeature'
 import { SectionHeading } from '@/components/site/SectionHeading'
+import { Stars } from '@/components/site/Stars'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
 import { btnLight, btnOnDark, btnPrimary, sectionY, shell } from '@/components/site/ui'
 
@@ -46,6 +48,11 @@ export default async function HomePage({ params }: Args) {
   const interludeBranch = branches[2] ?? branches[0]
   const closingBranch = branches[1] ?? branches[0]
 
+  // Sentences that spell the number out are filled from the branches actually
+  // published, so opening a fifth hotel does not leave the copy saying four.
+  const n = branches.length
+  const count = (template: string) => fillCount(template, n, locale)
+
   return (
     <>
       {/* The hero stays put while the page slides up over it. A pure-CSS
@@ -67,9 +74,10 @@ export default async function HomePage({ params }: Args) {
         />
 
         <div className={cn(shell, 'relative pt-40 pb-24 sm:pb-28')}>
-          <p className="eyebrow rise" style={{ animationDelay: '0.55s' }}>
-            {t.home.heroEyebrow}
-          </p>
+          <div className="rise flex items-center gap-4" style={{ animationDelay: '0.55s' }}>
+            <p className="eyebrow">{t.home.heroEyebrow}</p>
+            <Stars count={settings.stars} />
+          </div>
           <h1
             className="font-display display-hero rise mt-7 max-w-5xl text-balance text-white"
             style={{ animationDelay: '0.7s' }}
@@ -80,7 +88,7 @@ export default async function HomePage({ params }: Args) {
             className="rise mt-8 max-w-lg text-lg leading-relaxed text-white/75 sm:text-xl"
             style={{ animationDelay: '0.9s' }}
           >
-            {t.home.heroLead}
+            {count(t.home.heroLead)}
           </p>
 
           <div
@@ -148,7 +156,7 @@ export default async function HomePage({ params }: Args) {
           <SectionHeading
             index={2}
             eyebrow={t.home.collectionEyebrow}
-            title={t.home.chooseBranch}
+            title={count(t.home.chooseBranch)}
             lead={t.home.chooseBranchLead}
             className="mb-12 lg:mb-16"
           />
@@ -180,7 +188,7 @@ export default async function HomePage({ params }: Args) {
           <div aria-hidden="true" className="absolute inset-0 bg-black/55" />
           <Reveal className={cn(shell, 'relative text-center')}>
             <p className="font-display display-lg mx-auto max-w-3xl text-balance text-white">
-              {t.home.interlude}
+              {count(t.home.interlude)}
             </p>
           </Reveal>
         </section>

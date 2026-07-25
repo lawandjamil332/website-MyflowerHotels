@@ -25,6 +25,30 @@ export const Settings: GlobalConfig = {
       defaultValue: 'Myflower Hotels',
     },
     {
+      type: 'row',
+      fields: [
+        {
+          name: 'establishedYear',
+          type: 'number',
+          admin: {
+            width: '50%',
+            placeholder: '2012',
+            description: 'Shown as "Since 2012" in the footer. Leave empty to hide it.',
+          },
+        },
+        {
+          name: 'stars',
+          type: 'select',
+          label: 'Star rating',
+          options: ['3', '4', '5'],
+          admin: {
+            width: '50%',
+            description: 'Shown beside the hotel name. Leave empty to hide it.',
+          },
+        },
+      ],
+    },
+    {
       name: 'logo',
       type: 'upload',
       relationTo: 'media',

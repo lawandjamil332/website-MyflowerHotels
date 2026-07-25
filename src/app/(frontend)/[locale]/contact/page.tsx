@@ -7,6 +7,7 @@ import { getBranches } from '@/utilities/branches'
 import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
+import { branchLocative } from '@/utilities/teasers'
 import { cn } from '@/utilities/ui'
 import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
@@ -40,6 +41,7 @@ export default async function ContactPage({ params }: Args) {
             {branches.map((branch, i) => {
               const wa = toWhatsAppHref(branch.whatsapp, `${t.branch.enquire} — ${branch.name}`)
               const tel = toTelHref(branch.phone)
+              const telAlt = toTelHref(branch.phoneAlt)
               const maps = toMapsHref(branch.googleMapsUrl, branch.latitude, branch.longitude)
 
               return (
@@ -52,9 +54,9 @@ export default async function ContactPage({ params }: Args) {
                       <h2 className="font-display mt-3 text-3xl leading-tight text-ink">
                         {branch.name}
                       </h2>
-                      {branch.city && (
-                        <p className="mt-2 text-xs tracking-[0.18em] text-muted-ink uppercase rtl:tracking-normal">
-                          {branch.city}
+                      {branchLocative(branch) && (
+                        <p className="mt-2 max-w-[22ch] text-sm leading-relaxed text-muted-ink">
+                          {branchLocative(branch)}
                         </p>
                       )}
                     </div>
@@ -72,6 +74,15 @@ export default async function ContactPage({ params }: Args) {
                           className="link-line block w-fit text-ink hover:text-brass"
                         >
                           {branch.phone}
+                        </a>
+                      )}
+                      {telAlt && (
+                        <a
+                          href={telAlt}
+                          dir="ltr"
+                          className="link-line block w-fit text-ink hover:text-brass"
+                        >
+                          {branch.phoneAlt}
                         </a>
                       )}
                       {branch.email && (

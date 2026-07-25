@@ -23,8 +23,9 @@ const BeforeDashboard: React.FC = () => {
           the floating button should use.
         </li>
         <li>
-          Add your three hotels under <strong>Branches</strong>. Each needs a hero photo. The
-          homepage lists them by the <em>order</em> number in the sidebar.
+          Add each hotel under <strong>Branches</strong>. Every one needs a hero photo, and the{' '}
+          <em>street or landmark</em> field is what guests use to tell them apart. The homepage
+          lists them by the <em>order</em> number in the sidebar.
         </li>
         <li>
           Add <strong>Rooms</strong> and attach each one to its branch. Three photos minimum.

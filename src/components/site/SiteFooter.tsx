@@ -7,13 +7,14 @@ import { getBranches } from '@/utilities/branches'
 import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { cn } from '@/utilities/ui'
 import { LocaleSwitcher } from './LocaleSwitcher'
+import { Stars } from './Stars'
 import { shell } from './ui'
 
 /**
  * Ink footer. It closes the page on the darkest surface on the site, which is
  * what stops a long scroll of photographs from simply stopping.
  *
- * The three hotels are listed by name here as well as in the switcher: the
+ * Every hotel is listed by name here as well as in the switcher: the
  * footer is where a returning guest looks for the branch they stayed at last
  * time.
  */
@@ -49,9 +50,15 @@ export async function SiteFooter({
         <div className="grid gap-14 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:gap-10">
           <div>
             <p className="font-display text-2xl tracking-[0.22em] uppercase">{siteName}</p>
+            <Stars count={settings.stars} className="mt-4" />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/50">
               {t.home.heroEyebrow}
             </p>
+            {settings.establishedYear && (
+              <p className="mt-2 text-xs tracking-[0.2em] text-white/40 uppercase rtl:tracking-normal">
+                Since {settings.establishedYear}
+              </p>
+            )}
             <div aria-hidden="true" className="rule-brass mt-7" />
           </div>
 

@@ -208,6 +208,10 @@ export interface Branch {
   address?: string | null;
   city?: string | null;
   /**
+   * The street or landmark, e.g. "100m Street — beside Today Restaurant". Shown under the hotel name, and it is what guests actually choose between when the hotels are numbered.
+   */
+  neighbourhood?: string | null;
+  /**
    * In Google Maps, right-click the spot and click the numbers to copy.
    */
   latitude?: number | null;
@@ -217,11 +221,17 @@ export interface Branch {
    */
   googleMapsUrl?: string | null;
   phone?: string | null;
+  phoneAlt?: string | null;
   /**
    * Full international format, e.g. +9647501234567.
    */
   whatsapp?: string | null;
   email?: string | null;
+  /**
+   * This hotel's own page.
+   */
+  facebook?: string | null;
+  instagram?: string | null;
   amenities?:
     ('wifi' | 'parking' | 'restaurant' | 'gym' | 'pool' | 'airport_shuttle' | 'family_rooms' | 'generator')[] | null;
   checkInTime?: string | null;
@@ -1256,12 +1266,16 @@ export interface BranchesSelect<T extends boolean = true> {
       };
   address?: T;
   city?: T;
+  neighbourhood?: T;
   latitude?: T;
   longitude?: T;
   googleMapsUrl?: T;
   phone?: T;
+  phoneAlt?: T;
   whatsapp?: T;
   email?: T;
+  facebook?: T;
+  instagram?: T;
   amenities?: T;
   checkInTime?: T;
   checkOutTime?: T;
@@ -1902,6 +1916,14 @@ export interface Setting {
   id: number;
   siteName?: string | null;
   /**
+   * Shown as "Since 2012" in the footer. Leave empty to hide it.
+   */
+  establishedYear?: number | null;
+  /**
+   * Shown beside the hotel name. Leave empty to hide it.
+   */
+  stars?: ('3' | '4' | '5') | null;
+  /**
    * Shown in the header. A transparent PNG or SVG works best.
    */
   logo?: (number | null) | Media;
@@ -1988,6 +2010,8 @@ export interface Footer {
  */
 export interface SettingsSelect<T extends boolean = true> {
   siteName?: T;
+  establishedYear?: T;
+  stars?: T;
   logo?: T;
   socialShareImage?: T;
   phone?: T;

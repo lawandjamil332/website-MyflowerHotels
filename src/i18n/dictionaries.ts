@@ -91,21 +91,21 @@ const en: Dictionary = {
   },
   home: {
     heroEyebrow: 'Erbil · Kurdistan Region, Iraq',
-    heroLead: 'Three hotels, one standard of hospitality.',
+    heroLead: '{count} hotels, one standard of hospitality.',
     exploreCollection: 'Explore the hotels',
     scrollCue: 'Scroll',
     collectionEyebrow: 'The collection',
-    chooseBranch: 'Three hotels in Erbil',
+    chooseBranch: '{count} hotels in Erbil',
     chooseBranchLead: 'Choose the one that suits your stay.',
-    interlude: 'Three addresses in one city.',
+    interlude: '{count} addresses in one city.',
     introEyebrow: 'Our hospitality',
     introTitle: 'A family house, kept for guests',
     introBody:
-      'We have looked after travellers in Erbil for years. All three hotels are run the same way: clean, quiet, and close to the centre of the city.',
+      'We have looked after travellers in Erbil for years. Every hotel in the group is run the same way: clean, quiet, and close to the centre of the city.',
     assurance: [
       {
         title: 'In the heart of Erbil',
-        body: 'All three hotels sit within reach of the Citadel, the bazaar and the airport road.',
+        body: 'Every one of our hotels is within reach of the Citadel, the bazaar and the airport road.',
       },
       {
         title: 'Answered in minutes',
@@ -118,7 +118,7 @@ const en: Dictionary = {
     ],
     roomsEyebrow: 'Rooms & suites',
     featuredRooms: 'Where you will sleep',
-    roomsLead: 'Rooms across all three hotels, from quiet singles to family suites.',
+    roomsLead: 'Rooms across every hotel in the group, from quiet singles to family suites.',
     viewAllRooms: 'View all rooms',
     ctaEyebrow: 'Reservations',
     ctaTitle: 'Tell us when you are coming',
@@ -157,15 +157,15 @@ const en: Dictionary = {
   },
   about: {
     eyebrow: 'About the group',
-    lead: 'Three hotels in Erbil, run by one family.',
+    lead: '{count} hotels in Erbil, run by one family.',
     body1:
-      'We opened our first hotel in Erbil to look after the travellers who come here for work, for family, and for the city itself. Two more followed, each in a different part of town, each run the same way.',
+      'We opened our first hotel in Erbil to look after the travellers who come here for work, for family, and for the city itself. Others followed, each in a different part of town, each run the same way.',
     body2:
       'We are not a chain. The same people who own these hotels are the ones you will meet at the desk. If something is not right during your stay, tell us and it is put right that day.',
   },
   contact: {
     eyebrow: 'Get in touch',
-    lead: 'Reach any of the three hotels directly. WhatsApp is answered fastest.',
+    lead: 'Reach any of our hotels directly. WhatsApp is answered fastest.',
   },
   bed: { single: 'Single', double: 'Double', twin: 'Twin', king: 'King', suite: 'Suite' },
   amenity: {
@@ -212,21 +212,21 @@ const ku: Dictionary = {
   },
   home: {
     heroEyebrow: 'هەولێر · هەرێمی کوردستان، عێراق',
-    heroLead: 'سێ هۆتێل، یەک ئاستی میوانداری.',
+    heroLead: '{count} هۆتێل، یەک ئاستی میوانداری.',
     exploreCollection: 'هۆتێلەکان ببینە',
     scrollCue: 'بۆ خوارەوە',
     collectionEyebrow: 'کۆمەڵەکەمان',
-    chooseBranch: 'سێ هۆتێل لە هەولێر',
+    chooseBranch: '{count} هۆتێل لە هەولێر',
     chooseBranchLead: 'ئەوەی گونجاوە بۆ مانەوەت هەڵبژێرە.',
-    interlude: 'سێ ناونیشان لە یەک شاردا.',
+    interlude: '{count} ناونیشان لە یەک شاردا.',
     introEyebrow: 'میوانداریمان',
     introTitle: 'ماڵێکی خێزانی، بۆ میوان',
     introBody:
-      'ساڵانێکە لە هەولێر چاودێری گەشتیارەکان دەکەین. هەر سێ هۆتێلەکە بە یەک شێواز بەڕێوە دەبرێن: پاک، ئارام و نزیک لە ناوەندی شار.',
+      'ساڵانێکە لە هەولێر چاودێری گەشتیارەکان دەکەین. هەموو هۆتێلەکانمان بە یەک شێواز بەڕێوە دەبرێن: پاک، ئارام و نزیک لە ناوەندی شار.',
     assurance: [
       {
         title: 'لە دڵی هەولێر',
-        body: 'هەر سێ هۆتێلەکە نزیکن لە قەڵات، بازاڕ و ڕێگای فڕۆکەخانە.',
+        body: 'هەموو هۆتێلەکانمان نزیکن لە قەڵات، بازاڕ و ڕێگای فڕۆکەخانە.',
       },
       {
         title: 'وەڵام لە چەند خولەکێکدا',
@@ -239,7 +239,7 @@ const ku: Dictionary = {
     ],
     roomsEyebrow: 'ژوور و سویتەکان',
     featuredRooms: 'شوێنی مانەوەت',
-    roomsLead: 'ژوورەکانی هەر سێ هۆتێلەکە، لە ژووری تاکەکەسییەوە تا سویتی خێزانی.',
+    roomsLead: 'ژوورەکانی هەموو هۆتێلەکانمان، لە ژووری تاکەکەسییەوە تا سویتی خێزانی.',
     viewAllRooms: 'بینینی هەموو ژوورەکان',
     ctaEyebrow: 'حیجزکردن',
     ctaTitle: 'پێمان بڵێ کەی دێیت',
@@ -277,15 +277,15 @@ const ku: Dictionary = {
   },
   about: {
     eyebrow: 'دەربارەی کۆمەڵەکە',
-    lead: 'سێ هۆتێل لە هەولێر، بەڕێوەبراو لەلایەن یەک خێزانەوە.',
+    lead: '{count} هۆتێل لە هەولێر، بەڕێوەبراو لەلایەن یەک خێزانەوە.',
     body1:
-      'یەکەم هۆتێلمان لە هەولێر کردەوە بۆ چاودێریکردنی ئەو گەشتیارانەی بۆ کار، بۆ خێزان و بۆ خودی شارەکە دێن. دوو هۆتێلی تر دوای ئەوان هاتن، هەریەکە لە بەشێکی جیاوازی شار، هەموویان بە یەک شێواز بەڕێوە دەبرێن.',
+      'یەکەم هۆتێلمان لە هەولێر کردەوە بۆ چاودێریکردنی ئەو گەشتیارانەی بۆ کار، بۆ خێزان و بۆ خودی شارەکە دێن. هۆتێلی تر دوای ئەوان هاتن، هەریەکە لە بەشێکی جیاوازی شار، هەموویان بە یەک شێواز بەڕێوە دەبرێن.',
     body2:
       'ئێمە زنجیرەیەک نین. هەمان ئەو کەسانەی خاوەنی ئەم هۆتێلانەن، ئەوانەن کە لە پێشوازی دەیانبینیت. ئەگەر شتێک لە کاتی مانەوەکەتدا ڕێک نەبوو، پێمان بڵێ و هەر ئەو ڕۆژە چاک دەکرێتەوە.',
   },
   contact: {
     eyebrow: 'پەیوەندیمان پێوە بکە',
-    lead: 'ڕاستەوخۆ پەیوەندی بە هەر یەکێک لە هەر سێ هۆتێلەکەوە بکە. واتساپ خێراترین وەڵام دەداتەوە.',
+    lead: 'ڕاستەوخۆ پەیوەندی بە هەر یەکێک لە هۆتێلەکانمانەوە بکە. واتساپ خێراترین وەڵام دەداتەوە.',
   },
   bed: { single: 'تاکە', double: 'دوانە', twin: 'دوو جێگا', king: 'شاهانە', suite: 'سویت' },
   amenity: {
@@ -332,21 +332,21 @@ const ar: Dictionary = {
   },
   home: {
     heroEyebrow: 'أربيل · إقليم كردستان، العراق',
-    heroLead: 'ثلاثة فنادق، ومعيار واحد للضيافة.',
+    heroLead: '{count} فنادق، ومعيار واحد للضيافة.',
     exploreCollection: 'تصفّح الفنادق',
     scrollCue: 'مرّر',
     collectionEyebrow: 'مجموعتنا',
-    chooseBranch: 'ثلاثة فنادق في أربيل',
+    chooseBranch: '{count} فنادق في أربيل',
     chooseBranchLead: 'اختر ما يناسب إقامتك.',
-    interlude: 'ثلاثة عناوين في مدينة واحدة.',
+    interlude: '{count} عناوين في مدينة واحدة.',
     introEyebrow: 'ضيافتنا',
     introTitle: 'بيت عائلي، مفتوح للضيوف',
     introBody:
-      'نستقبل المسافرين في أربيل منذ سنوات. الفنادق الثلاثة تُدار بالطريقة نفسها: النظافة والهدوء والقرب من قلب المدينة.',
+      'نستقبل المسافرين في أربيل منذ سنوات. كل فنادق المجموعة تُدار بالطريقة نفسها: النظافة والهدوء والقرب من قلب المدينة.',
     assurance: [
       {
         title: 'في قلب أربيل',
-        body: 'الفنادق الثلاثة قريبة من القلعة والبازار وطريق المطار.',
+        body: 'كل فنادقنا قريبة من القلعة والبازار وطريق المطار.',
       },
       {
         title: 'ردّ خلال دقائق',
@@ -359,7 +359,7 @@ const ar: Dictionary = {
     ],
     roomsEyebrow: 'الغرف والأجنحة',
     featuredRooms: 'حيث تقيم',
-    roomsLead: 'غرف في الفنادق الثلاثة، من الغرف المفردة الهادئة إلى الأجنحة العائلية.',
+    roomsLead: 'غرف في كل فنادق المجموعة، من الغرف المفردة الهادئة إلى الأجنحة العائلية.',
     viewAllRooms: 'عرض جميع الغرف',
     ctaEyebrow: 'الحجوزات',
     ctaTitle: 'أخبرنا بموعد قدومك',
@@ -397,15 +397,15 @@ const ar: Dictionary = {
   },
   about: {
     eyebrow: 'عن المجموعة',
-    lead: 'ثلاثة فنادق في أربيل، تديرها عائلة واحدة.',
+    lead: '{count} فنادق في أربيل، تديرها عائلة واحدة.',
     body1:
-      'افتتحنا فندقنا الأول في أربيل لاستقبال المسافرين القادمين للعمل أو لزيارة الأهل أو لرؤية المدينة نفسها. ثم تبعه فندقان آخران، كل واحد في حيّ مختلف، وكلها تُدار بالطريقة نفسها.',
+      'افتتحنا فندقنا الأول في أربيل لاستقبال المسافرين القادمين للعمل أو لزيارة الأهل أو لرؤية المدينة نفسها. ثم تبعته فنادق أخرى، كل واحد في حيّ مختلف، وكلها تُدار بالطريقة نفسها.',
     body2:
       'نحن لسنا سلسلة فنادق. أصحاب هذه الفنادق هم أنفسهم من ستقابلهم عند الاستقبال. وإذا لم يكن شيء على ما يرام أثناء إقامتك، أخبرنا ويُعالَج في اليوم نفسه.',
   },
   contact: {
     eyebrow: 'تواصل معنا',
-    lead: 'تواصل مباشرة مع أي من الفنادق الثلاثة. واتساب هو الأسرع في الرد.',
+    lead: 'تواصل مباشرة مع أي من فنادقنا. واتساب هو الأسرع في الرد.',
   },
   bed: { single: 'مفرد', double: 'مزدوج', twin: 'سريران', king: 'كينغ', suite: 'جناح' },
   amenity: {

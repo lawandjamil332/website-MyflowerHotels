@@ -4,6 +4,7 @@ import type { Metadata } from 'next'
 
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
+import { fillCount } from '@/i18n/count'
 import { getSettings } from '@/utilities/getSettings'
 import { getBranches } from '@/utilities/branches'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
@@ -35,7 +36,7 @@ export default async function AboutPage({ params }: Args) {
       <PageHero
         eyebrow={t.about.eyebrow}
         title={siteName}
-        lead={t.about.lead}
+        lead={fillCount(t.about.lead, branches.length, locale)}
         imageUrl={mediaUrl(heroSource, 'xlarge')}
         imageAlt={mediaAlt(heroSource)}
       />
@@ -73,7 +74,7 @@ export default async function AboutPage({ params }: Args) {
         <section className={cn(shell, sectionY)}>
           <SectionHeading
             eyebrow={t.home.collectionEyebrow}
-            title={t.home.chooseBranch}
+            title={fillCount(t.home.chooseBranch, branches.length, locale)}
             lead={t.home.chooseBranchLead}
             className="mb-12 lg:mb-16"
           />

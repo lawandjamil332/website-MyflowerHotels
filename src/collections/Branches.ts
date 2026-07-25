@@ -91,6 +91,15 @@ export const Branches: CollectionConfig = {
           defaultValue: 'Erbil',
         },
         {
+          name: 'neighbourhood',
+          type: 'text',
+          localized: true,
+          admin: {
+            description:
+              'The street or landmark, e.g. "100m Street — beside Today Restaurant". Shown under the hotel name, and it is what guests actually choose between when the hotels are numbered.',
+          },
+        },
+        {
           // Two plain numbers rather than Payload's `point` type: `point`
           // compiles to a PostGIS `geometry` column, and Railway's Postgres
           // does not ship PostGIS. A map pin only needs these two values.
@@ -127,8 +136,22 @@ export const Branches: CollectionConfig = {
       label: 'Contact',
       fields: [
         {
-          name: 'phone',
-          type: 'text',
+          type: 'row',
+          fields: [
+            {
+              name: 'phone',
+              type: 'text',
+              admin: { width: '50%', placeholder: '+964 772 541 9898' },
+            },
+            {
+              // Every hotel in the group advertises two lines; one field
+              // forced staff to drop a number the guest may be dialling.
+              name: 'phoneAlt',
+              type: 'text',
+              label: 'Second phone',
+              admin: { width: '50%', placeholder: '+964 750 668 9090' },
+            },
+          ],
         },
         {
           name: 'whatsapp',
@@ -141,6 +164,23 @@ export const Branches: CollectionConfig = {
         {
           name: 'email',
           type: 'email',
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              // Each hotel runs its own Facebook page, so these cannot live
+              // only on the group-wide settings.
+              name: 'facebook',
+              type: 'text',
+              admin: { width: '50%', description: 'This hotel\'s own page.' },
+            },
+            {
+              name: 'instagram',
+              type: 'text',
+              admin: { width: '50%' },
+            },
+          ],
         },
       ],
     },

@@ -12,6 +12,7 @@ export type BranchTeaser = {
   name: string
   tagline: string
   city: string
+  neighbourhood: string
   imageUrl: string
   imageAlt: string
 }
@@ -22,6 +23,15 @@ export const toBranchTeaser = (branch: Branch): BranchTeaser => ({
   name: branch.name,
   tagline: branch.tagline ?? '',
   city: branch.city ?? '',
+  neighbourhood: branch.neighbourhood ?? '',
   imageUrl: mediaUrl(branch.heroImage, 'xlarge'),
   imageAlt: mediaAlt(branch.heroImage) || branch.name,
 })
+
+/**
+ * The line that tells a guest which hotel this is. When the hotels are
+ * numbered rather than named, the street is doing the real work — so it
+ * leads, and the city is the fallback.
+ */
+export const branchLocative = (branch: Pick<Branch, 'neighbourhood' | 'city'>): string =>
+  branch.neighbourhood || branch.city || ''

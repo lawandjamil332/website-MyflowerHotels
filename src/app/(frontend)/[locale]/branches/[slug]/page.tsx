@@ -6,6 +6,7 @@ import { getDictionary } from '@/i18n/dictionaries'
 import { getBranchBySlug, getRoomsForBranch } from '@/utilities/branches'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
+import { branchLocative } from '@/utilities/teasers'
 import { cn } from '@/utilities/ui'
 import { AmenityList } from '@/components/site/AmenityList'
 import { Gallery, type GalleryItem } from '@/components/site/Gallery'
@@ -39,6 +40,7 @@ export default async function BranchPage({ params }: Args) {
   const maps = toMapsHref(branch.googleMapsUrl, branch.latitude, branch.longitude)
   const wa = toWhatsAppHref(branch.whatsapp, `${t.branch.enquire} — ${branch.name}`)
   const tel = toTelHref(branch.phone)
+  const telAlt = toTelHref(branch.phoneAlt)
 
   const gallery: GalleryItem[] = (branch.gallery ?? [])
     .filter((g) => mediaUrl(g.image))
@@ -58,7 +60,7 @@ export default async function BranchPage({ params }: Args) {
   return (
     <>
       <PageHero
-        eyebrow={branch.city ?? undefined}
+        eyebrow={branchLocative(branch) || undefined}
         title={branch.name}
         lead={branch.tagline ?? undefined}
         imageUrl={mediaUrl(branch.heroImage, 'xlarge')}
@@ -146,6 +148,11 @@ export default async function BranchPage({ params }: Args) {
                       {branch.phone}
                     </a>
                   )}
+                  {telAlt && (
+                    <a href={telAlt} dir="ltr" className={cn(btnOutline, btnSmall, 'w-full')}>
+                      {branch.phoneAlt}
+                    </a>
+                  )}
                   {branch.bookingComUrl && (
                     <a
                       href={branch.bookingComUrl}
@@ -161,10 +168,37 @@ export default async function BranchPage({ params }: Args) {
                 {branch.email && (
                   <a
                     href={`mailto:${branch.email}`}
-                    className="link-line mt-6 inline-block text-sm text-muted-ink hover:text-ink"
+                    className="link-line mt-6 block w-fit text-sm text-muted-ink hover:text-ink"
                   >
                     {branch.email}
                   </a>
+                )}
+
+                {/* Each hotel keeps its own page, so these belong here rather
+                    than only in the group-wide footer. */}
+                {(branch.facebook || branch.instagram) && (
+                  <div className="mt-4 flex gap-5 text-sm">
+                    {branch.facebook && (
+                      <a
+                        href={branch.facebook}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="link-line text-muted-ink hover:text-ink"
+                      >
+                        Facebook
+                      </a>
+                    )}
+                    {branch.instagram && (
+                      <a
+                        href={branch.instagram}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="link-line text-muted-ink hover:text-ink"
+                      >
+                        Instagram
+                      </a>
+                    )}
+                  </div>
                 )}
               </div>
             </Reveal>

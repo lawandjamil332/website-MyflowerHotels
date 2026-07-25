@@ -13,7 +13,7 @@ import { PhotoFrame, monogramOf } from './PhotoFrame'
  * The homepage's centrepiece, and the one thing this group has that a
  * single-property hotel does not.
  *
- * On a desktop it is an index: a numbered list of the three hotels beside one
+ * On a desktop it is an index: a numbered list of the hotels beside one
  * large frame, and moving between the names changes the photograph in that
  * frame. Choosing a branch becomes a moment rather than a dropdown.
  *
@@ -61,7 +61,7 @@ export function BranchSwitcher({
           />
           <div className="absolute inset-x-0 bottom-0 p-8">
             <p className="text-sm tracking-[0.2em] text-white/80 uppercase rtl:tracking-normal">
-              {branches[active]?.city}
+              {branches[active]?.neighbourhood || branches[active]?.city}
             </p>
           </div>
         </div>
@@ -93,6 +93,16 @@ export function BranchSwitcher({
                   >
                     {branch.name}
                   </span>
+                  {branch.neighbourhood && (
+                    <span
+                      className={cn(
+                        'mt-2 block text-xs tracking-[0.16em] uppercase transition-colors duration-700 ease-luxe rtl:tracking-normal',
+                        i === active ? 'text-brass' : 'text-muted-ink/50',
+                      )}
+                    >
+                      {branch.neighbourhood}
+                    </span>
+                  )}
                   {branch.tagline && (
                     <span
                       className={cn(
@@ -121,7 +131,7 @@ export function BranchSwitcher({
         </ol>
       </div>
 
-      {/* Phone and tablet: the same three hotels as tall photographic cards. */}
+      {/* Phone and tablet: the same hotels as tall photographic cards. */}
       <div className="grid gap-4 sm:grid-cols-2 lg:hidden">
         {branches.map((branch, i) => (
           <Link
@@ -150,7 +160,9 @@ export function BranchSwitcher({
             <div className="relative p-6 sm:p-7">
               <p className="text-[0.65rem] tracking-[0.24em] text-brass-bright uppercase rtl:tracking-normal">
                 {String(i + 1).padStart(2, '0')}
-                {branch.city ? ` · ${branch.city}` : ''}
+                {branch.neighbourhood || branch.city
+                  ? ` · ${branch.neighbourhood || branch.city}`
+                  : ''}
               </p>
               <h3 className="font-display mt-3 text-3xl leading-tight text-white">{branch.name}</h3>
               {branch.tagline && (

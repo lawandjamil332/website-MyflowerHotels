@@ -1,6 +1,7 @@
 import * as migration_20260724_190205_initial from './20260724_190205_initial';
 import * as migration_20260724_224314_branches_rooms_enquiries from './20260724_224314_branches_rooms_enquiries';
 import * as migration_20260724_225255_site_settings from './20260724_225255_site_settings';
+import * as migration_20260725_102759_branch_contact_and_brand_details from './20260725_102759_branch_contact_and_brand_details';
 
 export const migrations = [
   {
@@ -16,6 +17,11 @@ export const migrations = [
   {
     up: migration_20260724_225255_site_settings.up,
     down: migration_20260724_225255_site_settings.down,
-    name: '20260724_225255_site_settings'
+    name: '20260724_225255_site_settings',
+  },
+  {
+    up: migration_20260725_102759_branch_contact_and_brand_details.up,
+    down: migration_20260725_102759_branch_contact_and_brand_details.down,
+    name: '20260725_102759_branch_contact_and_brand_details'
   },
 ];
