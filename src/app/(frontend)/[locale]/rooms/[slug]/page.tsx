@@ -8,12 +8,15 @@ import { getRoomBySlug } from '@/utilities/branches'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { formatNumber, formatPrice } from '@/utilities/format'
 import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
+import { shareImage } from '@/utilities/shareImage'
 import { cn } from '@/utilities/ui'
 import { AmenityList } from '@/components/site/AmenityList'
 import { Gallery, type GalleryItem } from '@/components/site/Gallery'
+import { EnquiryForm } from '@/components/site/EnquiryForm'
 import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
 import { SectionHeading } from '@/components/site/SectionHeading'
+import { RoomSchema } from '@/components/site/StructuredData'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
 import RichText from '@/components/RichText'
 import { btnOutline, btnSmall, btnWhatsApp, sectionY, shell } from '@/components/site/ui'
@@ -59,6 +62,7 @@ export default async function RoomPage({ params }: Args) {
 
   return (
     <>
+      <RoomSchema room={room} branch={branch} locale={locale} />
       <PageHero
         eyebrow={branch?.name ?? t.room.detailsEyebrow}
         title={room.name}
@@ -161,6 +165,18 @@ export default async function RoomPage({ params }: Args) {
         </div>
       </section>
 
+      <section className={cn(shell, 'pb-20 sm:pb-24 lg:pb-28')}>
+        <Reveal>
+          <EnquiryForm
+            t={t}
+            branchId={branch?.id}
+            roomId={room.id}
+            whatsappHref={wa}
+            className="mx-auto max-w-3xl"
+          />
+        </Reveal>
+      </section>
+
       {gallery.length > 0 && (
         <section className="bg-sand">
           <div className={cn(shell, sectionY)}>
@@ -185,11 +201,13 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const room = await getRoomBySlug(slug, locale)
   if (!room) return {}
 
+  const branchName = typeof room.branch === 'object' ? room.branch?.name : undefined
+
   return {
     title: room.name,
     openGraph: {
       title: room.name,
-      images: mediaUrl(room.images?.[0]?.image, 'og') || undefined,
+      images: shareImage(mediaUrl(room.images?.[0]?.image, 'og'), room.name, branchName),
     },
   }
 }

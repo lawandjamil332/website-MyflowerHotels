@@ -4,17 +4,21 @@ import type { Metadata } from 'next'
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { getBranchBySlug, getRoomsForBranch } from '@/utilities/branches'
+import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { branchLocative } from '@/utilities/teasers'
+import { shareImage } from '@/utilities/shareImage'
 import { cn } from '@/utilities/ui'
 import { AmenityList } from '@/components/site/AmenityList'
 import { Gallery, type GalleryItem } from '@/components/site/Gallery'
+import { EnquiryForm } from '@/components/site/EnquiryForm'
 import { OpeningMark, isOpeningSoon, openingLabel } from '@/components/site/OpeningMark'
 import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
 import { RoomCard } from '@/components/site/RoomCard'
 import { SectionHeading } from '@/components/site/SectionHeading'
+import { HotelSchema } from '@/components/site/StructuredData'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
 import RichText from '@/components/RichText'
 import {
@@ -37,7 +41,10 @@ export default async function BranchPage({ params }: Args) {
   const branch = await getBranchBySlug(slug, locale)
   if (!branch) notFound()
 
-  const rooms = await getRoomsForBranch(branch.id, locale)
+  const [rooms, settings] = await Promise.all([
+    getRoomsForBranch(branch.id, locale),
+    getSettings(locale),
+  ])
   const maps = toMapsHref(branch.googleMapsUrl, branch.latitude, branch.longitude)
   const wa = toWhatsAppHref(branch.whatsapp, `${t.branch.enquire} — ${branch.name}`)
   const tel = toTelHref(branch.phone)
@@ -64,6 +71,7 @@ export default async function BranchPage({ params }: Args) {
 
   return (
     <>
+      <HotelSchema branch={branch} locale={locale} stars={settings.stars} />
       <PageHero
         eyebrow={branchLocative(branch) || undefined}
         title={branch.name}
@@ -256,6 +264,18 @@ export default async function BranchPage({ params }: Args) {
         </section>
       )}
 
+      {/* The form the brief asked for, beside WhatsApp rather than instead of
+          it: one works at three in the morning, the other converts faster. */}
+      {!openingSoon && (
+        <section className="bg-sand">
+          <div className={cn(shell, sectionY)}>
+            <Reveal>
+              <EnquiryForm t={t} branchId={branch.id} whatsappHref={wa} className="mx-auto max-w-3xl" />
+            </Reveal>
+          </div>
+        </section>
+      )}
+
       {(embedSrc || maps || branch.address) && (
         <section className="border-t border-line bg-sand">
           <div className={cn(shell, 'grid gap-0 lg:grid-cols-[0.85fr_1.15fr]')}>
@@ -313,7 +333,11 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
     openGraph: {
       title: branch.name,
       description: branch.tagline ?? undefined,
-      images: mediaUrl(branch.heroImage, 'og') || undefined,
+      images: shareImage(
+        mediaUrl(branch.heroImage, 'og'),
+        branch.name,
+        branchLocative(branch) || undefined,
+      ),
     },
   }
 }

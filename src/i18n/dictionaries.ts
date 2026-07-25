@@ -67,6 +67,26 @@ export type Dictionary = {
     unavailable: string
   }
   about: { eyebrow: string; lead: string; body1: string; body2: string }
+  form: {
+    eyebrow: string
+    title: string
+    lead: string
+    name: string
+    phone: string
+    email: string
+    optional: string
+    checkIn: string
+    checkOut: string
+    guests: string
+    message: string
+    submit: string
+    sending: string
+    successTitle: string
+    successBody: string
+    errorRequired: string
+    errorGeneric: string
+    orWhatsApp: string
+  }
   contact: { eyebrow: string; lead: string }
   bed: Record<'single' | 'double' | 'twin' | 'king' | 'suite', string>
   amenity: Record<string, string>
@@ -167,6 +187,26 @@ const en: Dictionary = {
       'We opened our first hotel in Erbil to look after the travellers who come here for work, for family, and for the city itself. Others followed, each in a different part of town, each run the same way.',
     body2:
       'We are not a chain. The same people who own these hotels are the ones you will meet at the desk. If something is not right during your stay, tell us and it is put right that day.',
+  },
+  form: {
+    eyebrow: 'Reservation enquiry',
+    title: 'Ask about a stay',
+    lead: 'Tell us the dates and we will confirm what is free and what it costs.',
+    name: 'Your name',
+    phone: 'Phone or WhatsApp',
+    email: 'Email',
+    optional: 'optional',
+    checkIn: 'Arriving',
+    checkOut: 'Leaving',
+    guests: 'Guests',
+    message: 'Anything we should know',
+    submit: 'Send enquiry',
+    sending: 'Sending',
+    successTitle: 'Thank you — we have it.',
+    successBody: 'We will reply to the number you gave us, usually within the hour.',
+    errorRequired: 'Please give us a name and a number to reply to.',
+    errorGeneric: 'That did not send. Please message us on WhatsApp instead.',
+    orWhatsApp: 'Or message us directly',
   },
   contact: {
     eyebrow: 'Get in touch',
@@ -291,6 +331,26 @@ const ku: Dictionary = {
     body2:
       'ئێمە زنجیرەیەک نین. هەمان ئەو کەسانەی خاوەنی ئەم هۆتێلانەن، ئەوانەن کە لە پێشوازی دەیانبینیت. ئەگەر شتێک لە کاتی مانەوەکەتدا ڕێک نەبوو، پێمان بڵێ و هەر ئەو ڕۆژە چاک دەکرێتەوە.',
   },
+  form: {
+    eyebrow: 'داواکاری حیجز',
+    title: 'دەربارەی مانەوە بپرسە',
+    lead: 'ڕێککەوتەکانمان پێ بڵێ و ئێمە بەردەستبوون و نرخ پشتڕاست دەکەینەوە.',
+    name: 'ناوت',
+    phone: 'تەلەفۆن یان واتساپ',
+    email: 'ئیمەیل',
+    optional: 'ئارەزوومەندانە',
+    checkIn: 'گەیشتن',
+    checkOut: 'ڕۆیشتن',
+    guests: 'میوان',
+    message: 'شتێک هەیە بزانین',
+    submit: 'ناردنی داواکاری',
+    sending: 'دەنێردرێت',
+    successTitle: 'سوپاس — وەرمانگرت.',
+    successBody: 'لەسەر ئەو ژمارەیەی دات وەڵامت دەدەینەوە، زۆرجار لە ماوەی کاتژمێرێکدا.',
+    errorRequired: 'تکایە ناو و ژمارەیەکمان بدەرێ بۆ وەڵامدانەوە.',
+    errorGeneric: 'نەنێردرا. تکایە لە جیاتی ئەوە لە واتساپ نامەمان بۆ بنێرە.',
+    orWhatsApp: 'یان ڕاستەوخۆ نامەمان بۆ بنێرە',
+  },
   contact: {
     eyebrow: 'پەیوەندیمان پێوە بکە',
     lead: 'ڕاستەوخۆ پەیوەندی بە هەر یەکێک لە هۆتێلەکانمانەوە بکە. واتساپ خێراترین وەڵام دەداتەوە.',
@@ -413,6 +473,26 @@ const ar: Dictionary = {
       'افتتحنا فندقنا الأول في أربيل لاستقبال المسافرين القادمين للعمل أو لزيارة الأهل أو لرؤية المدينة نفسها. ثم تبعته فنادق أخرى، كل واحد في حيّ مختلف، وكلها تُدار بالطريقة نفسها.',
     body2:
       'نحن لسنا سلسلة فنادق. أصحاب هذه الفنادق هم أنفسهم من ستقابلهم عند الاستقبال. وإذا لم يكن شيء على ما يرام أثناء إقامتك، أخبرنا ويُعالَج في اليوم نفسه.',
+  },
+  form: {
+    eyebrow: 'طلب حجز',
+    title: 'استفسر عن الإقامة',
+    lead: 'أخبرنا بالتواريخ ونؤكد لك المتاح والسعر.',
+    name: 'الاسم',
+    phone: 'الهاتف أو واتساب',
+    email: 'البريد الإلكتروني',
+    optional: 'اختياري',
+    checkIn: 'الوصول',
+    checkOut: 'المغادرة',
+    guests: 'عدد الضيوف',
+    message: 'أي شيء يجب أن نعرفه',
+    submit: 'إرسال الطلب',
+    sending: 'جارٍ الإرسال',
+    successTitle: 'شكراً — وصلنا طلبك.',
+    successBody: 'سنرد على الرقم الذي أعطيتنا إياه، عادةً خلال ساعة.',
+    errorRequired: 'من فضلك اكتب الاسم ورقماً نرد عليه.',
+    errorGeneric: 'لم يتم الإرسال. راسلنا على واتساب من فضلك.',
+    orWhatsApp: 'أو راسلنا مباشرة',
   },
   contact: {
     eyebrow: 'تواصل معنا',

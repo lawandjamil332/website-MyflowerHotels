@@ -10,6 +10,7 @@ import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { branchLocative } from '@/utilities/teasers'
 import { cn } from '@/utilities/ui'
 import { OpeningMark, isOpeningSoon, openingLabel } from '@/components/site/OpeningMark'
+import { EnquiryForm } from '@/components/site/EnquiryForm'
 import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
@@ -141,6 +142,10 @@ export default async function ContactPage({ params }: Args) {
         ) : (
           <p className="text-muted-ink">Hotel details will appear here once they are added.</p>
         )}
+
+        <Reveal className="mt-16">
+          <EnquiryForm t={t} whatsappHref={toWhatsAppHref(settings.whatsapp)} />
+        </Reveal>
 
         {(settings.phone || settings.email || settings.whatsapp) && (
           <Reveal className="mt-16 border border-line bg-card p-8 sm:p-10">

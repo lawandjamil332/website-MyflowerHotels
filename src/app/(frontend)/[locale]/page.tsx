@@ -10,6 +10,7 @@ import { getBranches, getFeaturedRooms } from '@/utilities/branches'
 import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { toBranchTeaser } from '@/utilities/teasers'
+import { shareImage } from '@/utilities/shareImage'
 import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { cn } from '@/utilities/ui'
 import { BranchSwitcher } from '@/components/site/BranchSwitcher'
@@ -17,6 +18,7 @@ import { PhotoFrame, monogramOf } from '@/components/site/PhotoFrame'
 import { Reveal } from '@/components/site/Reveal'
 import { RoomFeature } from '@/components/site/RoomFeature'
 import { SectionHeading } from '@/components/site/SectionHeading'
+import { GroupSchema } from '@/components/site/StructuredData'
 import { Stars } from '@/components/site/Stars'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
 import { btnLight, btnOnDark, btnPrimary, sectionY, shell } from '@/components/site/ui'
@@ -55,6 +57,13 @@ export default async function HomePage({ params }: Args) {
 
   return (
     <>
+      <GroupSchema
+        siteName={siteName}
+        locale={locale}
+        branches={branches}
+        phone={settings.phone}
+        establishedYear={settings.establishedYear}
+      />
       {/* The hero stays put while the page slides up over it. A pure-CSS
           parallax: no scroll listener, no jank, and it gives the opening the
           weight of a title card rather than a banner. */}
@@ -290,12 +299,17 @@ export default async function HomePage({ params }: Args) {
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { locale: raw } = await params
   const locale = (isLocale(raw) ? raw : 'en') as Locale
-  const settings = await getSettings(locale)
+  const [settings, branches] = await Promise.all([getSettings(locale), getBranches(locale)])
   const t = getDictionary(locale)
   const siteName = settings.siteName || 'My Flower Hotels'
+  const count = (template: string) => fillCount(template, branches.length, locale)
 
   return {
     title: siteName,
-    description: `${t.home.heroLead} ${t.home.chooseBranchLead}`,
+    description: `${count(t.home.heroLead)} ${t.home.chooseBranchLead}`,
+    openGraph: {
+      title: siteName,
+      images: shareImage(mediaUrl(branches[0]?.heroImage, 'og'), siteName, t.home.heroEyebrow),
+    },
   }
 }

@@ -28,6 +28,7 @@ import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
 import { dir, isLocale, locales, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
+import { Lotus } from '@/components/site/Lotus'
 import { SiteHeader } from '@/components/site/SiteHeader'
 import { SiteFooter } from '@/components/site/SiteFooter'
 import { WhatsAppButton } from '@/components/site/WhatsAppButton'
@@ -67,16 +68,21 @@ export default async function LocaleLayout({ children, params }: Args) {
             __html: `document.documentElement.classList.add('js');try{if(sessionStorage.getItem('overture'))document.documentElement.classList.add('overture-seen');else sessionStorage.setItem('overture','1')}catch(e){}`,
           }}
         />
-        <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        <link href="/favicon-32.png" rel="icon" type="image/png" sizes="32x32" />
+        <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
+        <meta name="theme-color" content="#1a1714" />
       </head>
       <body className="bg-bone text-ink antialiased">
         {/* Lifts off the page on the first view of a session. Marked
             aria-hidden because it is scenery — the page beneath it is already
             complete and readable to a screen reader. */}
         <div className="overture" aria-hidden="true">
-          <span className="overture-mark font-display text-2xl tracking-[0.3em] uppercase sm:text-3xl">
-            {settings.siteName || 'My Flower Hotels'}
+          <span className="overture-mark flex flex-col items-center gap-5">
+            <Lotus className="h-10 w-10 text-brass sm:h-12 sm:w-12" />
+            <span className="font-display text-xl tracking-[0.3em] text-bone uppercase sm:text-2xl">
+              {settings.siteName || 'My Flower Hotels'}
+            </span>
           </span>
         </div>
 
