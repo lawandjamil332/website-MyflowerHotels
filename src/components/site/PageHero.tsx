@@ -40,12 +40,12 @@ export function PageHero({
         monogram={monogramOf(title)}
         priority
         tone="ink"
-        imageClassName="ken-burns"
+        imageClassName="ken-burns object-[center_26%]"
       />
       {imageUrl ? (
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/45"
+          className="absolute inset-0 bg-gradient-to-t from-black/88 via-black/45 to-black/60"
         />
       ) : null}
 

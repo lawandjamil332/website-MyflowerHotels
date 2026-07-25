@@ -75,11 +75,11 @@ export default async function HomePage({ params }: Args) {
           monogram={monogramOf(siteName)}
           priority
           tone="ink"
-          imageClassName="ken-burns"
+          imageClassName="ken-burns object-[center_28%]"
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-black/45"
+          className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/65"
         />
 
         <div className={cn(shell, 'relative pt-40 pb-24 sm:pb-28')}>
@@ -194,7 +194,7 @@ export default async function HomePage({ params }: Args) {
               className="object-cover"
             />
           ) : null}
-          <div aria-hidden="true" className="absolute inset-0 bg-black/55" />
+          <div aria-hidden="true" className="absolute inset-0 bg-black/65" />
           <Reveal className={cn(shell, 'relative text-center')}>
             <p className="font-display display-lg mx-auto max-w-3xl text-balance text-white">
               {count(t.home.interlude)}
@@ -258,7 +258,7 @@ export default async function HomePage({ params }: Args) {
               className="object-cover"
             />
           ) : null}
-          <div aria-hidden="true" className="absolute inset-0 bg-black/70" />
+          <div aria-hidden="true" className="absolute inset-0 bg-black/75" />
 
           <div className={cn(shell, 'relative py-24 text-center sm:py-32')}>
             <Reveal className="mx-auto max-w-2xl">
