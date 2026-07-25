@@ -3,14 +3,21 @@ import React from 'react'
 import { notFound } from 'next/navigation'
 import { draftMode } from 'next/headers'
 
+// Body text, Latin and Arabic script, from one designed-together family.
 import '@fontsource/ibm-plex-sans/400.css'
 import '@fontsource/ibm-plex-sans/500.css'
 import '@fontsource/ibm-plex-sans/600.css'
 import '@fontsource/ibm-plex-sans-arabic/400.css'
 import '@fontsource/ibm-plex-sans-arabic/500.css'
 import '@fontsource/ibm-plex-sans-arabic/600.css'
-import '@fontsource/ibm-plex-serif/400.css'
-import '@fontsource/ibm-plex-serif/500.css'
+// Headings. Latin subsets only for Cormorant — the Arabic and Kurdish glyphs
+// come from Noto Naskh, so shipping its Cyrillic and Vietnamese ranges would
+// be weight nobody on this site ever renders.
+import '@fontsource/cormorant-garamond/latin-300.css'
+import '@fontsource/cormorant-garamond/latin-400.css'
+import '@fontsource/cormorant-garamond/latin-500.css'
+import '@fontsource/noto-naskh-arabic/arabic-400.css'
+import '@fontsource/noto-naskh-arabic/arabic-500.css'
 
 import '../globals.css'
 
@@ -52,16 +59,24 @@ export default async function LocaleLayout({ children, params }: Args) {
     <html lang={locale} dir={dir(locale)} suppressHydrationWarning>
       <head>
         <InitTheme />
+        {/* Marks the document as scripted before first paint. The scroll-in
+            reveals hide themselves only under `.js`, so with JavaScript off
+            every section renders visible instead of staying blank. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.documentElement.classList.add('js')`,
+          }}
+        />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>
-      <body className="bg-white text-stone-900 antialiased">
+      <body className="bg-bone text-ink antialiased">
         <Providers>
           <AdminBar adminBarProps={{ preview: isEnabled }} />
 
           <a
             href="#main"
-            className="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-3 focus:rounded focus:bg-stone-900 focus:px-4 focus:py-2 focus:text-white"
+            className="sr-only focus:not-sr-only focus:absolute focus:z-[60] focus:m-3 focus:bg-ink focus:px-4 focus:py-2 focus:text-bone"
           >
             {t.common.skipToContent}
           </a>

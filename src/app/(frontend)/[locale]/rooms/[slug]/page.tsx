@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
@@ -9,7 +8,15 @@ import { getRoomBySlug } from '@/utilities/branches'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { formatNumber, formatPrice } from '@/utilities/format'
 import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
+import { cn } from '@/utilities/ui'
+import { AmenityList } from '@/components/site/AmenityList'
+import { Gallery, type GalleryItem } from '@/components/site/Gallery'
+import { PageHero } from '@/components/site/PageHero'
+import { Reveal } from '@/components/site/Reveal'
+import { SectionHeading } from '@/components/site/SectionHeading'
+import { WhatsAppMark } from '@/components/site/WhatsAppMark'
 import RichText from '@/components/RichText'
+import { btnOutline, btnSmall, btnWhatsApp, sectionY, shell } from '@/components/site/ui'
 import type { Branch } from '@/payload-types'
 
 type Args = { params: Promise<{ locale: string; slug: string }> }
@@ -36,126 +43,139 @@ export default async function RoomPage({ params }: Args) {
   const tel = toTelHref(branch?.phone)
 
   const facts = [
-    room.maxGuests
-      ? { label: t.room.guests, value: formatNumber(room.maxGuests, locale) }
-      : null,
+    price ? { label: t.room.from, value: `${price} · ${t.room.perNight}` } : null,
+    room.maxGuests ? { label: t.room.guests, value: formatNumber(room.maxGuests, locale) } : null,
     room.bedType ? { label: t.room.bedType, value: t.bed[room.bedType] ?? room.bedType } : null,
     room.sizeSqm ? { label: t.room.size, value: `${formatNumber(room.sizeSqm, locale)} m²` } : null,
   ].filter(Boolean) as { label: string; value: string }[]
 
+  // The opening photograph carries the hero, so the mosaic below shows the
+  // rest rather than repeating it.
+  const gallery: GalleryItem[] = images.slice(1).map((item) => ({
+    url: mediaUrl(item.image, 'large'),
+    full: mediaUrl(item.image, 'xlarge') || mediaUrl(item.image),
+    alt: mediaAlt(item.image) || room.name,
+  }))
+
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
-      {branch && (
-        <Link
-          href={`/${locale}/branches/${branch.slug}`}
-          className="text-sm text-stone-500 underline-offset-4 hover:text-stone-900 hover:underline"
-        >
-          ← {t.room.backToBranch}
-        </Link>
+    <>
+      <PageHero
+        eyebrow={branch?.name ?? t.room.detailsEyebrow}
+        title={room.name}
+        imageUrl={mediaUrl(images[0]?.image, 'xlarge')}
+        imageAlt={mediaAlt(images[0]?.image)}
+        size="tall"
+      >
+        {room.isAvailable === false && (
+          <p className="mt-7 inline-block border border-white/35 px-4 py-2 text-[0.65rem] tracking-[0.2em] text-white uppercase rtl:tracking-normal">
+            {t.room.unavailable}
+          </p>
+        )}
+      </PageHero>
+
+      {/* The four numbers a guest decides on, given a band of their own. */}
+      {facts.length > 0 && (
+        <section className="border-b border-line bg-card">
+          <dl className={cn(shell, 'grid gap-px sm:grid-cols-2 lg:grid-cols-4')}>
+            {facts.map((fact) => (
+              <div key={fact.label} className="py-8 lg:pe-8">
+                <dt className="text-[0.6rem] tracking-[0.22em] text-muted-ink uppercase rtl:tracking-normal">
+                  {fact.label}
+                </dt>
+                <dd className="font-display mt-2 text-2xl leading-tight text-ink">{fact.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </section>
       )}
 
-      {images.length > 0 && (
-        <div className="mt-6 grid gap-3 md:grid-cols-2">
-          <div className="relative aspect-4/3 overflow-hidden rounded-lg bg-stone-200 md:row-span-2 md:aspect-auto">
-            <Image
-              src={mediaUrl(images[0].image, 'xlarge')}
-              alt={mediaAlt(images[0].image) || room.name}
-              fill
-              sizes="(min-width: 768px) 50vw, 100vw"
-              className="object-cover"
-              priority
-            />
-          </div>
-          {images.slice(1, 3).map((item, i) => (
-            <div
-              key={item.id ?? i}
-              className="relative aspect-4/3 overflow-hidden rounded-lg bg-stone-200"
-            >
-              <Image
-                src={mediaUrl(item.image, 'medium')}
-                alt={mediaAlt(item.image) || room.name}
-                fill
-                sizes="(min-width: 768px) 50vw, 100vw"
-                className="object-cover"
-              />
-            </div>
-          ))}
-        </div>
-      )}
-
-      <div className="mt-12 grid gap-12 pb-16 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <h1 className="font-display text-3xl text-stone-900 sm:text-4xl">{room.name}</h1>
-          {branch && <p className="mt-2 text-stone-500">{branch.name}</p>}
-
-          {facts.length > 0 && (
-            <dl className="mt-8 grid grid-cols-3 gap-6 border-y border-stone-200 py-6 text-sm">
-              {facts.map((f) => (
-                <div key={f.label}>
-                  <dt className="text-stone-400">{f.label}</dt>
-                  <dd className="mt-1 text-stone-900">{f.value}</dd>
-                </div>
-              ))}
-            </dl>
-          )}
-
-          {room.description && (
-            <div className="mt-8">
-              <RichText data={room.description} enableGutter={false} className="max-w-none" />
-            </div>
-          )}
-
-          {room.amenities && room.amenities.length > 0 && (
-            <div className="mt-10">
-              <h2 className="font-display text-xl text-stone-900">{t.room.amenities}</h2>
-              <ul className="mt-4 flex flex-wrap gap-2">
-                {room.amenities.map((a) => (
-                  <li
-                    key={a}
-                    className="rounded-full border border-stone-200 px-4 py-1.5 text-sm text-stone-600"
-                  >
-                    {t.amenity[a] ?? a}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
-
-        <aside className="lg:col-span-1">
-          <div className="rounded-lg border border-stone-200 p-6 lg:sticky lg:top-24">
-            {price && (
-              <p className="text-sm text-stone-500">
-                {t.room.from}{' '}
-                <span className="font-display text-2xl text-stone-900">{price}</span>{' '}
-                {t.room.perNight}
-              </p>
+      <section className={cn(shell, 'py-20 sm:py-24 lg:py-28')}>
+        <div className="grid gap-14 lg:grid-cols-[1.4fr_0.9fr] lg:gap-20">
+          <div>
+            {/* The room's name is already the page heading above; repeating it
+                here and again over the gallery would say it three times. */}
+            {room.description && (
+              <Reveal>
+                <p className="eyebrow">{t.room.detailsEyebrow}</p>
+                <RichText
+                  data={room.description}
+                  enableGutter={false}
+                  className="mt-7 max-w-none prose-p:text-[1.0625rem] prose-p:leading-[1.85] prose-p:text-ink-soft prose-li:text-ink-soft prose-strong:text-ink prose-a:text-ink prose-headings:font-display prose-headings:font-normal prose-headings:text-ink"
+                />
+              </Reveal>
             )}
-            <div className="mt-5 flex flex-col gap-2">
-              {wa && (
-                <a
-                  href={wa}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="rounded-full bg-[#25D366] px-5 py-3 text-center text-sm font-medium text-white transition hover:opacity-90"
-                >
-                  {t.room.enquire}
-                </a>
-              )}
-              {tel && (
-                <a
-                  href={tel}
-                  dir="ltr"
-                  className="rounded-full border border-stone-300 px-5 py-3 text-center text-sm font-medium text-stone-900 transition hover:bg-stone-50"
-                >
-                  {branch?.phone}
-                </a>
-              )}
-            </div>
+
+            {room.amenities && room.amenities.length > 0 && (
+              <Reveal delay={150} className={room.description ? 'mt-14' : undefined}>
+                <h3 className="font-display text-2xl text-ink">{t.room.amenities}</h3>
+                <AmenityList amenities={room.amenities} t={t} className="mt-7" columns={2} />
+              </Reveal>
+            )}
           </div>
-        </aside>
-      </div>
-    </div>
+
+          <aside>
+            <Reveal delay={120} className="lg:sticky lg:top-28">
+              <div className="border border-line bg-card p-7 sm:p-8">
+                {price ? (
+                  <>
+                    <p className="text-[0.6rem] tracking-[0.22em] text-muted-ink uppercase rtl:tracking-normal">
+                      {t.room.from}
+                    </p>
+                    <p className="font-display mt-2 text-4xl leading-none text-ink">{price}</p>
+                    <p className="mt-2 text-sm text-muted-ink">{t.room.perNight}</p>
+                  </>
+                ) : (
+                  <p className="font-display text-2xl text-ink">{t.room.enquire}</p>
+                )}
+
+                <div className="mt-7 flex flex-col gap-2.5 border-t border-line pt-7">
+                  {wa && (
+                    <a
+                      href={wa}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(btnWhatsApp, btnSmall, 'w-full')}
+                    >
+                      <WhatsAppMark />
+                      {t.room.enquire}
+                    </a>
+                  )}
+                  {tel && (
+                    <a href={tel} dir="ltr" className={cn(btnOutline, btnSmall, 'w-full')}>
+                      {branch?.phone}
+                    </a>
+                  )}
+                </div>
+
+                {branch && (
+                  <Link
+                    href={`/${locale}/branches/${branch.slug}`}
+                    className="link-line mt-6 inline-block text-sm text-muted-ink hover:text-ink"
+                  >
+                    {t.room.backToBranch}
+                  </Link>
+                )}
+              </div>
+            </Reveal>
+          </aside>
+        </div>
+      </section>
+
+      {gallery.length > 0 && (
+        <section className="bg-sand">
+          <div className={cn(shell, sectionY)}>
+            <SectionHeading
+              eyebrow={t.room.galleryEyebrow}
+              title={t.branch.gallery}
+              className="mb-10 lg:mb-14"
+            />
+            <Reveal>
+              <Gallery items={gallery} />
+            </Reveal>
+          </div>
+        </section>
+      )}
+    </>
   )
 }
 

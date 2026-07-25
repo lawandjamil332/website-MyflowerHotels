@@ -9,15 +9,36 @@ import type { Locale } from './config'
  * details) is translated there instead — see `localization` in the Payload
  * config.
  */
+export type Assurance = { title: string; body: string }
+
 export type Dictionary = {
-  nav: { branches: string; rooms: string; about: string; contact: string }
+  nav: { home: string; branches: string; rooms: string; about: string; contact: string }
   home: {
+    heroEyebrow: string
+    heroLead: string
+    exploreCollection: string
+    scrollCue: string
+    collectionEyebrow: string
     chooseBranch: string
     chooseBranchLead: string
+    introEyebrow: string
+    introTitle: string
+    introBody: string
+    assurance: Assurance[]
+    roomsEyebrow: string
     featuredRooms: string
+    roomsLead: string
     viewAllRooms: string
+    ctaEyebrow: string
+    ctaTitle: string
+    ctaLead: string
   }
   branch: {
+    overviewEyebrow: string
+    stayEyebrow: string
+    galleryEyebrow: string
+    locationEyebrow: string
+    contactTitle: string
     rooms: string
     amenities: string
     gallery: string
@@ -30,6 +51,8 @@ export type Dictionary = {
     noRooms: string
   }
   room: {
+    detailsEyebrow: string
+    galleryEyebrow: string
     from: string
     perNight: string
     guests: string
@@ -40,6 +63,8 @@ export type Dictionary = {
     backToBranch: string
     unavailable: string
   }
+  about: { eyebrow: string; lead: string; body1: string; body2: string }
+  contact: { eyebrow: string; lead: string }
   bed: Record<'single' | 'double' | 'twin' | 'king' | 'suite', string>
   amenity: Record<string, string>
   common: {
@@ -49,18 +74,61 @@ export type Dictionary = {
     language: string
     viewDetails: string
     skipToContent: string
+    reserve: string
+    menu: string
+    close: string
   }
 }
 
 const en: Dictionary = {
-  nav: { branches: 'Our hotels', rooms: 'Rooms', about: 'About', contact: 'Contact' },
+  nav: {
+    home: 'Home',
+    branches: 'Our hotels',
+    rooms: 'Rooms',
+    about: 'About',
+    contact: 'Contact',
+  },
   home: {
+    heroEyebrow: 'Erbil · Kurdistan Region, Iraq',
+    heroLead: 'Three hotels, one standard of hospitality.',
+    exploreCollection: 'Explore the hotels',
+    scrollCue: 'Scroll',
+    collectionEyebrow: 'The collection',
     chooseBranch: 'Three hotels in Erbil',
     chooseBranchLead: 'Choose the one that suits your stay.',
-    featuredRooms: 'Rooms',
+    introEyebrow: 'Our hospitality',
+    introTitle: 'A family house, kept for guests',
+    introBody:
+      'We have looked after travellers in Erbil for years. All three hotels are run the same way: clean, quiet, and close to the centre of the city.',
+    assurance: [
+      {
+        title: 'In the heart of Erbil',
+        body: 'All three hotels sit within reach of the Citadel, the bazaar and the airport road.',
+      },
+      {
+        title: 'Answered in minutes',
+        body: 'A message on WhatsApp reaches the front desk directly, day or night.',
+      },
+      {
+        title: 'Power that stays on',
+        body: 'Full generator backup, so the lift, the air conditioning and the Wi-Fi do not stop.',
+      },
+    ],
+    roomsEyebrow: 'Rooms & suites',
+    featuredRooms: 'Where you will sleep',
+    roomsLead: 'Rooms across all three hotels, from quiet singles to family suites.',
     viewAllRooms: 'View all rooms',
+    ctaEyebrow: 'Reservations',
+    ctaTitle: 'Tell us when you are coming',
+    ctaLead:
+      'Send the dates and the number of guests. We will confirm availability and the rate.',
   },
   branch: {
+    overviewEyebrow: 'The hotel',
+    stayEyebrow: 'Your stay',
+    galleryEyebrow: 'In pictures',
+    locationEyebrow: 'Location',
+    contactTitle: 'Reserve a room',
     rooms: 'Rooms at this hotel',
     amenities: 'What this hotel offers',
     gallery: 'Gallery',
@@ -73,6 +141,8 @@ const en: Dictionary = {
     noRooms: 'Rooms for this hotel are being added.',
   },
   room: {
+    detailsEyebrow: 'The room',
+    galleryEyebrow: 'In pictures',
     from: 'From',
     perNight: 'per night',
     guests: 'Sleeps',
@@ -82,6 +152,18 @@ const en: Dictionary = {
     enquire: 'Enquire about this room',
     backToBranch: 'Back to the hotel',
     unavailable: 'Currently unavailable',
+  },
+  about: {
+    eyebrow: 'About the group',
+    lead: 'Three hotels in Erbil, run by one family.',
+    body1:
+      'We opened our first hotel in Erbil to look after the travellers who come here for work, for family, and for the city itself. Two more followed, each in a different part of town, each run the same way.',
+    body2:
+      'We are not a chain. The same people who own these hotels are the ones you will meet at the desk. If something is not right during your stay, tell us and it is put right that day.',
+  },
+  contact: {
+    eyebrow: 'Get in touch',
+    lead: 'Reach any of the three hotels directly. WhatsApp is answered fastest.',
   },
   bed: { single: 'Single', double: 'Double', twin: 'Twin', king: 'King', suite: 'Suite' },
   amenity: {
@@ -112,18 +194,60 @@ const en: Dictionary = {
     language: 'Language',
     viewDetails: 'View details',
     skipToContent: 'Skip to content',
+    reserve: 'Reserve',
+    menu: 'Menu',
+    close: 'Close',
   },
 }
 
 const ku: Dictionary = {
-  nav: { branches: 'هۆتێلەکانمان', rooms: 'ژوورەکان', about: 'دەربارە', contact: 'پەیوەندی' },
+  nav: {
+    home: 'سەرەتا',
+    branches: 'هۆتێلەکانمان',
+    rooms: 'ژوورەکان',
+    about: 'دەربارە',
+    contact: 'پەیوەندی',
+  },
   home: {
+    heroEyebrow: 'هەولێر · هەرێمی کوردستان، عێراق',
+    heroLead: 'سێ هۆتێل، یەک ئاستی میوانداری.',
+    exploreCollection: 'هۆتێلەکان ببینە',
+    scrollCue: 'بۆ خوارەوە',
+    collectionEyebrow: 'کۆمەڵەکەمان',
     chooseBranch: 'سێ هۆتێل لە هەولێر',
     chooseBranchLead: 'ئەوەی گونجاوە بۆ مانەوەت هەڵبژێرە.',
-    featuredRooms: 'ژوورەکان',
+    introEyebrow: 'میوانداریمان',
+    introTitle: 'ماڵێکی خێزانی، بۆ میوان',
+    introBody:
+      'ساڵانێکە لە هەولێر چاودێری گەشتیارەکان دەکەین. هەر سێ هۆتێلەکە بە یەک شێواز بەڕێوە دەبرێن: پاک، ئارام و نزیک لە ناوەندی شار.',
+    assurance: [
+      {
+        title: 'لە دڵی هەولێر',
+        body: 'هەر سێ هۆتێلەکە نزیکن لە قەڵات، بازاڕ و ڕێگای فڕۆکەخانە.',
+      },
+      {
+        title: 'وەڵام لە چەند خولەکێکدا',
+        body: 'نامەیەک لە واتساپ ڕاستەوخۆ دەگاتە پێشوازی، بە شەو و بە ڕۆژ.',
+      },
+      {
+        title: 'کارەبای بەردەوام',
+        body: 'مۆلیدەی تەواو، بۆ ئەوەی ئاسانسۆر و کۆندیشن و وای‌فای نەوەستن.',
+      },
+    ],
+    roomsEyebrow: 'ژوور و سویتەکان',
+    featuredRooms: 'شوێنی مانەوەت',
+    roomsLead: 'ژوورەکانی هەر سێ هۆتێلەکە، لە ژووری تاکەکەسییەوە تا سویتی خێزانی.',
     viewAllRooms: 'بینینی هەموو ژوورەکان',
+    ctaEyebrow: 'حیجزکردن',
+    ctaTitle: 'پێمان بڵێ کەی دێیت',
+    ctaLead: 'ڕێککەوت و ژمارەی میوانەکان بنێرە. بەردەستبوون و نرخەکەت بۆ پشتڕاست دەکەینەوە.',
   },
   branch: {
+    overviewEyebrow: 'هۆتێلەکە',
+    stayEyebrow: 'مانەوەکەت',
+    galleryEyebrow: 'بە وێنە',
+    locationEyebrow: 'شوێن',
+    contactTitle: 'ژوورێک حیجز بکە',
     rooms: 'ژوورەکانی ئەم هۆتێلە',
     amenities: 'ئەم هۆتێلە چی پێشکەش دەکات',
     gallery: 'وێنەکان',
@@ -136,6 +260,8 @@ const ku: Dictionary = {
     noRooms: 'ژوورەکانی ئەم هۆتێلە زیاد دەکرێن.',
   },
   room: {
+    detailsEyebrow: 'ژوورەکە',
+    galleryEyebrow: 'بە وێنە',
     from: 'لە',
     perNight: 'بۆ شەوێک',
     guests: 'گونجاوە بۆ',
@@ -145,6 +271,18 @@ const ku: Dictionary = {
     enquire: 'داواکاری دەربارەی ئەم ژوورە',
     backToBranch: 'گەڕانەوە بۆ هۆتێل',
     unavailable: 'لە ئێستادا بەردەست نییە',
+  },
+  about: {
+    eyebrow: 'دەربارەی کۆمەڵەکە',
+    lead: 'سێ هۆتێل لە هەولێر، بەڕێوەبراو لەلایەن یەک خێزانەوە.',
+    body1:
+      'یەکەم هۆتێلمان لە هەولێر کردەوە بۆ چاودێریکردنی ئەو گەشتیارانەی بۆ کار، بۆ خێزان و بۆ خودی شارەکە دێن. دوو هۆتێلی تر دوای ئەوان هاتن، هەریەکە لە بەشێکی جیاوازی شار، هەموویان بە یەک شێواز بەڕێوە دەبرێن.',
+    body2:
+      'ئێمە زنجیرەیەک نین. هەمان ئەو کەسانەی خاوەنی ئەم هۆتێلانەن، ئەوانەن کە لە پێشوازی دەیانبینیت. ئەگەر شتێک لە کاتی مانەوەکەتدا ڕێک نەبوو، پێمان بڵێ و هەر ئەو ڕۆژە چاک دەکرێتەوە.',
+  },
+  contact: {
+    eyebrow: 'پەیوەندیمان پێوە بکە',
+    lead: 'ڕاستەوخۆ پەیوەندی بە هەر یەکێک لە هەر سێ هۆتێلەکەوە بکە. واتساپ خێراترین وەڵام دەداتەوە.',
   },
   bed: { single: 'تاکە', double: 'دوانە', twin: 'دوو جێگا', king: 'شاهانە', suite: 'سویت' },
   amenity: {
@@ -175,18 +313,60 @@ const ku: Dictionary = {
     language: 'زمان',
     viewDetails: 'بینینی وردەکاری',
     skipToContent: 'بازدان بۆ ناوەڕۆک',
+    reserve: 'حیجز',
+    menu: 'لیست',
+    close: 'داخستن',
   },
 }
 
 const ar: Dictionary = {
-  nav: { branches: 'فنادقنا', rooms: 'الغرف', about: 'من نحن', contact: 'اتصل بنا' },
+  nav: {
+    home: 'الرئيسية',
+    branches: 'فنادقنا',
+    rooms: 'الغرف',
+    about: 'من نحن',
+    contact: 'اتصل بنا',
+  },
   home: {
+    heroEyebrow: 'أربيل · إقليم كردستان، العراق',
+    heroLead: 'ثلاثة فنادق، ومعيار واحد للضيافة.',
+    exploreCollection: 'تصفّح الفنادق',
+    scrollCue: 'مرّر',
+    collectionEyebrow: 'مجموعتنا',
     chooseBranch: 'ثلاثة فنادق في أربيل',
     chooseBranchLead: 'اختر ما يناسب إقامتك.',
-    featuredRooms: 'الغرف',
+    introEyebrow: 'ضيافتنا',
+    introTitle: 'بيت عائلي، مفتوح للضيوف',
+    introBody:
+      'نستقبل المسافرين في أربيل منذ سنوات. الفنادق الثلاثة تُدار بالطريقة نفسها: النظافة والهدوء والقرب من قلب المدينة.',
+    assurance: [
+      {
+        title: 'في قلب أربيل',
+        body: 'الفنادق الثلاثة قريبة من القلعة والبازار وطريق المطار.',
+      },
+      {
+        title: 'ردّ خلال دقائق',
+        body: 'رسالة على واتساب تصل إلى الاستقبال مباشرة، ليلاً ونهاراً.',
+      },
+      {
+        title: 'كهرباء لا تنقطع',
+        body: 'مولّد احتياطي كامل، ليبقى المصعد والتكييف والواي فاي يعمل دون انقطاع.',
+      },
+    ],
+    roomsEyebrow: 'الغرف والأجنحة',
+    featuredRooms: 'حيث تقيم',
+    roomsLead: 'غرف في الفنادق الثلاثة، من الغرف المفردة الهادئة إلى الأجنحة العائلية.',
     viewAllRooms: 'عرض جميع الغرف',
+    ctaEyebrow: 'الحجوزات',
+    ctaTitle: 'أخبرنا بموعد قدومك',
+    ctaLead: 'أرسل التواريخ وعدد الضيوف، ونؤكد لك التوفر والسعر.',
   },
   branch: {
+    overviewEyebrow: 'الفندق',
+    stayEyebrow: 'إقامتك',
+    galleryEyebrow: 'بالصور',
+    locationEyebrow: 'الموقع',
+    contactTitle: 'احجز غرفة',
     rooms: 'غرف هذا الفندق',
     amenities: 'ما يقدمه هذا الفندق',
     gallery: 'معرض الصور',
@@ -199,6 +379,8 @@ const ar: Dictionary = {
     noRooms: 'تتم إضافة غرف هذا الفندق.',
   },
   room: {
+    detailsEyebrow: 'الغرفة',
+    galleryEyebrow: 'بالصور',
     from: 'ابتداءً من',
     perNight: 'لليلة',
     guests: 'تتسع لـ',
@@ -208,6 +390,18 @@ const ar: Dictionary = {
     enquire: 'استفسر عن هذه الغرفة',
     backToBranch: 'العودة إلى الفندق',
     unavailable: 'غير متاحة حالياً',
+  },
+  about: {
+    eyebrow: 'عن المجموعة',
+    lead: 'ثلاثة فنادق في أربيل، تديرها عائلة واحدة.',
+    body1:
+      'افتتحنا فندقنا الأول في أربيل لاستقبال المسافرين القادمين للعمل أو لزيارة الأهل أو لرؤية المدينة نفسها. ثم تبعه فندقان آخران، كل واحد في حيّ مختلف، وكلها تُدار بالطريقة نفسها.',
+    body2:
+      'نحن لسنا سلسلة فنادق. أصحاب هذه الفنادق هم أنفسهم من ستقابلهم عند الاستقبال. وإذا لم يكن شيء على ما يرام أثناء إقامتك، أخبرنا ويُعالَج في اليوم نفسه.',
+  },
+  contact: {
+    eyebrow: 'تواصل معنا',
+    lead: 'تواصل مباشرة مع أي من الفنادق الثلاثة. واتساب هو الأسرع في الرد.',
   },
   bed: { single: 'مفرد', double: 'مزدوج', twin: 'سريران', king: 'كينغ', suite: 'جناح' },
   amenity: {
@@ -238,6 +432,9 @@ const ar: Dictionary = {
     language: 'اللغة',
     viewDetails: 'عرض التفاصيل',
     skipToContent: 'تخطي إلى المحتوى',
+    reserve: 'احجز',
+    menu: 'القائمة',
+    close: 'إغلاق',
   },
 }
 

@@ -5,29 +5,37 @@ import type { Branch } from '@/payload-types'
 import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
+import { cn } from '@/utilities/ui'
 
 /**
- * The homepage's centrepiece. Three branches is the group's real
- * differentiator, so each gets an equal, photo-led card rather than a line in
- * a dropdown. The photograph carries the card; the interface stays quiet.
+ * A single hotel as a photographic panel. Used where the full switcher would
+ * be too much — the about page, and anywhere a branch needs to appear in a
+ * plain grid. The photograph carries the card; the interface stays quiet.
  */
 export function BranchCard({
   branch,
   locale,
   t,
+  index,
   priority = false,
+  className,
 }: {
   branch: Branch
   locale: Locale
   t: Dictionary
+  index?: number
   priority?: boolean
+  className?: string
 }) {
   const hero = mediaUrl(branch.heroImage, 'large')
 
   return (
     <Link
       href={`/${locale}/branches/${branch.slug}`}
-      className="group relative flex aspect-4/5 flex-col justify-end overflow-hidden rounded-lg bg-stone-200 focus-visible:ring-2 focus-visible:ring-stone-900 focus-visible:ring-offset-2 sm:aspect-3/4"
+      className={cn(
+        'group relative flex aspect-4/5 flex-col justify-end overflow-hidden bg-sand focus-visible:ring-1 focus-visible:ring-ink focus-visible:ring-offset-2',
+        className,
+      )}
     >
       {hero ? (
         <Image
@@ -35,7 +43,7 @@ export function BranchCard({
           alt={mediaAlt(branch.heroImage) || branch.name}
           fill
           sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-          className="object-cover transition duration-700 group-hover:scale-105"
+          className="object-cover transition-transform duration-1000 ease-luxe group-hover:scale-105"
           priority={priority}
         />
       ) : null}
@@ -43,13 +51,22 @@ export function BranchCard({
       {/* Enough scrim for white text to stay legible over any photograph. */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent"
+        className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent"
       />
 
-      <div className="relative p-6">
-        <h3 className="font-display text-2xl leading-tight text-white">{branch.name}</h3>
-        {branch.tagline && <p className="mt-1 text-sm text-white/80">{branch.tagline}</p>}
-        <span className="mt-4 inline-block text-sm text-white/90 underline-offset-4 group-hover:underline">
+      <div className="relative p-6 sm:p-7">
+        {(typeof index === 'number' || branch.city) && (
+          <p className="text-[0.65rem] tracking-[0.24em] text-brass-bright uppercase rtl:tracking-normal">
+            {typeof index === 'number' ? String(index + 1).padStart(2, '0') : ''}
+            {typeof index === 'number' && branch.city ? ' · ' : ''}
+            {branch.city ?? ''}
+          </p>
+        )}
+        <h3 className="font-display mt-3 text-3xl leading-tight text-white">{branch.name}</h3>
+        {branch.tagline && (
+          <p className="mt-2 max-w-sm text-sm leading-relaxed text-white/75">{branch.tagline}</p>
+        )}
+        <span className="link-line mt-5 inline-block text-[0.65rem] tracking-[0.22em] text-white uppercase rtl:tracking-normal">
           {t.common.viewDetails}
         </span>
       </div>

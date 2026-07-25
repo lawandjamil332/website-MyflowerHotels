@@ -1,16 +1,20 @@
 import Link from 'next/link'
 
+import { btnLight, shell } from '@/components/site/ui'
+import { cn } from '@/utilities/ui'
+
 export default function NotFound() {
   return (
-    <div className="mx-auto flex max-w-3xl flex-col items-start px-4 py-32 sm:px-6">
-      <h1 className="font-display text-4xl text-stone-900">404</h1>
-      <p className="mt-3 text-stone-500">This page could not be found.</p>
-      <Link
-        href="/"
-        className="mt-8 rounded-full bg-stone-900 px-6 py-3 text-sm font-medium text-white transition hover:bg-stone-800"
-      >
-        Go to the homepage
-      </Link>
-    </div>
+    <section className="flex min-h-[70vh] items-center bg-ink">
+      <div className={cn(shell, 'py-32')}>
+        <p className="eyebrow">404</p>
+        <h1 className="font-display mt-5 max-w-2xl text-4xl leading-[1.1] text-white sm:text-6xl">
+          This page could not be found.
+        </h1>
+        <Link href="/" className={cn(btnLight, 'mt-10')}>
+          Go to the homepage
+        </Link>
+      </div>
+    </section>
   )
 }

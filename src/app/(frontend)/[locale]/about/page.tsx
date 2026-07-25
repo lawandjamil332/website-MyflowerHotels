@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
@@ -5,7 +6,13 @@ import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { getSettings } from '@/utilities/getSettings'
 import { getBranches } from '@/utilities/branches'
+import { mediaAlt, mediaUrl } from '@/utilities/media'
+import { cn } from '@/utilities/ui'
 import { BranchCard } from '@/components/site/BranchCard'
+import { PageHero } from '@/components/site/PageHero'
+import { Reveal } from '@/components/site/Reveal'
+import { SectionHeading } from '@/components/site/SectionHeading'
+import { sectionY, shell } from '@/components/site/ui'
 
 type Args = { params: Promise<{ locale: string }> }
 
@@ -18,32 +25,74 @@ export default async function AboutPage({ params }: Args) {
   const [settings, branches] = await Promise.all([getSettings(locale), getBranches(locale)])
   const siteName = settings.siteName || 'Myflower Hotels'
 
-  return (
-    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
-      <div className="max-w-2xl">
-        <h1 className="font-display text-4xl text-stone-900 sm:text-5xl">{t.nav.about}</h1>
-        <p className="mt-6 text-lg leading-relaxed text-stone-600">
-          {siteName} — {t.home.chooseBranch}.
-        </p>
-        <p className="mt-4 text-stone-500">
-          The group&apos;s story goes here. Replace this text once the wording is decided; it is the
-          one page guests read to decide whether they trust you.
-        </p>
-      </div>
+  // Falls back through the branches, so the page still opens on a photograph
+  // before anyone has uploaded a share image in settings.
+  const heroSource = settings.socialShareImage ?? branches[0]?.heroImage
+  const interlude = branches[1]?.heroImage ?? branches[0]?.heroImage
 
-      {branches.length > 0 && (
-        <div className="mt-16 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {branches.map((branch) => (
-            <BranchCard key={branch.id} branch={branch} locale={locale} t={t} />
-          ))}
+  return (
+    <>
+      <PageHero
+        eyebrow={t.about.eyebrow}
+        title={siteName}
+        lead={t.about.lead}
+        imageUrl={mediaUrl(heroSource, 'xlarge')}
+        imageAlt={mediaAlt(heroSource)}
+      />
+
+      <section className={cn(shell, 'py-20 sm:py-24 lg:py-28')}>
+        <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
+          <Reveal>
+            <p className="eyebrow">{t.home.introEyebrow}</p>
+            <h2 className="font-display mt-5 text-3xl leading-[1.12] text-balance text-ink sm:text-4xl">
+              {t.home.introTitle}
+            </h2>
+          </Reveal>
+
+          <Reveal delay={120}>
+            <p className="text-lg leading-[1.8] text-ink-soft sm:text-xl">{t.about.body1}</p>
+            <p className="mt-7 text-lg leading-[1.8] text-ink-soft sm:text-xl">{t.about.body2}</p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* A full-bleed breath between the story and the hotels themselves. */}
+      {mediaUrl(interlude, 'xlarge') && (
+        <div className="relative h-[45vh] overflow-hidden bg-ink sm:h-[60vh]">
+          <Image
+            src={mediaUrl(interlude, 'xlarge')}
+            alt={mediaAlt(interlude) || siteName}
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
         </div>
       )}
-    </div>
+
+      {branches.length > 0 && (
+        <section className={cn(shell, sectionY)}>
+          <SectionHeading
+            eyebrow={t.home.collectionEyebrow}
+            title={t.home.chooseBranch}
+            lead={t.home.chooseBranchLead}
+            className="mb-12 lg:mb-16"
+          />
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {branches.map((branch, i) => (
+              <Reveal key={branch.id} delay={(i % 3) * 110}>
+                <BranchCard branch={branch} locale={locale} t={t} index={i} />
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+    </>
   )
 }
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { locale: raw } = await params
   const locale = (isLocale(raw) ? raw : 'en') as Locale
-  return { title: getDictionary(locale).nav.about }
+  const t = getDictionary(locale)
+  return { title: t.nav.about, description: t.about.lead }
 }

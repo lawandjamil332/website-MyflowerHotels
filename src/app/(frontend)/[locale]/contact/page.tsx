@@ -4,7 +4,14 @@ import type { Metadata } from 'next'
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { getBranches } from '@/utilities/branches'
+import { getSettings } from '@/utilities/getSettings'
+import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
+import { cn } from '@/utilities/ui'
+import { PageHero } from '@/components/site/PageHero'
+import { Reveal } from '@/components/site/Reveal'
+import { WhatsAppMark } from '@/components/site/WhatsAppMark'
+import { btnOutline, btnSmall, btnWhatsApp, shell } from '@/components/site/ui'
 
 type Args = { params: Promise<{ locale: string }> }
 
@@ -14,84 +21,148 @@ export default async function ContactPage({ params }: Args) {
   const locale = raw as Locale
 
   const t = getDictionary(locale)
-  const branches = await getBranches(locale)
+  const [branches, settings] = await Promise.all([getBranches(locale), getSettings(locale)])
+  const heroSource = branches[2]?.heroImage ?? branches[0]?.heroImage
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
-      <h1 className="font-display text-4xl text-stone-900 sm:text-5xl">{t.nav.contact}</h1>
-      <p className="mt-3 max-w-xl text-stone-500">{t.home.chooseBranchLead}</p>
+    <>
+      <PageHero
+        eyebrow={t.contact.eyebrow}
+        title={t.nav.contact}
+        lead={t.contact.lead}
+        imageUrl={mediaUrl(heroSource, 'xlarge')}
+        imageAlt={mediaAlt(heroSource)}
+      />
 
-      {branches.length > 0 ? (
-        <div className="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {branches.map((branch) => {
-            const wa = toWhatsAppHref(branch.whatsapp)
-            const tel = toTelHref(branch.phone)
-            const maps = toMapsHref(branch.googleMapsUrl, branch.latitude, branch.longitude)
+      <section className={cn(shell, 'py-20 sm:py-24 lg:py-28')}>
+        {branches.length > 0 ? (
+          <ol className="border-t border-line">
+            {branches.map((branch, i) => {
+              const wa = toWhatsAppHref(branch.whatsapp, `${t.branch.enquire} — ${branch.name}`)
+              const tel = toTelHref(branch.phone)
+              const maps = toMapsHref(branch.googleMapsUrl, branch.latitude, branch.longitude)
 
-            return (
-              <div key={branch.id} className="rounded-lg border border-stone-200 p-6">
-                <h2 className="font-display text-xl text-stone-900">{branch.name}</h2>
-                {branch.address && (
-                  <p className="mt-2 whitespace-pre-line text-sm text-stone-600">
-                    {branch.address}
-                  </p>
-                )}
+              return (
+                <Reveal as="li" key={branch.id} delay={(i % 3) * 100}>
+                  <div className="grid gap-8 border-b border-line py-12 lg:grid-cols-[0.5fr_1fr_0.8fr] lg:gap-12 lg:py-14">
+                    <div>
+                      <span className="text-xs tracking-[0.2em] tabular-nums text-brass">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <h2 className="font-display mt-3 text-3xl leading-tight text-ink">
+                        {branch.name}
+                      </h2>
+                      {branch.city && (
+                        <p className="mt-2 text-xs tracking-[0.18em] text-muted-ink uppercase rtl:tracking-normal">
+                          {branch.city}
+                        </p>
+                      )}
+                    </div>
 
-                <div className="mt-5 flex flex-col gap-2 text-sm">
-                  {tel && (
-                    <a
-                      href={tel}
-                      dir="ltr"
-                      className="text-stone-900 underline-offset-4 hover:underline"
-                    >
-                      {branch.phone}
-                    </a>
-                  )}
-                  {branch.email && (
-                    <a
-                      href={`mailto:${branch.email}`}
-                      className="text-stone-600 underline-offset-4 hover:text-stone-900 hover:underline"
-                    >
-                      {branch.email}
-                    </a>
-                  )}
-                </div>
+                    <div className="space-y-3 text-sm">
+                      {branch.address && (
+                        <p className="leading-relaxed whitespace-pre-line text-ink-soft">
+                          {branch.address}
+                        </p>
+                      )}
+                      {tel && (
+                        <a
+                          href={tel}
+                          dir="ltr"
+                          className="link-line block w-fit text-ink hover:text-brass"
+                        >
+                          {branch.phone}
+                        </a>
+                      )}
+                      {branch.email && (
+                        <a
+                          href={`mailto:${branch.email}`}
+                          className="link-line block w-fit text-muted-ink hover:text-ink"
+                        >
+                          {branch.email}
+                        </a>
+                      )}
+                      {(branch.checkInTime || branch.checkOutTime) && (
+                        <p className="pt-1 text-xs text-muted-ink">
+                          {branch.checkInTime && `${t.branch.checkIn} ${branch.checkInTime}`}
+                          {branch.checkInTime && branch.checkOutTime && '  ·  '}
+                          {branch.checkOutTime && `${t.branch.checkOut} ${branch.checkOutTime}`}
+                        </p>
+                      )}
+                    </div>
 
-                <div className="mt-5 flex flex-wrap gap-2">
-                  {wa && (
-                    <a
-                      href={wa}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded-full bg-[#25D366] px-4 py-2 text-sm font-medium text-white transition hover:opacity-90"
-                    >
-                      {t.common.whatsapp}
-                    </a>
-                  )}
-                  {maps && (
-                    <a
-                      href={maps}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="rounded-full border border-stone-300 px-4 py-2 text-sm text-stone-700 transition hover:bg-stone-50"
-                    >
-                      {t.branch.getDirections}
-                    </a>
-                  )}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      ) : (
-        <p className="mt-12 text-stone-500">Hotel details will appear here once they are added.</p>
-      )}
-    </div>
+                    <div className="flex flex-col gap-2.5">
+                      {wa && (
+                        <a
+                          href={wa}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={cn(btnWhatsApp, btnSmall, 'w-full')}
+                        >
+                          <WhatsAppMark />
+                          {t.common.whatsapp}
+                        </a>
+                      )}
+                      {maps && (
+                        <a
+                          href={maps}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={cn(btnOutline, btnSmall, 'w-full')}
+                        >
+                          {t.branch.getDirections}
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </Reveal>
+              )
+            })}
+          </ol>
+        ) : (
+          <p className="text-muted-ink">Hotel details will appear here once they are added.</p>
+        )}
+
+        {(settings.phone || settings.email || settings.whatsapp) && (
+          <Reveal className="mt-16 border border-line bg-card p-8 sm:p-10">
+            <p className="eyebrow">{t.home.ctaEyebrow}</p>
+            <h2 className="font-display mt-4 text-2xl text-ink sm:text-3xl">{t.home.ctaTitle}</h2>
+            <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted-ink">
+              {t.home.ctaLead}
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              {toWhatsAppHref(settings.whatsapp) && (
+                <a
+                  href={toWhatsAppHref(settings.whatsapp)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn(btnWhatsApp, btnSmall)}
+                >
+                  <WhatsAppMark />
+                  {t.common.whatsapp}
+                </a>
+              )}
+              {toTelHref(settings.phone) && (
+                <a href={toTelHref(settings.phone)} dir="ltr" className={cn(btnOutline, btnSmall)}>
+                  {settings.phone}
+                </a>
+              )}
+              {settings.email && (
+                <a href={`mailto:${settings.email}`} className={cn(btnOutline, btnSmall)}>
+                  {settings.email}
+                </a>
+              )}
+            </div>
+          </Reveal>
+        )}
+      </section>
+    </>
   )
 }
 
 export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { locale: raw } = await params
   const locale = (isLocale(raw) ? raw : 'en') as Locale
-  return { title: getDictionary(locale).nav.contact }
+  const t = getDictionary(locale)
+  return { title: t.nav.contact, description: t.contact.lead }
 }

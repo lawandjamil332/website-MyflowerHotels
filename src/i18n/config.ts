@@ -25,3 +25,14 @@ export const localeNames: Record<Locale, string> = {
   ku: 'کوردی',
   ar: 'العربية',
 }
+
+/**
+ * Two-letter form for the header, where three full names in three scripts
+ * would crowd out the navigation. The full name still goes on the link's
+ * accessible label and is used in the footer and the mobile menu.
+ */
+export const localeShort: Record<Locale, string> = {
+  en: 'EN',
+  ku: 'KU',
+  ar: 'AR',
+}
