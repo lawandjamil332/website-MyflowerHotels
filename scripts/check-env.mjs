@@ -49,6 +49,31 @@ if (!dbUrl) {
   })
 }
 
+// Not fatal: the site runs perfectly well without a bucket. Photographs just
+// silently disappear on the next rebuild, which is far worse than a loud
+// warning here at start-up.
+const bucketVars = ['S3_ENDPOINT', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY', 'S3_BUCKET']
+const missingBucket = bucketVars.filter((name) => !process.env[name])
+
+if (missingBucket.length > 0) {
+  console.warn(
+    [
+      '',
+      '  WARNING: photo storage is not connected.',
+      '',
+      `  Missing: ${missingBucket.join(', ')}`,
+      '',
+      '  Photos uploaded in the admin panel will be written to this',
+      "  container's disk, and Railway erases that on every redeploy —",
+      '  so the pictures will vanish and the site will show empty frames.',
+      '',
+      '  Fix: Railway -> + Create -> Storage Bucket, then copy its four',
+      '  values into this service\'s Variables and redeploy.',
+      '',
+    ].join('\n'),
+  )
+}
+
 if (problems.length > 0) {
   const lines = [
     '',
