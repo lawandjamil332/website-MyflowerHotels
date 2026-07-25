@@ -21,6 +21,10 @@ export type Dictionary = {
     collectionEyebrow: string
     chooseBranch: string
     interlude: string
+    creditHotels: string
+    creditSince: string
+    creditStars: string
+    creditReception: string
     chooseBranchLead: string
     introEyebrow: string
     introTitle: string
@@ -121,6 +125,10 @@ const en: Dictionary = {
     chooseBranch: '{count} hotels in Erbil',
     chooseBranchLead: 'Choose the one that suits your stay.',
     interlude: '{count} addresses in one city.',
+    creditHotels: 'Hotels in Erbil',
+    creditSince: 'Welcoming guests since',
+    creditStars: 'Star rating',
+    creditReception: 'Reception',
     introEyebrow: 'Our hospitality',
     introTitle: 'A family house, kept for guests',
     introBody:
@@ -266,6 +274,10 @@ const ku: Dictionary = {
     chooseBranch: '{count} هۆتێل لە هەولێر',
     chooseBranchLead: 'ئەوەی گونجاوە بۆ مانەوەت هەڵبژێرە.',
     interlude: '{count} ناونیشان لە یەک شاردا.',
+    creditHotels: 'هۆتێل لە هەولێر',
+    creditSince: 'پێشوازی لە میوان لە',
+    creditStars: 'پلەی ئەستێرە',
+    creditReception: 'پێشوازی',
     introEyebrow: 'میوانداریمان',
     introTitle: 'ماڵێکی خێزانی، بۆ میوان',
     introBody:
@@ -410,6 +422,10 @@ const ar: Dictionary = {
     chooseBranch: '{count} فنادق في أربيل',
     chooseBranchLead: 'اختر ما يناسب إقامتك.',
     interlude: '{count} عناوين في مدينة واحدة.',
+    creditHotels: 'فنادق في أربيل',
+    creditSince: 'نستقبل الضيوف منذ',
+    creditStars: 'تصنيف النجوم',
+    creditReception: 'الاستقبال',
     introEyebrow: 'ضيافتنا',
     introTitle: 'بيت عائلي، مفتوح للضيوف',
     introBody:

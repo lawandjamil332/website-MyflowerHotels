@@ -71,6 +71,13 @@
      recognise it faster than they read any label. */
   --color-whatsapp: oklch(56% 0.115 152deg);
 
+  /* Real gold is never one flat colour — it is a gradient with a highlight
+     running through it. Three stops give a rule or a letterform something to
+     catch the light on, which is the difference between "brown" and "gilt". */
+  --color-gold-deep: oklch(58% 0.085 72deg);
+  --color-gold: oklch(76% 0.105 82deg);
+  --color-gold-light: oklch(91% 0.06 88deg);
+
   /* Long, decelerating easing. Every transition on the site uses it, which is
      most of what separates an expensive-feeling page from a twitchy one. */
   --ease-luxe: cubic-bezier(0.16, 1, 0.3, 1);
@@ -393,6 +400,63 @@ html[data-theme='light'] {
     }
 
     .rise {
+      animation: none;
+    }
+  }
+
+  /* Gilded type. The highlight sits slightly off-centre and drifts, so a
+     headline reads as metal rather than as yellow text. */
+  .text-gilt {
+    background: linear-gradient(
+      100deg,
+      var(--color-gold-deep) 0%,
+      var(--color-gold) 22%,
+      var(--color-gold-light) 42%,
+      var(--color-gold) 62%,
+      var(--color-gold-deep) 100%
+    );
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: gilt-drift 9s ease-in-out infinite;
+  }
+
+  @keyframes gilt-drift {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* A drawn rule with the same metal in it. */
+  .rule-gilt {
+    block-size: 1px;
+    background: linear-gradient(
+      to right,
+      transparent,
+      var(--color-gold) 20%,
+      var(--color-gold-light) 50%,
+      var(--color-gold) 80%,
+      transparent
+    );
+  }
+
+  /* Warmth behind the hero's type, so the words sit in a pool of light rather
+     than on top of a photograph. */
+  .hero-glow {
+    background: radial-gradient(
+      60% 55% at 20% 78%,
+      oklch(58% 0.085 72deg / 0.28) 0%,
+      transparent 70%
+    );
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .text-gilt {
       animation: none;
     }
   }

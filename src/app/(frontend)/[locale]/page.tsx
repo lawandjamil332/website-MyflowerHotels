@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
-import { fillCount } from '@/i18n/count'
+import { countWord, fillCount } from '@/i18n/count'
 import { getBranches, getFeaturedRooms } from '@/utilities/branches'
 import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
@@ -81,6 +81,7 @@ export default async function HomePage({ params }: Args) {
           aria-hidden="true"
           className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/65"
         />
+        <div aria-hidden="true" className="hero-glow absolute inset-0" />
 
         <div className={cn(shell, 'relative pt-40 pb-24 sm:pb-28')}>
           <div className="rise flex items-center gap-4" style={{ animationDelay: '0.55s' }}>
@@ -88,11 +89,12 @@ export default async function HomePage({ params }: Args) {
             <Stars count={settings.stars} />
           </div>
           <h1
-            className="font-display display-hero rise mt-7 max-w-5xl text-balance text-white"
+            className="font-display display-hero text-gilt rise mt-7 max-w-5xl text-balance"
             style={{ animationDelay: '0.7s' }}
           >
             {siteName}
           </h1>
+          <div aria-hidden="true" className="rule-gilt rise mt-8 w-40" style={{ animationDelay: '0.8s' }} />
           <p
             className="rise mt-8 max-w-lg text-lg leading-relaxed text-white/75 sm:text-xl"
             style={{ animationDelay: '0.9s' }}
@@ -130,6 +132,31 @@ export default async function HomePage({ params }: Args) {
 
       {/* Everything below rides over the pinned hero on its own ground. */}
       <div className="relative z-10 bg-bone">
+        {/* The four things a guest here checks first, answered before they
+            have to scroll for them. */}
+        <section className="bg-ink">
+          <ul className={cn(shell, 'grid gap-px py-14 sm:grid-cols-2 lg:grid-cols-4 lg:py-16')}>
+            {[
+              { value: countWord(n, locale), label: t.home.creditHotels },
+              { value: settings.establishedYear ? String(settings.establishedYear) : '—', label: t.home.creditSince },
+              { value: settings.stars ?? '4', label: t.home.creditStars },
+              { value: t.branch.anyTime, label: t.home.creditReception },
+            ].map((credit, i) => (
+              <Reveal
+                key={credit.label}
+                delay={i * 110}
+                className="border-white/10 px-2 text-center lg:not-first:border-s"
+              >
+                <p className="font-display text-gilt text-4xl leading-none sm:text-5xl">
+                  {credit.value}
+                </p>
+                <p className="mt-3 text-[0.6rem] tracking-[0.24em] text-white/45 uppercase rtl:tracking-normal">
+                  {credit.label}
+                </p>
+              </Reveal>
+            ))}
+          </ul>
+        </section>
         {/* The group in its own words, set as an editorial spread rather than
             a centred paragraph. */}
         <section className={cn(shell, sectionY)}>
