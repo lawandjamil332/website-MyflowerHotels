@@ -63,7 +63,7 @@ export function PageHero({
         </h1>
         {lead && (
           <p
-            className="rise mt-7 max-w-xl text-lg leading-relaxed text-white/75"
+            className="rise mt-7 max-w-xl text-lg leading-relaxed text-white/75 xl:max-w-2xl xl:text-xl"
             style={{ animationDelay: '0.42s' }}
           >
             {lead}

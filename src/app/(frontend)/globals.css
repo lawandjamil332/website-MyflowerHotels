@@ -299,17 +299,17 @@ html[data-theme='light'] {
      Cormorant's capitals are short, and normal leading leaves a hole under a
      two-line headline. */
   .display-hero {
-    font-size: clamp(3rem, 9vw, 9rem);
+    font-size: clamp(3rem, 8.6vw, 12rem);
     line-height: 0.94;
   }
 
   .display-xl {
-    font-size: clamp(2.5rem, 6vw, 5.5rem);
+    font-size: clamp(2.5rem, 5vw, 6.5rem);
     line-height: 1.02;
   }
 
   .display-lg {
-    font-size: clamp(1.9rem, 3.6vw, 3.25rem);
+    font-size: clamp(1.9rem, 3.4vw, 4.5rem);
     line-height: 1.1;
   }
 

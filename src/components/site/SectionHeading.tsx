@@ -27,7 +27,7 @@ export function SectionHeading({
   as?: 'h1' | 'h2'
 }) {
   return (
-    <Reveal className={cn('max-w-3xl', className)}>
+    <Reveal className={cn('max-w-3xl xl:max-w-5xl', className)}>
       <div className="flex items-center gap-4">
         {typeof index === 'number' && (
           <>
@@ -60,7 +60,7 @@ export function SectionHeading({
       {lead && (
         <p
           className={cn(
-            'mt-6 max-w-xl text-base leading-relaxed sm:text-lg',
+            'mt-6 max-w-xl text-base leading-relaxed sm:text-lg xl:max-w-2xl xl:text-xl',
             tone === 'light' ? 'text-white/70' : 'text-muted-ink',
           )}
         >

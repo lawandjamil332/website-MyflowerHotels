@@ -96,7 +96,7 @@ export default async function HomePage({ params }: Args) {
           </h1>
           <div aria-hidden="true" className="rule-gilt rise mt-8 w-40" style={{ animationDelay: '0.8s' }} />
           <p
-            className="rise mt-8 max-w-lg text-lg leading-relaxed text-white/75 sm:text-xl"
+            className="rise mt-8 max-w-lg text-lg leading-relaxed text-white/75 sm:text-xl xl:max-w-2xl xl:text-2xl"
             style={{ animationDelay: '0.9s' }}
           >
             {count(t.home.heroLead)}
@@ -173,7 +173,7 @@ export default async function HomePage({ params }: Args) {
             </Reveal>
 
             <Reveal delay={120} className="lg:pt-3">
-              <p className="max-w-xl text-lg leading-[1.75] text-ink-soft sm:text-xl">
+              <p className="max-w-xl text-lg leading-[1.75] text-ink-soft sm:text-xl xl:max-w-2xl xl:text-[1.375rem]">
                 {t.home.introBody}
               </p>
               <Link
@@ -293,7 +293,7 @@ export default async function HomePage({ params }: Args) {
               <h2 className="font-display display-xl mt-6 text-balance text-white">
                 {t.home.ctaTitle}
               </h2>
-              <p className="mx-auto mt-7 max-w-lg text-lg leading-relaxed text-white/70">
+              <p className="mx-auto mt-7 max-w-lg text-lg leading-relaxed text-white/70 xl:max-w-2xl xl:text-xl">
                 {t.home.ctaLead}
               </p>
 
