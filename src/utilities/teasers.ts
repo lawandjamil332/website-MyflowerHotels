@@ -1,5 +1,6 @@
 import type { Branch } from '@/payload-types'
 import { mediaAlt, mediaUrl } from './media'
+import { shippedPhoto as shippedPhotoFor } from './shippedPhoto'
 
 /**
  * The trimmed shape the interactive branch switcher needs. Payload documents
@@ -13,6 +14,7 @@ export type BranchTeaser = {
   tagline: string
   city: string
   neighbourhood: string
+  shippedPhoto?: string
   openingSoon: boolean
   openingNote: string
   imageUrl: string
@@ -26,6 +28,7 @@ export const toBranchTeaser = (branch: Branch): BranchTeaser => ({
   tagline: branch.tagline ?? '',
   city: branch.city ?? '',
   neighbourhood: branch.neighbourhood ?? '',
+  shippedPhoto: shippedPhotoFor(branch.slug),
   openingSoon: branch.status === 'openingSoon',
   openingNote: branch.openingNote ?? '',
   imageUrl: mediaUrl(branch.heroImage, 'xlarge'),

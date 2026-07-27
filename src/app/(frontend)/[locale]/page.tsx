@@ -10,6 +10,7 @@ import { getBranches, getFeaturedRooms } from '@/utilities/branches'
 import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { toBranchTeaser } from '@/utilities/teasers'
+import { shippedPhoto } from '@/utilities/shippedPhoto'
 import { shareImage } from '@/utilities/shareImage'
 import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { cn } from '@/utilities/ui'
@@ -73,6 +74,7 @@ export default async function HomePage({ params }: Args) {
           alt={mediaAlt(heroBranch?.heroImage) || siteName}
           sizes="100vw"
           monogram={monogramOf(siteName)}
+          fallbackSrc={shippedPhoto(heroBranch?.slug)}
           priority
           tone="ink"
           imageClassName="ken-burns object-[center_28%]"

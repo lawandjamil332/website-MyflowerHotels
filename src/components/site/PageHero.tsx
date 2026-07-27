@@ -16,6 +16,7 @@ export function PageHero({
   imageUrl,
   imageAlt,
   size = 'compact',
+  fallbackSrc,
   children,
 }: {
   eyebrow?: string
@@ -24,6 +25,7 @@ export function PageHero({
   imageUrl?: string
   imageAlt?: string
   size?: 'compact' | 'tall'
+  fallbackSrc?: string
   children?: React.ReactNode
 }) {
   return (
@@ -38,6 +40,7 @@ export function PageHero({
         alt={imageAlt || title}
         sizes="100vw"
         monogram={monogramOf(title)}
+        fallbackSrc={fallbackSrc}
         priority
         tone="ink"
         imageClassName="ken-burns object-[center_26%]"

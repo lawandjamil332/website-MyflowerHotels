@@ -30,6 +30,11 @@ const nextConfig: NextConfig = {
         // request.
         pathname: '/*.png',
       },
+      {
+        // The hotel photographs shipped with the site, used whenever an
+        // uploaded one cannot load.
+        pathname: '/hotels/**',
+      },
     ],
     qualities: [100],
     remotePatterns: [

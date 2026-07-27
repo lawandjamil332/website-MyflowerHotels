@@ -8,6 +8,7 @@ import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { branchLocative } from '@/utilities/teasers'
+import { shippedPhoto } from '@/utilities/shippedPhoto'
 import { shareImage } from '@/utilities/shareImage'
 import { cn } from '@/utilities/ui'
 import { AmenityList } from '@/components/site/AmenityList'
@@ -78,6 +79,7 @@ export default async function BranchPage({ params }: Args) {
         lead={branch.tagline ?? undefined}
         imageUrl={mediaUrl(branch.heroImage, 'xlarge')}
         imageAlt={mediaAlt(branch.heroImage)}
+        fallbackSrc={shippedPhoto(branch.slug)}
         size="tall"
       >
         {openingSoon && <OpeningMark label={opening} tone="light" className="mt-7" />}

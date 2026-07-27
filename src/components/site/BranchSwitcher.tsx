@@ -52,6 +52,7 @@ export function BranchSwitcher({
                 alt={branch.imageAlt}
                 sizes="50vw"
                 monogram={monogramOf(branch.name)}
+                fallbackSrc={branch.shippedPhoto}
                 priority={i === 0}
               />
             </div>
@@ -156,6 +157,7 @@ export function BranchSwitcher({
               alt={branch.imageAlt}
               sizes="(min-width: 640px) 50vw, 100vw"
               monogram={monogramOf(branch.name)}
+              fallbackSrc={branch.shippedPhoto}
               priority={i === 0}
               imageClassName="transition-transform duration-1000 ease-luxe group-hover:scale-105"
             />

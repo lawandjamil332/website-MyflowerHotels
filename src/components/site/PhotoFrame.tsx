@@ -1,14 +1,23 @@
+'use client'
+
 import Image from 'next/image'
+import { useState } from 'react'
 
 import { cn } from '@/utilities/ui'
 
 /**
  * A photograph, or a composed stand-in for one.
  *
- * Before a hotel's pictures are uploaded, every image slot on the site is an
- * empty grey rectangle — which reads as broken rather than unfinished. This
- * fills the same space with a monogram inside a hairline frame, so a site
- * with no photography still looks deliberate while the owner is gathering it.
+ * Two jobs. Before a hotel's pictures are uploaded, every image slot would be
+ * an empty grey rectangle — which reads as broken rather than unfinished — so
+ * this fills the space with a monogram inside a hairline frame instead.
+ *
+ * And when a picture that *should* exist fails to load, it does the same. That
+ * case is real rather than theoretical: uploads made before the storage bucket
+ * was connected were written to the server's own disk and erased on the next
+ * deploy, leaving the database pointing at files that were no longer there.
+ * The pages then showed a grid of broken-image icons. A site should degrade to
+ * looking unfinished, never to looking broken.
  */
 export function PhotoFrame({
   src,
@@ -19,6 +28,7 @@ export function PhotoFrame({
   tone = 'sand',
   className,
   imageClassName,
+  fallbackSrc,
 }: {
   src?: string
   alt: string
@@ -28,15 +38,23 @@ export function PhotoFrame({
   tone?: 'sand' | 'ink'
   className?: string
   imageClassName?: string
+  /** A picture shipped with the site, used if the uploaded one cannot load. */
+  fallbackSrc?: string
 }) {
-  if (src) {
+  const [failed, setFailed] = useState(false)
+  const showing = failed ? fallbackSrc : src || fallbackSrc
+
+  if (showing) {
     return (
       <Image
-        src={src}
+        // Re-mounts on fallback, so the browser actually re-requests.
+        key={showing}
+        src={showing}
         alt={alt}
         fill
         sizes={sizes}
         priority={priority}
+        onError={() => setFailed(true)}
         className={cn('object-cover', imageClassName, className)}
       />
     )
