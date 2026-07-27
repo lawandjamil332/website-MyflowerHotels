@@ -11,6 +11,7 @@ import * as migration_20260727_070000_postgres_file_storage from './20260727_070
 import * as migration_20260727_075000_settings_iqd_per_usd from './20260727_075000_settings_iqd_per_usd';
 import * as migration_20260727_078000_offers from './20260727_078000_offers';
 import * as migration_20260727_080000_seed_photos from './20260727_080000_seed_photos';
+import * as migration_20260727_090000_branch_social_and_maps from './20260727_090000_branch_social_and_maps';
 
 export const migrations = [
   {
@@ -79,5 +80,10 @@ export const migrations = [
     up: migration_20260727_080000_seed_photos.up,
     down: migration_20260727_080000_seed_photos.down,
     name: '20260727_080000_seed_photos',
+  },
+  {
+    up: migration_20260727_090000_branch_social_and_maps.up,
+    down: migration_20260727_090000_branch_social_and_maps.down,
+    name: '20260727_090000_branch_social_and_maps',
   },
 ];
