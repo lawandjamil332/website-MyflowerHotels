@@ -1,56 +1,54 @@
+import Link from 'next/link'
+
 import { cn } from '@/utilities/ui'
 import { Reveal } from './Reveal'
+import { btnPrimary } from './ui'
 
 /**
- * Eyebrow, headline, lead — the same three-part opening for every section, so
- * the page reads as one document rather than a stack of unrelated modules.
+ * Headline, lead, and the action that follows from them — centred.
  *
- * `index` adds a chapter numeral on a hairline. Used down the homepage, where
- * numbering the sections is what makes a long scroll feel edited rather than
- * merely long.
+ * This used to open every section with a chapter numeral on a hairline and a
+ * line of letterspaced capitals, which is how a magazine signals that a long
+ * scroll has been edited. It is not how a hotel group signals anything. The
+ * numerals told a guest which section they were in, a fact of no use to
+ * anybody trying to find a room, and the 11px capitals above every heading
+ * cost a moment's reading each time for decoration.
+ *
+ * So: one large serif line, one paragraph at a size adults actually read, and
+ * a button. Centred, because a centred heading over a full-width band reads as
+ * a section of a site, while a left-aligned one over the same band reads as a
+ * column of an article.
  */
 export function SectionHeading({
-  eyebrow,
   title,
   lead,
-  index,
   tone = 'ink',
+  align = 'center',
+  action,
   className,
   as: Tag = 'h2',
 }: {
-  eyebrow?: string
   title: string
   lead?: string
-  index?: number
   tone?: 'ink' | 'light'
+  align?: 'center' | 'start'
+  /** The pill that follows the lead, the way every band on the reference ends. */
+  action?: { href: string; label: string; external?: boolean }
   className?: string
   as?: 'h1' | 'h2'
 }) {
-  return (
-    <Reveal className={cn('max-w-3xl xl:max-w-5xl', className)}>
-      <div className="flex items-center gap-4">
-        {typeof index === 'number' && (
-          <>
-            <span
-              className={cn(
-                'text-xs tracking-[0.2em] tabular-nums',
-                tone === 'light' ? 'text-white/50' : 'text-muted-ink/60',
-              )}
-            >
-              {String(index).padStart(2, '0')}
-            </span>
-            <span
-              aria-hidden="true"
-              className={cn('h-px w-8', tone === 'light' ? 'bg-white/25' : 'bg-line')}
-            />
-          </>
-        )}
-        {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-      </div>
+  const centred = align === 'center'
 
+  return (
+    <Reveal
+      className={cn(
+        centred ? 'mx-auto max-w-3xl text-center' : 'max-w-3xl',
+        className,
+      )}
+    >
       <Tag
         className={cn(
-          'font-display display-xl mt-6 text-balance',
+          'font-display display-lg text-balance',
           tone === 'light' ? 'text-white' : 'text-ink',
         )}
       >
@@ -60,13 +58,61 @@ export function SectionHeading({
       {lead && (
         <p
           className={cn(
-            'mt-6 max-w-xl text-base leading-relaxed sm:text-lg xl:max-w-2xl xl:text-xl',
-            tone === 'light' ? 'text-white/70' : 'text-muted-ink',
+            'mt-5 text-[1.05rem] leading-[1.65] sm:text-[1.15rem]',
+            centred && 'mx-auto max-w-2xl',
+            tone === 'light' ? 'text-white/80' : 'text-muted-ink',
           )}
         >
           {lead}
         </p>
       )}
+
+      {action &&
+        (action.external ? (
+          <a
+            href={action.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(btnPrimary, 'mt-8')}
+          >
+            {action.label}
+          </a>
+        ) : (
+          <Link href={action.href} className={cn(btnPrimary, 'mt-8')}>
+            {action.label}
+          </Link>
+        ))}
     </Reveal>
+  )
+}
+
+/**
+ * A small centred heading with a rule running out either side — the treatment
+ * the reference uses to separate a list of logos or links from the band above
+ * it, where a full-size heading would be too much weight.
+ */
+export function RuledHeading({
+  title,
+  tone = 'ink',
+  className,
+}: {
+  title: string
+  tone?: 'ink' | 'light'
+  className?: string
+}) {
+  const rule = tone === 'light' ? 'bg-white/25' : 'bg-line'
+  return (
+    <div className={cn('flex items-center gap-5', className)}>
+      <span aria-hidden="true" className={cn('h-px flex-1', rule)} />
+      <h2
+        className={cn(
+          'font-display text-center text-2xl sm:text-3xl',
+          tone === 'light' ? 'text-white' : 'text-ink',
+        )}
+      >
+        {title}
+      </h2>
+      <span aria-hidden="true" className={cn('h-px flex-1', rule)} />
+    </div>
   )
 }

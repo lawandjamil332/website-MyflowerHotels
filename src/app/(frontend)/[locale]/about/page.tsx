@@ -34,7 +34,6 @@ export default async function AboutPage({ params }: Args) {
   return (
     <>
       <PageHero
-        eyebrow={t.about.eyebrow}
         title={siteName}
         lead={fillCount(t.about.lead, branches.length, locale)}
         imageUrl={mediaUrl(heroSource, 'xlarge')}
@@ -73,7 +72,6 @@ export default async function AboutPage({ params }: Args) {
       {branches.length > 0 && (
         <section className={cn(shell, sectionY)}>
           <SectionHeading
-            eyebrow={t.home.collectionEyebrow}
             title={fillCount(t.home.chooseBranch, branches.length, locale)}
             lead={t.home.chooseBranchLead}
             className="mb-12 lg:mb-16"

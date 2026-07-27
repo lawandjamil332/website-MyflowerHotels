@@ -9,16 +9,16 @@ import { countWord, fillCount } from '@/i18n/count'
 import { getBranches, getFeaturedRooms } from '@/utilities/branches'
 import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
-import { toBranchTeaser } from '@/utilities/teasers'
 import { shippedPhoto } from '@/utilities/shippedPhoto'
 import { shareImage } from '@/utilities/shareImage'
 import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { cn } from '@/utilities/ui'
-import { BranchSwitcher } from '@/components/site/BranchSwitcher'
+import { BranchCard } from '@/components/site/BranchCard'
+import { CardRail, RailCard } from '@/components/site/CardRail'
 import { PhotoFrame } from '@/components/site/PhotoFrame'
 import { monogramOf } from '@/utilities/monogram'
 import { Reveal } from '@/components/site/Reveal'
-import { RoomFeature } from '@/components/site/RoomFeature'
+import { RoomCard } from '@/components/site/RoomCard'
 import { SectionHeading } from '@/components/site/SectionHeading'
 import { StayFinder } from '@/components/site/StayFinder'
 import { GroupSchema } from '@/components/site/StructuredData'
@@ -139,75 +139,55 @@ export default async function HomePage({ params }: Args) {
             />
           </div>
         )}
-        {/* The four things a guest here checks first, answered before they
-            have to scroll for them. */}
+        {/* The four facts a guest checks first, before they scroll for them. */}
         <section className="bg-ink">
-          <ul className={cn(shell, 'grid gap-px py-14 sm:grid-cols-2 lg:grid-cols-4 lg:py-16')}>
+          <ul className={cn(shell, 'grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4 lg:py-20')}>
             {[
               { value: countWord(n, locale), label: t.home.creditHotels },
-              { value: settings.establishedYear ? String(settings.establishedYear) : '—', label: t.home.creditSince },
+              { value: settings.establishedYear ? String(settings.establishedYear) : '\u2014', label: t.home.creditSince },
               { value: settings.stars ?? '4', label: t.home.creditStars },
               { value: t.branch.anyTime, label: t.home.creditReception },
             ].map((credit, i) => (
-              <Reveal
-                key={credit.label}
-                delay={i * 110}
-                className="border-white/10 px-2 text-center lg:not-first:border-s"
-              >
-                <p className="font-display text-hero text-4xl leading-none sm:text-5xl">
+              <Reveal key={credit.label} delay={i * 90} className="text-center">
+                <p className="font-display text-hero text-5xl leading-none sm:text-6xl">
                   {credit.value}
                 </p>
-                <p className="mt-3 text-[0.62rem] tracking-[0.14em] text-white/75 uppercase rtl:tracking-normal">
-                  {credit.label}
-                </p>
+                <p className="mt-4 text-[0.95rem] text-white/70">{credit.label}</p>
               </Reveal>
             ))}
           </ul>
         </section>
-        {/* The group in its own words, set as an editorial spread rather than
-            a centred paragraph. */}
-        <section className={cn(shell, sectionY)}>
-          <div className="grid gap-12 lg:grid-cols-[0.85fr_1.15fr] lg:gap-20">
-            <Reveal>
-              <div className="flex items-center gap-4">
-                <span className="text-xs tracking-[0.2em] tabular-nums text-muted-ink/60">01</span>
-                <span aria-hidden="true" className="h-px w-8 bg-line" />
-                <p className="eyebrow">{t.home.introEyebrow}</p>
-              </div>
-              <h2 className="font-display display-lg mt-6 text-balance text-ink">
-                {t.home.introTitle}
-              </h2>
-            </Reveal>
 
-            <Reveal delay={120} className="lg:pt-3">
-              <p className="max-w-xl text-lg leading-[1.75] text-ink-soft sm:text-xl xl:max-w-2xl xl:text-[1.375rem]">
-                {t.home.introBody}
-              </p>
-              <Link
-                href={`/${locale}/about`}
-                className="link-line mt-8 inline-block text-[0.7rem] tracking-[0.22em] text-ink uppercase rtl:tracking-normal"
-              >
-                {t.nav.about}
-              </Link>
-            </Reveal>
+        {/* Who the group is, in one band. */}
+        <section className="bg-sand">
+          <div className={cn(shell, sectionY)}>
+            <SectionHeading
+              title={t.home.introTitle}
+              lead={t.home.introBody}
+              action={{ href: `/${locale}/about`, label: t.nav.about }}
+            />
           </div>
         </section>
 
-        {/* The branch switcher: the group's real differentiator, given the
-            room to be a decision rather than a dropdown. */}
-        <section id="collection" className={cn(shell, 'scroll-mt-24 pb-20 sm:pb-28 lg:pb-36')}>
+        {/* The hotels, as a rail. This is the decision the whole site exists
+            to help with, so it gets the pattern the eye is trained on. */}
+        <section id="collection" className={cn(shell, 'scroll-mt-24', sectionY)}>
           <SectionHeading
-            index={2}
-            eyebrow={t.home.collectionEyebrow}
             title={count(t.home.chooseBranch)}
             lead={t.home.chooseBranchLead}
             className="mb-12 lg:mb-16"
           />
 
           {branches.length > 0 ? (
-            <BranchSwitcher branches={branches.map(toBranchTeaser)} locale={locale} t={t} />
+            <CardRail label={t.nav.branches}>
+              {branches.map((branch, i) => (
+                <RailCard key={branch.id}>
+                  <BranchCard branch={branch} locale={locale} t={t} priority={i < 2} />
+                </RailCard>
+              ))}
+            </CardRail>
           ) : (
-            <div className="border border-dashed border-line p-12 text-center text-muted-ink">
+            <div className="rounded-2xl border border-dashed border-line p-12 text-center text-muted-ink">
               <p>No hotels have been added yet.</p>
               <p className="mt-1.5 text-sm">
                 Add them in the admin panel and they will appear here automatically.
@@ -216,73 +196,56 @@ export default async function HomePage({ params }: Args) {
           )}
         </section>
 
-        {/* A held breath between sections: one photograph, one line, nothing
-            to click. */}
-        <section className="relative flex h-[65vh] items-center justify-center overflow-hidden bg-ink sm:h-[80vh]">
-          {mediaUrl(interludeBranch?.heroImage, 'xlarge') ? (
-            <Image
-              src={mediaUrl(interludeBranch?.heroImage, 'xlarge')}
-              alt={mediaAlt(interludeBranch?.heroImage) || siteName}
-              fill
-              sizes="100vw"
-              className="object-cover"
-            />
-          ) : null}
-          <div aria-hidden="true" className="absolute inset-0 bg-black/65" />
-          <Reveal className={cn(shell, 'relative text-center')}>
-            <p className="font-display display-lg mx-auto max-w-3xl text-balance text-white">
-              {count(t.home.interlude)}
-            </p>
-          </Reveal>
-        </section>
-
-        {/* Three reasons to trust the group, set as type on a hairline grid —
-            the brief rules out floating icon cards, and numbers read calmer. */}
-        <section className="bg-sand">
-          <div className={cn(shell, sectionY)}>
-            <ul className="grid border-t border-line lg:grid-cols-3">
-              {t.home.assurance.map((item, i) => (
-                <Reveal
-                  as="li"
-                  key={item.title}
-                  delay={i * 120}
-                  className="border-line pt-8 pb-2 lg:pe-10 lg:ps-10 lg:not-first:border-s lg:first:ps-0"
-                >
-                  <span className="text-xs tracking-[0.2em] tabular-nums text-brand">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <h3 className="font-display mt-4 text-2xl leading-snug text-ink">{item.title}</h3>
-                  <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-ink">
-                    {item.body}
-                  </p>
-                </Reveal>
-              ))}
-            </ul>
+        {/* One line of colour across the page, the way the reference breaks up
+            a long scroll without spending another photograph on it. */}
+        <section className="bg-brand">
+          <div className={cn(shell, 'py-16 text-center sm:py-20')}>
+            <Reveal>
+              <p className="font-display mx-auto max-w-3xl text-balance text-2xl leading-snug text-white sm:text-3xl">
+                {count(t.home.interlude)}
+              </p>
+            </Reveal>
           </div>
         </section>
 
+        {/* Reasons to book direct, as bordered cards in a rail. */}
+        <section className={cn(shell, sectionY)}>
+          <SectionHeading title={t.home.assuranceTitle} className="mb-12 lg:mb-16" />
+          <CardRail label={t.home.assuranceTitle}>
+            {t.home.assurance.map((item) => (
+              <RailCard key={item.title}>
+                <div className="flex h-full flex-col rounded-2xl border border-line p-8 text-center">
+                  <h3 className="font-display text-2xl leading-snug text-ink">{item.title}</h3>
+                  <p className="mt-4 text-[1.02rem] leading-relaxed text-muted-ink">{item.body}</p>
+                </div>
+              </RailCard>
+            ))}
+          </CardRail>
+        </section>
+
         {rooms.length > 0 && (
-          <section className={cn(shell, sectionY)}>
-            <SectionHeading
-              index={3}
-              eyebrow={t.home.roomsEyebrow}
-              title={t.home.featuredRooms}
-              lead={t.home.roomsLead}
-              className="mb-16 lg:mb-24"
-            />
-            <div className="flex flex-col gap-20 lg:gap-32">
-              {rooms.map((room, i) => (
-                <Reveal key={room.id}>
-                  <RoomFeature room={room} locale={locale} t={t} index={i} priority={i === 0} />
-                </Reveal>
-              ))}
+          <section className="bg-sand">
+            <div className={cn(shell, sectionY)}>
+              <SectionHeading
+                title={t.home.featuredRooms}
+                lead={t.home.roomsLead}
+                action={{ href: `/${locale}/rooms`, label: t.nav.rooms }}
+                className="mb-12 lg:mb-16"
+              />
+              <CardRail label={t.nav.rooms}>
+                {rooms.map((room, i) => (
+                  <RailCard key={room.id}>
+                    <RoomCard room={room} locale={locale} t={t} showBranch priority={i < 2} />
+                  </RailCard>
+                ))}
+              </CardRail>
             </div>
           </section>
         )}
 
         {/* Closing band. A photograph rather than a flat colour, so the page
             hands over to the footer on an image. */}
-        <section className="relative flex min-h-[60vh] items-center overflow-hidden bg-ink">
+        <section className="relative flex min-h-[26rem] items-center overflow-hidden bg-ink">
           {mediaUrl(closingBranch?.heroImage, 'xlarge') ? (
             <Image
               src={mediaUrl(closingBranch?.heroImage, 'xlarge')}
@@ -292,19 +255,18 @@ export default async function HomePage({ params }: Args) {
               className="object-cover"
             />
           ) : null}
-          <div aria-hidden="true" className="absolute inset-0 bg-black/75" />
+          <div aria-hidden="true" className="absolute inset-0 bg-black/70" />
 
-          <div className={cn(shell, 'relative py-24 text-center sm:py-32')}>
+          <div className={cn(shell, 'relative py-20 text-center sm:py-24')}>
             <Reveal className="mx-auto max-w-2xl">
-              <p className="eyebrow text-white">{t.home.ctaEyebrow}</p>
-              <h2 className="font-display display-xl mt-4 text-balance text-white">
+              <h2 className="font-display display-lg text-balance text-white">
                 {t.home.ctaTitle}
               </h2>
-              <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-white/85 sm:text-lg">
+              <p className="mx-auto mt-5 max-w-lg text-[1.05rem] leading-relaxed text-white/85 sm:text-[1.15rem]">
                 {t.home.ctaLead}
               </p>
 
-              <div className="mt-11 flex flex-wrap justify-center gap-3 sm:gap-4">
+              <div className="mt-9 flex flex-wrap justify-center gap-3 sm:gap-4">
                 {wa && (
                   <a href={wa} target="_blank" rel="noopener noreferrer" className={btnLight}>
                     <WhatsAppMark />

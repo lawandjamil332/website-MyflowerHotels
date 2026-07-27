@@ -64,7 +64,6 @@ export default async function RoomPage({ params }: Args) {
     <>
       <RoomSchema room={room} branch={branch} locale={locale} />
       <PageHero
-        eyebrow={branch?.name ?? t.room.detailsEyebrow}
         title={room.name}
         imageUrl={mediaUrl(images[0], 'xlarge')}
         imageAlt={mediaAlt(images[0])}
@@ -181,7 +180,6 @@ export default async function RoomPage({ params }: Args) {
         <section className="bg-sand">
           <div className={cn(shell, sectionY)}>
             <SectionHeading
-              eyebrow={t.room.galleryEyebrow}
               title={t.branch.gallery}
               className="mb-10 lg:mb-14"
             />

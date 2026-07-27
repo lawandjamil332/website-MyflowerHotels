@@ -74,7 +74,6 @@ export default async function BranchPage({ params }: Args) {
     <>
       <HotelSchema branch={branch} locale={locale} stars={settings.stars} />
       <PageHero
-        eyebrow={branchLocative(branch) || undefined}
         title={branch.name}
         lead={branch.tagline ?? undefined}
         imageUrl={mediaUrl(branch.heroImage, 'xlarge')}
@@ -235,7 +234,6 @@ export default async function BranchPage({ params }: Args) {
         <section className="bg-sand">
           <div className={cn(shell, sectionY)}>
             <SectionHeading
-              eyebrow={t.branch.galleryEyebrow}
               title={t.branch.gallery}
               className="mb-10 lg:mb-14"
             />
@@ -249,7 +247,6 @@ export default async function BranchPage({ params }: Args) {
       {!openingSoon && (
         <section className={cn(shell, sectionY)}>
           <SectionHeading
-            eyebrow={t.home.roomsEyebrow}
             title={t.branch.rooms}
             className="mb-12 lg:mb-16"
           />
