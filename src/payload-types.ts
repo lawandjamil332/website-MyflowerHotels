@@ -1924,6 +1924,10 @@ export interface Setting {
    */
   stars?: ('3' | '4' | '5') | null;
   /**
+   * Lets guests switch prices between dinars and dollars. Put in how many dinars one dollar buys — check it every few months. Leave empty and prices stay in dinars only, with no switch shown.
+   */
+  iqdPerUsd?: number | null;
+  /**
    * Shown in the header. A transparent PNG or SVG works best.
    */
   logo?: (number | null) | Media;
@@ -2012,6 +2016,7 @@ export interface SettingsSelect<T extends boolean = true> {
   siteName?: T;
   establishedYear?: T;
   stars?: T;
+  iqdPerUsd?: T;
   logo?: T;
   socialShareImage?: T;
   phone?: T;

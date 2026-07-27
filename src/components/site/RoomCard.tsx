@@ -4,8 +4,9 @@ import type { Branch, Room } from '@/payload-types'
 import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
 import { mediaUrl, mediaAlt } from '@/utilities/media'
-import { formatNumber, formatPrice } from '@/utilities/format'
+import { formatNumber } from '@/utilities/format'
 import { cn } from '@/utilities/ui'
+import { Price } from './Currency'
 import { PhotoFrame } from './PhotoFrame'
 import { monogramOf } from '@/utilities/monogram'
 
@@ -29,7 +30,6 @@ export function RoomCard({
 }) {
   const cover = room.images?.[0]
   const url = mediaUrl(cover, 'large')
-  const price = formatPrice(room.priceFrom, room.currency, locale)
   const branch = typeof room.branch === 'object' ? (room.branch as Branch) : null
 
   const meta = [
@@ -68,12 +68,17 @@ export function RoomCard({
           </p>
         )}
 
-        {price && (
+        {typeof room.priceFrom === 'number' && (
           <p className="mt-4 flex items-baseline gap-2 text-sm text-muted-ink">
             <span className="text-[0.65rem] tracking-[0.2em] uppercase rtl:tracking-normal">
               {t.room.from}
             </span>
-            <span className={cn('font-display text-xl text-ink')}>{price}</span>
+            <Price
+              amount={room.priceFrom}
+              currency={room.currency}
+              locale={locale}
+              className="font-display text-xl text-ink"
+            />
             <span className="text-xs">{t.room.perNight}</span>
           </p>
         )}

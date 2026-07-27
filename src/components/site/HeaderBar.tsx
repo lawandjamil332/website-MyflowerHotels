@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react'
 import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
 import { cn } from '@/utilities/ui'
+import { CurrencySwitch } from './Currency'
 import { LocaleSwitcher } from './LocaleSwitcher'
 import { btnLight, btnSmall, shell } from './ui'
 
@@ -137,6 +138,7 @@ export function HeaderBar({
           </nav>
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-5">
+            <CurrencySwitch className="hidden border-white/25 md:inline-flex" />
             <LocaleSwitcher current={locale} label={t.common.language} tone="light" />
 
             {whatsappHref && (

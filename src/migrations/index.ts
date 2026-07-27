@@ -8,6 +8,7 @@ import * as migration_20260725_160439_branch_check_in_any_time from './20260725_
 import * as migration_20260725_221500_seed_photos from './20260725_221500_seed_photos';
 import * as migration_20260725_230500_photos_multi_select from './20260725_230500_photos_multi_select';
 import * as migration_20260727_070000_postgres_file_storage from './20260727_070000_postgres_file_storage';
+import * as migration_20260727_075000_settings_iqd_per_usd from './20260727_075000_settings_iqd_per_usd';
 import * as migration_20260727_080000_seed_photos from './20260727_080000_seed_photos';
 
 export const migrations = [
@@ -60,6 +61,11 @@ export const migrations = [
     up: migration_20260727_070000_postgres_file_storage.up,
     down: migration_20260727_070000_postgres_file_storage.down,
     name: '20260727_070000_postgres_file_storage',
+  },
+  {
+    up: migration_20260727_075000_settings_iqd_per_usd.up,
+    down: migration_20260727_075000_settings_iqd_per_usd.down,
+    name: '20260727_075000_settings_iqd_per_usd',
   },
   // Content seeds run last, after every schema migration — see the note in
   // 20260727_080000_seed_photos for what goes wrong when they do not.

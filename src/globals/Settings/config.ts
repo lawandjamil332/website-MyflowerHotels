@@ -49,6 +49,16 @@ export const Settings: GlobalConfig = {
       ],
     },
     {
+      name: 'iqdPerUsd',
+      type: 'number',
+      label: 'Dinars per US dollar',
+      admin: {
+        placeholder: '1310',
+        description:
+          'Lets guests switch prices between dinars and dollars. Put in how many dinars one dollar buys — check it every few months. Leave empty and prices stay in dinars only, with no switch shown.',
+      },
+    },
+    {
       name: 'logo',
       type: 'upload',
       relationTo: 'media',

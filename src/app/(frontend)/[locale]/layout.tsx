@@ -28,6 +28,7 @@ import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
 import { dir, isLocale, locales, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
+import { CurrencyProvider } from '@/components/site/Currency'
 import { SiteHeader } from '@/components/site/SiteHeader'
 import { SiteFooter } from '@/components/site/SiteFooter'
 import { WhatsAppButton } from '@/components/site/WhatsAppButton'
@@ -77,19 +78,21 @@ export default async function LocaleLayout({ children, params }: Args) {
             the editorial treatment. A guest checking a room rate does not want
             to be shown a title sequence first, and no group site has one. */}
         <Providers>
-          <AdminBar adminBarProps={{ preview: isEnabled }} />
+          <CurrencyProvider rate={settings.iqdPerUsd}>
+            <AdminBar adminBarProps={{ preview: isEnabled }} />
 
-          <a
-            href="#main"
-            className="sr-only focus:not-sr-only focus:absolute focus:z-[60] focus:m-3 focus:bg-ink focus:px-4 focus:py-2 focus:text-bone"
-          >
-            {t.common.skipToContent}
-          </a>
+            <a
+              href="#main"
+              className="sr-only focus:not-sr-only focus:absolute focus:z-[60] focus:m-3 focus:bg-ink focus:px-4 focus:py-2 focus:text-bone"
+            >
+              {t.common.skipToContent}
+            </a>
 
-          <SiteHeader locale={locale} t={t} settings={settings} />
-          <main id="main">{children}</main>
-          <SiteFooter locale={locale} t={t} settings={settings} />
-          <WhatsAppButton phone={settings.whatsapp} label={t.common.whatsapp} />
+            <SiteHeader locale={locale} t={t} settings={settings} />
+            <main id="main">{children}</main>
+            <SiteFooter locale={locale} t={t} settings={settings} />
+            <WhatsAppButton phone={settings.whatsapp} label={t.common.whatsapp} />
+          </CurrencyProvider>
         </Providers>
       </body>
     </html>

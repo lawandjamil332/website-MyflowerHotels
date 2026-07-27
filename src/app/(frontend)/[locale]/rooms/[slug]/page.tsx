@@ -7,6 +7,7 @@ import { getDictionary } from '@/i18n/dictionaries'
 import { getRoomBySlug } from '@/utilities/branches'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { formatNumber, formatPrice } from '@/utilities/format'
+import { Price } from '@/components/site/Currency'
 import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { shareImage } from '@/utilities/shareImage'
 import { cn } from '@/utilities/ui'
@@ -124,7 +125,12 @@ export default async function RoomPage({ params }: Args) {
                     <p className="text-[0.6rem] tracking-[0.22em] text-muted-ink uppercase rtl:tracking-normal">
                       {t.room.from}
                     </p>
-                    <p className="font-display mt-2 text-4xl leading-none text-ink">{price}</p>
+                    <Price
+                      amount={room.priceFrom}
+                      currency={room.currency}
+                      locale={locale}
+                      className="font-display mt-2 block text-4xl leading-none text-ink"
+                    />
                     <p className="mt-2 text-sm text-muted-ink">{t.room.perNight}</p>
                   </>
                 ) : (
