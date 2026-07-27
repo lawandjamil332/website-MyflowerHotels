@@ -122,11 +122,18 @@ export default async function HomePage({ params }: Args) {
         </div>
       </section>
 
-      <div className="relative z-10 bg-bone">
+      {/* flow-root, and it is load-bearing. The search pill below is lifted onto
+          the hero with a negative top margin, and as the first child of this
+          block that margin collapsed straight through the parent — dragging
+          the bone background up with it, painting out the bottom of the
+          photograph, and landing the pill on a white strip instead of the
+          picture. flow-root gives this block its own formatting context so the
+          pill moves and the background stays where it was put. */}
+      <div className="relative z-10 flow-root bg-bone">
         {/* Which hotel, which nights, how many — carried into the enquiry
             rather than checked against availability nobody is holding. */}
         {branches.length > 0 && (
-          <div className={cn(shell, 'relative -mt-12 lg:-mt-16')}>
+          <div className={cn(shell, 'relative -mt-12 pb-12 lg:-mt-16 lg:pb-16')}>
             <StayFinder
               hotels={branches.map((b) => ({
                 slug: b.slug,
