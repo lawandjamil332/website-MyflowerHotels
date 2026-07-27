@@ -60,7 +60,7 @@ export function EnquiryForm({
 
   if (state.status === 'success') {
     return (
-      <div id="enquire" className={cn('border border-brand/40 bg-card p-8 sm:p-10', className)}>
+      <div id="enquire" className={cn('border border-brand/40 rounded-2xl bg-card p-8 sm:p-10', className)}>
         <p className="eyebrow">{t.form.eyebrow}</p>
         <p className="font-display mt-5 text-3xl text-ink">{t.form.successTitle}</p>
         <p className="mt-4 max-w-md leading-relaxed text-muted-ink">{t.form.successBody}</p>
@@ -74,7 +74,7 @@ export function EnquiryForm({
     <form
       id="enquire"
       action={action}
-      className={cn('scroll-mt-28 border border-line bg-card p-8 sm:p-10', className)}
+      className={cn('scroll-mt-28 border border-line rounded-2xl bg-card p-8 sm:p-10', className)}
     >
       <p className="eyebrow">{t.form.eyebrow}</p>
       <h2 className="font-display display-lg mt-5 text-ink">{t.form.title}</h2>

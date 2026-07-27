@@ -46,7 +46,7 @@ export async function SiteFooter({
     'link-line text-sm text-white/60 transition-colors duration-500 ease-luxe hover:text-white'
 
   return (
-    <footer className="bg-ink text-white">
+    <footer className="bg-brand text-white">
       <div className={cn(shell, 'py-20 sm:py-24')}>
         <div className="grid gap-14 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:gap-10">
           <div>

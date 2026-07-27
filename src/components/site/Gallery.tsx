@@ -64,7 +64,7 @@ export function Gallery({ items, className }: { items: GalleryItem[]; className?
               // Fixed row height on the mosaic breakpoint: with aspect ratios
               // a 7-column tile is taller than a 5-column one, which leaves
               // holes in the grid instead of a spread.
-              'group relative aspect-4/3 overflow-hidden bg-sand focus-visible:ring-1 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:outline-none lg:aspect-auto lg:h-[21rem]',
+              'group relative aspect-4/3 overflow-hidden rounded-2xl bg-sand focus-visible:ring-1 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:outline-none lg:aspect-auto lg:h-[21rem]',
               spans[i % spans.length],
             )}
           >

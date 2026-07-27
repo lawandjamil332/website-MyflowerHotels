@@ -154,7 +154,7 @@ export default async function ContactPage({ params }: Args) {
         </Reveal>
 
         {(settings.phone || settings.email || settings.whatsapp) && (
-          <Reveal className="mt-16 border border-line bg-card p-8 sm:p-10">
+          <Reveal className="mt-16 border border-line rounded-2xl bg-card p-8 sm:p-10">
             <p className="eyebrow">{t.home.ctaEyebrow}</p>
             <h2 className="font-display mt-4 text-2xl text-ink sm:text-3xl">{t.home.ctaTitle}</h2>
             <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted-ink">{t.home.ctaLead}</p>

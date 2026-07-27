@@ -49,7 +49,7 @@ export function RoomFeature({
         tabIndex={-1}
         aria-hidden="true"
         className={cn(
-          'relative aspect-4/3 overflow-hidden bg-sand lg:col-span-7 lg:aspect-3/2',
+          'relative aspect-4/3 overflow-hidden rounded-2xl bg-sand lg:col-span-7 lg:aspect-3/2',
           // The photograph swaps sides each row; in RTL the whole grid is
           // already mirrored, so this stays in logical column order.
           flipped ? 'lg:order-2 lg:col-start-6' : 'lg:order-1',

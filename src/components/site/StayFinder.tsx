@@ -72,7 +72,7 @@ export function StayFinder({
       onSubmit={submit}
       aria-label={t.search.title}
       className={cn(
-        'border border-line bg-card/95 shadow-[0_20px_60px_-30px_rgb(0_0_0/0.5)] backdrop-blur',
+        'overflow-hidden border border-line rounded-2xl bg-card/95 shadow-[0_20px_60px_-30px_rgb(0_0_0/0.5)] backdrop-blur',
         'flex flex-col lg:flex-row lg:items-stretch',
         className,
       )}

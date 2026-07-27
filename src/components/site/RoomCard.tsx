@@ -43,7 +43,7 @@ export function RoomCard({
       href={`/${locale}/rooms/${room.slug}`}
       className="group block focus-visible:ring-1 focus-visible:ring-ink focus-visible:ring-offset-2 focus-visible:outline-none"
     >
-      <div className="relative aspect-4/3 overflow-hidden bg-sand">
+      <div className="relative aspect-4/3 overflow-hidden rounded-2xl bg-sand">
         <PhotoFrame
           src={url}
           alt={mediaAlt(cover) || room.name}

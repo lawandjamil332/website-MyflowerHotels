@@ -113,7 +113,7 @@ export default async function BranchPage({ params }: Args) {
 
           <aside>
             <Reveal delay={120} className="lg:sticky lg:top-28">
-              <div className="border border-line bg-card p-7 sm:p-8">
+              <div className="border border-line rounded-2xl bg-card p-7 sm:p-8">
                 <p className="eyebrow">{openingSoon ? opening : t.branch.stayEyebrow}</p>
                 <h2 className="font-display mt-4 text-2xl text-ink">
                   {openingSoon ? t.branch.openingSoon : t.branch.contactTitle}

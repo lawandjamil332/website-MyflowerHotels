@@ -39,7 +39,7 @@ export function BranchSwitcher({
     <>
       {/* Desktop: index beside a single changing frame. */}
       <div className="hidden gap-14 lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-stretch">
-        <div className="relative aspect-4/5 overflow-hidden bg-sand">
+        <div className="relative aspect-4/5 overflow-hidden rounded-2xl bg-sand">
           {branches.map((branch, i) => (
             <div
               key={branch.id}
@@ -148,7 +148,7 @@ export function BranchSwitcher({
             key={branch.id}
             href={`/${locale}/branches/${branch.slug}`}
             className={cn(
-              'group relative flex aspect-4/5 flex-col justify-end overflow-hidden bg-sand focus-visible:ring-1 focus-visible:ring-ink focus-visible:ring-offset-2',
+              'group relative flex aspect-4/5 flex-col justify-end overflow-hidden rounded-2xl bg-sand focus-visible:ring-1 focus-visible:ring-ink focus-visible:ring-offset-2',
               // An odd third card spans the row rather than leaving a hole.
               branches.length % 2 === 1 && i === branches.length - 1 && 'sm:col-span-2 sm:aspect-16/9',
             )}

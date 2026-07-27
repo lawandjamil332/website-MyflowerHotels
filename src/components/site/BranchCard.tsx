@@ -36,7 +36,7 @@ export function BranchCard({
     <Link
       href={`/${locale}/branches/${branch.slug}`}
       className={cn(
-        'group relative flex aspect-4/5 flex-col justify-end overflow-hidden bg-sand focus-visible:ring-1 focus-visible:ring-ink focus-visible:ring-offset-2',
+        'group relative flex aspect-4/5 flex-col justify-end overflow-hidden rounded-2xl bg-sand focus-visible:ring-1 focus-visible:ring-ink focus-visible:ring-offset-2',
         className,
       )}
     >

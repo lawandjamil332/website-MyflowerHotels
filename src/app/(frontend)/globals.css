@@ -48,24 +48,29 @@
      Plex Sans Arabic per-glyph — the two are designed together, so the
      Kurdish and Arabic versions do not read as an afterthought. */
   --font-sans: 'IBM Plex Sans', 'IBM Plex Sans Arabic', system-ui, sans-serif;
-  /* Headings take the same family as the body, separated by weight rather than
-     by a second typeface. That is how the large groups do it — one voice,
-     stated louder — and it keeps a Kurdish or Arabic headline in exactly the
-     same face as its English counterpart instead of a substituted serif. */
-  --font-display: 'IBM Plex Sans', 'IBM Plex Sans Arabic', system-ui, sans-serif;
+  /* Headings are a high-contrast serif against a sans body — the pairing the
+     reference site actually uses, which an earlier pass here got wrong from
+     memory and replaced with a single sans. The serif carries the Latin;
+     Kurdish and Arabic fall through to Noto Naskh, a serif of the same
+     temperament, so a Kurdish headline reads as considered rather than
+     substituted. */
+  --font-display:
+    'Cormorant Garamond', 'Noto Naskh Arabic', 'IBM Plex Serif', 'IBM Plex Sans Arabic', Georgia,
+    serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* The group palette: deep navy, one working blue, white and a cool grey.
-     Colour here carries information rather than mood — navy is structure,
-     blue is "this is the thing to press", and the greys stay out of the way. */
-  --color-ink: oklch(31% 0.06 250deg);
-  --color-ink-soft: oklch(39% 0.058 250deg);
+  /* Deep navy, near-black, white and a warm greige. The navy is a single
+     saturated tone reserved for things you press and for the footer; it is
+     never body text. Text is near-black, and the second ground is warm rather
+     than cool — a cool grey beside this navy turns the whole page cold. */
+  --color-ink: oklch(21% 0.005 60deg);
+  --color-ink-soft: oklch(32% 0.006 60deg);
   --color-bone: oklch(100% 0 0deg);
-  --color-sand: oklch(96.6% 0.004 250deg);
-  --color-brand: oklch(51% 0.132 250deg);
-  --color-brand-bright: oklch(62% 0.145 248deg);
-  --color-line: oklch(89% 0.006 250deg);
-  --color-muted-ink: oklch(50% 0.018 250deg);
+  --color-sand: oklch(93.8% 0.005 70deg);
+  --color-brand: oklch(29% 0.072 258deg);
+  --color-brand-bright: oklch(37% 0.082 258deg);
+  --color-line: oklch(88% 0.004 70deg);
+  --color-muted-ink: oklch(45% 0.008 60deg);
   /* WhatsApp's own green, held at a weight that sits beside the blue rather
      than shouting over it. Still unmistakably the WhatsApp colour, which is
      the point — guests here recognise it faster than they read any label. */
@@ -117,33 +122,32 @@
 
 :root {
   --background: oklch(100% 0 0deg);
-  --foreground: oklch(31% 0.06 250deg);
+  --foreground: oklch(21% 0.005 60deg);
   --card: oklch(100% 0 0deg);
-  --card-foreground: oklch(31% 0.06 250deg);
+  --card-foreground: oklch(21% 0.005 60deg);
   --popover: oklch(100% 0 0deg);
-  --popover-foreground: oklch(31% 0.06 250deg);
-  --primary: oklch(51% 0.132 250deg);
+  --popover-foreground: oklch(21% 0.005 60deg);
+  --primary: oklch(29% 0.072 258deg);
   --primary-foreground: oklch(100% 0 0deg);
-  --secondary: oklch(96.6% 0.004 250deg);
-  --secondary-foreground: oklch(31% 0.06 250deg);
-  --muted: oklch(96.6% 0.004 250deg);
-  --muted-foreground: oklch(50% 0.018 250deg);
-  --accent: oklch(51% 0.132 250deg);
+  --secondary: oklch(93.8% 0.005 70deg);
+  --secondary-foreground: oklch(21% 0.005 60deg);
+  --muted: oklch(93.8% 0.005 70deg);
+  --muted-foreground: oklch(45% 0.008 60deg);
+  --accent: oklch(29% 0.072 258deg);
   --accent-foreground: oklch(100% 0 0deg);
   --destructive: oklch(57.7% 0.245 27.325deg);
   --destructive-foreground: oklch(57.7% 0.245 27.325deg);
-  --border: oklch(89% 0.006 250deg);
-  --input: oklch(89% 0.006 250deg);
-  --ring: oklch(51% 0.132 250deg);
+  --border: oklch(88% 0.004 70deg);
+  --input: oklch(88% 0.004 70deg);
+  --ring: oklch(29% 0.072 258deg);
   --chart-1: oklch(64.6% 0.222 41.116deg);
   --chart-2: oklch(60% 0.118 184.704deg);
   --chart-3: oklch(39.8% 0.07 227.392deg);
   --chart-4: oklch(82.8% 0.189 84.429deg);
   --chart-5: oklch(76.9% 0.188 70.08deg);
-  /* A small, even radius on every card, field and button. It is the shape the
-     large booking sites all settle on: enough to read as a control you can
-     press, not enough to look playful. */
-  --radius: 0.25rem;
+  /* Generously rounded. Cards sit near 16px and buttons go fully round —
+     the reference site is far softer-edged than the 4px this once used. */
+  --radius: 0.875rem;
   --sidebar: oklch(98.5% 0 0deg);
   --sidebar-foreground: oklch(14.5% 0 0deg);
   --sidebar-primary: oklch(20.5% 0 0deg);
@@ -247,12 +251,14 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Headings are the body face at its heaviest. A bold grotesque sits
-     optically large — the opposite of the serif this replaced — so it wants
-     slightly negative tracking and none of the extra size that face needed. */
+  /* Cormorant is drawn with high stroke contrast and sits optically small, so
+     headings carry a heavier weight and tighter tracking to hold their own
+     against the sans beneath them. Its figures default to old-style, which is
+     lovely in prose and wrong for a price or a check-in time — those are data,
+     and lining figures are what a guest scans. */
   .font-display {
-    font-weight: 700;
-    letter-spacing: -0.02em;
+    font-weight: 600;
+    letter-spacing: -0.012em;
     font-variant-numeric: lining-nums proportional-nums;
   }
 
@@ -286,23 +292,22 @@ html[data-theme='light'] {
 
 @layer components {
   /* Display sizes scale with the viewport rather than stepping at
-     breakpoints. The ceilings are far lower than the serif scale they replace:
-     a bold grotesque at 12rem is a billboard, and the groups this design
-     follows top out nearer 4rem because the headline is there to label the
-     page, not to be the page. */
+     breakpoints. Larger than the sans scale they replace, because Cormorant
+     sits optically small — but well short of the 12rem this once ran to,
+     which was a billboard rather than a headline. */
   .display-hero {
-    font-size: clamp(2.25rem, 5vw, 4.25rem);
-    line-height: 1.08;
+    font-size: clamp(2.75rem, 6.4vw, 5.5rem);
+    line-height: 1.02;
   }
 
   .display-xl {
-    font-size: clamp(1.85rem, 3.2vw, 3rem);
-    line-height: 1.15;
+    font-size: clamp(2.1rem, 4vw, 3.75rem);
+    line-height: 1.08;
   }
 
   .display-lg {
-    font-size: clamp(1.45rem, 2.2vw, 2.1rem);
-    line-height: 1.25;
+    font-size: clamp(1.7rem, 2.8vw, 2.6rem);
+    line-height: 1.18;
   }
 
   /* Arabic and Kurdish sit on a taller body with deep descenders, so every

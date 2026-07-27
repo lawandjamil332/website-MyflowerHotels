@@ -119,7 +119,7 @@ export default async function RoomPage({ params }: Args) {
 
           <aside>
             <Reveal delay={120} className="lg:sticky lg:top-28">
-              <div className="border border-line bg-card p-7 sm:p-8">
+              <div className="border border-line rounded-2xl bg-card p-7 sm:p-8">
                 {price ? (
                   <>
                     <p className="text-[0.6rem] tracking-[0.22em] text-muted-ink uppercase rtl:tracking-normal">
