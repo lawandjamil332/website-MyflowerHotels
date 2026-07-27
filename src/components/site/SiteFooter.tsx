@@ -7,6 +7,7 @@ import type { SiteSettings } from '@/utilities/getSettings'
 import { getBranches } from '@/utilities/branches'
 import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { cn } from '@/utilities/ui'
+import { InstagramMark } from './InstagramMark'
 import { LocaleSwitcher } from './LocaleSwitcher'
 import { Stars } from './Stars'
 import { shell } from './ui'
@@ -34,14 +35,27 @@ export async function SiteFooter({
   const social = settings.social ?? {}
   const branches = await getBranches(locale)
 
+  // There is no group Instagram — there are four, one per hotel, and they are
+  // shown against their own hotels below. The single site-wide account was one
+  // of those four standing in for the group, which sent everyone looking for
+  // My Flower 1 to My Flower 3. It is dropped here once the hotels carry their
+  // own, and still shown when none of them do, so a group account entered in
+  // settings is never silently ignored.
+  const anyBranchInstagram = branches.some((branch) => Boolean(branch.instagram))
+
   const socialLinks = [
     { href: social.facebook, label: 'Facebook' },
-    { href: social.instagram, label: 'Instagram' },
+    { href: anyBranchInstagram ? undefined : social.instagram, label: 'Instagram' },
     { href: social.tiktok, label: 'TikTok' },
     { href: social.youtube, label: 'YouTube' },
   ].filter((s): s is { href: string; label: string } => Boolean(s.href))
 
-  const columnHeading = 'text-[0.65rem] tracking-[0.24em] text-brand uppercase rtl:tracking-normal'
+  // White, not brand. These headings were set in the brand navy on a footer
+  // painted the same brand navy, so "Menu", "Our hotels" and "Contact" were
+  // rendering at one-to-one contrast — present in the markup, read out by
+  // screen readers, and invisible to everyone looking at the page.
+  const columnHeading =
+    'text-[0.65rem] tracking-[0.24em] text-white/70 uppercase rtl:tracking-normal'
   const columnLink =
     'link-line tap-safe text-sm text-white/60 transition-colors duration-500 ease-luxe hover:text-white'
 
@@ -88,17 +102,31 @@ export async function SiteFooter({
             </Link>
           </nav>
 
+          {/* Each hotel keeps its own Instagram, so the account sits beside the
+              hotel it belongs to rather than in a list of its own. Listing the
+              four accounts separately would print all four hotel names twice
+              in one footer, and pairing them here says which is which without
+              a word of explanation. */}
           <nav className="flex flex-col items-start gap-3.5">
             <p className={columnHeading}>{t.nav.branches}</p>
             {branches.length > 0 ? (
               branches.map((branch) => (
-                <Link
-                  key={branch.id}
-                  href={`/${locale}/branches/${branch.slug}`}
-                  className={columnLink}
-                >
-                  {branch.name}
-                </Link>
+                <span key={branch.id} className="flex items-center gap-1">
+                  <Link href={`/${locale}/branches/${branch.slug}`} className={columnLink}>
+                    {branch.name}
+                  </Link>
+                  {branch.instagram && (
+                    <a
+                      href={branch.instagram}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${branch.name} — Instagram`}
+                      className="flex h-8 w-8 items-center justify-center text-white/45 transition-colors duration-500 ease-luxe hover:text-white"
+                    >
+                      <InstagramMark />
+                    </a>
+                  )}
+                </span>
               ))
             ) : (
               <span className="text-sm text-white/60">—</span>
