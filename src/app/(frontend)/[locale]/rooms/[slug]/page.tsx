@@ -159,7 +159,7 @@ export default async function RoomPage({ params }: Args) {
                 {branch && (
                   <Link
                     href={`/${locale}/branches/${branch.slug}`}
-                    className="link-line mt-6 inline-block text-sm text-muted-ink hover:text-ink"
+                    className="link-line tap-safe mt-6 inline-block text-sm text-muted-ink hover:text-ink"
                   >
                     {t.room.backToBranch}
                   </Link>

@@ -79,7 +79,7 @@ export default async function ContactPage({ params }: Args) {
                         <a
                           href={tel}
                           dir="ltr"
-                          className="link-line block w-fit text-ink hover:text-brand"
+                          className="link-line tap-safe block w-fit text-ink hover:text-brand"
                         >
                           {branch.phone}
                         </a>
@@ -88,7 +88,7 @@ export default async function ContactPage({ params }: Args) {
                         <a
                           href={telAlt}
                           dir="ltr"
-                          className="link-line block w-fit text-ink hover:text-brand"
+                          className="link-line tap-safe block w-fit text-ink hover:text-brand"
                         >
                           {branch.phoneAlt}
                         </a>
@@ -96,7 +96,7 @@ export default async function ContactPage({ params }: Args) {
                       {!openingSoon && branch.email && (
                         <a
                           href={`mailto:${branch.email}`}
-                          className="link-line block w-fit text-muted-ink hover:text-ink"
+                          className="link-line tap-safe block w-fit text-muted-ink hover:text-ink"
                         >
                           {branch.email}
                         </a>

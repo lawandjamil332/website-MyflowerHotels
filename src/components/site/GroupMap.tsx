@@ -91,7 +91,7 @@ export function GroupMap({
                   <span className="ps-9 pt-2">
                     <Link
                       href={`/${locale}/branches/${pin.slug}`}
-                      className="text-[0.85rem] font-semibold text-brand underline underline-offset-4"
+                      className="tap-safe text-[0.85rem] font-semibold text-brand underline underline-offset-4"
                     >
                       {t.common.viewDetails}
                     </Link>

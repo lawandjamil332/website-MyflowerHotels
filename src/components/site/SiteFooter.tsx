@@ -43,7 +43,7 @@ export async function SiteFooter({
 
   const columnHeading = 'text-[0.65rem] tracking-[0.24em] text-brand uppercase rtl:tracking-normal'
   const columnLink =
-    'link-line text-sm text-white/60 transition-colors duration-500 ease-luxe hover:text-white'
+    'link-line tap-safe text-sm text-white/60 transition-colors duration-500 ease-luxe hover:text-white'
 
   return (
     <footer className="bg-brand text-white">

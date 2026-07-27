@@ -461,6 +461,30 @@ html[data-theme='light'] {
     }
   }
 
+  /* Widens a small text link's tap area without moving anything.
+     A link set at 14px is about 20px tall, which is under the 24px a touch
+     target is meant to be. Padding would fix the height and drag the animated
+     underline down with it, because that underline is drawn on ::after
+     relative to the padded box — so the hit area is grown on ::before
+     instead, which is invisible, takes part in no layout, and leaves the
+     underline sitting where it belongs.
+
+     32px rather than the 44px of a button: these sit in stacked lists about
+     34px apart, and a 44px target would overlap its neighbour, turning a
+     too-small tap into a wrong-link tap. */
+  .tap-safe {
+    position: relative;
+  }
+
+  .tap-safe::before {
+    content: '';
+    position: absolute;
+    inset-inline: -0.25rem;
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    block-size: 2rem;
+  }
+
   /* Short bar under a heading — the one piece of ornament the design keeps,
      and it is in the brand colour so it doubles as a marker. */
   .rule-brand {

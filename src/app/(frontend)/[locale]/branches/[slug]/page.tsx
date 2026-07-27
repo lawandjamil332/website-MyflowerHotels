@@ -193,7 +193,7 @@ export default async function BranchPage({ params }: Args) {
                 {!openingSoon && branch.email && (
                   <a
                     href={`mailto:${branch.email}`}
-                    className="link-line mt-6 block w-fit text-sm text-muted-ink hover:text-ink"
+                    className="link-line tap-safe mt-6 block w-fit text-sm text-muted-ink hover:text-ink"
                   >
                     {branch.email}
                   </a>
@@ -208,7 +208,7 @@ export default async function BranchPage({ params }: Args) {
                         href={branch.facebook}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="link-line text-muted-ink hover:text-ink"
+                        className="link-line tap-safe text-muted-ink hover:text-ink"
                       >
                         Facebook
                       </a>
@@ -218,7 +218,7 @@ export default async function BranchPage({ params }: Args) {
                         href={branch.instagram}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="link-line text-muted-ink hover:text-ink"
+                        className="link-line tap-safe text-muted-ink hover:text-ink"
                       >
                         Instagram
                       </a>

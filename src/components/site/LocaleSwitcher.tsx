@@ -55,7 +55,13 @@ export function LocaleSwitcher({
               aria-label={localeNames[locale]}
               aria-current={isCurrent ? 'true' : undefined}
               className={cn(
-                'px-1 py-1 transition-colors duration-500 ease-luxe',
+                // A three-character code set at 11px gave a 26x25 tap target,
+                // which is under every touch guideline and a real miss on a
+                // site where switching language is a first action. The type
+                // stays the size it was; only the hit area grows, and it grows
+                // downward because the bar has height to spare and a 320px
+                // screen does not have width to spare.
+                'inline-flex min-h-[44px] items-center justify-center px-2 transition-colors duration-500 ease-luxe',
                 tone === 'light'
                   ? isCurrent
                     ? 'text-white'
