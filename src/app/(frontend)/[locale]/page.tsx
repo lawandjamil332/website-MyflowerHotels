@@ -6,7 +6,7 @@ import type { Metadata } from 'next'
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { countWord, fillCount } from '@/i18n/count'
-import { getBranches, getFeaturedRooms } from '@/utilities/branches'
+import { getBranches, getFeaturedRooms, getOffers } from '@/utilities/branches'
 import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { shippedPhoto } from '@/utilities/shippedPhoto'
@@ -15,6 +15,7 @@ import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { cn } from '@/utilities/ui'
 import { BranchCard } from '@/components/site/BranchCard'
 import { CardRail, RailCard } from '@/components/site/CardRail'
+import { OfferCard } from '@/components/site/OfferCard'
 import { PhotoFrame } from '@/components/site/PhotoFrame'
 import { monogramOf } from '@/utilities/monogram'
 import { Reveal } from '@/components/site/Reveal'
@@ -34,9 +35,10 @@ export default async function HomePage({ params }: Args) {
   const locale = raw as Locale
 
   const t = getDictionary(locale)
-  const [branches, rooms, settings] = await Promise.all([
+  const [branches, rooms, offers, settings] = await Promise.all([
     getBranches(locale),
     getFeaturedRooms(locale, 4),
+    getOffers(locale),
     getSettings(locale),
   ])
 
@@ -195,6 +197,27 @@ export default async function HomePage({ params }: Args) {
             </div>
           )}
         </section>
+
+        {/* Deals, when there are any. With none entered the band does not
+            appear at all rather than standing empty. */}
+        {offers.length > 0 && (
+          <section className="bg-sand">
+            <div className={cn(shell, sectionY)}>
+              <SectionHeading
+                title={t.home.offersTitle}
+                lead={t.home.offersLead}
+                className="mb-12 lg:mb-16"
+              />
+              <CardRail label={t.home.offersTitle}>
+                {offers.map((offer, i) => (
+                  <RailCard key={offer.id}>
+                    <OfferCard offer={offer} locale={locale} t={t} priority={i < 2} />
+                  </RailCard>
+                ))}
+              </CardRail>
+            </div>
+          </section>
+        )}
 
         {/* One line of colour across the page, the way the reference breaks up
             a long scroll without spending another photograph on it. */}

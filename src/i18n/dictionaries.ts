@@ -29,6 +29,9 @@ export type Dictionary = {
     introEyebrow: string
     introTitle: string
     introBody: string
+    offersTitle: string
+    offersEverywhere: string
+    offersLead: string
     assuranceTitle: string
     assurance: Assurance[]
     roomsEyebrow: string
@@ -156,6 +159,9 @@ const en: Dictionary = {
     introTitle: 'A family house, kept for guests',
     introBody:
       'We have looked after travellers in Erbil for years. Every hotel in the group is run the same way: clean, quiet, and close to the centre of the city.',
+    offersTitle: 'Offers and packages',
+    offersEverywhere: 'At every hotel',
+    offersLead: 'Current deals across the group. Ask for one by name when you message us.',
     assuranceTitle: 'Why book with us directly',
     assurance: [
       {
@@ -328,6 +334,9 @@ const ku: Dictionary = {
     introTitle: 'ماڵێکی خێزانی، بۆ میوان',
     introBody:
       'ساڵانێکە لە هەولێر چاودێری گەشتیارەکان دەکەین. هەموو هۆتێلەکانمان بە یەک شێواز بەڕێوە دەبرێن: پاک، ئارام و نزیک لە ناوەندی شار.',
+    offersTitle: 'داشکاندن و پاکێجەکان',
+    offersEverywhere: 'لە هەموو هۆتێلەکاندا',
+    offersLead: 'ئەو ڕێککەوتنانەی ئێستا لە هۆتێلەکاندا هەن. کاتێک پەیوەندیمان پێوە دەکەیت بە ناوی داوای بکە.',
     assuranceTitle: 'بۆچی ڕاستەوخۆ لەگەڵمان جێگە بگریت',
     assurance: [
       {
@@ -499,6 +508,9 @@ const ar: Dictionary = {
     introTitle: 'بيت عائلي، مفتوح للضيوف',
     introBody:
       'نستقبل المسافرين في أربيل منذ سنوات. كل فنادق المجموعة تُدار بالطريقة نفسها: النظافة والهدوء والقرب من قلب المدينة.',
+    offersTitle: 'العروض والباقات',
+    offersEverywhere: 'في جميع الفنادق',
+    offersLead: 'العروض الحالية في مجموعتنا. اذكر اسم العرض عند مراسلتنا.',
     assuranceTitle: 'لماذا تحجز معنا مباشرة',
     assurance: [
       {

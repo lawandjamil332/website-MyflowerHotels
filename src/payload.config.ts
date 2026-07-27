@@ -11,6 +11,7 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Rooms } from './collections/Rooms'
+import { Offers } from './collections/Offers'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Settings } from './globals/Settings/config'
@@ -79,7 +80,7 @@ export default buildConfig({
     defaultLocale: 'en',
     fallback: true,
   },
-  collections: [Branches, Rooms, Enquiries, Pages, Posts, Media, Categories, Users],
+  collections: [Branches, Rooms, Offers, Enquiries, Pages, Posts, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Settings, Header, Footer],
   plugins,

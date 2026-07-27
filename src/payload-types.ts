@@ -69,6 +69,7 @@ export interface Config {
   collections: {
     branches: Branch;
     rooms: Room;
+    offers: Offer;
     enquiries: Enquiry;
     pages: Page;
     posts: Post;
@@ -94,6 +95,7 @@ export interface Config {
   collectionsSelect: {
     branches: BranchesSelect<false> | BranchesSelect<true>;
     rooms: RoomsSelect<false> | RoomsSelect<true>;
+    offers: OffersSelect<false> | OffersSelect<true>;
     enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
@@ -438,6 +440,50 @@ export interface Room {
    * Uncheck to hide this room from the website without deleting it.
    */
   isAvailable?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Deals and packages shown on the homepage — long-stay rates, weekday prices, anything worth putting in front of a guest. Leave this empty and the section does not appear.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "offers".
+ */
+export interface Offer {
+  id: number;
+  /**
+   * Short and concrete — "Stay 3 nights, pay for 2".
+   */
+  title: string;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  /**
+   * Optional. Without one the offer shows as a plain card.
+   */
+  image?: (number | null) | Media;
+  /**
+   * A sentence or two. What the guest gets, and any condition attached.
+   */
+  summary?: string | null;
+  /**
+   * Leave empty if the offer applies at every hotel.
+   */
+  branch?: (number | null) | Branch;
+  /**
+   * Uncheck to take it off the site without deleting it.
+   */
+  isActive?: boolean | null;
+  /**
+   * Optional. After this date the offer disappears from the site on its own. Leave empty if it has no end date.
+   */
+  endsOn?: string | null;
+  /**
+   * Lower numbers come first.
+   */
+  order?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1169,6 +1215,10 @@ export interface PayloadLockedDocument {
         value: number | Room;
       } | null)
     | ({
+        relationTo: 'offers';
+        value: number | Offer;
+      } | null)
+    | ({
         relationTo: 'enquiries';
         value: number | Enquiry;
       } | null)
@@ -1307,6 +1357,23 @@ export interface RoomsSelect<T extends boolean = true> {
   sizeSqm?: T;
   amenities?: T;
   isAvailable?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "offers_select".
+ */
+export interface OffersSelect<T extends boolean = true> {
+  title?: T;
+  generateSlug?: T;
+  slug?: T;
+  image?: T;
+  summary?: T;
+  branch?: T;
+  isActive?: T;
+  endsOn?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }
