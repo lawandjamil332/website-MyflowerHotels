@@ -68,6 +68,7 @@ export function HeaderBar({
   const links = [
     { href: `/${locale}`, label: t.nav.home },
     { href: `/${locale}#collection`, label: t.nav.branches },
+    { href: `/${locale}/rooms`, label: t.nav.rooms },
     { href: `/${locale}/about`, label: t.nav.about },
     { href: `/${locale}/contact`, label: t.nav.contact },
   ]

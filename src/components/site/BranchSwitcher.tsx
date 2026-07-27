@@ -8,7 +8,8 @@ import type { Dictionary } from '@/i18n/dictionaries'
 import type { BranchTeaser } from '@/utilities/teasers'
 import { cn } from '@/utilities/ui'
 import { OpeningMark } from './OpeningMark'
-import { PhotoFrame, monogramOf } from './PhotoFrame'
+import { PhotoFrame } from './PhotoFrame'
+import { monogramOf } from '@/utilities/monogram'
 
 /**
  * The homepage's centrepiece, and the one thing this group has that a

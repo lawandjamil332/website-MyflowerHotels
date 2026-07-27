@@ -1,5 +1,6 @@
 import { cn } from '@/utilities/ui'
-import { PhotoFrame, monogramOf } from './PhotoFrame'
+import { PhotoFrame } from './PhotoFrame'
+import { monogramOf } from '@/utilities/monogram'
 import { shell } from './ui'
 
 /**

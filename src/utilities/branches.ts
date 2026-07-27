@@ -80,6 +80,25 @@ export const getFeaturedRooms = async (locale: Locale, limit = 6): Promise<Room[
   }
 }
 
+/** Every available room across all hotels, for the rooms browser. */
+export const getAllRooms = async (locale: Locale): Promise<Room[]> => {
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const { docs } = await payload.find({
+      collection: 'rooms',
+      locale,
+      depth: 2,
+      limit: 200,
+      sort: 'priceFrom',
+      where: { isAvailable: { not_equals: false } },
+      overrideAccess: false,
+    })
+    return docs
+  } catch {
+    return []
+  }
+}
+
 export const getRoomBySlug = async (slug: string, locale: Locale): Promise<Room | null> => {
   try {
     const payload = await getPayload({ config: configPromise })

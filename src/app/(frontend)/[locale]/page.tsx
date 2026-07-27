@@ -15,10 +15,12 @@ import { shareImage } from '@/utilities/shareImage'
 import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { cn } from '@/utilities/ui'
 import { BranchSwitcher } from '@/components/site/BranchSwitcher'
-import { PhotoFrame, monogramOf } from '@/components/site/PhotoFrame'
+import { PhotoFrame } from '@/components/site/PhotoFrame'
+import { monogramOf } from '@/utilities/monogram'
 import { Reveal } from '@/components/site/Reveal'
 import { RoomFeature } from '@/components/site/RoomFeature'
 import { SectionHeading } from '@/components/site/SectionHeading'
+import { StayFinder } from '@/components/site/StayFinder'
 import { GroupSchema } from '@/components/site/StructuredData'
 import { Stars } from '@/components/site/Stars'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
@@ -134,6 +136,21 @@ export default async function HomePage({ params }: Args) {
 
       {/* Everything below rides over the pinned hero on its own ground. */}
       <div className="relative z-10 bg-bone">
+        {/* Which hotel, which nights, how many — carried into the enquiry
+            rather than checked against availability nobody is holding. */}
+        {branches.length > 0 && (
+          <div className={cn(shell, 'relative -mt-12 lg:-mt-16')}>
+            <StayFinder
+              hotels={branches.map((b) => ({
+                slug: b.slug,
+                name: b.name,
+                openingSoon: b.status === 'openingSoon',
+              }))}
+              locale={locale}
+              t={t}
+            />
+          </div>
+        )}
         {/* The four things a guest here checks first, answered before they
             have to scroll for them. */}
         <section className="bg-ink">

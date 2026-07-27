@@ -72,6 +72,28 @@ export type Dictionary = {
     unavailable: string
   }
   about: { eyebrow: string; lead: string; body1: string; body2: string }
+  search: {
+    title: string
+    hotel: string
+    anyHotel: string
+    arriving: string
+    leaving: string
+    guests: string
+    submit: string
+  }
+  roomsPage: {
+    eyebrow: string
+    title: string
+    lead: string
+    filterHotel: string
+    filterGuests: string
+    filterBed: string
+    any: string
+    apply: string
+    clear: string
+    results: string
+    none: string
+  }
   form: {
     eyebrow: string
     title: string
@@ -197,6 +219,28 @@ const en: Dictionary = {
       'We opened our first hotel in Erbil to look after the travellers who come here for work, for family, and for the city itself. Others followed, each in a different part of town, each run the same way.',
     body2:
       'We are not a chain. The same people who own these hotels are the ones you will meet at the desk. If something is not right during your stay, tell us and it is put right that day.',
+  },
+  search: {
+    title: 'Plan your stay',
+    hotel: 'Hotel',
+    anyHotel: 'Any hotel',
+    arriving: 'Arriving',
+    leaving: 'Leaving',
+    guests: 'Guests',
+    submit: 'Check availability',
+  },
+  roomsPage: {
+    eyebrow: 'Rooms & suites',
+    title: 'Every room we have',
+    lead: 'Filter by hotel, by how many of you there are, or by the bed you want.',
+    filterHotel: 'Hotel',
+    filterGuests: 'Guests',
+    filterBed: 'Bed',
+    any: 'Any',
+    apply: 'Show rooms',
+    clear: 'Clear',
+    results: 'rooms',
+    none: 'No rooms match that. Try widening the filters, or message us and we will find something.',
   },
   form: {
     eyebrow: 'Reservation enquiry',
@@ -346,6 +390,28 @@ const ku: Dictionary = {
     body2:
       'ئێمە زنجیرەیەک نین. هەمان ئەو کەسانەی خاوەنی ئەم هۆتێلانەن، ئەوانەن کە لە پێشوازی دەیانبینیت. ئەگەر شتێک لە کاتی مانەوەکەتدا ڕێک نەبوو، پێمان بڵێ و هەر ئەو ڕۆژە چاک دەکرێتەوە.',
   },
+  search: {
+    title: 'مانەوەکەت پلان بکە',
+    hotel: 'هۆتێل',
+    anyHotel: 'هەر هۆتێلێک',
+    arriving: 'گەیشتن',
+    leaving: 'ڕۆیشتن',
+    guests: 'میوان',
+    submit: 'بەردەستبوون ببینە',
+  },
+  roomsPage: {
+    eyebrow: 'ژوور و سویتەکان',
+    title: 'هەموو ژوورەکانمان',
+    lead: 'بەپێی هۆتێل، ژمارەی میوان، یان جۆری جێگا پاڵێو بکە.',
+    filterHotel: 'هۆتێل',
+    filterGuests: 'میوان',
+    filterBed: 'جێگا',
+    any: 'هەموو',
+    apply: 'ژوورەکان پیشان بدە',
+    clear: 'سڕینەوە',
+    results: 'ژوور',
+    none: 'هیچ ژوورێک نەدۆزرایەوە. پاڵاوتنەکان فراوانتر بکە، یان نامەمان بۆ بنێرە و شتێکت بۆ دەدۆزینەوە.',
+  },
   form: {
     eyebrow: 'داواکاری حیجز',
     title: 'دەربارەی مانەوە بپرسە',
@@ -493,6 +559,28 @@ const ar: Dictionary = {
       'افتتحنا فندقنا الأول في أربيل لاستقبال المسافرين القادمين للعمل أو لزيارة الأهل أو لرؤية المدينة نفسها. ثم تبعته فنادق أخرى، كل واحد في حيّ مختلف، وكلها تُدار بالطريقة نفسها.',
     body2:
       'نحن لسنا سلسلة فنادق. أصحاب هذه الفنادق هم أنفسهم من ستقابلهم عند الاستقبال. وإذا لم يكن شيء على ما يرام أثناء إقامتك، أخبرنا ويُعالَج في اليوم نفسه.',
+  },
+  search: {
+    title: 'خطط لإقامتك',
+    hotel: 'الفندق',
+    anyHotel: 'أي فندق',
+    arriving: 'الوصول',
+    leaving: 'المغادرة',
+    guests: 'عدد الضيوف',
+    submit: 'تحقق من التوفر',
+  },
+  roomsPage: {
+    eyebrow: 'الغرف والأجنحة',
+    title: 'كل غرفنا',
+    lead: 'صفِّ حسب الفندق أو عدد الضيوف أو نوع السرير.',
+    filterHotel: 'الفندق',
+    filterGuests: 'عدد الضيوف',
+    filterBed: 'السرير',
+    any: 'الكل',
+    apply: 'اعرض الغرف',
+    clear: 'مسح',
+    results: 'غرفة',
+    none: 'لا توجد غرف مطابقة. وسّع خيارات التصفية، أو راسلنا وسنجد لك ما يناسبك.',
   },
   form: {
     eyebrow: 'طلب حجز',

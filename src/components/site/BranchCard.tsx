@@ -7,7 +7,8 @@ import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { cn } from '@/utilities/ui'
 import { branchLocative } from '@/utilities/teasers'
 import { OpeningMark, isOpeningSoon, openingLabel } from './OpeningMark'
-import { PhotoFrame, monogramOf } from './PhotoFrame'
+import { PhotoFrame } from './PhotoFrame'
+import { monogramOf } from '@/utilities/monogram'
 
 /**
  * A single hotel as a photographic panel. Used where the full switcher would

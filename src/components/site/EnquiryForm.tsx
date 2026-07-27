@@ -1,5 +1,6 @@
 'use client'
 
+import { useSearchParams } from 'next/navigation'
 import { useActionState } from 'react'
 import { useFormStatus } from 'react-dom'
 
@@ -47,9 +48,19 @@ export function EnquiryForm({
     status: 'idle',
   })
 
+  // Dates and party size chosen in the search bar on the homepage arrive as
+  // query parameters. Carrying them in means the guest types them once, not
+  // twice — the whole point of asking on the first screen.
+  const search = useSearchParams()
+  const prefill = {
+    checkIn: search?.get('checkIn') ?? '',
+    checkOut: search?.get('checkOut') ?? '',
+    guests: search?.get('guests') ?? '',
+  }
+
   if (state.status === 'success') {
     return (
-      <div className={cn('border border-brass/40 bg-card p-8 sm:p-10', className)}>
+      <div id="enquire" className={cn('border border-brass/40 bg-card p-8 sm:p-10', className)}>
         <p className="eyebrow">{t.form.eyebrow}</p>
         <p className="font-display mt-5 text-3xl text-ink">{t.form.successTitle}</p>
         <p className="mt-4 max-w-md leading-relaxed text-muted-ink">{t.form.successBody}</p>
@@ -60,7 +71,11 @@ export function EnquiryForm({
   const invalid = (name: string) => state.fields?.includes(name)
 
   return (
-    <form action={action} className={cn('border border-line bg-card p-8 sm:p-10', className)}>
+    <form
+      id="enquire"
+      action={action}
+      className={cn('scroll-mt-28 border border-line bg-card p-8 sm:p-10', className)}
+    >
       <p className="eyebrow">{t.form.eyebrow}</p>
       <h2 className="font-display display-lg mt-5 text-ink">{t.form.title}</h2>
       <p className="mt-4 max-w-md leading-relaxed text-muted-ink">{t.form.lead}</p>
@@ -124,14 +139,28 @@ export function EnquiryForm({
           <label className={label} htmlFor="enq-in">
             {t.form.checkIn}
           </label>
-          <input id="enq-in" name="checkIn" type="date" dir="ltr" className={field} />
+          <input
+            id="enq-in"
+            name="checkIn"
+            type="date"
+            dir="ltr"
+            defaultValue={prefill.checkIn}
+            className={field}
+          />
         </div>
 
         <div>
           <label className={label} htmlFor="enq-out">
             {t.form.checkOut}
           </label>
-          <input id="enq-out" name="checkOut" type="date" dir="ltr" className={field} />
+          <input
+            id="enq-out"
+            name="checkOut"
+            type="date"
+            dir="ltr"
+            defaultValue={prefill.checkOut}
+            className={field}
+          />
         </div>
 
         <div className="sm:col-span-2">
@@ -145,6 +174,7 @@ export function EnquiryForm({
             min={1}
             max={20}
             dir="ltr"
+            defaultValue={prefill.guests}
             className={cn(field, 'sm:max-w-32')}
           />
         </div>

@@ -6,7 +6,8 @@ import type { Dictionary } from '@/i18n/dictionaries'
 import { mediaUrl, mediaAlt } from '@/utilities/media'
 import { formatNumber, formatPrice } from '@/utilities/format'
 import { cn } from '@/utilities/ui'
-import { PhotoFrame, monogramOf } from './PhotoFrame'
+import { PhotoFrame } from './PhotoFrame'
+import { monogramOf } from '@/utilities/monogram'
 
 /**
  * A room given a full editorial row rather than a cell in a grid.
