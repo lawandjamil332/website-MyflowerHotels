@@ -108,10 +108,7 @@ export default async function HomePage({ params }: Args) {
             {count(t.home.heroLead)}
           </p>
 
-          <div
-            className="rise mt-7 flex flex-wrap gap-3"
-            style={{ animationDelay: '0.5s' }}
-          >
+          <div className="rise mt-7 flex flex-wrap gap-3" style={{ animationDelay: '0.5s' }}>
             <Link href="#collection" className={btnLight}>
               {t.home.exploreCollection}
             </Link>
@@ -141,22 +138,40 @@ export default async function HomePage({ params }: Args) {
             />
           </div>
         )}
-        {/* The four facts a guest checks first, before they scroll for them. */}
+        {/* The facts a guest checks first, before they scroll for them. The
+            guest count sits next to the founding year on purpose: a large
+            number means little on its own, and "since 2012" is what turns it
+            from a boast into a rate. */}
         <section className="bg-ink">
-          <ul className={cn(shell, 'grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4 lg:py-20')}>
+          <ul
+            className={cn(
+              shell,
+              'grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-3 lg:py-20 xl:grid-cols-5',
+            )}
+          >
             {[
-              { value: countWord(n, locale), label: t.home.creditHotels },
-              { value: settings.establishedYear ? String(settings.establishedYear) : '\u2014', label: t.home.creditSince },
+              // Dropped rather than shown as zero when the branch query comes
+              // back empty: "0 hotels in Erbil" is worse than saying nothing.
+              n > 0 ? { value: countWord(n, locale), label: t.home.creditHotels } : null,
+              settings.establishedYear
+                ? { value: String(settings.establishedYear), label: t.home.creditSince }
+                : null,
+              { value: t.home.creditGuestsValue, label: t.home.creditGuests },
               { value: settings.stars ?? '4', label: t.home.creditStars },
               { value: t.branch.anyTime, label: t.home.creditReception },
-            ].map((credit, i) => (
-              <Reveal key={credit.label} delay={i * 90} className="text-center">
-                <p className="font-display text-hero text-5xl leading-none sm:text-6xl">
-                  {credit.value}
-                </p>
-                <p className="mt-4 text-[0.95rem] text-white/70">{credit.label}</p>
-              </Reveal>
-            ))}
+            ]
+              .filter((c): c is { value: string; label: string } => c !== null)
+              .map((credit, i) => (
+                <Reveal key={credit.label} delay={i * 90} className="text-center">
+                  {/* Sized down from the four-item version: "1.5 million+" is
+                    three times the width of "4", and at the old size it broke
+                    its column before it broke the line. */}
+                  <p className="font-display text-hero text-4xl leading-tight text-balance sm:text-5xl">
+                    {credit.value}
+                  </p>
+                  <p className="mt-3 text-[0.95rem] text-white/70">{credit.label}</p>
+                </Reveal>
+              ))}
           </ul>
         </section>
 
@@ -282,9 +297,7 @@ export default async function HomePage({ params }: Args) {
 
           <div className={cn(shell, 'relative py-20 text-center sm:py-24')}>
             <Reveal className="mx-auto max-w-2xl">
-              <h2 className="font-display display-lg text-balance text-white">
-                {t.home.ctaTitle}
-              </h2>
+              <h2 className="font-display display-lg text-balance text-white">{t.home.ctaTitle}</h2>
               <p className="mx-auto mt-5 max-w-lg text-[1.05rem] leading-relaxed text-white/85 sm:text-[1.15rem]">
                 {t.home.ctaLead}
               </p>

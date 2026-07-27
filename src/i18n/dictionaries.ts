@@ -21,6 +21,8 @@ export type Dictionary = {
     collectionEyebrow: string
     chooseBranch: string
     interlude: string
+    creditGuestsValue: string
+    creditGuests: string
     creditHotels: string
     creditSince: string
     creditStars: string
@@ -151,6 +153,8 @@ const en: Dictionary = {
     chooseBranch: '{count} hotels in Erbil',
     chooseBranchLead: 'Choose the one that suits your stay.',
     interlude: '{count} addresses in one city.',
+    creditGuestsValue: '1.5 million+',
+    creditGuests: 'Guests welcomed',
     creditHotels: 'Hotels in Erbil',
     creditSince: 'Welcoming guests since',
     creditStars: 'Star rating',
@@ -326,6 +330,8 @@ const ku: Dictionary = {
     chooseBranch: '{count} هۆتێل لە هەولێر',
     chooseBranchLead: 'ئەوەی گونجاوە بۆ مانەوەت هەڵبژێرە.',
     interlude: '{count} ناونیشان لە یەک شاردا.',
+    creditGuestsValue: '+1.5 ملیۆن',
+    creditGuests: 'میوان پێشوازیمان لێکردوون',
     creditHotels: 'هۆتێل لە هەولێر',
     creditSince: 'پێشوازی لە میوان لە',
     creditStars: 'پلەی ئەستێرە',
@@ -500,6 +506,8 @@ const ar: Dictionary = {
     chooseBranch: '{count} فنادق في أربيل',
     chooseBranchLead: 'اختر ما يناسب إقامتك.',
     interlude: '{count} عناوين في مدينة واحدة.',
+    creditGuestsValue: '+1.5 مليون',
+    creditGuests: 'ضيف استقبلناهم',
     creditHotels: 'فنادق في أربيل',
     creditSince: 'نستقبل الضيوف منذ',
     creditStars: 'تصنيف النجوم',

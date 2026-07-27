@@ -25,9 +25,17 @@ const words: Record<Locale, string[]> = {
   ],
 }
 
-/** Spelled-out number, falling back to the digit past ten. */
+/**
+ * Spelled-out number, falling back to the digit past ten.
+ *
+ * `||` rather than `??` on purpose. Index 0 holds an empty string, which is
+ * not nullish, so `??` handed that empty string straight through — and zero is
+ * exactly what this returns when the database is briefly unreachable and the
+ * branch query comes back empty. The homepage then rendered a blank number
+ * over its label and a hero reading " hotels, one standard of hospitality".
+ */
 export const countWord = (n: number, locale: Locale): string =>
-  words[locale]?.[n] ?? String(n)
+  words[locale]?.[n] || String(n)
 
 export const fillCount = (template: string, n: number, locale: Locale): string =>
   template.replace('{count}', countWord(n, locale))
