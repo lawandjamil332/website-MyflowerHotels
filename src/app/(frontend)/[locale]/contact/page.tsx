@@ -51,7 +51,7 @@ export default async function ContactPage({ params }: Args) {
                 <Reveal as="li" key={branch.id} delay={(i % 3) * 100}>
                   <div className="grid gap-8 border-b border-line py-12 lg:grid-cols-[0.5fr_1fr_0.8fr] lg:gap-12 lg:py-14">
                     <div>
-                      <span className="text-xs tracking-[0.2em] tabular-nums text-brass">
+                      <span className="text-xs tracking-[0.2em] tabular-nums text-brand">
                         {String(i + 1).padStart(2, '0')}
                       </span>
                       <h2 className="font-display mt-3 text-3xl leading-tight text-ink">
@@ -80,7 +80,7 @@ export default async function ContactPage({ params }: Args) {
                         <a
                           href={tel}
                           dir="ltr"
-                          className="link-line block w-fit text-ink hover:text-brass"
+                          className="link-line block w-fit text-ink hover:text-brand"
                         >
                           {branch.phone}
                         </a>
@@ -89,7 +89,7 @@ export default async function ContactPage({ params }: Args) {
                         <a
                           href={telAlt}
                           dir="ltr"
-                          className="link-line block w-fit text-ink hover:text-brass"
+                          className="link-line block w-fit text-ink hover:text-brand"
                         >
                           {branch.phoneAlt}
                         </a>

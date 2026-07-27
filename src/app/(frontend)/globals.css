@@ -48,38 +48,31 @@
      Plex Sans Arabic per-glyph — the two are designed together, so the
      Kurdish and Arabic versions do not read as an afterthought. */
   --font-sans: 'IBM Plex Sans', 'IBM Plex Sans Arabic', system-ui, sans-serif;
-  /* Headings. Cormorant carries the Latin at large sizes; Arabic and Kurdish
-     fall through to Noto Naskh Arabic, a serif of the same temperament, so a
-     Kurdish headline reads as considered rather than substituted. */
-  --font-display:
-    'Cormorant Garamond', 'Noto Naskh Arabic', 'IBM Plex Serif', 'IBM Plex Sans Arabic', Georgia,
-    serif;
+  /* Headings take the same family as the body, separated by weight rather than
+     by a second typeface. That is how the large groups do it — one voice,
+     stated louder — and it keeps a Kurdish or Arabic headline in exactly the
+     same face as its English counterpart instead of a substituted serif. */
+  --font-display: 'IBM Plex Sans', 'IBM Plex Sans Arabic', system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* The hotel palette. Warm near-black, warm off-white, one metallic accent —
-     nothing else, so the photography supplies all the colour. */
-  --color-ink: oklch(18.5% 0.007 65deg);
-  --color-ink-soft: oklch(27% 0.008 65deg);
-  --color-bone: oklch(97.2% 0.008 85deg);
-  --color-sand: oklch(93.4% 0.012 82deg);
-  --color-brass: oklch(69% 0.082 78deg);
-  --color-brass-bright: oklch(80% 0.09 80deg);
-  --color-line: oklch(87% 0.009 80deg);
-  --color-muted-ink: oklch(48% 0.01 70deg);
-  /* WhatsApp's own green, darkened until it belongs beside the ink and brass.
-     Still unmistakably the WhatsApp colour, which is the point — guests here
-     recognise it faster than they read any label. */
+  /* The group palette: deep navy, one working blue, white and a cool grey.
+     Colour here carries information rather than mood — navy is structure,
+     blue is "this is the thing to press", and the greys stay out of the way. */
+  --color-ink: oklch(31% 0.06 250deg);
+  --color-ink-soft: oklch(39% 0.058 250deg);
+  --color-bone: oklch(100% 0 0deg);
+  --color-sand: oklch(96.6% 0.004 250deg);
+  --color-brand: oklch(51% 0.132 250deg);
+  --color-brand-bright: oklch(62% 0.145 248deg);
+  --color-line: oklch(89% 0.006 250deg);
+  --color-muted-ink: oklch(50% 0.018 250deg);
+  /* WhatsApp's own green, held at a weight that sits beside the blue rather
+     than shouting over it. Still unmistakably the WhatsApp colour, which is
+     the point — guests here recognise it faster than they read any label. */
   --color-whatsapp: oklch(56% 0.115 152deg);
 
-  /* Real gold is never one flat colour — it is a gradient with a highlight
-     running through it. Three stops give a rule or a letterform something to
-     catch the light on, which is the difference between "brown" and "gilt". */
-  --color-gold-deep: oklch(58% 0.085 72deg);
-  --color-gold: oklch(76% 0.105 82deg);
-  --color-gold-light: oklch(91% 0.06 88deg);
-
-  /* Long, decelerating easing. Every transition on the site uses it, which is
-     most of what separates an expensive-feeling page from a twitchy one. */
+  /* Long, decelerating easing, kept from the previous design because it costs
+     nothing and a page that settles rather than snaps still reads better. */
   --ease-luxe: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -123,33 +116,34 @@
 }
 
 :root {
-  --background: oklch(97.2% 0.008 85deg);
-  --foreground: oklch(18.5% 0.007 65deg);
-  --card: oklch(99% 0.004 85deg);
-  --card-foreground: oklch(18.5% 0.007 65deg);
-  --popover: oklch(99% 0.004 85deg);
-  --popover-foreground: oklch(18.5% 0.007 65deg);
-  --primary: oklch(18.5% 0.007 65deg);
-  --primary-foreground: oklch(97.2% 0.008 85deg);
-  --secondary: oklch(93.4% 0.012 82deg);
-  --secondary-foreground: oklch(18.5% 0.007 65deg);
-  --muted: oklch(93.4% 0.012 82deg);
-  --muted-foreground: oklch(48% 0.01 70deg);
-  --accent: oklch(69% 0.082 78deg);
-  --accent-foreground: oklch(18.5% 0.007 65deg);
+  --background: oklch(100% 0 0deg);
+  --foreground: oklch(31% 0.06 250deg);
+  --card: oklch(100% 0 0deg);
+  --card-foreground: oklch(31% 0.06 250deg);
+  --popover: oklch(100% 0 0deg);
+  --popover-foreground: oklch(31% 0.06 250deg);
+  --primary: oklch(51% 0.132 250deg);
+  --primary-foreground: oklch(100% 0 0deg);
+  --secondary: oklch(96.6% 0.004 250deg);
+  --secondary-foreground: oklch(31% 0.06 250deg);
+  --muted: oklch(96.6% 0.004 250deg);
+  --muted-foreground: oklch(50% 0.018 250deg);
+  --accent: oklch(51% 0.132 250deg);
+  --accent-foreground: oklch(100% 0 0deg);
   --destructive: oklch(57.7% 0.245 27.325deg);
   --destructive-foreground: oklch(57.7% 0.245 27.325deg);
-  --border: oklch(87% 0.009 80deg);
-  --input: oklch(87% 0.009 80deg);
-  --ring: oklch(69% 0.082 78deg);
+  --border: oklch(89% 0.006 250deg);
+  --input: oklch(89% 0.006 250deg);
+  --ring: oklch(51% 0.132 250deg);
   --chart-1: oklch(64.6% 0.222 41.116deg);
   --chart-2: oklch(60% 0.118 184.704deg);
   --chart-3: oklch(39.8% 0.07 227.392deg);
   --chart-4: oklch(82.8% 0.189 84.429deg);
   --chart-5: oklch(76.9% 0.188 70.08deg);
-  /* Near-square. Rounded corners read as software; hotels of this class use
-     sharp edges and let the photograph be the shape. */
-  --radius: 0.125rem;
+  /* A small, even radius on every card, field and button. It is the shape the
+     large booking sites all settle on: enough to read as a control you can
+     press, not enough to look playful. */
+  --radius: 0.25rem;
   --sidebar: oklch(98.5% 0 0deg);
   --sidebar-foreground: oklch(14.5% 0 0deg);
   --sidebar-primary: oklch(20.5% 0 0deg);
@@ -253,26 +247,24 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Cormorant is drawn with high stroke contrast and sits optically small, so
-     headings get a little extra size and tighter tracking to compensate.
-     Its figures default to old-style, which is lovely in running prose and
-     wrong for a price or a check-in time — those are data, and lining figures
-     are what a guest scans. */
+  /* Headings are the body face at its heaviest. A bold grotesque sits
+     optically large — the opposite of the serif this replaced — so it wants
+     slightly negative tracking and none of the extra size that face needed. */
   .font-display {
-    letter-spacing: -0.015em;
+    font-weight: 700;
+    letter-spacing: -0.02em;
     font-variant-numeric: lining-nums proportional-nums;
   }
 
-  /* Arabic and Kurdish are set in a Naskh face whose letterforms already sit
-     wide; negative tracking would collide the joins. */
+  /* Arabic and Kurdish letters join; tracking them apart breaks the word. */
   [dir='rtl'] .font-display {
     letter-spacing: 0;
-    line-height: 1.45;
+    line-height: 1.4;
   }
 
   ::selection {
-    background: var(--color-brass);
-    color: var(--color-ink);
+    background: var(--color-brand);
+    color: oklch(100% 0 0deg);
   }
 }
 
@@ -294,87 +286,37 @@ html[data-theme='light'] {
 
 @layer components {
   /* Display sizes scale with the viewport rather than stepping at
-     breakpoints, so a headline is as large as the screen can carry at every
-     width in between. Leading is set below 1 at the top of the scale —
-     Cormorant's capitals are short, and normal leading leaves a hole under a
-     two-line headline. */
+     breakpoints. The ceilings are far lower than the serif scale they replace:
+     a bold grotesque at 12rem is a billboard, and the groups this design
+     follows top out nearer 4rem because the headline is there to label the
+     page, not to be the page. */
   .display-hero {
-    font-size: clamp(3rem, 8.6vw, 12rem);
-    line-height: 0.94;
+    font-size: clamp(2.25rem, 5vw, 4.25rem);
+    line-height: 1.08;
   }
 
   .display-xl {
-    font-size: clamp(2.5rem, 5vw, 6.5rem);
-    line-height: 1.02;
+    font-size: clamp(1.85rem, 3.2vw, 3rem);
+    line-height: 1.15;
   }
 
   .display-lg {
-    font-size: clamp(1.9rem, 3.4vw, 4.5rem);
-    line-height: 1.1;
+    font-size: clamp(1.45rem, 2.2vw, 2.1rem);
+    line-height: 1.25;
   }
 
-  /* Naskh sets on a taller body with deep descenders; the tight Latin
-     leading above would collide the lines. */
+  /* Arabic and Kurdish sit on a taller body with deep descenders, so every
+     size gets a little more room between lines. */
   [dir='rtl'] .display-hero {
-    line-height: 1.22;
-  }
-
-  [dir='rtl'] .display-xl {
     line-height: 1.3;
   }
 
+  [dir='rtl'] .display-xl {
+    line-height: 1.35;
+  }
+
   [dir='rtl'] .display-lg {
-    line-height: 1.4;
-  }
-
-  /* Opening curtain. Driven entirely by CSS so a failed or slow hydration
-     can never leave a guest staring at a covered page — the animation lifts
-     it either way. An inline script in <head> marks repeat visits within the
-     session so it plays once, not on every navigation. */
-  .overture {
-    position: fixed;
-    inset: 0;
-    z-index: 90;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--color-ink);
-    animation: overture-lift 1.5s var(--ease-luxe) 0.35s forwards;
-  }
-
-  .overture-mark {
-    color: var(--color-bone);
-    opacity: 0;
-    animation: overture-mark 1.1s var(--ease-luxe) 0.1s forwards;
-  }
-
-  @keyframes overture-mark {
-    0% {
-      opacity: 0;
-      transform: translateY(0.75rem);
-    }
-    45% {
-      opacity: 1;
-      transform: none;
-    }
-    100% {
-      opacity: 0;
-      transform: none;
-    }
-  }
-
-  @keyframes overture-lift {
-    to {
-      transform: translateY(-101%);
-      visibility: hidden;
-    }
-  }
-
-  /* No curtain without scripting (it would never have been marked as seen),
-     for repeat views in the same session, or when motion is unwelcome. */
-  html:not(.js) .overture,
-  html.overture-seen .overture {
-    display: none;
+    line-height: 1.45;
   }
 
   /* Staggered entrance for the hero's lines. Pure CSS, so it runs on the
@@ -395,85 +337,42 @@ html[data-theme='light'] {
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .overture {
-      display: none;
-    }
-
     .rise {
       animation: none;
     }
   }
 
-  /* Gilded type. The highlight sits slightly off-centre and drifts, so a
-     headline reads as metal rather than as yellow text. */
-  .text-gilt {
-    background: linear-gradient(
-      100deg,
-      var(--color-gold-deep) 0%,
-      var(--color-gold) 22%,
-      var(--color-gold-light) 42%,
-      var(--color-gold) 62%,
-      var(--color-gold-deep) 100%
-    );
-    background-size: 220% 100%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    animation: gilt-drift 9s ease-in-out infinite;
+  /* Type set over a photograph. Plain white, because the whole point of this
+     palette is that nothing competes with the blue that means "press here" —
+     a headline that shimmers would be the loudest thing on the page and the
+     least useful. */
+  .text-hero {
+    color: oklch(100% 0 0deg);
   }
 
-  @keyframes gilt-drift {
-    0%,
-    100% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-  }
-
-  /* A drawn rule with the same metal in it. */
-  .rule-gilt {
-    block-size: 1px;
-    background: linear-gradient(
-      to right,
-      transparent,
-      var(--color-gold) 20%,
-      var(--color-gold-light) 50%,
-      var(--color-gold) 80%,
-      transparent
-    );
-  }
-
-  /* Warmth behind the hero's type, so the words sit in a pool of light rather
-     than on top of a photograph. */
+  /* Keeps the words legible wherever the photograph happens to be bright,
+     without darkening the whole image. */
   .hero-glow {
     background: radial-gradient(
-      60% 55% at 20% 78%,
-      oklch(58% 0.085 72deg / 0.28) 0%,
-      transparent 70%
+      70% 60% at 22% 80%,
+      oklch(28% 0.055 250deg / 0.55) 0%,
+      transparent 72%
     );
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .text-gilt {
-      animation: none;
-    }
-  }
-
-  /* Small uppercase label above a heading. Used everywhere a section needs
-     naming without a second competing headline. */
+  /* Small uppercase label above a heading. Short tracking and real weight:
+     this is a signpost to be scanned, not a decorative line of capitals. */
   .eyebrow {
-    font-size: 0.6875rem;
-    font-weight: 500;
-    letter-spacing: 0.28em;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
     text-transform: uppercase;
     line-height: 1;
-    color: var(--color-brass);
+    color: var(--color-brand);
   }
 
   [dir='rtl'] .eyebrow {
-    letter-spacing: 0.12em;
+    letter-spacing: 0;
   }
 
   /* Underline that grows from the leading edge — mirrors automatically in RTL
@@ -557,10 +456,11 @@ html[data-theme='light'] {
     }
   }
 
-  /* Hairline that reads as a drawn rule rather than a border. */
-  .rule-brass {
+  /* Short bar under a heading — the one piece of ornament the design keeps,
+     and it is in the brand colour so it doubles as a marker. */
+  .rule-brand {
     inline-size: 3rem;
-    block-size: 1px;
-    background: var(--color-brass);
+    block-size: 3px;
+    background: var(--color-brand-bright);
   }
 }

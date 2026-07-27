@@ -64,31 +64,18 @@ export default async function LocaleLayout({ children, params }: Args) {
             every section renders visible instead of staying blank. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `document.documentElement.classList.add('js');try{if(sessionStorage.getItem('overture'))document.documentElement.classList.add('overture-seen');else sessionStorage.setItem('overture','1')}catch(e){}`,
+            __html: `document.documentElement.classList.add('js')`,
           }}
         />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
         <link href="/favicon-32.png" rel="icon" type="image/png" sizes="32x32" />
         <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
-        <meta name="theme-color" content="#1a1714" />
+        <meta name="theme-color" content="#0f3a5e" />
       </head>
       <body className="bg-bone text-ink antialiased">
-        {/* Lifts off the page on the first view of a session. Marked
-            aria-hidden because it is scenery — the page beneath it is already
-            complete and readable to a screen reader. */}
-        <div className="overture" aria-hidden="true">
-          <span className="overture-mark block">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/logo-light.png"
-              alt=""
-              width={228}
-              height={147}
-              className="h-20 w-auto object-contain sm:h-28"
-            />
-          </span>
-        </div>
-
+        {/* The opening curtain that used to sit here is gone with the rest of
+            the editorial treatment. A guest checking a room rate does not want
+            to be shown a title sequence first, and no group site has one. */}
         <Providers>
           <AdminBar adminBarProps={{ preview: isEnabled }} />
 

@@ -6,9 +6,11 @@ import { shell } from './ui'
 /**
  * The opening band of every page that is not the homepage.
  *
- * It is always dark — either a photograph or flat ink — because the header
- * floats over it in its transparent state. A page that started on a light
- * background would put white navigation on white.
+ * Kept short on purpose. An interior page is somewhere a guest has already
+ * chosen to go, so the picture is a label for it rather than a view to stop
+ * and take in — and every pixel it occupies is a pixel of the room rates
+ * pushed below the fold. Capped in rem as well as vh so a tall monitor gets a
+ * band rather than a wall.
  */
 export function PageHero({
   eyebrow,
@@ -33,7 +35,9 @@ export function PageHero({
     <section
       className={cn(
         'relative flex items-end overflow-hidden bg-ink',
-        size === 'tall' ? 'min-h-[72vh] sm:min-h-[82vh]' : 'min-h-[52vh] sm:min-h-[60vh]',
+        size === 'tall'
+          ? 'h-[52svh] max-h-[28rem] min-h-[19rem]'
+          : 'h-[38svh] max-h-[22rem] min-h-[15rem]',
       )}
     >
       <PhotoFrame
@@ -44,7 +48,7 @@ export function PageHero({
         fallbackSrc={fallbackSrc}
         priority
         tone="ink"
-        imageClassName="ken-burns object-[center_26%]"
+        imageClassName="object-[center_26%]"
       />
       {imageUrl ? (
         <div
@@ -53,21 +57,23 @@ export function PageHero({
         />
       ) : null}
 
-      <div className={cn(shell, 'relative pt-36 pb-16 sm:pb-20')}>
+      <div className={cn(shell, 'relative pt-24 pb-10 sm:pb-12')}>
+        {/* The eyebrow is brand blue by default, which is a mid tone and
+            illegible over a photograph — on dark it goes white. */}
         {eyebrow && (
-          <p className="eyebrow rise" style={{ animationDelay: '0.15s' }}>
+          <p className="eyebrow rise text-white" style={{ animationDelay: '0.15s' }}>
             {eyebrow}
           </p>
         )}
         <h1
-          className="font-display display-xl rise mt-6 max-w-4xl text-balance text-white"
+          className="font-display display-xl rise mt-3 max-w-4xl text-balance text-white"
           style={{ animationDelay: '0.28s' }}
         >
           {title}
         </h1>
         {lead && (
           <p
-            className="rise mt-7 max-w-xl text-lg leading-relaxed text-white/75 xl:max-w-2xl xl:text-xl"
+            className="rise mt-3 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg"
             style={{ animationDelay: '0.42s' }}
           >
             {lead}

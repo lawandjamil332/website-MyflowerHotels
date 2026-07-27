@@ -67,10 +67,11 @@ export default async function HomePage({ params }: Args) {
         phone={settings.phone}
         establishedYear={settings.establishedYear}
       />
-      {/* The hero stays put while the page slides up over it. A pure-CSS
-          parallax: no scroll listener, no jank, and it gives the opening the
-          weight of a title card rather than a banner. */}
-      <section className="sticky top-0 flex h-svh items-end overflow-hidden bg-ink">
+      {/* A banner, not a title card. It is deliberately short: the search box
+          below it is the most useful thing on this page, and a hero that fills
+          the screen pushes the one control a guest came to use below the fold.
+          Capped in rem as well as vh so it stays a band on a tall monitor. */}
+      <section className="relative flex h-[62svh] max-h-[34rem] min-h-[22rem] items-end overflow-hidden bg-ink">
         <PhotoFrame
           src={heroUrl}
           alt={mediaAlt(heroBranch?.heroImage) || siteName}
@@ -79,36 +80,35 @@ export default async function HomePage({ params }: Args) {
           fallbackSrc={shippedPhoto(heroBranch?.slug)}
           priority
           tone="ink"
-          imageClassName="ken-burns object-[center_28%]"
+          imageClassName="object-[center_28%]"
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/45 to-black/65"
+          className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/45"
         />
         <div aria-hidden="true" className="hero-glow absolute inset-0" />
 
-        <div className={cn(shell, 'relative pt-40 pb-24 sm:pb-28')}>
-          <div className="rise flex items-center gap-4" style={{ animationDelay: '0.55s' }}>
-            <p className="eyebrow">{t.home.heroEyebrow}</p>
-            <Stars count={settings.stars} />
+        <div className={cn(shell, 'relative pt-28 pb-16 sm:pb-20')}>
+          <div className="rise flex items-center gap-4" style={{ animationDelay: '0.2s' }}>
+            <p className="eyebrow text-white">{t.home.heroEyebrow}</p>
+            <Stars count={settings.stars} tone="light" />
           </div>
           <h1
-            className="font-display display-hero text-gilt rise mt-7 max-w-5xl text-balance"
-            style={{ animationDelay: '0.7s' }}
+            className="font-display display-hero text-hero rise mt-4 max-w-4xl text-balance"
+            style={{ animationDelay: '0.3s' }}
           >
             {siteName}
           </h1>
-          <div aria-hidden="true" className="rule-gilt rise mt-8 w-40" style={{ animationDelay: '0.8s' }} />
           <p
-            className="rise mt-8 max-w-lg text-lg leading-relaxed text-white/75 sm:text-xl xl:max-w-2xl xl:text-2xl"
-            style={{ animationDelay: '0.9s' }}
+            className="rise mt-4 max-w-xl text-base leading-relaxed text-white/85 sm:text-lg"
+            style={{ animationDelay: '0.4s' }}
           >
             {count(t.home.heroLead)}
           </p>
 
           <div
-            className="rise mt-11 flex flex-wrap gap-3 sm:gap-4"
-            style={{ animationDelay: '1.05s' }}
+            className="rise mt-7 flex flex-wrap gap-3"
+            style={{ animationDelay: '0.5s' }}
           >
             <Link href="#collection" className={btnLight}>
               {t.home.exploreCollection}
@@ -121,20 +121,8 @@ export default async function HomePage({ params }: Args) {
             )}
           </div>
         </div>
-
-        {/* Quiet indication that the page continues, instead of a bouncing
-            chevron. */}
-        <div
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 hidden justify-center pb-8 sm:flex"
-        >
-          <span className="relative block h-14 w-px overflow-hidden bg-white/20">
-            <span className="animate-[scroll-cue_2.6s_var(--ease-luxe)_infinite] absolute inset-x-0 top-0 block h-6 bg-brass-bright" />
-          </span>
-        </div>
       </section>
 
-      {/* Everything below rides over the pinned hero on its own ground. */}
       <div className="relative z-10 bg-bone">
         {/* Which hotel, which nights, how many — carried into the enquiry
             rather than checked against availability nobody is holding. */}
@@ -166,10 +154,10 @@ export default async function HomePage({ params }: Args) {
                 delay={i * 110}
                 className="border-white/10 px-2 text-center lg:not-first:border-s"
               >
-                <p className="font-display text-gilt text-4xl leading-none sm:text-5xl">
+                <p className="font-display text-hero text-4xl leading-none sm:text-5xl">
                   {credit.value}
                 </p>
-                <p className="mt-3 text-[0.6rem] tracking-[0.24em] text-white/45 uppercase rtl:tracking-normal">
+                <p className="mt-3 text-[0.62rem] tracking-[0.14em] text-white/75 uppercase rtl:tracking-normal">
                   {credit.label}
                 </p>
               </Reveal>
@@ -260,7 +248,7 @@ export default async function HomePage({ params }: Args) {
                   delay={i * 120}
                   className="border-line pt-8 pb-2 lg:pe-10 lg:ps-10 lg:not-first:border-s lg:first:ps-0"
                 >
-                  <span className="text-xs tracking-[0.2em] tabular-nums text-brass">
+                  <span className="text-xs tracking-[0.2em] tabular-nums text-brand">
                     {String(i + 1).padStart(2, '0')}
                   </span>
                   <h3 className="font-display mt-4 text-2xl leading-snug text-ink">{item.title}</h3>
@@ -308,11 +296,11 @@ export default async function HomePage({ params }: Args) {
 
           <div className={cn(shell, 'relative py-24 text-center sm:py-32')}>
             <Reveal className="mx-auto max-w-2xl">
-              <p className="eyebrow">{t.home.ctaEyebrow}</p>
-              <h2 className="font-display display-xl mt-6 text-balance text-white">
+              <p className="eyebrow text-white">{t.home.ctaEyebrow}</p>
+              <h2 className="font-display display-xl mt-4 text-balance text-white">
                 {t.home.ctaTitle}
               </h2>
-              <p className="mx-auto mt-7 max-w-lg text-lg leading-relaxed text-white/70 xl:max-w-2xl xl:text-xl">
+              <p className="mx-auto mt-5 max-w-lg text-base leading-relaxed text-white/85 sm:text-lg">
                 {t.home.ctaLead}
               </p>
 

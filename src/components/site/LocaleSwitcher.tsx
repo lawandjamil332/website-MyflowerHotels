@@ -63,7 +63,7 @@ export function LocaleSwitcher({
                   : isCurrent
                     ? 'text-ink'
                     : 'text-muted-ink hover:text-ink',
-                isCurrent && 'underline decoration-brass decoration-1 underline-offset-[6px]',
+                isCurrent && 'underline decoration-brand decoration-1 underline-offset-[6px]',
               )}
             >
               {size === 'full' ? localeNames[locale] : localeShort[locale]}

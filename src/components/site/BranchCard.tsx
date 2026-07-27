@@ -59,7 +59,7 @@ export function BranchCard({
 
       <div className="relative p-6 sm:p-7">
         {(typeof index === 'number' || branchLocative(branch)) && (
-          <p className="text-[0.65rem] tracking-[0.24em] text-brass-bright uppercase rtl:tracking-normal">
+          <p className="text-[0.65rem] tracking-[0.24em] text-brand-bright uppercase rtl:tracking-normal">
             {typeof index === 'number' ? String(index + 1).padStart(2, '0') : ''}
             {typeof index === 'number' && branchLocative(branch) ? ' · ' : ''}
             {branchLocative(branch)}

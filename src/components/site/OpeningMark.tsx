@@ -20,7 +20,7 @@ export function OpeningMark({
     <span
       className={cn(
         'inline-block border px-3 py-1.5 text-[0.6rem] tracking-[0.2em] uppercase rtl:tracking-normal',
-        tone === 'light' ? 'border-white/40 text-white' : 'border-brass/60 text-brass',
+        tone === 'light' ? 'border-white/40 text-white' : 'border-brand/60 text-brand',
         className,
       )}
     >

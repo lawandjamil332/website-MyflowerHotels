@@ -71,7 +71,7 @@ export function RoomFeature({
           flipped ? 'lg:order-1 lg:col-start-1 lg:row-start-1' : 'lg:order-2',
         )}
       >
-        <span className="text-xs tracking-[0.2em] tabular-nums text-brass">
+        <span className="text-xs tracking-[0.2em] tabular-nums text-brand">
           {String(index + 1).padStart(2, '0')}
         </span>
 

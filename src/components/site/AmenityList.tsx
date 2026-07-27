@@ -32,7 +32,7 @@ export function AmenityList({
           key={amenity}
           className="flex items-center gap-3 border-b border-line py-4 text-sm text-ink-soft"
         >
-          <span aria-hidden="true" className="h-1 w-1 shrink-0 rounded-full bg-brass" />
+          <span aria-hidden="true" className="h-1 w-1 shrink-0 rounded-full bg-brand" />
           {t.amenity[amenity] ?? amenity}
         </li>
       ))}

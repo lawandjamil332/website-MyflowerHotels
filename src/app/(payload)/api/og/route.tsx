@@ -7,7 +7,7 @@ import path from 'node:path'
  *
  * In this market that is the link — the brief says so plainly — and the default
  * was a stock image shipped with the Payload template. This draws a branded
- * card instead: ink ground, the lotus in brass, the hotel's name set in the
+ * card instead: ink ground, the lotus in brand, the hotel's name set in the
  * same serif the site uses.
  *
  * Built per request from ?title= and ?eyebrow=, so every hotel and every room

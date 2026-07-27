@@ -22,10 +22,13 @@ type Props = {
 }
 
 /**
- * The bar sits over the photograph at the top of every page and only becomes
- * a solid surface once the guest scrolls past it. That is what keeps the hero
- * full-bleed — a header with its own background permanently pinned above the
- * image is the single clearest tell of a template.
+ * A solid navy bar, present from the first pixel and unchanged by scrolling.
+ *
+ * The previous design floated it transparently over the hero so the
+ * photograph could run full-bleed. That is the right call for a single
+ * property selling a mood; it is the wrong one here. A group site is
+ * navigated, and navigation you can always see — in a colour that never
+ * shifts under you — is worth more than an uninterrupted photograph.
  */
 export function HeaderBar({
   locale,
@@ -73,40 +76,26 @@ export function HeaderBar({
     { href: `/${locale}/contact`, label: t.nav.contact },
   ]
 
-  // While the overlay is open the bar always sits on ink, so it uses the
-  // light treatment regardless of scroll position.
-  const onDark = !solid || menuOpen
-
+  // The bar is navy at every scroll position, so everything on it takes the
+  // light treatment. Scrolling only tightens the height and adds a shadow.
   return (
     <>
       <header
         className={cn(
-          'fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,border-color] duration-700 ease-luxe',
-          solid && !menuOpen
-            ? 'border-b border-line bg-bone/90 backdrop-blur-md'
-            : 'border-b border-transparent bg-transparent',
+          'fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-ink transition-shadow duration-500 ease-luxe',
+          solid && !menuOpen && 'shadow-[0_2px_12px_rgb(0_0_0/0.28)]',
         )}
       >
-        {/* Scrim only while transparent: white type needs a floor to sit on
-            when the top of a photograph happens to be bright sky. */}
-        <div
-          aria-hidden="true"
-          className={cn(
-            'pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-black/45 to-transparent transition-opacity duration-700 ease-luxe',
-            solid || menuOpen ? 'opacity-0' : 'opacity-100',
-          )}
-        />
-
         <div
           className={cn(
             shell,
-            'relative flex items-center justify-between gap-3 transition-[height] duration-700 ease-luxe sm:gap-6',
-            solid && !menuOpen ? 'h-16' : 'h-20 sm:h-24',
+            'relative flex items-center justify-between gap-3 transition-[height] duration-500 ease-luxe sm:gap-6',
+            solid && !menuOpen ? 'h-16' : 'h-18 sm:h-20',
           )}
         >
-          {/* `min-w-0` matters: a long hotel name set in letterspaced capitals
-              is wide enough to push the menu button off a 360px screen if the
-              wordmark is allowed to refuse to shrink. */}
+          {/* `min-w-0` matters: a long hotel name is wide enough to push the
+              menu button off a 360px screen if the wordmark is allowed to
+              refuse to shrink. */}
           <Link
             href={`/${locale}`}
             className="flex min-w-0 items-center gap-3"
@@ -117,43 +106,30 @@ export function HeaderBar({
                 // The dark-surface artwork already carries a legible wordmark,
                 // so it must not be run through a filter — that would flatten
                 // the flower to a white silhouette and throw the brand away.
-                src={onDark && logoLightUrl ? logoLightUrl : logoUrl}
+                src={logoLightUrl || logoUrl}
                 alt={logoAlt || siteName}
                 width={228}
                 height={147}
                 priority
                 className={cn(
-                  'w-auto object-contain transition-all duration-700 ease-luxe',
-                  solid && !menuOpen ? 'h-11' : 'h-14 sm:h-16',
-                  onDark && !logoLightUrl && 'brightness-0 invert',
+                  'w-auto object-contain transition-all duration-500 ease-luxe',
+                  solid && !menuOpen ? 'h-10' : 'h-12 sm:h-14',
+                  !logoLightUrl && 'brightness-0 invert',
                 )}
               />
             ) : (
-              <span
-                className={cn(
-                  'font-display truncate text-base leading-none tracking-[0.16em] uppercase transition-colors duration-700 ease-luxe sm:text-xl sm:tracking-[0.26em]',
-                  onDark ? 'text-white' : 'text-ink',
-                )}
-              >
+              <span className="font-display truncate text-lg leading-none text-white sm:text-xl">
                 {siteName}
               </span>
             )}
           </Link>
 
-          <nav
-            className={cn(
-              'hidden items-center gap-9 text-[0.7rem] font-medium tracking-[0.22em] uppercase transition-colors duration-700 ease-luxe lg:flex rtl:gap-8 rtl:text-xs rtl:tracking-normal',
-              onDark ? 'text-white/85' : 'text-muted-ink',
-            )}
-          >
+          <nav className="hidden items-center gap-7 text-[0.92rem] font-medium text-white/85 lg:flex xl:gap-9">
             {links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}
-                className={cn(
-                  'link-line transition-colors duration-500 ease-luxe',
-                  onDark ? 'hover:text-white' : 'hover:text-ink',
-                )}
+                className="transition-colors duration-300 ease-luxe hover:text-white"
               >
                 {link.label}
               </Link>
@@ -161,23 +137,14 @@ export function HeaderBar({
           </nav>
 
           <div className="flex shrink-0 items-center gap-2 sm:gap-5">
-            <LocaleSwitcher
-              current={locale}
-              label={t.common.language}
-              tone={onDark ? 'light' : 'ink'}
-            />
+            <LocaleSwitcher current={locale} label={t.common.language} tone="light" />
 
             {whatsappHref && (
               <a
                 href={whatsappHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={cn(
-                  btnLight,
-                  btnSmall,
-                  'hidden lg:inline-flex',
-                  !onDark && 'bg-ink text-bone hover:bg-brass hover:text-ink',
-                )}
+                className={cn(btnLight, btnSmall, 'hidden lg:inline-flex')}
               >
                 {t.common.reserve}
               </a>
@@ -189,10 +156,7 @@ export function HeaderBar({
               aria-expanded={menuOpen}
               aria-controls="site-menu"
               aria-label={menuOpen ? t.common.close : t.common.menu}
-              className={cn(
-                'relative -me-1 flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-[5px] transition-colors duration-700 ease-luxe lg:hidden',
-                onDark ? 'text-white' : 'text-ink',
-              )}
+              className="relative -me-1 flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-[5px] text-white lg:hidden"
             >
               <span
                 className={cn(

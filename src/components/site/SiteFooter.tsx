@@ -41,7 +41,7 @@ export async function SiteFooter({
     { href: social.youtube, label: 'YouTube' },
   ].filter((s): s is { href: string; label: string } => Boolean(s.href))
 
-  const columnHeading = 'text-[0.65rem] tracking-[0.24em] text-brass uppercase rtl:tracking-normal'
+  const columnHeading = 'text-[0.65rem] tracking-[0.24em] text-brand uppercase rtl:tracking-normal'
   const columnLink =
     'link-line text-sm text-white/60 transition-colors duration-500 ease-luxe hover:text-white'
 
@@ -58,15 +58,15 @@ export async function SiteFooter({
               className="h-16 w-auto object-contain"
             />
             <Stars count={settings.stars} className="mt-4" />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/50">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/75">
               {t.home.heroEyebrow}
             </p>
             {settings.establishedYear && (
-              <p className="mt-2 text-xs tracking-[0.2em] text-white/40 uppercase rtl:tracking-normal">
+              <p className="mt-2 text-xs tracking-[0.12em] text-white/65 uppercase rtl:tracking-normal">
                 Since {settings.establishedYear}
               </p>
             )}
-            <div aria-hidden="true" className="rule-brass mt-7" />
+            <div aria-hidden="true" className="rule-brand mt-7" />
           </div>
 
           <nav className="flex flex-col items-start gap-3.5">
@@ -101,7 +101,7 @@ export async function SiteFooter({
                 </Link>
               ))
             ) : (
-              <span className="text-sm text-white/35">—</span>
+              <span className="text-sm text-white/60">—</span>
             )}
           </nav>
 
@@ -166,7 +166,7 @@ export async function SiteFooter({
             'flex flex-col-reverse items-center justify-between gap-5 py-7 sm:flex-row',
           )}
         >
-          <p className="text-xs text-white/35">
+          <p className="text-xs text-white/65">
             © {new Date().getFullYear()} {siteName}
           </p>
           <LocaleSwitcher current={locale} label={t.common.language} tone="light" size="full" />

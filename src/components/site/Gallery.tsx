@@ -93,7 +93,7 @@ export function Gallery({ items, className }: { items: GalleryItem[]; className?
               type="button"
               onClick={close}
               aria-label="Close"
-              className="text-[0.7rem] tracking-[0.22em] uppercase transition-colors duration-500 hover:text-brass rtl:tracking-normal"
+              className="text-[0.7rem] tracking-[0.22em] uppercase transition-colors duration-500 hover:text-brand rtl:tracking-normal"
             >
               ✕
             </button>

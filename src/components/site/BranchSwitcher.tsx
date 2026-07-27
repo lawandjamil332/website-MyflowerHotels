@@ -81,7 +81,7 @@ export function BranchSwitcher({
                 <span
                   className={cn(
                     'text-xs tracking-[0.2em] tabular-nums transition-colors duration-700 ease-luxe',
-                    i === active ? 'text-brass' : 'text-muted-ink/50',
+                    i === active ? 'text-brand' : 'text-muted-ink',
                   )}
                 >
                   {String(i + 1).padStart(2, '0')}
@@ -100,7 +100,7 @@ export function BranchSwitcher({
                     <span
                       className={cn(
                         'mt-2 block text-xs tracking-[0.16em] uppercase transition-colors duration-700 ease-luxe rtl:tracking-normal',
-                        i === active ? 'text-brass' : 'text-muted-ink/50',
+                        i === active ? 'text-brand' : 'text-muted-ink',
                       )}
                     >
                       {branch.neighbourhood}
@@ -129,7 +129,7 @@ export function BranchSwitcher({
                   <span
                     className={cn(
                       'text-[0.65rem] tracking-[0.22em] whitespace-nowrap uppercase transition-all duration-700 ease-luxe rtl:tracking-normal',
-                      i === active ? 'text-brass opacity-100' : 'text-muted-ink opacity-0',
+                      i === active ? 'text-brand opacity-100' : 'text-muted-ink opacity-0',
                     )}
                   >
                     {t.common.viewDetails}
@@ -169,7 +169,7 @@ export function BranchSwitcher({
               />
             )}
             <div className="relative p-6 sm:p-7">
-              <p className="text-[0.65rem] tracking-[0.24em] text-brass-bright uppercase rtl:tracking-normal">
+              <p className="text-[0.65rem] tracking-[0.24em] text-brand-bright uppercase rtl:tracking-normal">
                 {String(i + 1).padStart(2, '0')}
                 {branch.neighbourhood || branch.city
                   ? ` · ${branch.neighbourhood || branch.city}`
