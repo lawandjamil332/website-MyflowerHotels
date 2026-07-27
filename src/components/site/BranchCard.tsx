@@ -11,22 +11,20 @@ import { PhotoFrame } from './PhotoFrame'
 import { monogramOf } from '@/utilities/monogram'
 
 /**
- * A single hotel as a photographic panel. Used where the full switcher would
- * be too much — the about page, and anywhere a branch needs to appear in a
- * plain grid. The photograph carries the card; the interface stays quiet.
+ * A single hotel as a photographic panel. The photograph carries the card; the
+ * interface stays quiet. Sized to sit in a CardRail, which is where both the
+ * homepage and the about page put it.
  */
 export function BranchCard({
   branch,
   locale,
   t,
-  index,
   priority = false,
   className,
 }: {
   branch: Branch
   locale: Locale
   t: Dictionary
-  index?: number
   priority?: boolean
   className?: string
 }) {

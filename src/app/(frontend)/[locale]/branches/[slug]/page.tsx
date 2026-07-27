@@ -12,6 +12,7 @@ import { shippedPhoto } from '@/utilities/shippedPhoto'
 import { shareImage } from '@/utilities/shareImage'
 import { cn } from '@/utilities/ui'
 import { AmenityList } from '@/components/site/AmenityList'
+import { CardRail, RailCard } from '@/components/site/CardRail'
 import { Gallery, type GalleryItem } from '@/components/site/Gallery'
 import { EnquiryForm } from '@/components/site/EnquiryForm'
 import { OpeningMark, isOpeningSoon, openingLabel } from '@/components/site/OpeningMark'
@@ -55,6 +56,7 @@ export default async function BranchPage({ params }: Args) {
   // line nobody is answering or a room list that does not exist.
   const openingSoon = isOpeningSoon(branch)
   const opening = openingLabel(branch, t.branch.openingSoon)
+  const hasOverview = Boolean(branch.description) || (branch.amenities?.length ?? 0) > 0
 
   const gallery: GalleryItem[] = (branch.gallery ?? [])
     .filter((g) => mediaUrl(g))
@@ -86,33 +88,41 @@ export default async function BranchPage({ params }: Args) {
       </PageHero>
 
       {/* Overview beside a standing reservation card. The card is what the
-          page exists for, so it stays in view as the guest reads. */}
+          page exists for, so it stays in view as the guest reads.
+
+          With neither a description nor amenities written yet, the wide column
+          would be empty and the card would sit marooned beside a third of a
+          screen of nothing. In that case the card becomes the whole section. */}
       <section className={cn(shell, 'py-20 sm:py-24 lg:py-28')}>
-        <div className="grid gap-14 lg:grid-cols-[1.4fr_0.9fr] lg:gap-20">
-          <div>
-            {/* The eyebrow labels the description; with no description written
+        <div className={cn('grid gap-14 lg:gap-20', hasOverview && 'lg:grid-cols-[1.4fr_0.9fr]')}>
+          {hasOverview && (
+            <div>
+              {/* The eyebrow labels the description; with no description written
                 yet it would sit orphaned above the amenities. */}
-            {branch.description && (
-              <Reveal>
-                <p className="eyebrow">{t.branch.overviewEyebrow}</p>
-                <RichText
-                  data={branch.description}
-                  enableGutter={false}
-                  className="mt-7 max-w-none prose-p:text-[1.0625rem] prose-p:leading-[1.85] prose-p:text-ink-soft prose-li:text-ink-soft prose-strong:text-ink prose-a:text-ink prose-headings:font-display prose-headings:font-normal prose-headings:text-ink"
-                />
-              </Reveal>
-            )}
+              {branch.description && (
+                <Reveal>
+                  <p className="eyebrow">{t.branch.overviewEyebrow}</p>
+                  <RichText
+                    data={branch.description}
+                    enableGutter={false}
+                    className="mt-7 max-w-none prose-p:text-[1.0625rem] prose-p:leading-[1.85] prose-p:text-ink-soft prose-li:text-ink-soft prose-strong:text-ink prose-a:text-ink prose-headings:font-display prose-headings:font-normal prose-headings:text-ink"
+                  />
+                </Reveal>
+              )}
 
-            {branch.amenities && branch.amenities.length > 0 && (
-              <Reveal delay={150} className={branch.description ? 'mt-14' : undefined}>
-                <h2 className="font-display text-2xl text-ink sm:text-3xl">{t.branch.amenities}</h2>
-                <AmenityList amenities={branch.amenities} t={t} className="mt-7" columns={2} />
-              </Reveal>
-            )}
-          </div>
+              {branch.amenities && branch.amenities.length > 0 && (
+                <Reveal delay={150} className={branch.description ? 'mt-14' : undefined}>
+                  <h2 className="font-display text-2xl text-ink sm:text-3xl">
+                    {t.branch.amenities}
+                  </h2>
+                  <AmenityList amenities={branch.amenities} t={t} className="mt-7" columns={2} />
+                </Reveal>
+              )}
+            </div>
+          )}
 
-          <aside>
-            <Reveal delay={120} className="lg:sticky lg:top-28">
+          <aside className={cn(!hasOverview && 'mx-auto w-full max-w-md')}>
+            <Reveal delay={120} className={cn(hasOverview && 'lg:sticky lg:top-28')}>
               <div id="reserve-card" className="border border-line rounded-2xl bg-card p-7 sm:p-8">
                 <p className="eyebrow">{openingSoon ? opening : t.branch.stayEyebrow}</p>
                 <h2 className="font-display mt-4 text-2xl text-ink">
@@ -132,29 +142,29 @@ export default async function BranchPage({ params }: Args) {
 
                 {!openingSoon &&
                   (branch.checkInAnyTime || branch.checkInTime || branch.checkOutTime) && (
-                  <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-line pt-6">
-                    {(branch.checkInAnyTime || branch.checkInTime) && (
-                      <div>
-                        <dt className="text-[0.6rem] tracking-[0.2em] text-muted-ink uppercase rtl:tracking-normal">
-                          {t.branch.checkIn}
-                        </dt>
-                        <dd className="font-display mt-1.5 text-xl text-ink">
-                          {branch.checkInAnyTime ? t.branch.anyTime : branch.checkInTime}
-                        </dd>
-                      </div>
-                    )}
-                    {branch.checkOutTime && (
-                      <div>
-                        <dt className="text-[0.6rem] tracking-[0.2em] text-muted-ink uppercase rtl:tracking-normal">
-                          {t.branch.checkOut}
-                        </dt>
-                        <dd className="font-display mt-1.5 text-xl text-ink">
-                          {branch.checkOutTime}
-                        </dd>
-                      </div>
-                    )}
-                  </dl>
-                )}
+                    <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-line pt-6">
+                      {(branch.checkInAnyTime || branch.checkInTime) && (
+                        <div>
+                          <dt className="text-[0.6rem] tracking-[0.2em] text-muted-ink uppercase rtl:tracking-normal">
+                            {t.branch.checkIn}
+                          </dt>
+                          <dd className="font-display mt-1.5 text-xl text-ink">
+                            {branch.checkInAnyTime ? t.branch.anyTime : branch.checkInTime}
+                          </dd>
+                        </div>
+                      )}
+                      {branch.checkOutTime && (
+                        <div>
+                          <dt className="text-[0.6rem] tracking-[0.2em] text-muted-ink uppercase rtl:tracking-normal">
+                            {t.branch.checkOut}
+                          </dt>
+                          <dd className="font-display mt-1.5 text-xl text-ink">
+                            {branch.checkOutTime}
+                          </dd>
+                        </div>
+                      )}
+                    </dl>
+                  )}
 
                 <div className="mt-7 flex flex-col gap-2.5">
                   {!openingSoon && wa && (
@@ -234,10 +244,7 @@ export default async function BranchPage({ params }: Args) {
       {gallery.length > 0 && (
         <section className="bg-sand">
           <div className={cn(shell, sectionY)}>
-            <SectionHeading
-              title={t.branch.gallery}
-              className="mb-10 lg:mb-14"
-            />
+            <SectionHeading title={t.branch.gallery} className="mb-10 lg:mb-14" />
             <Reveal>
               <Gallery items={gallery} />
             </Reveal>
@@ -247,18 +254,15 @@ export default async function BranchPage({ params }: Args) {
 
       {!openingSoon && (
         <section className={cn(shell, sectionY)}>
-          <SectionHeading
-            title={t.branch.rooms}
-            className="mb-12 lg:mb-16"
-          />
+          <SectionHeading title={t.branch.rooms} className="mb-12 lg:mb-16" />
           {rooms.length > 0 ? (
-            <div className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+            <CardRail label={t.branch.rooms}>
               {rooms.map((room, i) => (
-                <Reveal key={room.id} delay={(i % 3) * 110}>
-                  <RoomCard room={room} locale={locale} t={t} />
-                </Reveal>
+                <RailCard key={room.id}>
+                  <RoomCard room={room} locale={locale} t={t} priority={i < 2} />
+                </RailCard>
               ))}
-            </div>
+            </CardRail>
           ) : (
             <p className="text-muted-ink">{t.branch.noRooms}</p>
           )}
@@ -271,7 +275,12 @@ export default async function BranchPage({ params }: Args) {
         <section className="bg-sand">
           <div className={cn(shell, sectionY)}>
             <Reveal>
-              <EnquiryForm t={t} branchId={branch.id} whatsappHref={wa} className="mx-auto max-w-3xl" />
+              <EnquiryForm
+                t={t}
+                branchId={branch.id}
+                whatsappHref={wa}
+                className="mx-auto max-w-3xl"
+              />
             </Reveal>
           </div>
         </section>

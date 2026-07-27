@@ -4,7 +4,7 @@ import type { Metadata } from 'next'
 
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
-import { getRoomBySlug } from '@/utilities/branches'
+import { getRoomBySlug, getRoomsForBranch } from '@/utilities/branches'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { formatNumber, formatPrice } from '@/utilities/format'
 import { Price } from '@/components/site/Currency'
@@ -12,10 +12,12 @@ import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { shareImage } from '@/utilities/shareImage'
 import { cn } from '@/utilities/ui'
 import { AmenityList } from '@/components/site/AmenityList'
+import { CardRail, RailCard } from '@/components/site/CardRail'
 import { Gallery, type GalleryItem } from '@/components/site/Gallery'
 import { EnquiryForm } from '@/components/site/EnquiryForm'
 import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
+import { RoomCard } from '@/components/site/RoomCard'
 import { SectionHeading } from '@/components/site/SectionHeading'
 import { RoomSchema } from '@/components/site/StructuredData'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
@@ -37,6 +39,13 @@ export default async function RoomPage({ params }: Args) {
   const branch = (typeof room.branch === 'object' ? room.branch : null) as Branch | null
   const images = (room.images ?? []).filter((i) => mediaUrl(i))
   const price = formatPrice(room.priceFrom, room.currency, locale)
+
+  const hasDetails = Boolean(room.description) || (room.amenities?.length ?? 0) > 0
+
+  // Every other room in this hotel, for the rail at the foot of the page.
+  const siblings = branch
+    ? (await getRoomsForBranch(branch.id, locale)).filter((r) => r.id !== room.id)
+    : []
 
   // Pre-fills the WhatsApp message with the room, so the guest does not have
   // to explain which one they mean.
@@ -93,32 +102,37 @@ export default async function RoomPage({ params }: Args) {
         </section>
       )}
 
+      {/* As on the hotel page: with no description and no amenities written,
+          the wide column is empty, so the price card becomes the section
+          rather than sitting beside a blank third of the screen. */}
       <section className={cn(shell, 'py-20 sm:py-24 lg:py-28')}>
-        <div className="grid gap-14 lg:grid-cols-[1.4fr_0.9fr] lg:gap-20">
-          <div>
-            {/* The room's name is already the page heading above; repeating it
+        <div className={cn('grid gap-14 lg:gap-20', hasDetails && 'lg:grid-cols-[1.4fr_0.9fr]')}>
+          {hasDetails && (
+            <div>
+              {/* The room's name is already the page heading above; repeating it
                 here and again over the gallery would say it three times. */}
-            {room.description && (
-              <Reveal>
-                <p className="eyebrow">{t.room.detailsEyebrow}</p>
-                <RichText
-                  data={room.description}
-                  enableGutter={false}
-                  className="mt-7 max-w-none prose-p:text-[1.0625rem] prose-p:leading-[1.85] prose-p:text-ink-soft prose-li:text-ink-soft prose-strong:text-ink prose-a:text-ink prose-headings:font-display prose-headings:font-normal prose-headings:text-ink"
-                />
-              </Reveal>
-            )}
+              {room.description && (
+                <Reveal>
+                  <p className="eyebrow">{t.room.detailsEyebrow}</p>
+                  <RichText
+                    data={room.description}
+                    enableGutter={false}
+                    className="mt-7 max-w-none prose-p:text-[1.0625rem] prose-p:leading-[1.85] prose-p:text-ink-soft prose-li:text-ink-soft prose-strong:text-ink prose-a:text-ink prose-headings:font-display prose-headings:font-normal prose-headings:text-ink"
+                  />
+                </Reveal>
+              )}
 
-            {room.amenities && room.amenities.length > 0 && (
-              <Reveal delay={150} className={room.description ? 'mt-14' : undefined}>
-                <h3 className="font-display text-2xl text-ink">{t.room.amenities}</h3>
-                <AmenityList amenities={room.amenities} t={t} className="mt-7" columns={2} />
-              </Reveal>
-            )}
-          </div>
+              {room.amenities && room.amenities.length > 0 && (
+                <Reveal delay={150} className={room.description ? 'mt-14' : undefined}>
+                  <h3 className="font-display text-2xl text-ink">{t.room.amenities}</h3>
+                  <AmenityList amenities={room.amenities} t={t} className="mt-7" columns={2} />
+                </Reveal>
+              )}
+            </div>
+          )}
 
-          <aside>
-            <Reveal delay={120} className="lg:sticky lg:top-28">
+          <aside className={cn(!hasDetails && 'mx-auto w-full max-w-md')}>
+            <Reveal delay={120} className={cn(hasDetails && 'lg:sticky lg:top-28')}>
               <div className="border border-line rounded-2xl bg-card p-7 sm:p-8">
                 {price ? (
                   <>
@@ -170,31 +184,49 @@ export default async function RoomPage({ params }: Args) {
         </div>
       </section>
 
-      <section className={cn(shell, 'pb-20 sm:pb-24 lg:pb-28')}>
-        <Reveal>
-          <EnquiryForm
-            t={t}
-            branchId={branch?.id}
-            roomId={room.id}
-            whatsappHref={wa}
-            className="mx-auto max-w-3xl"
-          />
-        </Reveal>
-      </section>
-
+      {/* Photographs before the form. A guest decides on the pictures, so
+          asking them to enquire before they have seen the room puts the
+          request ahead of the reason to make it. */}
       {gallery.length > 0 && (
         <section className="bg-sand">
           <div className={cn(shell, sectionY)}>
-            <SectionHeading
-              title={t.branch.gallery}
-              className="mb-10 lg:mb-14"
-            />
+            <SectionHeading title={t.branch.gallery} className="mb-10 lg:mb-14" />
             <Reveal>
               <Gallery items={gallery} />
             </Reveal>
           </div>
         </section>
       )}
+
+      {/* The other rooms in the same hotel. This room may simply be the wrong
+          size or the wrong price, and without this the only way on from here
+          is the browser's back button. */}
+      {siblings.length > 0 && (
+        <section className={cn(shell, sectionY)}>
+          <SectionHeading title={t.branch.rooms} className="mb-12 lg:mb-16" />
+          <CardRail label={t.branch.rooms}>
+            {siblings.map((sibling) => (
+              <RailCard key={sibling.id}>
+                <RoomCard room={sibling} locale={locale} t={t} />
+              </RailCard>
+            ))}
+          </CardRail>
+        </section>
+      )}
+
+      <section className="bg-sand">
+        <div className={cn(shell, sectionY)}>
+          <Reveal>
+            <EnquiryForm
+              t={t}
+              branchId={branch?.id}
+              roomId={room.id}
+              whatsappHref={wa}
+              className="mx-auto max-w-3xl"
+            />
+          </Reveal>
+        </div>
+      </section>
     </>
   )
 }

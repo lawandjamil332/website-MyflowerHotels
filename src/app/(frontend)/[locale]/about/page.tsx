@@ -10,6 +10,7 @@ import { getBranches } from '@/utilities/branches'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { cn } from '@/utilities/ui'
 import { BranchCard } from '@/components/site/BranchCard'
+import { CardRail, RailCard } from '@/components/site/CardRail'
 import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
 import { SectionHeading } from '@/components/site/SectionHeading'
@@ -40,18 +41,19 @@ export default async function AboutPage({ params }: Args) {
         imageAlt={mediaAlt(heroSource)}
       />
 
-      <section className={cn(shell, 'py-20 sm:py-24 lg:py-28')}>
-        <div className="grid gap-12 lg:grid-cols-[0.75fr_1.25fr] lg:gap-20">
-          <Reveal>
-            <p className="eyebrow">{t.home.introEyebrow}</p>
-            <h2 className="font-display mt-5 text-3xl leading-[1.12] text-balance text-ink sm:text-4xl">
-              {t.home.introTitle}
-            </h2>
-          </Reveal>
-
-          <Reveal delay={120}>
-            <p className="text-lg leading-[1.8] text-ink-soft sm:text-xl">{t.about.body1}</p>
-            <p className="mt-7 text-lg leading-[1.8] text-ink-soft sm:text-xl">{t.about.body2}</p>
+      {/* The story as a centred band rather than a heading in one column and
+          prose in another. Both paragraphs are two sentences, which is the
+          length a centred measure carries — this is a section of a site, not
+          the opening spread of an article. */}
+      <section className="bg-sand">
+        <div className={cn(shell, sectionY)}>
+          <SectionHeading title={t.home.introTitle} lead={t.about.body1} />
+          {/* Set to match SectionHeading's own lead exactly, so the two
+              paragraphs read as one column rather than two treatments. */}
+          <Reveal delay={120} className="mx-auto mt-6 max-w-2xl text-center">
+            <p className="text-[1.05rem] leading-[1.65] text-muted-ink sm:text-[1.15rem]">
+              {t.about.body2}
+            </p>
           </Reveal>
         </div>
       </section>
@@ -76,13 +78,15 @@ export default async function AboutPage({ params }: Args) {
             lead={t.home.chooseBranchLead}
             className="mb-12 lg:mb-16"
           />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {/* The same rail the homepage uses for the same four hotels: a guest
+              who has just read who runs them is one swipe from choosing one. */}
+          <CardRail label={t.nav.branches}>
             {branches.map((branch, i) => (
-              <Reveal key={branch.id} delay={(i % 3) * 110}>
-                <BranchCard branch={branch} locale={locale} t={t} index={i} />
-              </Reveal>
+              <RailCard key={branch.id}>
+                <BranchCard branch={branch} locale={locale} t={t} priority={i < 2} />
+              </RailCard>
             ))}
-          </div>
+          </CardRail>
         </section>
       )}
     </>
