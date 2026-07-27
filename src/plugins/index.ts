@@ -2,6 +2,14 @@ import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { s3Storage } from '@payloadcms/storage-s3'
 import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
 import { postgresStorage } from '@/storage/postgresStorage'
+import {
+  bucketConfigured,
+  storageAccessKeyId,
+  storageBucket,
+  storageEndpoint,
+  storageRegion,
+  storageSecretKey,
+} from '@/utilities/storageEnv'
 import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
@@ -34,19 +42,19 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
 // configured. When none is, the files go into Postgres instead of onto the
 // disposable disk — the database already exists, already has a permanent
 // volume and is already backed up, so uploads survive with no setup at all.
-const storagePlugins: Plugin[] = process.env.S3_BUCKET
+const storagePlugins: Plugin[] = bucketConfigured()
   ? [
       s3Storage({
         collections: {
           media: true,
         },
-        bucket: process.env.S3_BUCKET,
+        bucket: storageBucket() as string,
         config: {
-          endpoint: process.env.S3_ENDPOINT,
-          region: process.env.S3_REGION || 'auto',
+          endpoint: storageEndpoint(),
+          region: storageRegion(),
           credentials: {
-            accessKeyId: process.env.S3_ACCESS_KEY_ID || '',
-            secretAccessKey: process.env.S3_SECRET_ACCESS_KEY || '',
+            accessKeyId: storageAccessKeyId() || '',
+            secretAccessKey: storageSecretKey() || '',
           },
           // Bucket-in-path addressing; required by most S3-compatible stores.
           forcePathStyle: true,

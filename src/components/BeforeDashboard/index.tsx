@@ -11,39 +11,12 @@ const baseClass = 'before-dashboard'
  * of linking to framework documentation.
  */
 const BeforeDashboard: React.FC = () => {
-  // Without a bucket, every photo uploaded here is written to the container's
-  // disk and erased on the next deploy. The owner would upload an afternoon's
-  // work and find blank frames a week later with nothing explaining it, so the
-  // warning belongs on the page where the uploading happens.
-  const storageConnected = Boolean(
-    process.env.S3_BUCKET &&
-      process.env.S3_ENDPOINT &&
-      process.env.S3_ACCESS_KEY_ID &&
-      process.env.S3_SECRET_ACCESS_KEY,
-  )
-
   return (
     <div className={baseClass}>
       <Banner className={`${baseClass}__banner`} type="success">
         <h4>Welcome</h4>
       </Banner>
 
-      {!storageConnected && (
-        <Banner className={`${baseClass}__banner`} type="error">
-          <h4>Do not upload photos yet</h4>
-          <p>
-            Photo storage is not connected, so anything uploaded now is saved onto this server&apos;s
-            temporary disk and <strong>deleted the next time the site updates</strong>.
-          </p>
-          <p>
-            In Railway: <strong>+ Create → Storage Bucket</strong>, then copy its four values
-            (endpoint, access key id, secret access key, bucket name) into this service&apos;s{' '}
-            <strong>Variables</strong> as <code>S3_ENDPOINT</code>, <code>S3_ACCESS_KEY_ID</code>,{' '}
-            <code>S3_SECRET_ACCESS_KEY</code> and <code>S3_BUCKET</code>, and redeploy. This message
-            disappears once it is done.
-          </p>
-        </Banner>
-      )}
       Here is the order that works best:
       <ul className={`${baseClass}__instructions`}>
         <li>

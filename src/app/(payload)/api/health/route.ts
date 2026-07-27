@@ -1,5 +1,6 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import { bucketConfigured, missingBucketParts } from '@/utilities/storageEnv'
 
 /**
  * A plain-language status page for the running deployment, at /api/health.
@@ -77,17 +78,13 @@ export async function GET() {
   // The quiet killer: without a bucket, uploads land on the container's disk
   // and Railway wipes that on every rebuild. Photographs would simply vanish,
   // with nothing in the interface to explain why.
-  const bucketConfigured = Boolean(
-    process.env.S3_BUCKET &&
-      process.env.S3_ENDPOINT &&
-      process.env.S3_ACCESS_KEY_ID &&
-      process.env.S3_SECRET_ACCESS_KEY,
-  )
+  // Either route is permanent now; the bucket is simply the better of the two.
+  const onBucket = bucketConfigured()
   checks.photoStorage = {
-    ok: bucketConfigured,
-    detail: bucketConfigured
-      ? 'storage bucket connected — uploads survive a redeploy'
-      : 'NOT CONNECTED — uploads go to the container disk and are deleted on every redeploy. Set S3_ENDPOINT, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY and S3_BUCKET in Railway.',
+    ok: true,
+    detail: onBucket
+      ? 'storage bucket connected — photographs are kept in the bucket'
+      : `photographs are kept in the database, which is permanent. To use the bucket instead, still missing: ${missingBucketParts().join(', ')}`,
   }
 
   checks.siteUrl = {
