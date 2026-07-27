@@ -1,5 +1,4 @@
 import type { CollectionConfig } from 'payload'
-import { APIError } from 'payload'
 
 import {
   FixedToolbarFeature,
@@ -15,43 +14,9 @@ import { authenticated } from '../access/authenticated'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-/**
- * True only when all four bucket variables are present. Without them Payload
- * writes uploads into the container's own filesystem, which the host erases on
- * every deploy — the pictures look fine for hours and are gone by the next
- * release, with nothing in the interface to explain it.
- */
-const bucketConnected = (): boolean =>
-  Boolean(
-    process.env.S3_BUCKET &&
-      process.env.S3_ENDPOINT &&
-      process.env.S3_ACCESS_KEY_ID &&
-      process.env.S3_SECRET_ACCESS_KEY,
-  )
-
 export const Media: CollectionConfig = {
   slug: 'media',
   folders: true,
-  hooks: {
-    beforeValidate: [
-      ({ req }) => {
-        // Only a person uploading through the admin panel is stopped. Seeds
-        // and migrations run without a signed-in user and are left alone, and
-        // local development has no bucket by design.
-        const isPerson = Boolean(req?.user) && Boolean(req?.file)
-        if (!isPerson) return
-        if (process.env.NODE_ENV !== 'production') return
-        if (bucketConnected()) return
-
-        throw new APIError(
-          'Photo storage is not connected yet, so this picture would be deleted the next time the site updates. ' +
-            'In Railway: + Create → Storage Bucket, then copy its four values into this service\'s Variables as ' +
-            'S3_ENDPOINT, S3_ACCESS_KEY_ID, S3_SECRET_ACCESS_KEY and S3_BUCKET, and redeploy. Then upload again.',
-          400,
-        )
-      },
-    ],
-  },
   access: {
     create: authenticated,
     delete: authenticated,

@@ -1,5 +1,7 @@
 import { formBuilderPlugin } from '@payloadcms/plugin-form-builder'
 import { s3Storage } from '@payloadcms/storage-s3'
+import { cloudStoragePlugin } from '@payloadcms/plugin-cloud-storage'
+import { postgresStorage } from '@/storage/postgresStorage'
 import { nestedDocsPlugin } from '@payloadcms/plugin-nested-docs'
 import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
@@ -24,10 +26,14 @@ const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
   return doc?.slug ? `${url}/${doc.slug}` : url
 }
 
-// Media must live in the Railway Storage Bucket, not on the container's
-// filesystem — Railway wipes the filesystem on every redeploy, which would
-// silently delete every uploaded photo. The plugin is only enabled when the
-// bucket credentials exist, so local development keeps writing to disk.
+// Uploads must never land on the container's filesystem: the host replaces it
+// on every deploy, so photographs uploaded today are gone by the next release
+// and the database is left pointing at files that do not exist.
+//
+// A storage bucket is the better answer and is used whenever one is
+// configured. When none is, the files go into Postgres instead of onto the
+// disposable disk — the database already exists, already has a permanent
+// volume and is already backed up, so uploads survive with no setup at all.
 const storagePlugins: Plugin[] = process.env.S3_BUCKET
   ? [
       s3Storage({
@@ -47,7 +53,13 @@ const storagePlugins: Plugin[] = process.env.S3_BUCKET
         },
       }),
     ]
-  : []
+  : [
+      cloudStoragePlugin({
+        collections: {
+          media: { adapter: postgresStorage(), disableLocalStorage: true },
+        },
+      }),
+    ]
 
 export const plugins: Plugin[] = [
   ...storagePlugins,

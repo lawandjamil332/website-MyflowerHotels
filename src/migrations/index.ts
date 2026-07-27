@@ -7,6 +7,7 @@ import * as migration_20260725_110500_seed_hotels from './20260725_110500_seed_h
 import * as migration_20260725_160439_branch_check_in_any_time from './20260725_160439_branch_check_in_any_time';
 import * as migration_20260725_221500_seed_photos from './20260725_221500_seed_photos';
 import * as migration_20260725_230500_photos_multi_select from './20260725_230500_photos_multi_select';
+import * as migration_20260727_070000_postgres_file_storage from './20260727_070000_postgres_file_storage';
 
 export const migrations = [
   {
