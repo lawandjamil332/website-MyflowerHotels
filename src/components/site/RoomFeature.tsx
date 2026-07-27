@@ -71,9 +71,6 @@ export function RoomFeature({
           flipped ? 'lg:order-1 lg:col-start-1 lg:row-start-1' : 'lg:order-2',
         )}
       >
-        <span className="text-xs tracking-[0.2em] tabular-nums text-brand">
-          {String(index + 1).padStart(2, '0')}
-        </span>
 
         <h3 className="font-display display-lg mt-4 text-ink">
           <Link href={`/${locale}/rooms/${room.slug}`} className="link-line">

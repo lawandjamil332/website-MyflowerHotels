@@ -16,6 +16,7 @@ import { Gallery, type GalleryItem } from '@/components/site/Gallery'
 import { EnquiryForm } from '@/components/site/EnquiryForm'
 import { OpeningMark, isOpeningSoon, openingLabel } from '@/components/site/OpeningMark'
 import { PageHero } from '@/components/site/PageHero'
+import { ReserveBar } from '@/components/site/ReserveBar'
 import { Reveal } from '@/components/site/Reveal'
 import { RoomCard } from '@/components/site/RoomCard'
 import { SectionHeading } from '@/components/site/SectionHeading'
@@ -112,7 +113,7 @@ export default async function BranchPage({ params }: Args) {
 
           <aside>
             <Reveal delay={120} className="lg:sticky lg:top-28">
-              <div className="border border-line rounded-2xl bg-card p-7 sm:p-8">
+              <div id="reserve-card" className="border border-line rounded-2xl bg-card p-7 sm:p-8">
                 <p className="eyebrow">{openingSoon ? opening : t.branch.stayEyebrow}</p>
                 <h2 className="font-display mt-4 text-2xl text-ink">
                   {openingSoon ? t.branch.openingSoon : t.branch.contactTitle}
@@ -316,6 +317,21 @@ export default async function BranchPage({ params }: Args) {
             )}
           </div>
         </section>
+      )}
+
+      {/* Slides up once the reserve card above has scrolled away, so the way
+          to act is never more than a thumb-reach from wherever they are. */}
+      {!openingSoon && (
+        <ReserveBar
+          watch="reserve-card"
+          title={branch.name}
+          meta={branch.neighbourhood || branch.city || undefined}
+          whatsappHref={wa || undefined}
+          telHref={tel || undefined}
+          reserveLabel={t.common.reserve}
+          whatsappLabel={t.common.whatsapp}
+          callLabel={t.common.call}
+        />
       )}
     </>
   )

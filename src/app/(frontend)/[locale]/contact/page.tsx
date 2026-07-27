@@ -11,7 +11,9 @@ import { branchLocative } from '@/utilities/teasers'
 import { cn } from '@/utilities/ui'
 import { OpeningMark, isOpeningSoon, openingLabel } from '@/components/site/OpeningMark'
 import { EnquiryForm } from '@/components/site/EnquiryForm'
+import { GroupMap } from '@/components/site/GroupMap'
 import { PageHero } from '@/components/site/PageHero'
+import { SectionHeading } from '@/components/site/SectionHeading'
 import { Reveal } from '@/components/site/Reveal'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
 import { btnOutline, btnSmall, btnWhatsApp, shell } from '@/components/site/ui'
@@ -51,10 +53,7 @@ export default async function ContactPage({ params }: Args) {
                 <Reveal as="li" key={branch.id} delay={(i % 3) * 100}>
                   <div className="grid gap-8 border-b border-line py-12 lg:grid-cols-[0.5fr_1fr_0.8fr] lg:gap-12 lg:py-14">
                     <div>
-                      <span className="text-xs tracking-[0.2em] tabular-nums text-brand">
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
-                      <h2 className="font-display mt-3 text-3xl leading-tight text-ink">
+                      <h2 className="font-display text-3xl leading-tight text-ink">
                         {branch.name}
                       </h2>
                       {branchLocative(branch) && (
@@ -148,6 +147,27 @@ export default async function ContactPage({ params }: Args) {
         ) : (
           <p className="text-muted-ink">Hotel details will appear here once they are added.</p>
         )}
+
+        {/* Every hotel on one map. Each already carries its own on its own
+            page, which only helps once a guest has chosen — this answers the
+            question that comes before that: where these four are, and how far
+            apart. */}
+        <Reveal className="mt-20">
+          <SectionHeading title={t.branch.location} className="mb-10" />
+          <GroupMap
+            pins={branches.map((b) => ({
+              slug: b.slug,
+              name: b.name,
+              address: b.address,
+              latitude: b.latitude,
+              longitude: b.longitude,
+              mapsUrl: b.googleMapsUrl,
+              openingSoon: isOpeningSoon(b),
+            }))}
+            locale={locale}
+            t={t}
+          />
+        </Reveal>
 
         <Reveal className="mt-16">
           <EnquiryForm t={t} whatsappHref={toWhatsAppHref(settings.whatsapp)} />
