@@ -27,6 +27,7 @@ export const storageEndpoint = (): string | undefined =>
     'STORAGE_ENDPOINT',
     'AWS_ENDPOINT_URL_S3',
     'AWS_ENDPOINT_URL',
+    'AWS_S3_ENDPOINT',
     'RAILWAY_BUCKET_ENDPOINT',
   )
 
@@ -36,7 +37,11 @@ export const storageBucket = (): string | undefined =>
     'BUCKET_NAME',
     'BUCKET',
     'STORAGE_BUCKET',
+    // Railway's "AWS SDK (Generic)" style writes the bucket name here.
+    'AWS_S3_BUCKET_NAME',
+    'AWS_S3_BUCKET',
     'AWS_BUCKET_NAME',
+    'AWS_BUCKET',
     'RAILWAY_BUCKET_NAME',
   )
 
@@ -60,7 +65,14 @@ export const storageSecretKey = (): string | undefined =>
   )
 
 export const storageRegion = (): string =>
-  first('S3_REGION', 'BUCKET_REGION', 'STORAGE_REGION', 'AWS_REGION') || 'auto'
+  first(
+    'S3_REGION',
+    'BUCKET_REGION',
+    'STORAGE_REGION',
+    'AWS_DEFAULT_REGION',
+    'AWS_REGION',
+    'AWS_S3_REGION',
+  ) || 'auto'
 
 /** A bucket is only usable when all four parts are present. */
 export const bucketConfigured = (): boolean =>
