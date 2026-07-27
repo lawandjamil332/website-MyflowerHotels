@@ -12,6 +12,7 @@ import * as migration_20260727_075000_settings_iqd_per_usd from './20260727_0750
 import * as migration_20260727_078000_offers from './20260727_078000_offers';
 import * as migration_20260727_080000_seed_photos from './20260727_080000_seed_photos';
 import * as migration_20260727_090000_branch_social_and_maps from './20260727_090000_branch_social_and_maps';
+import * as migration_20260727_100000_repin_branches from './20260727_100000_repin_branches';
 
 export const migrations = [
   {
@@ -85,5 +86,10 @@ export const migrations = [
     up: migration_20260727_090000_branch_social_and_maps.up,
     down: migration_20260727_090000_branch_social_and_maps.down,
     name: '20260727_090000_branch_social_and_maps',
+  },
+  {
+    up: migration_20260727_100000_repin_branches.up,
+    down: migration_20260727_100000_repin_branches.down,
+    name: '20260727_100000_repin_branches',
   },
 ];

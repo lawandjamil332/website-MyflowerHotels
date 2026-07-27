@@ -8,6 +8,25 @@
  */
 export type Coords = { latitude: number; longitude: number }
 
+/** A box a coordinate has to fall inside to be believed. */
+export type Bounds = { minLat: number; maxLat: number; minLng: number; maxLng: number }
+
+/**
+ * Greater Erbil, generously drawn.
+ *
+ * Every hotel in this group is in one city, so a coordinate outside this box
+ * is not a hotel however confidently it was parsed — it is a number scraped
+ * off the wrong page. Reading a stray pair out of a Google consent screen once
+ * put a pin in another country, and a map that is confidently wrong is worse
+ * than no map: it sends a guest to the wrong address. Out of the box, nothing
+ * is stored and the map simply does not appear.
+ */
+export const ERBIL: Bounds = { minLat: 35.9, maxLat: 36.5, minLng: 43.7, maxLng: 44.4 }
+
+const within = (lat: number, lng: number, bounds?: Bounds): boolean =>
+  !bounds ||
+  (lat >= bounds.minLat && lat <= bounds.maxLat && lng >= bounds.minLng && lng <= bounds.maxLng)
+
 const valid = (lat: number, lng: number): boolean =>
   Number.isFinite(lat) &&
   Number.isFinite(lng) &&
@@ -24,13 +43,20 @@ const valid = (lat: number, lng: number): boolean =>
  *   ...?ll=36.1911,44.0092            older links
  *   ...?destination=36.1911,44.0092   a directions link
  */
-export const coordsFromMapsUrl = (url?: string | null): Coords | null => {
+export const coordsFromMapsUrl = (url?: string | null, bounds?: Bounds): Coords | null => {
   if (!url) return null
 
+  // Order matters, and getting it wrong put a hotel in the wrong place.
+  //
+  // A Google place URL carries two different pairs. `!3d!4d` is the place
+  // itself — the pin. `@` is only where the map happened to be centred, which
+  // is the same thing when the link is fresh and something else entirely when
+  // the person sharing it had panned away first. The pin is asked for first
+  // and the viewport is a fallback, never the other way round.
   const patterns: RegExp[] = [
-    /@(-?\d+\.\d+),(-?\d+\.\d+)/,
     /!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/,
     /[?&](?:q|ll|sll|daddr|destination)=(-?\d+\.\d+),\s*(-?\d+\.\d+)/,
+    /@(-?\d+\.\d+),(-?\d+\.\d+)/,
   ]
 
   for (const pattern of patterns) {
@@ -38,7 +64,7 @@ export const coordsFromMapsUrl = (url?: string | null): Coords | null => {
     if (match) {
       const lat = Number(match[1])
       const lng = Number(match[2])
-      if (valid(lat, lng)) return { latitude: lat, longitude: lng }
+      if (valid(lat, lng) && within(lat, lng, bounds)) return { latitude: lat, longitude: lng }
     }
   }
 
@@ -54,7 +80,10 @@ export const isShortMapsLink = (url?: string | null): boolean =>
  * lands. Deliberately forgiving: this runs while the owner is saving a hotel,
  * and a slow or unreachable Google must never hold up or fail that save.
  */
-export const resolveShortMapsLink = async (url: string): Promise<Coords | null> => {
+export const resolveShortMapsLink = async (
+  url: string,
+  bounds?: Bounds,
+): Promise<Coords | null> => {
   try {
     const controller = new AbortController()
     const timer = setTimeout(() => controller.abort(), 6000)
@@ -65,13 +94,17 @@ export const resolveShortMapsLink = async (url: string): Promise<Coords | null> 
     })
     clearTimeout(timer)
 
-    const fromUrl = coordsFromMapsUrl(response.url)
+    // Where the redirect landed is the trustworthy answer.
+    const fromUrl = coordsFromMapsUrl(response.url, bounds)
     if (fromUrl) return fromUrl
 
     // Some short links land on a page that only carries the coordinates in
-    // its body, so fall back to reading the first pair out of the HTML.
+    // its body. This is the loosest reading available — it is one regex over
+    // whatever HTML came back, and if Google served a consent or error page
+    // instead it will happily match something unrelated. It stays because
+    // some links need it, but only ever inside the bounds.
     const body = await response.text()
-    return coordsFromMapsUrl(body)
+    return coordsFromMapsUrl(body, bounds)
   } catch {
     return null
   }

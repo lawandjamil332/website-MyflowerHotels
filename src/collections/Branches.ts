@@ -5,6 +5,7 @@ import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { branchAmenityOptions } from '../fields/amenities'
 import {
+  ERBIL,
   coordsFromMapsUrl,
   isShortMapsLink,
   resolveShortMapsLink,
@@ -44,9 +45,11 @@ export const Branches: CollectionConfig = {
         if (!data?.googleMapsUrl) return data
         if (typeof data.latitude === 'number' && typeof data.longitude === 'number') return data
 
-        let coords = coordsFromMapsUrl(data.googleMapsUrl)
+        // Bounded to Erbil: a link that reads as somewhere else was misread,
+        // and leaving the map empty is better than pinning the wrong city.
+        let coords = coordsFromMapsUrl(data.googleMapsUrl, ERBIL)
         if (!coords && isShortMapsLink(data.googleMapsUrl)) {
-          coords = await resolveShortMapsLink(data.googleMapsUrl)
+          coords = await resolveShortMapsLink(data.googleMapsUrl, ERBIL)
         }
         if (coords) {
           data.latitude = coords.latitude
@@ -148,7 +151,7 @@ export const Branches: CollectionConfig = {
           label: 'Google Maps URL',
           admin: {
             description:
-              'Paste the Share link from Google Maps. The map on the hotel\'s page appears by itself — the coordinates below fill in from this link when you save.',
+              "Paste the Share link from Google Maps. The map on the hotel's page appears by itself — the coordinates below fill in from this link when you save.",
           },
         },
       ],
@@ -195,7 +198,7 @@ export const Branches: CollectionConfig = {
               // only on the group-wide settings.
               name: 'facebook',
               type: 'text',
-              admin: { width: '50%', description: 'This hotel\'s own page.' },
+              admin: { width: '50%', description: "This hotel's own page." },
             },
             {
               name: 'instagram',
