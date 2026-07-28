@@ -1,4 +1,5 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
@@ -23,7 +24,43 @@ import { getServerSideURL } from './utilities/getURL'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+/**
+ * Mail, only if it has somewhere to send.
+ *
+ * Enquiries are announced by email, and with no transport configured Payload
+ * writes them to the console instead — which is the correct fallback and is
+ * exactly what this site did before. So the adapter is attached only when the
+ * SMTP settings are actually present: half-configured mail that throws on every
+ * enquiry would be worse than no mail at all.
+ */
+const smtpHost = process.env.SMTP_HOST
+const smtpUser = process.env.SMTP_USER
+const smtpPass = process.env.SMTP_PASS
+
+const email =
+  smtpHost && smtpUser && smtpPass
+    ? nodemailerAdapter({
+        // Do not dial the mail server while booting. `npm run start` is
+        // check-env && migrate && next start, so a verification handshake
+        // against a slow or unreachable SMTP host does not fail the deploy —
+        // it hangs it, before the site has served a single page. Mail is worth
+        // nothing next to the site being up, and a send that fails is already
+        // caught and logged with the enquiry attached.
+        skipVerify: true,
+        defaultFromName: process.env.SMTP_FROM_NAME || 'My Flower Hotels',
+        defaultFromAddress: process.env.SMTP_FROM || smtpUser,
+        transportOptions: {
+          host: smtpHost,
+          port: Number(process.env.SMTP_PORT || 587),
+          // 465 is implicit TLS; everything else upgrades with STARTTLS.
+          secure: Number(process.env.SMTP_PORT || 587) === 465,
+          auth: { user: smtpUser, pass: smtpPass },
+        },
+      })
+    : undefined
+
 export default buildConfig({
+  ...(email ? { email } : {}),
   admin: {
     components: {
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.

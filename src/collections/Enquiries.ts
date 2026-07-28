@@ -2,6 +2,8 @@ import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { sendEnquiryEmail } from '../utilities/enquiryEmail'
+import type { Branch, Room } from '../payload-types'
 
 /**
  * Reservation enquiries submitted from the website. Anyone may create one
@@ -25,6 +27,54 @@ export const Enquiries: CollectionConfig = {
     description: 'Enquiries sent from the website. Newest first.',
   },
   defaultSort: '-createdAt',
+  hooks: {
+    afterChange: [
+      async ({ doc, operation, req }) => {
+        if (operation !== 'create') return doc
+
+        // Deliberately not awaited. The guest is waiting on this response, and
+        // a slow or unreachable mail server must not hold up the "thank you" —
+        // the enquiry is already saved by the time this runs, so the send has
+        // nothing left to protect.
+        void (async () => {
+          try {
+            const branch =
+              typeof doc.branch === 'object'
+                ? doc.branch
+                : doc.branch
+                  ? await req.payload.findByID({
+                      collection: 'branches',
+                      id: doc.branch,
+                      depth: 0,
+                    })
+                  : null
+
+            const room =
+              typeof doc.room === 'object'
+                ? doc.room
+                : doc.room
+                  ? await req.payload.findByID({ collection: 'rooms', id: doc.room, depth: 0 })
+                  : null
+
+            const settings = await req.payload.findGlobal({ slug: 'settings', depth: 0 })
+
+            await sendEnquiryEmail({
+              payload: req.payload,
+              enquiry: doc,
+              branch: branch as Branch | null,
+              room: room as Room | null,
+              groupEmail: (settings as { email?: string | null })?.email,
+              siteUrl: process.env.NEXT_PUBLIC_SERVER_URL,
+            })
+          } catch (error) {
+            req.payload.logger.error(`Enquiry ${doc.id}: could not be announced — ${error}`)
+          }
+        })()
+
+        return doc
+      },
+    ],
+  },
   fields: [
     {
       type: 'row',
