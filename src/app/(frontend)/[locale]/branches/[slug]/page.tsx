@@ -166,8 +166,19 @@ export default async function BranchPage({ params }: Args) {
                     </dl>
                   )}
 
+                {/* A hotel that is not open yet still answers the phone.
+                    These were hidden along with everything else while the copy
+                    directly above said "send us a message and we will tell you
+                    as soon as it is taking guests" — so the fourth hotel's page
+                    asked for a message and then rendered an empty box where
+                    every way of sending one should have been.
+
+                    What stays hidden is booking: a room cannot be reserved at a
+                    hotel that has not opened. A line somebody answers is a
+                    different thing, and for the fourth hotel that line is the
+                    third hotel's. */}
                 <div className="mt-7 flex flex-col gap-2.5">
-                  {!openingSoon && wa && (
+                  {wa && (
                     <a
                       href={wa}
                       target="_blank"
@@ -178,12 +189,12 @@ export default async function BranchPage({ params }: Args) {
                       {t.branch.enquire}
                     </a>
                   )}
-                  {!openingSoon && tel && (
+                  {tel && (
                     <a href={tel} dir="ltr" className={cn(btnOutline, btnSmall, 'w-full')}>
                       {branch.phone}
                     </a>
                   )}
-                  {!openingSoon && telAlt && (
+                  {telAlt && (
                     <a href={telAlt} dir="ltr" className={cn(btnOutline, btnSmall, 'w-full')}>
                       {branch.phoneAlt}
                     </a>
@@ -200,7 +211,7 @@ export default async function BranchPage({ params }: Args) {
                   )}
                 </div>
 
-                {!openingSoon && branch.email && (
+                {branch.email && (
                   <a
                     href={`mailto:${branch.email}`}
                     className="link-line tap-safe mt-6 block w-fit text-sm text-muted-ink hover:text-ink"
