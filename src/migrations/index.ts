@@ -13,6 +13,7 @@ import * as migration_20260727_078000_offers from './20260727_078000_offers'
 import * as migration_20260727_079000_bookings from './20260727_079000_bookings'
 import * as migration_20260727_079500_guests_and_points from './20260727_079500_guests_and_points'
 import * as migration_20260727_079700_booking_idempotency from './20260727_079700_booking_idempotency'
+import * as migration_20260727_079800_media_alt_optional from './20260727_079800_media_alt_optional'
 import * as migration_20260727_080000_seed_photos from './20260727_080000_seed_photos'
 import * as migration_20260727_090000_branch_social_and_maps from './20260727_090000_branch_social_and_maps'
 import * as migration_20260727_100000_repin_branches from './20260727_100000_repin_branches'
@@ -94,6 +95,11 @@ export const migrations = [
     up: migration_20260727_079700_booking_idempotency.up,
     down: migration_20260727_079700_booking_idempotency.down,
     name: '20260727_079700_booking_idempotency',
+  },
+  {
+    up: migration_20260727_079800_media_alt_optional.up,
+    down: migration_20260727_079800_media_alt_optional.down,
+    name: '20260727_079800_media_alt_optional',
   },
   // Content seeds run last, after every schema migration — see the note in
   // 20260727_080000_seed_photos for what goes wrong when they do not.

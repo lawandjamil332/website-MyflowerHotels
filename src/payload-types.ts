@@ -360,7 +360,10 @@ export interface Branch {
  */
 export interface Media {
   id: number;
-  alt: string;
+  /**
+   * What is in the photo, in a few words — "Double room with balcony". Read aloud to guests who cannot see it, and used by Google. Leave it empty and the hotel or room name is used instead.
+   */
+  alt?: string | null;
   caption?: {
     root: {
       type: string;

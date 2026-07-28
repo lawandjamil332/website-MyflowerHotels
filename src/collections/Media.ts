@@ -25,13 +25,25 @@ export const Media: CollectionConfig = {
   },
   fields: [
     {
-      // Required and localized: screen readers and Google both depend on this,
-      // and a photo described only in English is no use on the Kurdish and
-      // Arabic versions of the site.
+      // Localized, so a photo described in English is not read out in English
+      // to somebody using the Kurdish site — but not required.
+      //
+      // Requiring it sounds like the accessible choice and is the opposite of
+      // one. Nobody uploading two hundred hotel photographs writes two hundred
+      // real descriptions; they write "1", "photo", "aaa", and a screen reader
+      // announcing "photo, photo, photo" down a gallery is worse than one with
+      // something sensible to fall back on. Every place this site renders an
+      // image already falls back to the hotel's name, the room's name or the
+      // site's name, so a blank here is never a blank on the page.
       name: 'alt',
       type: 'text',
-      required: true,
       localized: true,
+      admin: {
+        description:
+          'What is in the photo, in a few words — "Double room with balcony". ' +
+          'Read aloud to guests who cannot see it, and used by Google. ' +
+          'Leave it empty and the hotel or room name is used instead.',
+      },
     },
     {
       name: 'caption',
