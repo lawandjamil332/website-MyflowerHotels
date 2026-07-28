@@ -39,6 +39,54 @@ export class InvalidDatesError extends Error {
   }
 }
 
+export class CapacityError extends Error {
+  constructor(message = 'That room does not sleep that many') {
+    super(message)
+    this.name = 'CapacityError'
+  }
+}
+
+/**
+ * The limits every stay has to fall inside.
+ *
+ * Not opinions — each one closes a hole that was open. A booking for 2020, a
+ * five-year stay and forty guests in a double were all accepted before these
+ * existed, because the only rule was that check-out came after check-in.
+ */
+export const MAX_NIGHTS = 30
+export const MAX_LEAD_DAYS = 730
+
+/** Midnight today, UTC. Stays are whole days, so the clock does not come into it. */
+const todayUtc = (): Date => {
+  const now = new Date()
+  return new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+}
+
+/**
+ * Checks a stay is one a hotel could actually honour.
+ *
+ * Called inside createBooking rather than only in the form, because the form is
+ * not the only way in: a URL can be typed, and a form left open overnight comes
+ * back the next morning with yesterday's date still in it.
+ */
+export const assertBookableDates = (checkIn: Date, checkOut: Date): void => {
+  if (Number.isNaN(checkIn.getTime()) || Number.isNaN(checkOut.getTime())) {
+    throw new InvalidDatesError('Those dates could not be read')
+  }
+  if (checkOut <= checkIn) throw new InvalidDatesError()
+
+  const today = todayUtc()
+  if (checkIn < today) throw new InvalidDatesError('That date has passed')
+
+  const nights = nightsBetween(checkIn, checkOut)
+  if (nights > MAX_NIGHTS) {
+    throw new InvalidDatesError(`Stays longer than ${MAX_NIGHTS} nights are arranged by phone`)
+  }
+
+  const lead = Math.round((checkIn.getTime() - today.getTime()) / 86_400_000)
+  if (lead > MAX_LEAD_DAYS) throw new InvalidDatesError('That is too far ahead to book online')
+}
+
 const pool = (payload: Payload) => (payload.db as unknown as { pool: any }).pool
 
 /** Nights between two dates, counted the way a hotel counts them. */
@@ -99,6 +147,8 @@ export type NewBooking = {
   notes?: string | null
   /** Set when the booking was made from a signed-in account. */
   guestId?: number | null
+  /** One per rendering of the form. Two presses share it; the second is refused. */
+  idempotencyKey?: string | null
 }
 
 /**
@@ -107,8 +157,9 @@ export type NewBooking = {
 export const createBooking = async (
   payload: Payload,
   input: NewBooking,
-): Promise<{ id: number; reference: string; nights: number }> => {
-  if (input.checkOut <= input.checkIn) throw new InvalidDatesError()
+): Promise<{ id: number; reference: string; nights: number; duplicate?: boolean }> => {
+  assertBookableDates(input.checkIn, input.checkOut)
+  if (input.guests != null && input.guests < 1) throw new CapacityError('At least one guest')
 
   const client = await pool(payload).connect()
   try {
@@ -117,13 +168,34 @@ export const createBooking = async (
     // Everything below is serialised per room type by this lock. It is taken
     // before the count, not after, which is the entire point.
     const locked = await client.query(
-      `SELECT quantity::int AS quantity, is_available
+      `SELECT quantity::int AS quantity, is_available, max_guests::int AS max_guests
          FROM rooms WHERE id = $1 FOR UPDATE`,
       [input.roomId],
     )
     if (locked.rows.length === 0) throw new NoAvailabilityError('That room no longer exists')
     if (locked.rows[0].is_available === false) {
       throw new NoAvailabilityError('That room is not currently offered')
+    }
+
+    // Checked here, against the room the booking is actually for, rather than
+    // trusted from the search that led here — the search can be skipped.
+    const sleeps = locked.rows[0].max_guests
+    if (input.guests != null && sleeps != null && input.guests > sleeps) {
+      throw new CapacityError()
+    }
+
+    // Already booked by this very press? Then this is the second arrival of one
+    // intention, and the answer is the booking the first one made — not an
+    // error, and not a second room.
+    if (input.idempotencyKey) {
+      const seen = await client.query(
+        `SELECT id, reference, nights::int AS nights FROM bookings WHERE idempotency_key = $1`,
+        [input.idempotencyKey],
+      )
+      if (seen.rows.length > 0) {
+        await client.query('COMMIT')
+        return { ...seen.rows[0], duplicate: true }
+      }
     }
 
     const taken = await client.query(
@@ -147,8 +219,8 @@ export const createBooking = async (
           `INSERT INTO bookings
              (reference, guest_name, guest_phone, guest_email, branch_id, room_id,
               check_in, check_out, guests, nights, total_amount, currency, status, notes,
-              guest_id)
-           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'confirmed',$13,$14)
+              guest_id, idempotency_key)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'confirmed',$13,$14,$15)
            RETURNING id, reference`,
           [
             reference,
@@ -165,12 +237,26 @@ export const createBooking = async (
             input.currency ?? 'IQD',
             input.notes ?? null,
             input.guestId ?? null,
+            input.idempotencyKey ?? null,
           ],
         )
         break
       } catch (error) {
         const code = (error as { code?: string })?.code
         if (code !== '23505') throw error // not a uniqueness clash — real failure
+        // Which unique index? A clash on the key means the other press won the
+        // race by microseconds; hand back what it created.
+        if (input.idempotencyKey) {
+          const winner = await client.query(
+            `SELECT id, reference, nights::int AS nights FROM bookings WHERE idempotency_key = $1`,
+            [input.idempotencyKey],
+          )
+          if (winner.rows.length > 0) {
+            await client.query('COMMIT')
+            return { ...winner.rows[0], duplicate: true }
+          }
+        }
+        // Otherwise it was the reference that collided: loop and draw another.
       }
     }
 

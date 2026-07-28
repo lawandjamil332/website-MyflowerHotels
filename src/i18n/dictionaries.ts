@@ -159,6 +159,8 @@ export type Dictionary = {
     doneLead: string
     reference: string
     total: string
+    errorDates: string
+    errorGuests: string
     errorGone: string
     errorGeneric: string
   }
@@ -353,6 +355,8 @@ const en: Dictionary = {
     doneLead: 'We have sent the details on. Keep this reference — it is what to quote at the desk.',
     reference: 'Booking reference',
     total: 'Total',
+    errorDates: 'Please check the dates — they may have passed while this page was open.',
+    errorGuests: 'That room does not sleep that many. Please choose a larger one.',
     errorGone: 'Those dates went while you were deciding. Please pick again.',
     errorGeneric:
       'That did not go through. Please message us on WhatsApp and we will book it by hand.',
@@ -573,6 +577,8 @@ const ku: Dictionary = {
     doneLead: 'زانیارییەکانمان ناردووە. ئەم ژمارەیە بپارێزە — لە پێشوازی پێویستت پێیەتی.',
     reference: 'ژمارەی حیجز',
     total: 'کۆی گشتی',
+    errorDates: 'تکایە ڕۆژەکان بپشکنە — لەوانەیە تێپەڕیبن لە کاتێکدا ئەم پەڕەیە کراوە بوو.',
+    errorGuests: 'ئەم ژوورە ئەوەندە کەس جێی نابێتەوە. تکایە ژوورێکی گەورەتر هەڵبژێرە.',
     errorGone: 'ئەو ڕۆژانە گیران لە کاتی بڕیاردانت. تکایە دووبارە هەڵبژێرە.',
     errorGeneric:
       'سەرکەوتوو نەبوو. تکایە لە واتساپ پەیوەندیمان پێوە بکە و بە دەست حیجزت بۆ دەکەین.',
@@ -790,6 +796,8 @@ const ar: Dictionary = {
     doneLead: 'أرسلنا التفاصيل. احتفظ بهذا الرقم — هو ما تذكره عند الاستقبال.',
     reference: 'رقم الحجز',
     total: 'الإجمالي',
+    errorDates: 'يرجى التحقق من التواريخ — ربما مضت بينما كانت هذه الصفحة مفتوحة.',
+    errorGuests: 'هذه الغرفة لا تتسع لهذا العدد. الرجاء اختيار غرفة أكبر.',
     errorGone: 'حُجزت هذه التواريخ أثناء اختيارك. الرجاء الاختيار من جديد.',
     errorGeneric: 'لم تتم العملية. راسلنا على واتساب وسنحجز لك يدويًا.',
   },

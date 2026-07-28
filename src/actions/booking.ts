@@ -3,13 +3,22 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
-import { createBooking, NoAvailabilityError } from '@/utilities/booking'
+import {
+  CapacityError,
+  createBooking,
+  InvalidDatesError,
+  NoAvailabilityError,
+} from '@/utilities/booking'
 import { currentGuest } from '@/actions/account'
 import { sendBookingEmails } from '@/utilities/bookingEmail'
 
 export type BookingResult =
   | { status: 'success'; reference: string }
-  | { status: 'error'; message: 'gone' | 'generic' | 'required'; fields?: string[] }
+  | {
+      status: 'error'
+      message: 'gone' | 'generic' | 'required' | 'dates' | 'guests'
+      fields?: string[]
+    }
 
 const text = (value: FormDataEntryValue | null): string =>
   typeof value === 'string' ? value.trim() : ''
@@ -70,6 +79,7 @@ export async function submitBooking(
       currency,
       notes: text(formData.get('notes')) || null,
       guestId: guest ? Number(guest.id) : null,
+      idempotencyKey: text(formData.get('idempotencyKey')) || null,
     })
 
     // Not awaited: the room is already held by the time this runs, and a guest
@@ -82,6 +92,10 @@ export async function submitBooking(
     // The one refusal a guest can do something about: the room went while they
     // were typing. Everything else is ours, not theirs.
     if (error instanceof NoAvailabilityError) return { status: 'error', message: 'gone' }
+    // A form left open overnight comes back with yesterday in it; a typed URL
+    // can carry anything. Both are worth explaining rather than shrugging at.
+    if (error instanceof InvalidDatesError) return { status: 'error', message: 'dates' }
+    if (error instanceof CapacityError) return { status: 'error', message: 'guests' }
     return { status: 'error', message: 'generic' }
   }
 }

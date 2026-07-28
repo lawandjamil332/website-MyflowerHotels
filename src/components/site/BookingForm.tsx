@@ -1,6 +1,6 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useState } from 'react'
 
 import type { Dictionary } from '@/i18n/dictionaries'
 import type { AvailableRoom } from '@/utilities/booking'
@@ -41,6 +41,17 @@ export function BookingForm({
     null,
   )
 
+  // Made once, when the form first renders, and unchanged for its lifetime.
+  // Two presses of this form carry the same key, so the second is recognised as
+  // the same intention rather than a second room. Disabling the button while
+  // the first is in flight is not enough on its own: that is client-side, and a
+  // second request can be on the wire before React has re-rendered anything.
+  const [idempotencyKey] = useState(() =>
+    typeof crypto !== 'undefined' && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+  )
+
   if (state?.status === 'success') {
     return (
       <div className="rounded-2xl border border-line bg-card p-8 text-center sm:p-10">
@@ -66,6 +77,7 @@ export function BookingForm({
       <h2 className="font-display text-2xl text-ink sm:text-3xl">{t.booking.confirmTitle}</h2>
       <p className="mt-3 text-[0.98rem] leading-relaxed text-muted-ink">{t.booking.confirmLead}</p>
 
+      <input type="hidden" name="idempotencyKey" value={idempotencyKey} />
       <input type="hidden" name="room" value={room.id} />
       <input type="hidden" name="branch" value={branchId} />
       <input type="hidden" name="checkIn" value={checkIn} />
@@ -113,7 +125,11 @@ export function BookingForm({
             ? t.booking.errorGone
             : state.message === 'required'
               ? t.form.errorRequired
-              : t.booking.errorGeneric}
+              : state.message === 'dates'
+                ? t.booking.errorDates
+                : state.message === 'guests'
+                  ? t.booking.errorGuests
+                  : t.booking.errorGeneric}
         </p>
       )}
 
