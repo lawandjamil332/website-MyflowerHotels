@@ -485,6 +485,18 @@ html[data-theme='light'] {
     block-size: 2rem;
   }
 
+  /* 44px, the size a finger actually needs, for links stacked in a column
+     where there is room to give them it — the footer. A line of text is 20px
+     tall, so at 32px a thumb aimed between two of them lands on neither and
+     the tap appears to do nothing at all.
+
+     It only works with enough space to sit in: these hit areas are invisible,
+     so on a tighter gap they would silently overlap and the wrong link would
+     answer. Every column using this sets a gap of at least 1.5rem. */
+  .tap-safe-lg::before {
+    block-size: 2.75rem;
+  }
+
   /* Short bar under a heading — the one piece of ornament the design keeps,
      and it is in the brand colour so it doubles as a marker. */
   .rule-brand {

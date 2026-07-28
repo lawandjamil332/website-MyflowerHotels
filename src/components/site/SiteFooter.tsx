@@ -56,8 +56,10 @@ export async function SiteFooter({
   // screen readers, and invisible to everyone looking at the page.
   const columnHeading =
     'text-[0.65rem] tracking-[0.24em] text-white/70 uppercase rtl:tracking-normal'
+  // tap-safe-lg gives these a 44px hit area; the gap-6 on every column below
+  // is what stops those areas overlapping each other.
   const columnLink =
-    'link-line tap-safe text-sm text-white/60 transition-colors duration-500 ease-luxe hover:text-white'
+    'link-line tap-safe tap-safe-lg text-sm text-white/60 transition-colors duration-500 ease-luxe hover:text-white'
 
   return (
     <footer className="bg-brand text-white">
@@ -83,7 +85,7 @@ export async function SiteFooter({
             <div aria-hidden="true" className="rule-brand mt-7" />
           </div>
 
-          <nav className="flex flex-col items-start gap-3.5">
+          <nav className="flex flex-col items-start gap-6">
             <p className={columnHeading}>{t.common.menu}</p>
             <Link href={`/${locale}`} className={columnLink}>
               {t.nav.home}
@@ -107,11 +109,11 @@ export async function SiteFooter({
               four accounts separately would print all four hotel names twice
               in one footer, and pairing them here says which is which without
               a word of explanation. */}
-          <nav className="flex flex-col items-start gap-3.5">
+          <nav className="flex flex-col items-start gap-6">
             <p className={columnHeading}>{t.nav.branches}</p>
             {branches.length > 0 ? (
               branches.map((branch) => (
-                <span key={branch.id} className="flex items-center gap-1">
+                <span key={branch.id} className="flex items-center gap-2">
                   <Link href={`/${locale}/branches/${branch.slug}`} className={columnLink}>
                     {branch.name}
                   </Link>
@@ -121,7 +123,7 @@ export async function SiteFooter({
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${branch.name} — Instagram`}
-                      className="flex h-8 w-8 items-center justify-center text-white/45 transition-colors duration-500 ease-luxe hover:text-white"
+                      className="flex h-11 w-11 items-center justify-center text-white/45 transition-colors duration-500 ease-luxe hover:text-white"
                     >
                       <InstagramMark />
                     </a>
@@ -133,7 +135,7 @@ export async function SiteFooter({
             )}
           </nav>
 
-          <div className="flex flex-col items-start gap-3.5">
+          <div className="flex flex-col items-start gap-6">
             <p className={columnHeading}>{t.nav.contact}</p>
             {tel && (
               <a href={tel} className={columnLink} dir="ltr">
