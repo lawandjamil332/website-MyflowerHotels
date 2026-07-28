@@ -16,7 +16,16 @@ export function middleware(request: NextRequest) {
     (locale) => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`),
   )
 
-  if (alreadyLocalized) return NextResponse.next()
+  if (alreadyLocalized) {
+    // Passed through so the layout can name the page it is rendering. A layout
+    // has no access to the path, and without it there is nowhere to put the
+    // canonical URL or the three hreflang tags that tell Google the English,
+    // Kurdish and Arabic pages are one page in three languages rather than
+    // three pages saying the same thing.
+    const headers = new Headers(request.headers)
+    headers.set('x-pathname', pathname)
+    return NextResponse.next({ request: { headers } })
+  }
 
   const url = request.nextUrl.clone()
   url.pathname = `/${defaultLocale}${pathname === '/' ? '' : pathname}`

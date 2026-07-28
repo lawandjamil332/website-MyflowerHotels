@@ -29,6 +29,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { dir, isLocale, locales, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { CurrencyProvider } from '@/components/site/Currency'
+import { Hreflang } from '@/components/site/Hreflang'
 import { SiteHeader } from '@/components/site/SiteHeader'
 import { SiteFooter } from '@/components/site/SiteFooter'
 import { ContactDock } from '@/components/site/ContactDock'
@@ -108,6 +109,7 @@ export default async function LocaleLayout({ children, params }: Args) {
         <link href="/favicon-32.png" rel="icon" type="image/png" sizes="32x32" />
         <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
         <meta name="theme-color" content="#0f3a5e" />
+        <Hreflang locale={locale} />
       </head>
       <body className="bg-bone text-ink antialiased">
         {/* The opening curtain that used to sit here is gone with the rest of
