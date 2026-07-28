@@ -36,7 +36,12 @@ const nextConfig: NextConfig = {
         pathname: '/hotels/**',
       },
     ],
-    qualities: [100],
+    // 82, not 100. Quality 100 WebP is around 40% heavier than 82 for a
+    // difference nobody can see, and it is spent on photographs cropped from a
+    // printed flyer — so the extra bytes were preserving the print's own
+    // artefacts at full price. 75 stays allowed because it is next/image's
+    // default and any component that does not ask for a quality gets it.
+    qualities: [75, 82],
     remotePatterns: [
       ...[NEXT_PUBLIC_SERVER_URL /* 'https://example.com' */].map((item) => {
         const url = new URL(item)
