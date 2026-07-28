@@ -31,7 +31,7 @@ import { getDictionary } from '@/i18n/dictionaries'
 import { CurrencyProvider } from '@/components/site/Currency'
 import { SiteHeader } from '@/components/site/SiteHeader'
 import { SiteFooter } from '@/components/site/SiteFooter'
-import { WhatsAppButton } from '@/components/site/WhatsAppButton'
+import { ContactDock } from '@/components/site/ContactDock'
 import { getSettings } from '@/utilities/getSettings'
 import { getBranches } from '@/utilities/branches'
 import { toWhatsAppHref } from '@/utilities/contact'
@@ -78,6 +78,20 @@ export default async function LocaleLayout({ children, params }: Args) {
         ? [{ name: settings.siteName || 'My Flower Hotels', href: groupChat }]
         : []
 
+  // The same treatment for Instagram: four accounts, one per hotel, so the
+  // button asks which. Falls back to a group account only when no hotel has
+  // one of its own.
+  const hotelGrams = branches
+    .filter((branch) => Boolean(branch.instagram))
+    .map((branch) => ({ name: branch.name, href: branch.instagram as string }))
+
+  const instagramTargets =
+    hotelGrams.length > 0
+      ? hotelGrams
+      : settings.social?.instagram
+        ? [{ name: settings.siteName || 'My Flower Hotels', href: settings.social.instagram }]
+        : []
+
   return (
     <html lang={locale} dir={dir(locale)} suppressHydrationWarning>
       <head>
@@ -113,10 +127,10 @@ export default async function LocaleLayout({ children, params }: Args) {
             <SiteHeader locale={locale} t={t} settings={settings} />
             <main id="main">{children}</main>
             <SiteFooter locale={locale} t={t} settings={settings} />
-            <WhatsAppButton
-              targets={whatsappTargets}
-              label={t.common.whatsapp}
-              chooseLabel={t.common.whatsapp}
+            <ContactDock
+              whatsapp={whatsappTargets}
+              instagram={instagramTargets}
+              whatsappLabel={t.common.whatsapp}
               closeLabel={t.common.close}
             />
           </CurrencyProvider>
