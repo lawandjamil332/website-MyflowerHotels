@@ -155,11 +155,15 @@ export function StayFinder({
         // sitting on the picture and becomes a band ruled across the page.
         'mx-auto w-full max-w-[68rem] rounded-2xl bg-card p-2 lg:rounded-full lg:p-2.5',
         'shadow-[0_24px_70px_-28px_rgb(0_0_0/0.55)]',
-        'flex flex-col lg:flex-row lg:items-center',
+        // Two columns on a phone rather than five stacked rows. The two dates
+        // belong side by side anyway — they are one decision — and pairing them
+        // takes a whole field's height out of a control that now sits at the
+        // top of the hero, where every row it costs pushes the photograph down.
+        'grid grid-cols-2 lg:flex lg:flex-row lg:items-center',
         className,
       )}
     >
-      <div className={cn(cell, 'border-b lg:border-b-0 lg:border-e')}>
+      <div className={cn(cell, 'col-span-2 border-b lg:col-auto lg:border-b-0 lg:border-e')}>
         <BuildingIcon />
         <span className="min-w-0 flex-1">
           <label className={label} htmlFor="finder-hotel">
@@ -181,7 +185,7 @@ export function StayFinder({
         </span>
       </div>
 
-      <div className={cn(cell, 'border-b lg:border-b-0 lg:border-e')}>
+      <div className={cn(cell, 'border-b border-e lg:border-b-0')}>
         <CalendarIcon />
         <span className="min-w-0 flex-1">
           <label className={label} htmlFor="finder-in">
@@ -217,7 +221,7 @@ export function StayFinder({
         </span>
       </div>
 
-      <div className={cn(cell, 'border-b lg:border-b-0 lg:max-w-[10.5rem]')}>
+      <div className={cn(cell, 'col-span-2 border-b lg:col-auto lg:border-b-0 lg:max-w-[10.5rem]')}>
         <GuestIcon />
         <span className="min-w-0 flex-1">
           <label className={label} htmlFor="finder-guests">
@@ -240,7 +244,10 @@ export function StayFinder({
         </span>
       </div>
 
-      <button type="submit" className={cn(btnPrimary, 'mt-2 shrink-0 lg:mt-0 lg:px-9')}>
+      <button
+        type="submit"
+        className={cn(btnPrimary, 'col-span-2 mt-2 shrink-0 lg:col-auto lg:mt-0 lg:px-9')}
+      >
         {t.search.submit}
       </button>
     </form>

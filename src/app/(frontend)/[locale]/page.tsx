@@ -69,11 +69,15 @@ export default async function HomePage({ params }: Args) {
         phone={settings.phone}
         establishedYear={settings.establishedYear}
       />
-      {/* A banner, not a title card. It is deliberately short: the search box
-          below it is the most useful thing on this page, and a hero that fills
-          the screen pushes the one control a guest came to use below the fold.
-          Capped in rem as well as vh so it stays a band on a tall monitor. */}
-      <section className="relative flex h-[62svh] max-h-[34rem] min-h-[22rem] items-end overflow-hidden bg-ink">
+      {/* The search box sits at the top of the picture, above the name, which
+          is where the reference puts it and is the right way round: the one
+          control a guest came to use should not be something they scroll to.
+          It was previously below the hero, which is also why the hero had to
+          be kept short — with the control inside it the banner can be a proper
+          photograph again. Height comes from the content rather than a fixed
+          vh, so nothing is ever clipped in the language with the longest
+          labels. */}
+      <section className="relative flex min-h-[34rem] flex-col overflow-hidden bg-ink lg:min-h-[40rem]">
         <PhotoFrame
           src={heroUrl}
           alt={mediaAlt(heroBranch?.heroImage) || siteName}
@@ -90,7 +94,28 @@ export default async function HomePage({ params }: Args) {
         />
         <div aria-hidden="true" className="hero-glow absolute inset-0" />
 
-        <div className={cn(shell, 'relative pt-28 pb-16 sm:pb-20')}>
+        {/* Which hotel, which nights, how many — carried into the enquiry
+            rather than checked against availability nobody is holding.
+
+            pt-28 clears the header, which stands 81px tall. At pt-20 the pill
+            sat one pixel under it at tablet widths and seven clear at phone
+            widths — the control the page opens with, tucked behind the menu.
+            Measured, not guessed. */}
+        {branches.length > 0 && (
+          <div className={cn(shell, 'relative pt-28')}>
+            <StayFinder
+              hotels={branches.map((b) => ({
+                slug: b.slug,
+                name: b.name,
+                openingSoon: b.status === 'openingSoon',
+              }))}
+              locale={locale}
+              t={t}
+            />
+          </div>
+        )}
+
+        <div className={cn(shell, 'relative mt-auto pt-14 pb-16 sm:pb-20')}>
           <div className="rise flex items-center gap-4" style={{ animationDelay: '0.2s' }}>
             <p className="eyebrow text-white">{t.home.heroEyebrow}</p>
             <Stars count={settings.stars} tone="light" />
@@ -122,67 +147,18 @@ export default async function HomePage({ params }: Args) {
         </div>
       </section>
 
-      {/* flow-root, and it is load-bearing. The search pill below is lifted onto
-          the hero with a negative top margin, and as the first child of this
-          block that margin collapsed straight through the parent — dragging
-          the bone background up with it, painting out the bottom of the
-          photograph, and landing the pill on a white strip instead of the
-          picture. flow-root gives this block its own formatting context so the
-          pill moves and the background stays where it was put. */}
-      <div className="relative z-10 flow-root bg-bone">
-        {/* Which hotel, which nights, how many — carried into the enquiry
-            rather than checked against availability nobody is holding. */}
-        {branches.length > 0 && (
-          <div className={cn(shell, 'relative -mt-12 pb-12 lg:-mt-16 lg:pb-16')}>
-            <StayFinder
-              hotels={branches.map((b) => ({
-                slug: b.slug,
-                name: b.name,
-                openingSoon: b.status === 'openingSoon',
-              }))}
-              locale={locale}
-              t={t}
-            />
-          </div>
-        )}
-        {/* The facts a guest checks first, before they scroll for them. The
-            guest count sits next to the founding year on purpose: a large
+      <div className="relative z-10 bg-bone">
+        {/* Who the group is, and the facts a guest checks, in one band.
+            These were two full-height sections — a wall of five numbers on
+            ink, then a heading and two sentences on sand — and between them
+            they spent six hundred pixels on about forty words. That is what
+            made the page read as empty next to a reference that stacks one
+            row of cards on the next. Together they are one section that earns
+            its height.
+
+            The guest count sits beside the founding year on purpose: a large
             number means little on its own, and "since 2012" is what turns it
             from a boast into a rate. */}
-        <section className="bg-ink">
-          <ul
-            className={cn(
-              shell,
-              'grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-3 lg:py-20 xl:grid-cols-5',
-            )}
-          >
-            {[
-              // Dropped rather than shown as zero when the branch query comes
-              // back empty: "0 hotels in Erbil" is worse than saying nothing.
-              n > 0 ? { value: countWord(n, locale), label: t.home.creditHotels } : null,
-              settings.establishedYear
-                ? { value: String(settings.establishedYear), label: t.home.creditSince }
-                : null,
-              { value: t.home.creditGuestsValue, label: t.home.creditGuests },
-              { value: settings.stars ?? '4', label: t.home.creditStars },
-              { value: t.branch.anyTime, label: t.home.creditReception },
-            ]
-              .filter((c): c is { value: string; label: string } => c !== null)
-              .map((credit, i) => (
-                <Reveal key={credit.label} delay={i * 90} className="text-center">
-                  {/* Sized down from the four-item version: "1.5 million+" is
-                    three times the width of "4", and at the old size it broke
-                    its column before it broke the line. */}
-                  <p className="font-display text-hero text-4xl leading-tight text-balance sm:text-5xl">
-                    {credit.value}
-                  </p>
-                  <p className="mt-3 text-[0.95rem] text-white/70">{credit.label}</p>
-                </Reveal>
-              ))}
-          </ul>
-        </section>
-
-        {/* Who the group is, in one band. */}
         <section className="bg-sand">
           <div className={cn(shell, sectionY)}>
             <SectionHeading
@@ -190,6 +166,32 @@ export default async function HomePage({ params }: Args) {
               lead={t.home.introBody}
               action={{ href: `/${locale}/about`, label: t.nav.about }}
             />
+
+            <ul className="mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3 xl:grid-cols-5">
+              {[
+                // Dropped rather than shown as zero when the branch query comes
+                // back empty: "0 hotels in Erbil" is worse than saying nothing.
+                n > 0 ? { value: countWord(n, locale), label: t.home.creditHotels } : null,
+                settings.establishedYear
+                  ? { value: String(settings.establishedYear), label: t.home.creditSince }
+                  : null,
+                { value: t.home.creditGuestsValue, label: t.home.creditGuests },
+                { value: settings.stars ?? '4', label: t.home.creditStars },
+                { value: t.branch.anyTime, label: t.home.creditReception },
+              ]
+                .filter((c): c is { value: string; label: string } => c !== null)
+                .map((credit, i) => (
+                  <Reveal key={credit.label} delay={i * 90} className="text-center">
+                    {/* Sized down from the four-item version: "2 million" is
+                        several times the width of "4", and at the old size it
+                        broke its column before it broke the line. */}
+                    <p className="font-display text-3xl leading-tight text-balance text-ink sm:text-4xl">
+                      {credit.value}
+                    </p>
+                    <p className="mt-2.5 text-[0.9rem] text-muted-ink">{credit.label}</p>
+                  </Reveal>
+                ))}
+            </ul>
           </div>
         </section>
 
