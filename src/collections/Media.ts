@@ -25,25 +25,19 @@ export const Media: CollectionConfig = {
   },
   fields: [
     {
-      // Localized, so a photo described in English is not read out in English
-      // to somebody using the Kurdish site — but not required.
+      // Kept in the schema, taken out of the panel. The owner uploads in bulk
+      // and does not want to be asked; the field staying means the photos that
+      // already carry a description keep using it, and the site keeps a place
+      // to put one later without a migration.
       //
-      // Requiring it sounds like the accessible choice and is the opposite of
-      // one. Nobody uploading two hundred hotel photographs writes two hundred
-      // real descriptions; they write "1", "photo", "aaa", and a screen reader
-      // announcing "photo, photo, photo" down a gallery is worse than one with
-      // something sensible to fall back on. Every place this site renders an
-      // image already falls back to the hotel's name, the room's name or the
-      // site's name, so a blank here is never a blank on the page.
+      // Nothing on the site renders an empty description as a result. Every
+      // image falls back to the hotel's name, the room's name or the site's
+      // name, which for a hotel gallery is very close to what a hand-written
+      // description would have said anyway.
       name: 'alt',
       type: 'text',
       localized: true,
-      admin: {
-        description:
-          'What is in the photo, in a few words — "Double room with balcony". ' +
-          'Read aloud to guests who cannot see it, and used by Google. ' +
-          'Leave it empty and the hotel or room name is used instead.',
-      },
+      admin: { hidden: true },
     },
     {
       name: 'caption',
