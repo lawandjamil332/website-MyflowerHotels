@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import { cn } from '@/utilities/ui'
 
@@ -18,8 +18,8 @@ import { cn } from '@/utilities/ui'
  * Built on scroll-snap rather than a carousel library: it works with a thumb,
  * a trackpad, a scrollbar and the keyboard for free, it costs no JavaScript to
  * render, and with scripting off the row is still there and still scrolls. The
- * arrows are the only scripted part, and they hide themselves when there is
- * nothing to scroll to.
+ * arrows are the only scripted part, and they take themselves off the page
+ * when the row fits — which is most of them on a wide screen.
  */
 export function CardRail({
   children,
@@ -36,6 +36,9 @@ export function CardRail({
   const rail = useRef<HTMLDivElement>(null)
   const [atStart, setAtStart] = useState(true)
   const [atEnd, setAtEnd] = useState(false)
+  // Starts true so the server renders the arrows and a page with no JavaScript
+  // keeps them. The first measurement corrects it before paint.
+  const [scrollable, setScrollable] = useState(true)
 
   const measure = useCallback(() => {
     const el = rail.current
@@ -47,9 +50,16 @@ export function CardRail({
     const max = el.scrollWidth - el.clientWidth
     setAtStart(x <= 2)
     setAtEnd(x >= max - 2)
+    setScrollable(max > 2)
   }, [])
 
-  useEffect(() => {
+  // Layout effect, not effect: this can remove the arrows, and doing that after
+  // the browser has painted would shift everything below the rail up by the
+  // height of a control the guest never saw. Measured before paint, the row
+  // simply arrives in its settled state.
+  const useMeasureEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
+
+  useMeasureEffect(() => {
     const el = rail.current
     if (!el) return
     measure()
@@ -86,6 +96,11 @@ export function CardRail({
         tabIndex={0}
         className={cn(
           'flex snap-x snap-mandatory gap-5 overflow-x-auto pb-1',
+          // A row with fewer cards than fit was left hanging off the leading
+          // edge with a quarter of the band empty beside it — three cards in a
+          // space built for four read as a row that had failed to load. When
+          // there is nothing to scroll, the cards sit in the middle instead.
+          !scrollable && 'justify-center',
           // The scrollbar is noise under a row of photographs; the arrows and
           // the partly-visible next card already say it scrolls.
           '[scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
@@ -95,7 +110,10 @@ export function CardRail({
         {children}
       </div>
 
-      <div className="mt-7 flex justify-end gap-3">
+      {/* Only when there is somewhere to go. These used to render always and
+          merely disable themselves, so every rail that fitted its band — which
+          on a desktop was all of them — closed with a pair of dead circles. */}
+      <div className={cn('mt-7 flex justify-end gap-3', !scrollable && 'hidden')}>
         {([-1, 1] as const).map((direction) => (
           <button
             key={direction}
@@ -138,10 +156,7 @@ export function RailCard({
 }) {
   return (
     <article
-      className={cn(
-        'w-[78%] shrink-0 snap-start sm:w-[46%] lg:w-[31.5%] xl:w-[23.5%]',
-        className,
-      )}
+      className={cn('w-[78%] shrink-0 snap-start sm:w-[46%] lg:w-[31.5%] xl:w-[23.5%]', className)}
     >
       {children}
     </article>
