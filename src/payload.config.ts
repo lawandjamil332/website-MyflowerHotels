@@ -6,6 +6,8 @@ import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { Bookings } from './collections/Bookings'
+import { Guests } from './collections/Guests'
+import { PointEntries } from './collections/PointEntries'
 import { Branches } from './collections/Branches'
 import { Categories } from './collections/Categories'
 import { Enquiries } from './collections/Enquiries'
@@ -120,6 +122,8 @@ export default buildConfig({
   },
   collections: [
     Bookings,
+    Guests,
+    PointEntries,
     Branches,
     Rooms,
     Offers,

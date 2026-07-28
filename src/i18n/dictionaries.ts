@@ -121,6 +121,26 @@ export type Dictionary = {
     orWhatsApp: string
   }
   contact: { eyebrow: string; lead: string }
+  account: {
+    signIn: string
+    signUp: string
+    signOut: string
+    myBookings: string
+    email: string
+    password: string
+    haveAccount: string
+    noAccount: string
+    points: string
+    pointsLead: string
+    pending: string
+    noBookings: string
+    badLogin: string
+    taken: string
+    createTitle: string
+    createLead: string
+    upcoming: string
+    past: string
+  }
   booking: {
     title: string
     lead: string
@@ -292,6 +312,26 @@ const en: Dictionary = {
     errorRequired: 'Please give us a name and a number to reply to.',
     errorGeneric: 'That did not send. Please message us on WhatsApp instead.',
     orWhatsApp: 'Or message us directly',
+  },
+  account: {
+    signIn: 'Sign in',
+    signUp: 'Create an account',
+    signOut: 'Sign out',
+    myBookings: 'My bookings',
+    email: 'Email',
+    password: 'Password',
+    haveAccount: 'Already have an account?',
+    noAccount: 'No account yet?',
+    points: 'Points',
+    pointsLead: 'Points are added after you have stayed.',
+    pending: 'after your stay',
+    noBookings: 'Nothing booked yet.',
+    badLogin: 'That email and password do not match.',
+    taken: 'There is already an account with that email.',
+    createTitle: 'Keep your bookings in one place',
+    createLead: 'An account remembers your details and collects points on every stay.',
+    upcoming: 'Coming up',
+    past: 'Past stays',
   },
   booking: {
     title: 'Rooms free for your dates',
@@ -491,6 +531,26 @@ const ku: Dictionary = {
     errorGeneric: 'نەنێردرا. تکایە لە جیاتی ئەوە لە واتساپ نامەمان بۆ بنێرە.',
     orWhatsApp: 'یان ڕاستەوخۆ نامەمان بۆ بنێرە',
   },
+  account: {
+    signIn: 'چوونەژوورەوە',
+    signUp: 'دروستکردنی هەژمار',
+    signOut: 'دەرچوون',
+    myBookings: 'حیجزەکانم',
+    email: 'ئیمەیل',
+    password: 'وشەی نهێنی',
+    haveAccount: 'هەژمارت هەیە؟',
+    noAccount: 'هێشتا هەژمارت نییە؟',
+    points: 'خاڵەکان',
+    pointsLead: 'خاڵەکان دوای مانەوەکەت زیاد دەکرێن.',
+    pending: 'دوای مانەوەکەت',
+    noBookings: 'هێشتا هیچ حیجزێک نییە.',
+    badLogin: 'ئیمەیل و وشەی نهێنی یەک ناگرنەوە.',
+    taken: 'هەژمارێک بەم ئیمەیلە هەیە.',
+    createTitle: 'حیجزەکانت لە یەک شوێندا',
+    createLead: 'هەژمار زانیارییەکانت دەپارێزێت و لە هەر مانەوەیەکدا خاڵ کۆدەکاتەوە.',
+    upcoming: 'داهاتوو',
+    past: 'مانەوەی پێشوو',
+  },
   booking: {
     title: 'ژوورە بەردەستەکان بۆ ڕۆژەکانت',
     lead: 'ژوورێک هەڵبژێرە. ئێستا هیچ پارەیەک وەرناگیرێت — لە هۆتێلەکە دەدەیت.',
@@ -686,6 +746,26 @@ const ar: Dictionary = {
     errorRequired: 'من فضلك اكتب الاسم ورقماً نرد عليه.',
     errorGeneric: 'لم يتم الإرسال. راسلنا على واتساب من فضلك.',
     orWhatsApp: 'أو راسلنا مباشرة',
+  },
+  account: {
+    signIn: 'تسجيل الدخول',
+    signUp: 'إنشاء حساب',
+    signOut: 'تسجيل الخروج',
+    myBookings: 'حجوزاتي',
+    email: 'البريد الإلكتروني',
+    password: 'كلمة المرور',
+    haveAccount: 'لديك حساب بالفعل؟',
+    noAccount: 'ليس لديك حساب؟',
+    points: 'النقاط',
+    pointsLead: 'تُضاف النقاط بعد انتهاء إقامتك.',
+    pending: 'بعد إقامتك',
+    noBookings: 'لا توجد حجوزات بعد.',
+    badLogin: 'البريد الإلكتروني وكلمة المرور غير متطابقين.',
+    taken: 'يوجد حساب بهذا البريد الإلكتروني.',
+    createTitle: 'احفظ حجوزاتك في مكان واحد',
+    createLead: 'الحساب يحفظ بياناتك ويجمع النقاط مع كل إقامة.',
+    upcoming: 'القادمة',
+    past: 'الإقامات السابقة',
   },
   booking: {
     title: 'الغرف المتاحة في تواريخك',

@@ -97,6 +97,8 @@ export type NewBooking = {
   totalAmount?: number | null
   currency?: 'IQD' | 'USD'
   notes?: string | null
+  /** Set when the booking was made from a signed-in account. */
+  guestId?: number | null
 }
 
 /**
@@ -144,8 +146,9 @@ export const createBooking = async (
         inserted = await client.query(
           `INSERT INTO bookings
              (reference, guest_name, guest_phone, guest_email, branch_id, room_id,
-              check_in, check_out, guests, nights, total_amount, currency, status, notes)
-           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'confirmed',$13)
+              check_in, check_out, guests, nights, total_amount, currency, status, notes,
+              guest_id)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'confirmed',$13,$14)
            RETURNING id, reference`,
           [
             reference,
@@ -161,6 +164,7 @@ export const createBooking = async (
             input.totalAmount ?? null,
             input.currency ?? 'IQD',
             input.notes ?? null,
+            input.guestId ?? null,
           ],
         )
         break

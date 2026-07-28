@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
+import { awardPointsForBooking } from '../utilities/points'
 
 /**
  * A reservation. One row per stay.
@@ -36,6 +37,20 @@ export const Bookings: CollectionConfig = {
     description: 'Reservations made on the website. Newest first.',
   },
   defaultSort: '-createdAt',
+  hooks: {
+    afterChange: [
+      async ({ doc, req, previousDoc }) => {
+        // Points land when a stay is marked as having happened, and only on the
+        // change into that state — not on every later edit of a completed
+        // booking. The award is idempotent regardless, but there is no reason
+        // to ask it the same question every time staff touch a row.
+        if (doc.status === 'completed' && previousDoc?.status !== 'completed') {
+          void awardPointsForBooking(req.payload, doc.id).catch(() => {})
+        }
+        return doc
+      },
+    ],
+  },
   fields: [
     {
       name: 'reference',
@@ -55,6 +70,18 @@ export const Bookings: CollectionConfig = {
       ],
     },
     { name: 'guestEmail', type: 'email' },
+    {
+      // Set when the booking was made while signed in, or when a guest opened
+      // an account straight afterwards and kept it. Empty is the normal case
+      // and always will be — an account is never required to book.
+      name: 'guest',
+      type: 'relationship',
+      relationTo: 'guests',
+      admin: {
+        position: 'sidebar',
+        description: 'The account this stay belongs to, if the guest has one.',
+      },
+    },
     {
       type: 'row',
       fields: [

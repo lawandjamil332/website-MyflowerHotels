@@ -63,11 +63,14 @@ export type SupportedTimezones =
 
 export interface Config {
   auth: {
+    guests: GuestAuthOperations;
     users: UserAuthOperations;
   };
   blocks: {};
   collections: {
     bookings: Booking;
+    guests: Guest;
+    'point-entries': PointEntry;
     branches: Branch;
     rooms: Room;
     offers: Offer;
@@ -95,6 +98,8 @@ export interface Config {
   };
   collectionsSelect: {
     bookings: BookingsSelect<false> | BookingsSelect<true>;
+    guests: GuestsSelect<false> | GuestsSelect<true>;
+    'point-entries': PointEntriesSelect<false> | PointEntriesSelect<true>;
     branches: BranchesSelect<false> | BranchesSelect<true>;
     rooms: RoomsSelect<false> | RoomsSelect<true>;
     offers: OffersSelect<false> | OffersSelect<true>;
@@ -133,7 +138,7 @@ export interface Config {
   widgets: {
     collections: CollectionsWidget;
   };
-  user: User;
+  user: Guest | User;
   jobs: {
     tasks: {
       schedulePublish: TaskSchedulePublish;
@@ -143,6 +148,24 @@ export interface Config {
       };
     };
     workflows: unknown;
+  };
+}
+export interface GuestAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
   };
 }
 export interface UserAuthOperations {
@@ -178,6 +201,10 @@ export interface Booking {
   guestName: string;
   guestPhone: string;
   guestEmail?: string | null;
+  /**
+   * The account this stay belongs to, if the guest has one.
+   */
+  guest?: (number | null) | Guest;
   branch: number | Branch;
   room: number | Room;
   checkIn: string;
@@ -199,6 +226,35 @@ export interface Booking {
   notes?: string | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * Guests who opened an account on the website.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guests".
+ */
+export interface Guest {
+  id: number;
+  name: string;
+  phone?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'guests';
 }
 /**
  * Each hotel in the group. The homepage lists these in the order set below.
@@ -483,6 +539,27 @@ export interface Room {
    * Uncheck to take this room type off the website entirely — it stops being bookable and stops being listed.
    */
   isAvailable?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Every points movement. A guest’s balance is the sum of their rows.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "point-entries".
+ */
+export interface PointEntry {
+  id: number;
+  guest: number | Guest;
+  /**
+   * Negative to deduct — a redemption, or a correction.
+   */
+  points: number;
+  reason: string;
+  /**
+   * The stay that earned them, where there is one.
+   */
+  booking?: (number | null) | Booking;
   updatedAt: string;
   createdAt: string;
 }
@@ -1254,6 +1331,14 @@ export interface PayloadLockedDocument {
         value: number | Booking;
       } | null)
     | ({
+        relationTo: 'guests';
+        value: number | Guest;
+      } | null)
+    | ({
+        relationTo: 'point-entries';
+        value: number | PointEntry;
+      } | null)
+    | ({
         relationTo: 'branches';
         value: number | Branch;
       } | null)
@@ -1310,10 +1395,15 @@ export interface PayloadLockedDocument {
         value: number | FolderInterface;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'guests';
+        value: number | Guest;
+      }
+    | {
+        relationTo: 'users';
+        value: number | User;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -1323,10 +1413,15 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: number;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'guests';
+        value: number | Guest;
+      }
+    | {
+        relationTo: 'users';
+        value: number | User;
+      };
   key?: string | null;
   value?:
     | {
@@ -1360,6 +1455,7 @@ export interface BookingsSelect<T extends boolean = true> {
   guestName?: T;
   guestPhone?: T;
   guestEmail?: T;
+  guest?: T;
   branch?: T;
   room?: T;
   checkIn?: T;
@@ -1370,6 +1466,42 @@ export interface BookingsSelect<T extends boolean = true> {
   currency?: T;
   status?: T;
   notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "guests_select".
+ */
+export interface GuestsSelect<T extends boolean = true> {
+  name?: T;
+  phone?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "point-entries_select".
+ */
+export interface PointEntriesSelect<T extends boolean = true> {
+  guest?: T;
+  points?: T;
+  reason?: T;
+  booking?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2065,6 +2197,14 @@ export interface Setting {
    */
   iqdPerUsd?: number | null;
   /**
+   * Turn the loyalty scheme on or off across the whole site.
+   */
+  pointsEnabled?: boolean | null;
+  /**
+   * Points a guest earns for every 1,000 dinars of a completed stay. Change it whenever you like — it only affects stays completed afterwards.
+   */
+  pointsPer1000Iqd?: number | null;
+  /**
    * Shown in the header. A transparent PNG or SVG works best.
    */
   logo?: (number | null) | Media;
@@ -2154,6 +2294,8 @@ export interface SettingsSelect<T extends boolean = true> {
   establishedYear?: T;
   stars?: T;
   iqdPerUsd?: T;
+  pointsEnabled?: T;
+  pointsPer1000Iqd?: T;
   logo?: T;
   socialShareImage?: T;
   phone?: T;

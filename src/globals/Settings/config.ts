@@ -59,6 +59,27 @@ export const Settings: GlobalConfig = {
       },
     },
     {
+      name: 'pointsEnabled',
+      type: 'checkbox',
+      label: 'Collect points on stays',
+      defaultValue: true,
+      admin: {
+        description: 'Turn the loyalty scheme on or off across the whole site.',
+      },
+    },
+    {
+      name: 'pointsPer1000Iqd',
+      type: 'number',
+      label: 'Points per 1,000 IQD spent',
+      min: 0,
+      defaultValue: 1,
+      admin: {
+        description:
+          'Points a guest earns for every 1,000 dinars of a completed stay. Change it whenever you like — it only affects stays completed afterwards.',
+        condition: (data) => Boolean(data?.pointsEnabled),
+      },
+    },
+    {
       name: 'logo',
       type: 'upload',
       relationTo: 'media',

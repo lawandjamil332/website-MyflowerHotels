@@ -4,6 +4,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
 import { createBooking, NoAvailabilityError } from '@/utilities/booking'
+import { currentGuest } from '@/actions/account'
 import { sendBookingEmails } from '@/utilities/bookingEmail'
 
 export type BookingResult =
@@ -52,6 +53,10 @@ export async function submitBooking(
   try {
     const payload = await getPayload({ config: configPromise })
 
+    // Booked while signed in? Then it is theirs, and it will earn points when
+    // they have stayed. Signed out is the ordinary case and stays first-class.
+    const guest = await currentGuest()
+
     const booking = await createBooking(payload, {
       roomId,
       branchId,
@@ -64,6 +69,7 @@ export async function submitBooking(
       totalAmount: Number.isFinite(totalAmount) && totalAmount > 0 ? totalAmount : null,
       currency,
       notes: text(formData.get('notes')) || null,
+      guestId: guest ? Number(guest.id) : null,
     })
 
     // Not awaited: the room is already held by the time this runs, and a guest
