@@ -14,6 +14,7 @@ import * as migration_20260727_080000_seed_photos from './20260727_080000_seed_p
 import * as migration_20260727_090000_branch_social_and_maps from './20260727_090000_branch_social_and_maps';
 import * as migration_20260727_100000_repin_branches from './20260727_100000_repin_branches';
 import * as migration_20260727_110000_fourth_hotel_phones from './20260727_110000_fourth_hotel_phones';
+import * as migration_20260727_120000_first_hotel_second_line from './20260727_120000_first_hotel_second_line';
 
 export const migrations = [
   {
@@ -97,5 +98,10 @@ export const migrations = [
     up: migration_20260727_110000_fourth_hotel_phones.up,
     down: migration_20260727_110000_fourth_hotel_phones.down,
     name: '20260727_110000_fourth_hotel_phones',
+  },
+  {
+    up: migration_20260727_120000_first_hotel_second_line.up,
+    down: migration_20260727_120000_first_hotel_second_line.down,
+    name: '20260727_120000_first_hotel_second_line',
   },
 ];
