@@ -19,6 +19,25 @@ type Props = {
   logoUrl: string
   logoLightUrl?: string
   logoAlt: string
+  /** First name of the signed-in guest, or '' when nobody is. */
+  guestName?: string
+}
+
+/** Marks the account control as an account control, before the word is read. */
+function PersonIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className="h-[1.05rem] w-[1.05rem] shrink-0"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.7"
+    >
+      <circle cx="12" cy="8" r="3.4" />
+      <path d="M5 20a7 7 0 0 1 14 0" strokeLinecap="round" />
+    </svg>
+  )
 }
 
 /**
@@ -30,7 +49,15 @@ type Props = {
  * navigated, and navigation you can always see — in a colour that never
  * shifts under you — is worth more than an uninterrupted photograph.
  */
-export function HeaderBar({ locale, t, siteName, logoUrl, logoLightUrl, logoAlt }: Props) {
+export function HeaderBar({
+  locale,
+  t,
+  siteName,
+  logoUrl,
+  logoLightUrl,
+  logoAlt,
+  guestName = '',
+}: Props) {
   const pathname = usePathname()
   const [solid, setSolid] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -60,14 +87,20 @@ export function HeaderBar({ locale, t, siteName, logoUrl, logoLightUrl, logoAlt 
     }
   }, [menuOpen])
 
+  // Places, not actions. The account door used to sit at the end of this list
+  // as "My bookings", where it read as a sixth page rather than as the way in
+  // — which is why signing in looked like it was not there at all. Every hotel
+  // group of any size puts it in the corner, beside the reserve button, and
+  // says the words "Sign in" while nobody is.
   const links = [
     { href: `/${locale}`, label: t.nav.home },
     { href: `/${locale}#collection`, label: t.nav.branches },
     { href: `/${locale}/rooms`, label: t.nav.rooms },
     { href: `/${locale}/about`, label: t.nav.about },
     { href: `/${locale}/contact`, label: t.nav.contact },
-    { href: `/${locale}/account`, label: t.account.myBookings },
   ]
+
+  const accountLabel = guestName || t.account.signIn
 
   // The bar is navy at every scroll position, so everything on it takes the
   // light treatment. Scrolling only tightens the height and adds a shadow.
@@ -132,6 +165,16 @@ export function HeaderBar({ locale, t, siteName, logoUrl, logoLightUrl, logoAlt 
           <div className="flex shrink-0 items-center gap-2 sm:gap-5">
             <CurrencySwitch className="hidden border-white/25 md:inline-flex" />
             <LocaleSwitcher current={locale} label={t.common.language} tone="light" />
+
+            {/* Shown from tablet up rather than desktop only: on a phone this
+                would crowd the burger, and the phone menu carries it instead. */}
+            <Link
+              href={`/${locale}/account`}
+              className="tap-safe hidden items-center gap-2 text-[0.92rem] font-medium text-white/85 transition-colors duration-300 ease-luxe hover:text-white md:inline-flex"
+            >
+              <PersonIcon />
+              <span className="max-w-[9rem] truncate">{accountLabel}</span>
+            </Link>
 
             {/* Reserve means reserve now that there is something to reserve
                 with. It used to open WhatsApp, and was hidden when no WhatsApp
@@ -199,9 +242,20 @@ export function HeaderBar({ locale, t, siteName, logoUrl, logoLightUrl, logoAlt 
           </nav>
 
           <div className="flex flex-col gap-8">
-            <Link href={`/${locale}/book`} className={cn(btnLight, 'w-full')}>
-              {t.common.reserve}
-            </Link>
+            <div className="flex flex-col gap-3">
+              <Link href={`/${locale}/book`} className={cn(btnLight, 'w-full')}>
+                {t.common.reserve}
+              </Link>
+              {/* Beside Reserve, not buried in the list of pages above it —
+                  these two are the things a guest came to do. */}
+              <Link
+                href={`/${locale}/account`}
+                className="tap-safe flex items-center justify-center gap-2 py-2 text-[0.95rem] font-medium text-white/85"
+              >
+                <PersonIcon />
+                <span className="truncate">{accountLabel}</span>
+              </Link>
+            </div>
             <LocaleSwitcher current={locale} label={t.common.language} tone="light" size="full" />
           </div>
         </div>

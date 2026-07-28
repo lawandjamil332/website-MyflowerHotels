@@ -7,7 +7,7 @@ import { getPayload } from 'payload'
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { getBranches } from '@/utilities/branches'
-import { availableRooms, nightsBetween, type AvailableRoom } from '@/utilities/booking'
+import { availableRoomsAcross, nightsBetween, type AvailableRoom } from '@/utilities/booking'
 import { formatNumber } from '@/utilities/format'
 import { Price } from '@/components/site/Currency'
 import { cn } from '@/utilities/ui'
@@ -51,29 +51,37 @@ export default async function BookPage({ params, searchParams }: Args) {
   const guests = Number.isFinite(guestsRaw) && guestsRaw > 0 ? guestsRaw : null
   const chosenRoomId = Number(one(query.room))
 
-  // A search only means something with a hotel and two sensible dates. Anything
-  // short of that is sent back to the finder rather than guessed at.
-  const searchable = Boolean(branch && checkIn && checkOut && checkOut > checkIn)
+  // A search needs two sensible dates. It does not need a hotel: a guest who
+  // has not been to Erbil before has no way to pick one yet, and "Any hotel"
+  // says on the tin that they need not. Without dates there is nothing to
+  // answer, so the finder is shown again rather than guessed at.
+  const searchable = Boolean(checkIn && checkOut && checkOut > checkIn)
+
+  // One hotel if they named one, otherwise every hotel taking guests. A hotel
+  // still being built has nothing to sell and would only be a dead heading.
+  const open = branches.filter((b) => b.status !== 'openingSoon')
+  const targets = branch ? [branch] : open
+  const groupSearch = !branch
 
   let rooms: AvailableRoom[] = []
   let hotelHasRooms = true
   if (searchable) {
     const payload = await getPayload({ config: configPromise })
-    rooms = await availableRooms(payload, {
-      branchId: branch!.id,
+    rooms = await availableRoomsAcross(payload, {
+      branchIds: targets.map((b) => b.id),
       checkIn: checkIn!,
       checkOut: checkOut!,
       guests,
       locale,
     })
 
-    // Nothing free and nothing to be free: until the hotel's room types are
-    // entered, "try different nights" is advice that cannot work. Worth one
-    // extra query only when a search came back empty.
-    if (rooms.length === 0) {
+    // Nothing free and nothing to be free: until the room types are entered,
+    // "try different nights" is advice that cannot work. Worth one extra query
+    // only when a search came back empty.
+    if (rooms.length === 0 && targets.length > 0) {
       const { totalDocs } = await payload.count({
         collection: 'rooms',
-        where: { branch: { equals: branch!.id } },
+        where: { branch: { in: targets.map((b) => b.id) } },
       })
       hotelHasRooms = totalDocs > 0
     }
@@ -83,14 +91,24 @@ export default async function BookPage({ params, searchParams }: Args) {
   const chosen = rooms.find((room) => room.id === chosenRoomId) ?? null
   const total = chosen?.priceFrom ? chosen.priceFrom * nights : null
 
-  const back = `/${locale}/book?hotel=${hotelSlug}&checkIn=${checkInRaw}&checkOut=${checkOutRaw}${
-    guests ? `&guests=${guests}` : ''
-  }`
+  // Which hotel the guest is actually booking into. When they searched the
+  // whole group there is no hotel in the URL, so it comes from the room they
+  // pressed — the room knows, and the room is the thing they chose.
+  const chosenBranch = chosen ? (branches.find((b) => b.id === chosen.branchId) ?? branch) : branch
+
+  const back =
+    `/${locale}/book?checkIn=${checkInRaw}&checkOut=${checkOutRaw}` +
+    (hotelSlug ? `&hotel=${hotelSlug}` : '') +
+    (guests ? `&guests=${guests}` : '')
+
+  const byHotel = targets
+    .map((b) => ({ hotel: b, rooms: rooms.filter((r) => r.branchId === b.id) }))
+    .filter((group) => group.rooms.length > 0)
 
   return (
     <>
       <PageHero
-        title={branch ? branch.name : t.search.title}
+        title={chosenBranch ? chosenBranch.name : t.search.title}
         lead={
           searchable ? `${checkInRaw} → ${checkOutRaw} · ${nights} ${t.booking.nights}` : undefined
         }
@@ -122,7 +140,7 @@ export default async function BookPage({ params, searchParams }: Args) {
               <div>
                 <h1 className="font-display text-2xl text-ink sm:text-3xl">{chosen.name}</h1>
                 <p className="mt-1.5 text-[0.95rem] text-muted-ink">
-                  {branch!.name} · {checkInRaw} → {checkOutRaw}
+                  {chosenBranch?.name} · {checkInRaw} → {checkOutRaw}
                 </p>
               </div>
               <Link href={back} className="link-line tap-safe text-sm text-brand">
@@ -150,7 +168,7 @@ export default async function BookPage({ params, searchParams }: Args) {
             <BookingForm
               locale={locale}
               room={chosen}
-              branchId={branch!.id}
+              branchId={chosen.branchId}
               checkIn={checkInRaw}
               checkOut={checkOutRaw}
               guests={guests}
@@ -174,7 +192,9 @@ export default async function BookPage({ params, searchParams }: Args) {
                 </p>
                 <Link
                   href={
-                    hotelHasRooms ? `/${locale}` : `/${locale}/branches/${branch!.slug}#enquire`
+                    hotelHasRooms
+                      ? `/${locale}`
+                      : `/${locale}/${branch ? `branches/${branch.slug}` : 'contact'}#enquire`
                   }
                   className={cn(btnOutline, 'mt-7')}
                 >
@@ -182,52 +202,73 @@ export default async function BookPage({ params, searchParams }: Args) {
                 </Link>
               </div>
             ) : (
-              <ul className="mx-auto grid max-w-4xl gap-4">
-                {rooms.map((room) => (
-                  <li
-                    key={room.id}
-                    className="flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-line bg-card p-6 sm:p-7"
-                  >
-                    <div className="min-w-0">
-                      <h3 className="font-display text-xl leading-tight text-ink sm:text-2xl">
-                        {room.name}
-                      </h3>
-                      <p className="mt-2 text-[0.85rem] text-muted-ink">
-                        {[
-                          room.maxGuests
-                            ? `${t.room.guests} ${formatNumber(room.maxGuests, locale)}`
-                            : null,
-                          room.bedType
-                            ? (t.bed[room.bedType as keyof typeof t.bed] ?? room.bedType)
-                            : null,
-                          `${formatNumber(room.left, locale)} ${t.booking.roomsLeft}`,
-                        ]
-                          .filter(Boolean)
-                          .join(' · ')}
-                      </p>
-                    </div>
+              // Grouped under their hotels when the whole group was searched.
+              // A flat list of a dozen rooms across four buildings is not a
+              // result, it is a pile — the hotel is the first thing a guest
+              // chooses between, so it has to be the thing they see.
+              <div className="mx-auto grid max-w-4xl gap-12">
+                {byHotel.map(({ hotel, rooms: hotelRooms }) => (
+                  <div key={hotel.id}>
+                    {groupSearch && (
+                      <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3">
+                        <h2 className="font-display text-2xl text-ink">{hotel.name}</h2>
+                        <Link
+                          href={`/${locale}/branches/${hotel.slug}`}
+                          className="link-line tap-safe text-sm text-brand"
+                        >
+                          {t.common.viewDetails}
+                        </Link>
+                      </div>
+                    )}
+                    <ul className="grid gap-4">
+                      {hotelRooms.map((room) => (
+                        <li
+                          key={room.id}
+                          className="flex flex-wrap items-center justify-between gap-6 rounded-2xl border border-line bg-card p-6 sm:p-7"
+                        >
+                          <div className="min-w-0">
+                            <h3 className="font-display text-xl leading-tight text-ink sm:text-2xl">
+                              {room.name}
+                            </h3>
+                            <p className="mt-2 text-[0.85rem] text-muted-ink">
+                              {[
+                                room.maxGuests
+                                  ? `${t.room.guests} ${formatNumber(room.maxGuests, locale)}`
+                                  : null,
+                                room.bedType
+                                  ? (t.bed[room.bedType as keyof typeof t.bed] ?? room.bedType)
+                                  : null,
+                                `${formatNumber(room.left, locale)} ${t.booking.roomsLeft}`,
+                              ]
+                                .filter(Boolean)
+                                .join(' · ')}
+                            </p>
+                          </div>
 
-                    <div className="flex flex-wrap items-center gap-5">
-                      {room.priceFrom ? (
-                        <p className="flex items-baseline gap-2">
-                          <Price
-                            amount={room.priceFrom * nights}
-                            currency={room.currency}
-                            locale={locale}
-                            className="font-display text-2xl text-ink"
-                          />
-                          <span className="text-xs text-muted-ink">
-                            {nights} {t.booking.nights}
-                          </span>
-                        </p>
-                      ) : null}
-                      <Link href={`${back}&room=${room.id}`} className={btnPrimary}>
-                        {t.booking.reserve}
-                      </Link>
-                    </div>
-                  </li>
+                          <div className="flex flex-wrap items-center gap-5">
+                            {room.priceFrom ? (
+                              <p className="flex items-baseline gap-2">
+                                <Price
+                                  amount={room.priceFrom * nights}
+                                  currency={room.currency}
+                                  locale={locale}
+                                  className="font-display text-2xl text-ink"
+                                />
+                                <span className="text-xs text-muted-ink">
+                                  {nights} {t.booking.nights}
+                                </span>
+                              </p>
+                            ) : null}
+                            <Link href={`${back}&room=${room.id}`} className={btnPrimary}>
+                              {t.booking.reserve}
+                            </Link>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 ))}
-              </ul>
+              </div>
             )}
           </>
         )}

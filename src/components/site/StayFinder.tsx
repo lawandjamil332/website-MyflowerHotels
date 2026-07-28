@@ -72,10 +72,11 @@ function GuestIcon() {
  * The search bar every large hotel group opens with: which hotel, which
  * nights, how many people.
  *
- * It does not check live availability — this group has no system holding that
- * — so instead of pretending, it carries the answers straight into the
- * enquiry, which is what a guest would otherwise have typed out by hand. The
- * fields do the remembering; the front desk does the checking.
+ * It checks real availability. It used to carry the answers into an enquiry
+ * form instead, because nothing here was holding room counts — and that
+ * fallback outlived its reason. A guest who picks their nights and presses a
+ * button marked "Check availability" is owed rooms and prices, not a page
+ * asking them to type the same thing again.
  *
  * Set as a pill floating on the hero photograph, which is what the reference
  * does with the one control its homepage is built around. It was previously a
@@ -100,6 +101,7 @@ export function StayFinder({
   const [checkIn, setCheckIn] = useState('')
   const [checkOut, setCheckOut] = useState('')
   const [guests, setGuests] = useState('')
+  const [missing, setMissing] = useState(false)
 
   // Only hotels taking guests can be searched; one still being built would
   // send the visitor to a page with no way to book.
@@ -107,25 +109,30 @@ export function StayFinder({
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
-    const params = new URLSearchParams()
-    if (checkIn) params.set('checkIn', checkIn)
-    if (checkOut) params.set('checkOut', checkOut)
-    if (guests) params.set('guests', guests)
-    const query = params.toString()
 
-    // With a hotel and both dates, this is a real search and goes to the
-    // booking page, which can answer it. Anything less cannot be answered —
-    // availability needs a hotel and two nights — so it falls back to the
-    // hotel's own page, or the enquiry, exactly as it did before booking
-    // existed.
-    if (hotel && checkIn && checkOut) {
-      params.set('hotel', hotel)
-      router.push(`/${locale}/book?${params.toString()}`)
+    // A button called "Check availability" has exactly one honest outcome:
+    // availability. It used to send anyone who had not filled in all three
+    // fields to a contact form instead — which is what pressing it looked like
+    // from the outside, since the commonest thing a guest does is pick their
+    // nights, press it, and get a page with no rooms on it. That fallback was
+    // written before this site could answer the question at all. It can now.
+    if (!checkIn || !checkOut) {
+      setMissing(true)
+      // Put them in the field that is actually holding the search up.
+      const id = !checkIn ? 'finder-in' : 'finder-out'
+      document.getElementById(id)?.focus()
       return
     }
 
-    const target = hotel ? `/${locale}/branches/${hotel}` : `/${locale}/contact`
-    router.push(`${target}${query ? `?${query}` : ''}#enquire`)
+    setMissing(false)
+    const params = new URLSearchParams()
+    params.set('checkIn', checkIn)
+    params.set('checkOut', checkOut)
+    if (guests) params.set('guests', guests)
+    // No hotel chosen searches all of them, which is what "Any hotel" says on
+    // the tin and what a guest who does not know the city yet actually wants.
+    if (hotel) params.set('hotel', hotel)
+    router.push(`/${locale}/book?${params.toString()}`)
   }
 
   const field =
@@ -153,112 +160,136 @@ export function StayFinder({
 
   const today = new Date().toISOString().slice(0, 10)
 
+  // Ringed rather than reddened. The dates are not wrong, they are not there
+  // yet, and the guest is being pointed at them a fraction of a second after
+  // pressing the button — this has to read as "here", not as a telling-off.
+  const wanted = (empty: boolean) =>
+    missing && empty ? 'rounded-xl ring-2 ring-brand/70 ring-offset-2 ring-offset-card' : ''
+
   return (
-    <form
-      onSubmit={submit}
-      aria-label={t.search.title}
-      className={cn(
-        // A pill on a photograph, the shape the reference gives the one control
-        // its whole homepage is built around — and capped well short of the
-        // page gutter. Run the full width of the shell it stops being an object
-        // sitting on the picture and becomes a band ruled across the page.
-        'mx-auto w-full max-w-[68rem] rounded-2xl bg-card p-2 lg:rounded-full lg:p-2.5',
-        'shadow-[0_24px_70px_-28px_rgb(0_0_0/0.55)]',
-        // Two columns on a phone rather than five stacked rows. The two dates
-        // belong side by side anyway — they are one decision — and pairing them
-        // takes a whole field's height out of a control that now sits at the
-        // top of the hero, where every row it costs pushes the photograph down.
-        'grid grid-cols-2 lg:flex lg:flex-row lg:items-center',
-        className,
-      )}
-    >
-      <div className={cn(cell, 'col-span-2 border-b lg:col-auto lg:border-b-0 lg:border-e')}>
-        <BuildingIcon />
-        <span className="min-w-0 flex-1">
-          <label className={label} htmlFor="finder-hotel">
-            {t.search.hotel}
-          </label>
-          <select
-            id="finder-hotel"
-            value={hotel}
-            onChange={(e) => setHotel(e.target.value)}
-            className={cn(field, 'mt-1.5')}
-          >
-            <option value="">{t.search.anyHotel}</option>
-            {bookable.map((h) => (
-              <option key={h.slug} value={h.slug}>
-                {h.name}
-              </option>
-            ))}
-          </select>
-        </span>
-      </div>
-
-      <div className={cn(cell, 'border-b border-e lg:border-b-0')}>
-        <CalendarIcon />
-        <span className="min-w-0 flex-1">
-          <label className={label} htmlFor="finder-in">
-            {t.search.arriving}
-          </label>
-          <input
-            id="finder-in"
-            type="date"
-            dir="ltr"
-            min={today}
-            value={checkIn}
-            onChange={(e) => setCheckIn(e.target.value)}
-            className={cn(dateField, 'mt-1.5')}
-          />
-        </span>
-      </div>
-
-      <div className={cn(cell, 'border-b lg:border-b-0 lg:border-e')}>
-        <CalendarIcon />
-        <span className="min-w-0 flex-1">
-          <label className={label} htmlFor="finder-out">
-            {t.search.leaving}
-          </label>
-          <input
-            id="finder-out"
-            type="date"
-            dir="ltr"
-            min={checkIn || today}
-            value={checkOut}
-            onChange={(e) => setCheckOut(e.target.value)}
-            className={cn(dateField, 'mt-1.5')}
-          />
-        </span>
-      </div>
-
-      <div className={cn(cell, 'col-span-2 border-b lg:col-auto lg:border-b-0 lg:max-w-[10.5rem]')}>
-        <GuestIcon />
-        <span className="min-w-0 flex-1">
-          <label className={label} htmlFor="finder-guests">
-            {t.search.guests}
-          </label>
-          <select
-            id="finder-guests"
-            value={guests}
-            onChange={(e) => setGuests(e.target.value)}
-            className={cn(field, 'mt-1.5')}
-          >
-            <option value="">{t.roomsPage.any}</option>
-            {[1, 2, 3, 4, 5, 6].map((n) => (
-              <option key={n} value={n}>
-                {n}
-                {n === 6 ? '+' : ''}
-              </option>
-            ))}
-          </select>
-        </span>
-      </div>
-
-      <button
-        type="submit"
-        className={cn(btnPrimary, 'col-span-2 mt-2 shrink-0 lg:col-auto lg:mt-0 lg:px-9')}
+    <div className="mx-auto w-full max-w-[68rem]">
+      <form
+        onSubmit={submit}
+        aria-label={t.search.title}
+        className={cn(
+          // A pill on a photograph, the shape the reference gives the one
+          // control its whole homepage is built around — and capped well short
+          // of the page gutter. Run the full width of the shell it stops being
+          // an object sitting on the picture and becomes a band ruled across
+          // the page.
+          'w-full rounded-2xl bg-card p-2 lg:rounded-full lg:p-2.5',
+          'shadow-[0_24px_70px_-28px_rgb(0_0_0/0.55)]',
+          // Two columns on a phone rather than five stacked rows. The two dates
+          // belong side by side anyway — they are one decision — and pairing them
+          // takes a whole field's height out of a control that now sits at the
+          // top of the hero, where every row it costs pushes the photograph down.
+          'grid grid-cols-2 lg:flex lg:flex-row lg:items-center',
+          className,
+        )}
       >
-        {t.search.submit}
-      </button>
-    </form>
+        <div className={cn(cell, 'col-span-2 border-b lg:col-auto lg:border-b-0 lg:border-e')}>
+          <BuildingIcon />
+          <span className="min-w-0 flex-1">
+            <label className={label} htmlFor="finder-hotel">
+              {t.search.hotel}
+            </label>
+            <select
+              id="finder-hotel"
+              value={hotel}
+              onChange={(e) => setHotel(e.target.value)}
+              className={cn(field, 'mt-1.5')}
+            >
+              <option value="">{t.search.anyHotel}</option>
+              {bookable.map((h) => (
+                <option key={h.slug} value={h.slug}>
+                  {h.name}
+                </option>
+              ))}
+            </select>
+          </span>
+        </div>
+
+        <div className={cn(cell, 'border-b border-e lg:border-b-0')}>
+          <CalendarIcon />
+          <span className="min-w-0 flex-1">
+            <label className={label} htmlFor="finder-in">
+              {t.search.arriving}
+            </label>
+            <input
+              id="finder-in"
+              type="date"
+              dir="ltr"
+              min={today}
+              value={checkIn}
+              aria-invalid={missing && !checkIn}
+              onChange={(e) => setCheckIn(e.target.value)}
+              className={cn(dateField, 'mt-1.5', wanted(!checkIn))}
+            />
+          </span>
+        </div>
+
+        <div className={cn(cell, 'border-b lg:border-b-0 lg:border-e')}>
+          <CalendarIcon />
+          <span className="min-w-0 flex-1">
+            <label className={label} htmlFor="finder-out">
+              {t.search.leaving}
+            </label>
+            <input
+              id="finder-out"
+              type="date"
+              dir="ltr"
+              min={checkIn || today}
+              value={checkOut}
+              aria-invalid={missing && !checkOut}
+              onChange={(e) => setCheckOut(e.target.value)}
+              className={cn(dateField, 'mt-1.5', wanted(!checkOut))}
+            />
+          </span>
+        </div>
+
+        <div
+          className={cn(cell, 'col-span-2 border-b lg:col-auto lg:border-b-0 lg:max-w-[10.5rem]')}
+        >
+          <GuestIcon />
+          <span className="min-w-0 flex-1">
+            <label className={label} htmlFor="finder-guests">
+              {t.search.guests}
+            </label>
+            <select
+              id="finder-guests"
+              value={guests}
+              onChange={(e) => setGuests(e.target.value)}
+              className={cn(field, 'mt-1.5')}
+            >
+              <option value="">{t.roomsPage.any}</option>
+              {[1, 2, 3, 4, 5, 6].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                  {n === 6 ? '+' : ''}
+                </option>
+              ))}
+            </select>
+          </span>
+        </div>
+
+        <button
+          type="submit"
+          className={cn(btnPrimary, 'col-span-2 mt-2 shrink-0 lg:col-auto lg:mt-0 lg:px-9')}
+        >
+          {t.search.submit}
+        </button>
+      </form>
+
+      {/* Outside the pill, so saying it cannot change the shape of the control
+          the whole page is built around. */}
+      {missing && (
+        <p
+          role="alert"
+          className="mt-3 rounded-xl bg-card/95 px-4 py-2.5 text-center text-[0.9rem] text-ink"
+        >
+          {t.search.needDates}
+        </p>
+      )}
+    </div>
   )
 }

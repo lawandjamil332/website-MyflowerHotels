@@ -82,6 +82,7 @@ export type Dictionary = {
     title: string
     hotel: string
     anyHotel: string
+    needDates: string
     arriving: string
     leaving: string
     guests: string
@@ -126,6 +127,8 @@ export type Dictionary = {
     signUp: string
     signOut: string
     myBookings: string
+    gateTitle: string
+    gateLead: string
     email: string
     password: string
     haveAccount: string
@@ -288,6 +291,7 @@ const en: Dictionary = {
     title: 'Plan your stay',
     hotel: 'Hotel',
     anyHotel: 'Any hotel',
+    needDates: 'Please choose the nights you are staying.',
     arriving: 'Arriving',
     leaving: 'Leaving',
     guests: 'Guests',
@@ -331,6 +335,8 @@ const en: Dictionary = {
     signUp: 'Create an account',
     signOut: 'Sign out',
     myBookings: 'My bookings',
+    gateTitle: 'Sign in or create an account',
+    gateLead: 'Keep your bookings in one place and collect points on every stay.',
     email: 'Email',
     password: 'Password',
     haveAccount: 'Already have an account?',
@@ -520,6 +526,7 @@ const ku: Dictionary = {
     title: 'مانەوەکەت پلان بکە',
     hotel: 'هۆتێل',
     anyHotel: 'هەر هۆتێلێک',
+    needDates: 'تکایە ئەو شەوانە هەڵبژێرە کە دەمێنیتەوە.',
     arriving: 'گەیشتن',
     leaving: 'ڕۆیشتن',
     guests: 'میوان',
@@ -563,6 +570,8 @@ const ku: Dictionary = {
     signUp: 'دروستکردنی هەژمار',
     signOut: 'دەرچوون',
     myBookings: 'حیجزەکانم',
+    gateTitle: 'بچۆ ژوورەوە یان هەژمارێک دروست بکە',
+    gateLead: 'حیجزەکانت لە یەک شوێن بپارێزە و لە هەر مانەوەیەک خاڵ کۆبکەرەوە.',
     email: 'ئیمەیل',
     password: 'وشەی نهێنی',
     haveAccount: 'هەژمارت هەیە؟',
@@ -750,6 +759,7 @@ const ar: Dictionary = {
     title: 'خطط لإقامتك',
     hotel: 'الفندق',
     anyHotel: 'أي فندق',
+    needDates: 'يرجى اختيار ليالي إقامتك.',
     arriving: 'الوصول',
     leaving: 'المغادرة',
     guests: 'عدد الضيوف',
@@ -793,6 +803,8 @@ const ar: Dictionary = {
     signUp: 'إنشاء حساب',
     signOut: 'تسجيل الخروج',
     myBookings: 'حجوزاتي',
+    gateTitle: 'سجّل الدخول أو أنشئ حساباً',
+    gateLead: 'احفظ حجوزاتك في مكان واحد واجمع النقاط مع كل إقامة.',
     email: 'البريد الإلكتروني',
     password: 'كلمة المرور',
     haveAccount: 'لديك حساب بالفعل؟',

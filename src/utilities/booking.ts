@@ -274,6 +274,7 @@ export const createBooking = async (
 
 export type AvailableRoom = {
   id: number
+  branchId: number
   name: string
   slug: string
   priceFrom: number | null
@@ -284,26 +285,28 @@ export type AvailableRoom = {
 }
 
 /**
- * Every room type at a hotel that can actually be had for these dates.
+ * Every room type across the given hotels that can actually be had for these
+ * dates.
  *
- * One query rather than one per room: a hotel with a dozen types would
- * otherwise open a dozen round trips to answer a single search, and the whole
- * page waits on the slowest.
+ * One query rather than one per room — or, when a guest has not picked a hotel,
+ * one rather than one per hotel. A group search over four hotels with a dozen
+ * types each would otherwise open forty-eight round trips to answer a single
+ * question, and the page waits on the slowest of them.
  *
  * Room types withdrawn from the website are excluded here rather than filtered
  * later, so a room nobody is offering can never appear in a search result and
  * then be refused at the last step.
  */
-export const availableRooms = async (
+export const availableRoomsAcross = async (
   payload: Payload,
   {
-    branchId,
+    branchIds,
     checkIn,
     checkOut,
     guests,
     locale = 'en',
   }: {
-    branchId: number
+    branchIds: number[]
     checkIn: Date
     checkOut: Date
     guests?: number | null
@@ -311,9 +314,11 @@ export const availableRooms = async (
   },
 ): Promise<AvailableRoom[]> => {
   if (checkOut <= checkIn) throw new InvalidDatesError()
+  if (branchIds.length === 0) return []
 
   const { rows } = await pool(payload).query(
     `SELECT r.id,
+            r.branch_id::int    AS branch_id,
             COALESCE(rl.name, rf.name) AS name,
             r.slug,
             r.price_from::float AS price_from,
@@ -333,16 +338,17 @@ export const availableRooms = async (
        -- language yet, so a search never returns a room with no name.
        LEFT JOIN rooms_locales rl ON rl._parent_id = r.id AND rl._locale = $5
        LEFT JOIN rooms_locales rf ON rf._parent_id = r.id AND rf._locale = 'en'
-      WHERE r.branch_id = $1
+      WHERE r.branch_id = ANY($1)
         AND r.is_available IS NOT FALSE
         AND ($6::int IS NULL OR r.max_guests IS NULL OR r.max_guests >= $6::int)
       ORDER BY r.price_from NULLS LAST, r.id`,
-    [branchId, OCCUPYING, checkIn, checkOut, locale, guests ?? null],
+    [branchIds, OCCUPYING, checkIn, checkOut, locale, guests ?? null],
   )
 
   return rows
     .map((row: Record<string, unknown>) => ({
       id: row.id as number,
+      branchId: row.branch_id as number,
       name: (row.name as string) ?? '',
       slug: (row.slug as string) ?? '',
       priceFrom: (row.price_from as number) ?? null,
@@ -353,3 +359,18 @@ export const availableRooms = async (
     }))
     .filter((room: AvailableRoom) => room.left > 0)
 }
+
+/** One hotel's rooms — the group search narrowed to a single branch. */
+export const availableRooms = async (
+  payload: Payload,
+  {
+    branchId,
+    ...rest
+  }: {
+    branchId: number
+    checkIn: Date
+    checkOut: Date
+    guests?: number | null
+    locale?: string
+  },
+): Promise<AvailableRoom[]> => availableRoomsAcross(payload, { branchIds: [branchId], ...rest })

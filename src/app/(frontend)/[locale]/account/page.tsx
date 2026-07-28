@@ -31,7 +31,10 @@ export default async function AccountPage({ params }: Args) {
   if (!guest) {
     return (
       <>
-        <PageHero title={t.account.myBookings} lead={t.account.createLead} />
+        {/* Named for what a signed-out visitor can do here, not for what they
+            would see if they were already signed in. "My bookings" over two
+            empty forms is a page describing somebody else's screen. */}
+        <PageHero title={t.account.gateTitle} lead={t.account.gateLead} />
         <section className={cn(shell, sectionY)}>
           <div className="mx-auto grid max-w-4xl gap-10 lg:grid-cols-2 lg:gap-14">
             <div className="rounded-2xl border border-line bg-card p-7 sm:p-9">
