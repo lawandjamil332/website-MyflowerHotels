@@ -125,6 +125,9 @@ export async function SiteFooter({
             <Link href={`/${locale}/contact`} className={columnLink}>
               {t.nav.contact}
             </Link>
+            <Link href={`/${locale}/account`} className={columnLink}>
+              {t.account.myBookings}
+            </Link>
           </nav>
 
           {/* Each hotel keeps its own Instagram, so the account sits beside the

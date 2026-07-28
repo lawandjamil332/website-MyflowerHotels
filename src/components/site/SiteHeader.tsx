@@ -32,7 +32,6 @@ export function SiteHeader({
       logoUrl={uploaded || '/logo.png'}
       logoLightUrl={uploaded ? '' : '/logo-light.png'}
       logoAlt={mediaAlt(settings.logo)}
-      whatsappHref={toWhatsAppHref(settings.whatsapp)}
     />
   )
 }

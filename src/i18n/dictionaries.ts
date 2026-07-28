@@ -148,6 +148,7 @@ export type Dictionary = {
     roomsLeft: string
     none: string
     changeDates: string
+    noRoomsYet: string
     reserve: string
     confirmTitle: string
     confirmLead: string
@@ -340,6 +341,8 @@ const en: Dictionary = {
     roomsLeft: 'left',
     none: 'Nothing is free for those dates. Try different nights, or message us and we will look.',
     changeDates: 'Change dates',
+    noRoomsYet:
+      'This hotel is not taking online bookings yet. Message us and we will arrange your stay.',
     reserve: 'Reserve this room',
     confirmTitle: 'Confirm your booking',
     confirmLead: 'We only need a name and a number. You pay at the hotel on arrival.',
@@ -558,6 +561,8 @@ const ku: Dictionary = {
     roomsLeft: 'ماوە',
     none: 'هیچ ژوورێک بەردەست نییە بۆ ئەو ڕۆژانە. ڕۆژی تر تاقی بکەرەوە، یان پەیوەندیمان پێوە بکە.',
     changeDates: 'گۆڕینی ڕۆژەکان',
+    noRoomsYet:
+      'ئەم هۆتێلە هێشتا حیجزی ئۆنلاین وەرناگرێت. پەیوەندیمان پێوە بکە و مانەوەکەت ڕێک دەخەین.',
     reserve: 'ئەم ژوورە بگرە',
     confirmTitle: 'دڵنیاکردنەوەی حیجزەکەت',
     confirmLead: 'تەنها ناو و ژمارەیەکمان پێویستە. لە کاتی گەیشتن لە هۆتێلەکە دەدەیت.',
@@ -774,6 +779,7 @@ const ar: Dictionary = {
     roomsLeft: 'متبقية',
     none: 'لا تتوفر غرف في هذه التواريخ. جرّب ليالي أخرى، أو راسلنا وسنبحث لك.',
     changeDates: 'تغيير التواريخ',
+    noRoomsYet: 'هذا الفندق لا يستقبل الحجز عبر الإنترنت بعد. راسلنا وسنرتب إقامتك.',
     reserve: 'احجز هذه الغرفة',
     confirmTitle: 'تأكيد الحجز',
     confirmLead: 'نحتاج الاسم ورقم الهاتف فقط. الدفع في الفندق عند الوصول.',

@@ -19,7 +19,6 @@ type Props = {
   logoUrl: string
   logoLightUrl?: string
   logoAlt: string
-  whatsappHref: string
 }
 
 /**
@@ -31,15 +30,7 @@ type Props = {
  * navigated, and navigation you can always see — in a colour that never
  * shifts under you — is worth more than an uninterrupted photograph.
  */
-export function HeaderBar({
-  locale,
-  t,
-  siteName,
-  logoUrl,
-  logoLightUrl,
-  logoAlt,
-  whatsappHref,
-}: Props) {
+export function HeaderBar({ locale, t, siteName, logoUrl, logoLightUrl, logoAlt }: Props) {
   const pathname = usePathname()
   const [solid, setSolid] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
@@ -75,6 +66,7 @@ export function HeaderBar({
     { href: `/${locale}/rooms`, label: t.nav.rooms },
     { href: `/${locale}/about`, label: t.nav.about },
     { href: `/${locale}/contact`, label: t.nav.contact },
+    { href: `/${locale}/account`, label: t.account.myBookings },
   ]
 
   // The bar is navy at every scroll position, so everything on it takes the
@@ -141,16 +133,16 @@ export function HeaderBar({
             <CurrencySwitch className="hidden border-white/25 md:inline-flex" />
             <LocaleSwitcher current={locale} label={t.common.language} tone="light" />
 
-            {whatsappHref && (
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(btnLight, btnSmall, 'hidden lg:inline-flex')}
-              >
-                {t.common.reserve}
-              </a>
-            )}
+            {/* Reserve means reserve now that there is something to reserve
+                with. It used to open WhatsApp, and was hidden when no WhatsApp
+                number was set — a booking page is always there, so the button
+                always is too. Internal, so it is a Link and stays in the tab. */}
+            <Link
+              href={`/${locale}/book`}
+              className={cn(btnLight, btnSmall, 'hidden lg:inline-flex')}
+            >
+              {t.common.reserve}
+            </Link>
 
             <button
               type="button"
@@ -207,22 +199,10 @@ export function HeaderBar({
           </nav>
 
           <div className="flex flex-col gap-8">
-            {whatsappHref && (
-              <a
-                href={whatsappHref}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={cn(btnLight, 'w-full')}
-              >
-                {t.common.reserve}
-              </a>
-            )}
-            <LocaleSwitcher
-              current={locale}
-              label={t.common.language}
-              tone="light"
-              size="full"
-            />
+            <Link href={`/${locale}/book`} className={cn(btnLight, 'w-full')}>
+              {t.common.reserve}
+            </Link>
+            <LocaleSwitcher current={locale} label={t.common.language} tone="light" size="full" />
           </div>
         </div>
       </div>

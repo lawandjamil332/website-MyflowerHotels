@@ -12,6 +12,7 @@ import { formatNumber } from '@/utilities/format'
 import { Price } from '@/components/site/Currency'
 import { cn } from '@/utilities/ui'
 import { BookingForm } from '@/components/site/BookingForm'
+import { StayFinder } from '@/components/site/StayFinder'
 import { PageHero } from '@/components/site/PageHero'
 import { SectionHeading } from '@/components/site/SectionHeading'
 import { btnOutline, btnPrimary, sectionY, shell } from '@/components/site/ui'
@@ -55,6 +56,7 @@ export default async function BookPage({ params, searchParams }: Args) {
   const searchable = Boolean(branch && checkIn && checkOut && checkOut > checkIn)
 
   let rooms: AvailableRoom[] = []
+  let hotelHasRooms = true
   if (searchable) {
     const payload = await getPayload({ config: configPromise })
     rooms = await availableRooms(payload, {
@@ -64,6 +66,17 @@ export default async function BookPage({ params, searchParams }: Args) {
       guests,
       locale,
     })
+
+    // Nothing free and nothing to be free: until the hotel's room types are
+    // entered, "try different nights" is advice that cannot work. Worth one
+    // extra query only when a search came back empty.
+    if (rooms.length === 0) {
+      const { totalDocs } = await payload.count({
+        collection: 'rooms',
+        where: { branch: { equals: branch!.id } },
+      })
+      hotelHasRooms = totalDocs > 0
+    }
   }
 
   const nights = searchable ? nightsBetween(checkIn!, checkOut!) : 0
@@ -85,11 +98,22 @@ export default async function BookPage({ params, searchParams }: Args) {
 
       <section className={cn(shell, sectionY)}>
         {!searchable ? (
-          <SectionHeading
-            title={t.search.title}
-            lead={t.search.submit}
-            action={{ href: `/${locale}`, label: t.booking.changeDates }}
-          />
+          // Arriving here from "Reserve" with nothing chosen yet: ask the
+          // question rather than sending them back to the homepage to be asked
+          // it there.
+          <div className="mx-auto max-w-4xl">
+            <SectionHeading title={t.search.title} lead={t.booking.lead} className="mb-10" />
+            <StayFinder
+              hotels={branches.map((b) => ({
+                slug: b.slug,
+                name: b.name,
+                openingSoon: b.status === 'openingSoon',
+              }))}
+              locale={locale}
+              t={t}
+              className="shadow-none ring-1 ring-line"
+            />
+          </div>
         ) : chosen ? (
           <div className="mx-auto max-w-3xl">
             {/* What they are about to book, restated. Nobody should have to
@@ -144,9 +168,16 @@ export default async function BookPage({ params, searchParams }: Args) {
 
             {rooms.length === 0 ? (
               <div className="mx-auto max-w-xl rounded-2xl border border-dashed border-line p-10 text-center">
-                <p className="text-[1.02rem] leading-relaxed text-muted-ink">{t.booking.none}</p>
-                <Link href={`/${locale}`} className={cn(btnOutline, 'mt-7')}>
-                  {t.booking.changeDates}
+                <p className="text-[1.02rem] leading-relaxed text-muted-ink">
+                  {hotelHasRooms ? t.booking.none : t.booking.noRoomsYet}
+                </p>
+                <Link
+                  href={
+                    hotelHasRooms ? `/${locale}` : `/${locale}/branches/${branch!.slug}#enquire`
+                  }
+                  className={cn(btnOutline, 'mt-7')}
+                >
+                  {hotelHasRooms ? t.booking.changeDates : t.branch.enquire}
                 </Link>
               </div>
             ) : (
@@ -165,7 +196,9 @@ export default async function BookPage({ params, searchParams }: Args) {
                           room.maxGuests
                             ? `${t.room.guests} ${formatNumber(room.maxGuests, locale)}`
                             : null,
-                          room.bedType ? (t.bed[room.bedType as keyof typeof t.bed] ?? room.bedType) : null,
+                          room.bedType
+                            ? (t.bed[room.bedType as keyof typeof t.bed] ?? room.bedType)
+                            : null,
                           `${formatNumber(room.left, locale)} ${t.booking.roomsLeft}`,
                         ]
                           .filter(Boolean)
