@@ -128,6 +128,12 @@ export async function SiteFooter({
             <Link href={`/${locale}/account`} className={columnLink}>
               {t.account.myBookings}
             </Link>
+            {/* For the guest who booked without an account, which is most of
+                them. Without a door here their reference opens nothing and
+                every change goes through somebody answering a phone. */}
+            <Link href={`/${locale}/booking`} className={columnLink}>
+              {t.booking.manageTitle}
+            </Link>
           </nav>
 
           {/* Each hotel keeps its own Instagram, so the account sits beside the

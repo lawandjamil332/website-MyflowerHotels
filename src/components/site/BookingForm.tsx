@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useActionState, useState } from 'react'
 
 import type { Dictionary } from '@/i18n/dictionaries'
@@ -18,6 +19,7 @@ import { btnPrimary } from './ui'
  * is theirs.
  */
 export function BookingForm({
+  locale,
   room,
   branchId,
   checkIn,
@@ -27,6 +29,7 @@ export function BookingForm({
   total,
   t,
 }: {
+  locale: string
   room: AvailableRoom
   branchId: number
   checkIn: string
@@ -63,6 +66,14 @@ export function BookingForm({
         {/* The one thing on this page worth remembering, at a size that says so. */}
         <p className="font-display mt-2 text-4xl tracking-wide text-brand" dir="ltr">
           {state.reference}
+        </p>
+        {/* The only moment a guest is certain to be looking at the reference is
+            this one, so it is also the only moment worth telling them what it
+            opens. Anywhere later they have already closed the page. */}
+        <p className="mt-8 text-[0.9rem] text-muted-ink">
+          <Link href={`/${locale}/booking`} className="link-line tap-safe text-ink">
+            {t.booking.manageTitle}
+          </Link>
         </p>
       </div>
     )

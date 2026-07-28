@@ -148,6 +148,7 @@ export default async function BookPage({ params, searchParams }: Args) {
             )}
 
             <BookingForm
+              locale={locale}
               room={chosen}
               branchId={branch!.id}
               checkIn={checkInRaw}

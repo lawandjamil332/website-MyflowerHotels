@@ -159,6 +159,16 @@ export type Dictionary = {
     doneLead: string
     reference: string
     total: string
+    manageTitle: string
+    manageLead: string
+    yourReference: string
+    findIt: string
+    notFound: string
+    tooMany: string
+    cancel: string
+    cancelled: string
+    tooLate: string
+    confirmCancel: string
     errorDates: string
     errorGuests: string
     errorGone: string
@@ -355,6 +365,16 @@ const en: Dictionary = {
     doneLead: 'We have sent the details on. Keep this reference — it is what to quote at the desk.',
     reference: 'Booking reference',
     total: 'Total',
+    manageTitle: 'Find your booking',
+    manageLead: 'Enter your reference and the phone number you booked with.',
+    yourReference: 'Booking reference',
+    findIt: 'Find booking',
+    notFound: 'No booking matches that reference and number.',
+    tooMany: 'Too many tries. Please wait a few minutes, or call the hotel.',
+    cancel: 'Cancel this booking',
+    cancelled: 'This booking is cancelled. The room has gone back into stock.',
+    tooLate: 'This one cannot be cancelled here — please call the hotel.',
+    confirmCancel: 'Cancelling cannot be undone.',
     errorDates: 'Please check the dates — they may have passed while this page was open.',
     errorGuests: 'That room does not sleep that many. Please choose a larger one.',
     errorGone: 'Those dates went while you were deciding. Please pick again.',
@@ -577,6 +597,16 @@ const ku: Dictionary = {
     doneLead: 'زانیارییەکانمان ناردووە. ئەم ژمارەیە بپارێزە — لە پێشوازی پێویستت پێیەتی.',
     reference: 'ژمارەی حیجز',
     total: 'کۆی گشتی',
+    manageTitle: 'حیجزەکەت بدۆزەرەوە',
+    manageLead: 'ژمارەی حیجز و ئەو ژمارە تەلەفۆنە بنووسە کە پێی حیجزت کرد.',
+    yourReference: 'ژمارەی حیجز',
+    findIt: 'دۆزینەوەی حیجز',
+    notFound: 'هیچ حیجزێک بەم ژمارانە نەدۆزرایەوە.',
+    tooMany: 'زۆر هەوڵت دا. تکایە چەند خولەکێک چاوەڕێ بکە، یان پەیوەندی بە هۆتێلەوە بکە.',
+    cancel: 'هەڵوەشاندنەوەی ئەم حیجزە',
+    cancelled: 'ئەم حیجزە هەڵوەشێنرایەوە. ژوورەکە گەڕایەوە بۆ بەردەستبوون.',
+    tooLate: 'ئەمە لێرە هەڵناوەشێتەوە — تکایە پەیوەندی بە هۆتێلەکەوە بکە.',
+    confirmCancel: 'هەڵوەشاندنەوە ناگەڕێتەوە.',
     errorDates: 'تکایە ڕۆژەکان بپشکنە — لەوانەیە تێپەڕیبن لە کاتێکدا ئەم پەڕەیە کراوە بوو.',
     errorGuests: 'ئەم ژوورە ئەوەندە کەس جێی نابێتەوە. تکایە ژوورێکی گەورەتر هەڵبژێرە.',
     errorGone: 'ئەو ڕۆژانە گیران لە کاتی بڕیاردانت. تکایە دووبارە هەڵبژێرە.',
@@ -796,6 +826,16 @@ const ar: Dictionary = {
     doneLead: 'أرسلنا التفاصيل. احتفظ بهذا الرقم — هو ما تذكره عند الاستقبال.',
     reference: 'رقم الحجز',
     total: 'الإجمالي',
+    manageTitle: 'ابحث عن حجزك',
+    manageLead: 'أدخل رقم الحجز ورقم الهاتف الذي حجزت به.',
+    yourReference: 'رقم الحجز',
+    findIt: 'بحث عن الحجز',
+    notFound: 'لا يوجد حجز مطابق لهذا الرقم وهذا الهاتف.',
+    tooMany: 'محاولات كثيرة. يرجى الانتظار بضع دقائق، أو الاتصال بالفندق.',
+    cancel: 'إلغاء هذا الحجز',
+    cancelled: 'تم إلغاء الحجز. عادت الغرفة إلى التوفر.',
+    tooLate: 'لا يمكن إلغاء هذا هنا — يرجى الاتصال بالفندق.',
+    confirmCancel: 'لا يمكن التراجع عن الإلغاء.',
     errorDates: 'يرجى التحقق من التواريخ — ربما مضت بينما كانت هذه الصفحة مفتوحة.',
     errorGuests: 'هذه الغرفة لا تتسع لهذا العدد. الرجاء اختيار غرفة أكبر.',
     errorGone: 'حُجزت هذه التواريخ أثناء اختيارك. الرجاء الاختيار من جديد.',
