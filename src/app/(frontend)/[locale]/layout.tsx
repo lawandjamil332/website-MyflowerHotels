@@ -33,6 +33,8 @@ import { SiteHeader } from '@/components/site/SiteHeader'
 import { SiteFooter } from '@/components/site/SiteFooter'
 import { WhatsAppButton } from '@/components/site/WhatsAppButton'
 import { getSettings } from '@/utilities/getSettings'
+import { getBranches } from '@/utilities/branches'
+import { toWhatsAppHref } from '@/utilities/contact'
 
 // The database is not reachable during the deploy build, so pages render on
 // request. It also means content edited in the admin panel appears at once.
@@ -55,6 +57,26 @@ export default async function LocaleLayout({ children, params }: Args) {
   const { isEnabled } = await draftMode()
   const t = getDictionary(locale)
   const settings = await getSettings(locale)
+
+  // The floating button used to carry the one group-wide number, which belongs
+  // to My Flower 1 — so anyone reading about another hotel and pressing it
+  // opened a chat with the wrong front desk. Each hotel that has its own line
+  // is offered instead, and the group number only stands in when none do.
+  const branches = await getBranches(locale)
+  const hotelChats = branches
+    .map((branch) => ({
+      name: branch.name,
+      href: toWhatsAppHref(branch.whatsapp, `${t.branch.enquire} — ${branch.name}`),
+    }))
+    .filter((chat): chat is { name: string; href: string } => Boolean(chat.href))
+
+  const groupChat = toWhatsAppHref(settings.whatsapp)
+  const whatsappTargets =
+    hotelChats.length > 0
+      ? hotelChats
+      : groupChat
+        ? [{ name: settings.siteName || 'My Flower Hotels', href: groupChat }]
+        : []
 
   return (
     <html lang={locale} dir={dir(locale)} suppressHydrationWarning>
@@ -91,7 +113,12 @@ export default async function LocaleLayout({ children, params }: Args) {
             <SiteHeader locale={locale} t={t} settings={settings} />
             <main id="main">{children}</main>
             <SiteFooter locale={locale} t={t} settings={settings} />
-            <WhatsAppButton phone={settings.whatsapp} label={t.common.whatsapp} />
+            <WhatsAppButton
+              targets={whatsappTargets}
+              label={t.common.whatsapp}
+              chooseLabel={t.common.whatsapp}
+              closeLabel={t.common.close}
+            />
           </CurrencyProvider>
         </Providers>
       </body>

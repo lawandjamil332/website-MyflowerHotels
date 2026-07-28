@@ -8,6 +8,7 @@ import { getBranches } from '@/utilities/branches'
 import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { cn } from '@/utilities/ui'
 import { InstagramMark } from './InstagramMark'
+import { WhatsAppMark } from './WhatsAppMark'
 import { LocaleSwitcher } from './LocaleSwitcher'
 import { Stars } from './Stars'
 import { shell } from './ui'
@@ -43,12 +44,27 @@ export async function SiteFooter({
   // settings is never silently ignored.
   const anyBranchInstagram = branches.some((branch) => Boolean(branch.instagram))
 
+  // Same reasoning for the phone. The site-wide number is My Flower 1's line,
+  // and now every hotel prints its own two above, it appeared a third time
+  // under a "Contact" heading as though it belonged to the group — which is
+  // exactly the "it only writes one number" the owner was looking at. It is
+  // kept only as a fallback, for the case where no hotel has a line of its own.
+  const anyBranchPhone = branches.some((branch) => Boolean(branch.phone))
+  const showGroupContact = !anyBranchPhone
+
   const socialLinks = [
     { href: social.facebook, label: 'Facebook' },
     { href: anyBranchInstagram ? undefined : social.instagram, label: 'Instagram' },
     { href: social.tiktok, label: 'TikTok' },
     { href: social.youtube, label: 'YouTube' },
   ].filter((s): s is { href: string; label: string } => Boolean(s.href))
+
+  // With the group number demoted, this column can hold nothing at all. A
+  // heading standing over an empty space reads as content that failed to load,
+  // so the column is dropped and the row closes up around it.
+  const hasContactColumn = Boolean(
+    (showGroupContact && (tel || wa)) || settings.email || socialLinks.length > 0,
+  )
 
   // White, not brand. These headings were set in the brand navy on a footer
   // painted the same brand navy, so "Menu", "Our hotels" and "Contact" were
@@ -60,11 +76,18 @@ export async function SiteFooter({
   // is what stops those areas overlapping each other.
   const columnLink =
     'link-line tap-safe tap-safe-lg text-sm text-white/60 transition-colors duration-500 ease-luxe hover:text-white'
+  const iconLink =
+    'flex h-11 w-11 items-center justify-center text-white/45 transition-colors duration-500 ease-luxe hover:text-white'
 
   return (
     <footer className="bg-brand text-white">
       <div className={cn(shell, 'py-20 sm:py-24')}>
-        <div className="grid gap-14 lg:grid-cols-[1.2fr_1fr_1fr_1fr] lg:gap-10">
+        <div
+          className={cn(
+            'grid gap-14 lg:gap-10',
+            hasContactColumn ? 'lg:grid-cols-[1.2fr_1fr_1fr_1fr]' : 'lg:grid-cols-[1.2fr_1fr_1fr]',
+          )}
+        >
           <div>
             <Image
               src="/logo-light.png"
@@ -109,65 +132,102 @@ export async function SiteFooter({
               four accounts separately would print all four hotel names twice
               in one footer, and pairing them here says which is which without
               a word of explanation. */}
-          <nav className="flex flex-col items-start gap-6">
+          <nav className="flex flex-col items-start gap-8">
             <p className={columnHeading}>{t.nav.branches}</p>
             {branches.length > 0 ? (
-              branches.map((branch) => (
-                <span key={branch.id} className="flex items-center gap-2">
-                  <Link href={`/${locale}/branches/${branch.slug}`} className={columnLink}>
-                    {branch.name}
-                  </Link>
-                  {branch.instagram && (
-                    <a
-                      href={branch.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`${branch.name} — Instagram`}
-                      className="flex h-11 w-11 items-center justify-center text-white/45 transition-colors duration-500 ease-luxe hover:text-white"
-                    >
-                      <InstagramMark />
-                    </a>
-                  )}
-                </span>
-              ))
+              branches.map((branch) => {
+                const branchWa = toWhatsAppHref(
+                  branch.whatsapp,
+                  `${t.branch.enquire} — ${branch.name}`,
+                )
+                const numbers = [branch.phone, branch.phoneAlt].filter(Boolean) as string[]
+                return (
+                  <div key={branch.id} className="flex flex-col items-start gap-4">
+                    <span className="flex items-center gap-2">
+                      <Link href={`/${locale}/branches/${branch.slug}`} className={columnLink}>
+                        {branch.name}
+                      </Link>
+                      {branchWa && (
+                        <a
+                          href={branchWa}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`${branch.name} — ${t.common.whatsapp}`}
+                          className={iconLink}
+                        >
+                          <WhatsAppMark className="h-4 w-4" />
+                        </a>
+                      )}
+                      {branch.instagram && (
+                        <a
+                          href={branch.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`${branch.name} — Instagram`}
+                          className={iconLink}
+                        >
+                          <InstagramMark />
+                        </a>
+                      )}
+                    </span>
+
+                    {numbers.length > 0 && (
+                      <span className="flex flex-wrap items-center gap-x-4 gap-y-3">
+                        {numbers.map((number) => (
+                          <a
+                            key={number}
+                            href={toTelHref(number)}
+                            dir="ltr"
+                            className="link-line tap-safe tap-safe-lg text-xs text-white/50 transition-colors duration-500 ease-luxe hover:text-white"
+                          >
+                            {number}
+                          </a>
+                        ))}
+                      </span>
+                    )}
+                  </div>
+                )
+              })
             ) : (
               <span className="text-sm text-white/60">—</span>
             )}
           </nav>
 
-          <div className="flex flex-col items-start gap-6">
-            <p className={columnHeading}>{t.nav.contact}</p>
-            {tel && (
-              <a href={tel} className={columnLink} dir="ltr">
-                {settings.phone}
-              </a>
-            )}
-            {wa && (
-              <a href={wa} target="_blank" rel="noopener noreferrer" className={columnLink}>
-                {t.common.whatsapp}
-              </a>
-            )}
-            {settings.email && (
-              <a href={`mailto:${settings.email}`} className={columnLink}>
-                {settings.email}
-              </a>
-            )}
-            {socialLinks.length > 0 && (
-              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
-                {socialLinks.map((s) => (
-                  <a
-                    key={s.label}
-                    href={s.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={columnLink}
-                  >
-                    {s.label}
-                  </a>
-                ))}
-              </div>
-            )}
-          </div>
+          {hasContactColumn && (
+            <div className="flex flex-col items-start gap-6">
+              <p className={columnHeading}>{t.nav.contact}</p>
+              {showGroupContact && tel && (
+                <a href={tel} className={columnLink} dir="ltr">
+                  {settings.phone}
+                </a>
+              )}
+              {showGroupContact && wa && (
+                <a href={wa} target="_blank" rel="noopener noreferrer" className={columnLink}>
+                  {t.common.whatsapp}
+                </a>
+              )}
+              {settings.email && (
+                <a href={`mailto:${settings.email}`} className={columnLink}>
+                  {settings.email}
+                </a>
+              )}
+              {socialLinks.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
+                  {socialLinks.map((s) => (
+                    <a
+                      key={s.label}
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={columnLink}
+                    >
+                      {s.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
