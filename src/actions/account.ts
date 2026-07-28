@@ -1,13 +1,31 @@
 'use server'
 
 import configPromise from '@payload-config'
-import { getPayload } from 'payload'
+import { getPayload, type Payload } from 'payload'
 import { cookies, headers as nextHeaders } from 'next/headers'
 import { redirect } from 'next/navigation'
 
-export type AccountResult = { status: 'error'; message: 'bad' | 'taken' | 'required' } | null
+import { awardPointsForBooking } from '@/utilities/points'
+import { sendPasswordReset } from '@/utilities/accountEmail'
+import { allow, callerKey } from '@/utilities/throttle'
+
+export type AccountResult =
+  | { status: 'error'; message: 'bad' | 'taken' | 'required' | 'weak' }
+  | { status: 'sent' }
+  | null
 
 const text = (v: FormDataEntryValue | null) => (typeof v === 'string' ? v.trim() : '')
+
+/**
+ * The one rule worth enforcing on the server as well as in the browser.
+ *
+ * Length and nothing else. Forcing a capital, a digit and a symbol is how you
+ * get Password1! on ten thousand accounts — it narrows the space people choose
+ * from instead of widening it, which is the opposite of the intention. A long
+ * passphrase somebody can remember beats a short one they write on a card.
+ */
+const MIN_PASSWORD = 8
+const tooWeak = (password: string): boolean => password.length < MIN_PASSWORD
 
 /**
  * Guest sign-in, sign-up and sign-out.
@@ -59,10 +77,11 @@ export async function signUp(_prev: AccountResult, formData: FormData): Promise<
   const phone = text(formData.get('phone'))
   const locale = text(formData.get('locale')) || 'en'
   if (!email || !password || !name) return { status: 'error', message: 'required' }
+  if (tooWeak(password)) return { status: 'error', message: 'weak' }
 
   try {
     const payload = await getPayload({ config: configPromise })
-    await payload.create({
+    const created = await payload.create({
       collection: 'guests',
       data: { email, password, name, phone: phone || undefined },
       overrideAccess: true,
@@ -71,24 +90,8 @@ export async function signUp(_prev: AccountResult, formData: FormData): Promise<
     const result = await payload.login({ collection: 'guests', data: { email, password } })
     if (result?.token) await setSession(result.token)
 
-    // Any booking already made from this device with this email becomes theirs,
-    // so the account they open after booking arrives with the booking in it.
-    await payload
-      .update({
-        collection: 'bookings',
-        where: { and: [{ guestEmail: { equals: email } }, { guest: { exists: false } }] },
-        data: {
-          guest: (
-            await payload.find({
-              collection: 'guests',
-              where: { email: { equals: email } },
-              limit: 1,
-            })
-          ).docs[0]?.id,
-        },
-        overrideAccess: true,
-      })
-      .catch(() => {})
+    // Bookings they already made, before they had anywhere to keep them.
+    await claimBookings(payload, Number(created.id), email, phone)
   } catch (error) {
     const message = String(error)
     if (/duplicate|unique|already/i.test(message)) return { status: 'error', message: 'taken' }
@@ -98,11 +101,133 @@ export async function signUp(_prev: AccountResult, formData: FormData): Promise<
   redirect(`/${locale}/account`)
 }
 
+/**
+ * Hands a new account the bookings its owner already made without one.
+ *
+ * This matters more here than at most hotels, because booking never required an
+ * account: by the time somebody signs up they may already have stayed three
+ * times, and an account that opens showing "Nothing booked yet" to a repeat
+ * guest is worse than no account. Their history — and the points those stays
+ * earned — has to be waiting for them.
+ *
+ * Matched on email or phone. Email alone would miss almost everyone, since the
+ * booking form asks for a phone number and treats email as optional. Phone is
+ * compared on its last nine digits, so +964 750 111 2222 on the booking finds
+ * 07501112222 on the account.
+ *
+ * Only ever claims bookings with no owner. A booking already attached to
+ * somebody cannot be moved by signing up with their number.
+ */
+const claimBookings = async (
+  payload: Payload,
+  guestId: number,
+  email: string,
+  phone: string,
+): Promise<void> => {
+  const digits = phone.replace(/\D/g, '')
+  const tail = digits.length >= 9 ? digits.slice(-9) : ''
+
+  try {
+    const pool = (payload.db as unknown as { pool: { query: Function } }).pool
+    const { rows } = await pool.query(
+      `UPDATE bookings SET guest_id = $1
+        WHERE guest_id IS NULL
+          AND ( LOWER(guest_email) = $2
+                OR ($3 <> '' AND RIGHT(REGEXP_REPLACE(guest_phone, '\\D', '', 'g'), 9) = $3) )
+        RETURNING id, status`,
+      [guestId, email, tail],
+    )
+
+    // Stays that had already finished before the account existed still earned
+    // their points; they simply had nobody to credit. Awarding them now is what
+    // makes signing up after a stay worth doing rather than a fresh start.
+    for (const row of rows) {
+      if (row.status === 'completed') {
+        await awardPointsForBooking(payload, Number(row.id)).catch(() => {})
+      }
+    }
+  } catch (error) {
+    // A new account must never fail because an old booking would not attach.
+    payload.logger.error(`Could not claim bookings for guest ${guestId} — ${error}`)
+  }
+}
+
 export async function signOut(formData: FormData): Promise<void> {
   const locale = text(formData.get('locale')) || 'en'
   const jar = await cookies()
   jar.delete('payload-token')
   redirect(`/${locale}`)
+}
+
+/**
+ * "I have forgotten my password."
+ *
+ * Without this an account is a trap: the whole point of one here is that it
+ * holds a guest's stays and the points those stays earned, and a forgotten
+ * password would put all of it out of reach permanently, with nothing the front
+ * desk could do about it.
+ *
+ * Always answers the same way, whether or not the address is one of ours.
+ * Anything else turns this form into a way of asking which of your guests have
+ * accounts, one address at a time.
+ *
+ * The mail is sent from here rather than by Payload's own handler so the link
+ * lands in the language the guest is reading the site in.
+ */
+export async function requestReset(
+  _prev: AccountResult,
+  formData: FormData,
+): Promise<AccountResult> {
+  const email = text(formData.get('email')).toLowerCase()
+  const locale = text(formData.get('locale')) || 'en'
+  if (!email) return { status: 'error', message: 'required' }
+
+  // Five in fifteen minutes. A guest needs one; anything sending more is either
+  // mining for addresses or using this to post mail through us.
+  if (!allow(await callerKey('reset'), 5, 15 * 60 * 1000)) return { status: 'sent' }
+
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const token = await payload.forgotPassword({
+      collection: 'guests',
+      data: { email },
+      disableEmail: true, // sent below instead, with our own wording and link
+    })
+    if (token) await sendPasswordReset(payload, email, String(token), locale)
+  } catch {
+    // An unknown address throws. It must look exactly like a known one.
+  }
+
+  return { status: 'sent' }
+}
+
+/** Sets the new password and signs them straight in, so the link ends in. */
+export async function resetPassword(
+  _prev: AccountResult,
+  formData: FormData,
+): Promise<AccountResult> {
+  const token = text(formData.get('token'))
+  const password = text(formData.get('password'))
+  const locale = text(formData.get('locale')) || 'en'
+  if (!token || !password) return { status: 'error', message: 'required' }
+  if (tooWeak(password)) return { status: 'error', message: 'weak' }
+
+  try {
+    const payload = await getPayload({ config: configPromise })
+    const result = await payload.resetPassword({
+      collection: 'guests',
+      data: { token, password },
+      overrideAccess: true,
+    })
+    if (!result?.token) return { status: 'error', message: 'bad' }
+    await setSession(result.token)
+  } catch {
+    // Expired, already used, or invented. One message for all three: which it
+    // was is of interest only to somebody who did not have the link.
+    return { status: 'error', message: 'bad' }
+  }
+
+  redirect(`/${locale}/account`)
 }
 
 /** The signed-in guest, or null. Safe to call from any server component. */

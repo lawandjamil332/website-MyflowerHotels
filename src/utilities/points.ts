@@ -20,6 +20,53 @@ const pool = (payload: Payload) => (payload.db as unknown as { pool: any }).pool
 export const pointsForStay = (totalIqd: number, perThousand: number): number =>
   Math.max(0, Math.floor((totalIqd / 1000) * perThousand))
 
+/** The rate in force, and whether the scheme is running at all. */
+export const pointsRate = async (
+  payload: Payload,
+): Promise<{ enabled: boolean; perThousand: number }> => {
+  try {
+    const settings = (await payload.findGlobal({ slug: 'settings', depth: 0 })) as {
+      pointsEnabled?: boolean | null
+      pointsPer1000Iqd?: number | null
+    }
+    const perThousand = settings?.pointsPer1000Iqd ?? 1
+    return {
+      enabled: settings?.pointsEnabled !== false && perThousand > 0,
+      perThousand,
+    }
+  } catch {
+    return { enabled: false, perThousand: 0 }
+  }
+}
+
+export type PointEntry = { id: number; points: number; reason: string; createdAt: string }
+
+/**
+ * Every line that adds up to the balance, newest first.
+ *
+ * A loyalty balance with no statement behind it is a number a guest has to take
+ * on trust, and the first time it looks wrong to them there is nothing either
+ * side can point at. The ledger already exists — this only shows it.
+ */
+export const pointsHistory = async (
+  payload: Payload,
+  guestId: number,
+  limit = 50,
+): Promise<PointEntry[]> => {
+  const { rows } = await pool(payload).query(
+    `SELECT id, points::int AS points, reason, created_at
+       FROM point_entries WHERE guest_id = $1
+      ORDER BY created_at DESC, id DESC LIMIT $2`,
+    [guestId, limit],
+  )
+  return rows.map((row: Record<string, unknown>) => ({
+    id: row.id as number,
+    points: row.points as number,
+    reason: (row.reason as string) ?? '',
+    createdAt: String(row.created_at ?? ''),
+  }))
+}
+
 export const pointsBalance = async (payload: Payload, guestId: number): Promise<number> => {
   const { rows } = await pool(payload).query(
     `SELECT COALESCE(SUM(points), 0)::int AS balance FROM point_entries WHERE guest_id = $1`,

@@ -7,6 +7,7 @@ import type { Dictionary } from '@/i18n/dictionaries'
 import type { AvailableRoom } from '@/utilities/booking'
 import { cn } from '@/utilities/ui'
 import { submitBooking, type BookingResult } from '@/actions/booking'
+import { SignUpForm } from './AccountForms'
 import { btnPrimary } from './ui'
 
 /**
@@ -27,6 +28,8 @@ export function BookingForm({
   guests,
   nights,
   total,
+  earns,
+  signedIn,
   t,
 }: {
   locale: string
@@ -37,12 +40,20 @@ export function BookingForm({
   guests?: number | null
   nights: number
   total: number | null
+  /** Points this stay will earn once it is finished, or 0 if none. */
+  earns: number
+  signedIn: boolean
   t: Dictionary
 }) {
   const [state, action, pending] = useActionState<BookingResult | null, FormData>(
     submitBooking,
     null,
   )
+
+  // Kept so the account offer on the next screen can be one field instead of
+  // four. They are typing these anyway; asking again half a minute later is
+  // what makes an optional account not worth taking up.
+  const [given, setGiven] = useState({ name: '', phone: '', email: '' })
 
   // Made once, when the form first renders, and unchanged for its lifetime.
   // Two presses of this form carry the same key, so the second is recognised as
@@ -75,6 +86,25 @@ export function BookingForm({
             {t.booking.manageTitle}
           </Link>
         </p>
+
+        {/* The account, offered here and nowhere earlier. Demanding one before
+            the room is held is the single largest cause of abandoned hotel
+            bookings; offering it after costs nothing, because the booking it
+            was meant to carry has already happened. One field, since we know
+            the rest — and it is a plain sign-up, so it claims their booking by
+            matching the number they just gave rather than by trusting anything
+            this page sends about which booking it was. */}
+        {!signedIn && (
+          <div className="mt-10 border-t border-line pt-8 text-start">
+            <h3 className="font-display text-xl text-ink">{t.account.keepItTitle}</h3>
+            <p className="mt-2 text-[0.92rem] leading-relaxed text-muted-ink">
+              {t.account.keepItLead}
+            </p>
+            <div className="mx-auto mt-7 max-w-sm">
+              <SignUpForm locale={locale} t={t} defaults={given} submitLabel={t.account.keepIt} />
+            </div>
+          </div>
+        )}
       </div>
     )
   }
@@ -102,19 +132,42 @@ export function BookingForm({
           <label className={label} htmlFor="booking-name">
             {t.form.name}
           </label>
-          <input id="booking-name" name="guestName" required className={field} />
+          <input
+            id="booking-name"
+            name="guestName"
+            required
+            autoComplete="name"
+            onChange={(e) => setGiven((g) => ({ ...g, name: e.target.value }))}
+            className={field}
+          />
         </div>
         <div>
           <label className={label} htmlFor="booking-phone">
             {t.form.phone}
           </label>
-          <input id="booking-phone" name="guestPhone" required dir="ltr" className={field} />
+          <input
+            id="booking-phone"
+            name="guestPhone"
+            required
+            dir="ltr"
+            autoComplete="tel"
+            onChange={(e) => setGiven((g) => ({ ...g, phone: e.target.value }))}
+            className={field}
+          />
         </div>
         <div className="sm:col-span-2">
           <label className={label} htmlFor="booking-email">
             {t.form.email} <span className="font-normal text-muted-ink">({t.form.optional})</span>
           </label>
-          <input id="booking-email" name="guestEmail" type="email" dir="ltr" className={field} />
+          <input
+            id="booking-email"
+            name="guestEmail"
+            type="email"
+            dir="ltr"
+            autoComplete="email"
+            onChange={(e) => setGiven((g) => ({ ...g, email: e.target.value }))}
+            className={field}
+          />
         </div>
         <div className="sm:col-span-2">
           <label className={label} htmlFor="booking-notes">
@@ -152,6 +205,17 @@ export function BookingForm({
           {nights} {t.booking.nights} · {t.booking.payAtHotel}
         </p>
       </div>
+
+      {/* What the stay is worth in points, said before they commit rather than
+          discovered afterwards — and said honestly, including when it pays. */}
+      {earns > 0 && (
+        <p className="mt-5 text-[0.88rem] text-muted-ink">
+          <span className="font-semibold text-brand">
+            {t.account.earns} {earns.toLocaleString('en-US')} {t.account.points.toLowerCase()}
+          </span>{' '}
+          · {t.account.earnLead}
+        </p>
+      )}
     </form>
   )
 }

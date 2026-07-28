@@ -129,6 +129,26 @@ export type Dictionary = {
     myBookings: string
     gateTitle: string
     gateLead: string
+    forgot: string
+    forgotLead: string
+    sendReset: string
+    resetSent: string
+    backToSignIn: string
+    setPassword: string
+    resetLead: string
+    resetNoToken: string
+    weak: string
+    show: string
+    hide: string
+    passwordHint: string
+    phoneHint: string
+    history: string
+    noHistory: string
+    earnLead: string
+    earns: string
+    keepItTitle: string
+    keepItLead: string
+    keepIt: string
     email: string
     password: string
     haveAccount: string
@@ -337,6 +357,28 @@ const en: Dictionary = {
     myBookings: 'My bookings',
     gateTitle: 'Sign in or create an account',
     gateLead: 'Keep your bookings in one place and collect points on every stay.',
+    forgot: 'I have forgotten my password',
+    forgotLead: 'Enter your email address and we will send you a link to set a new password.',
+    sendReset: 'Send the link',
+    resetSent: 'If that address has an account, the link is on its way. It expires in an hour.',
+    backToSignIn: 'Back to sign in',
+    setPassword: 'Choose a new password',
+    resetLead: 'Pick something you will remember. You will be signed in straight away.',
+    resetNoToken:
+      'This page needs the link from your email. Please open it from the message we sent.',
+    weak: 'Please use at least 8 characters.',
+    show: 'Show',
+    hide: 'Hide',
+    passwordHint: 'At least 8 characters. A short phrase works better than a short word.',
+    phoneHint:
+      'The number you book with, so stays you made before opening an account come with you.',
+    history: 'Points history',
+    noHistory: 'Points appear here after your first completed stay.',
+    earnLead: 'Points are added once the stay is finished.',
+    earns: 'Earns',
+    keepItTitle: 'Keep this booking',
+    keepItLead: 'Set a password and this stay, and every one after it, is saved to your account.',
+    keepIt: 'Create my account',
     email: 'Email',
     password: 'Password',
     haveAccount: 'Already have an account?',
@@ -572,6 +614,27 @@ const ku: Dictionary = {
     myBookings: 'حیجزەکانم',
     gateTitle: 'بچۆ ژوورەوە یان هەژمارێک دروست بکە',
     gateLead: 'حیجزەکانت لە یەک شوێن بپارێزە و لە هەر مانەوەیەک خاڵ کۆبکەرەوە.',
+    forgot: 'وشەی نهێنیم لەبیر چووە',
+    forgotLead: 'ئیمەیڵەکەت بنووسە و بەستەرێکت بۆ دەنێرین بۆ دانانی وشەی نهێنی نوێ.',
+    sendReset: 'بەستەرەکە بنێرە',
+    resetSent: 'ئەگەر ئەو ئیمەیڵە هەژماری هەبێت، بەستەرەکە لە ڕێگاوەیە. دوای کاتژمێرێک بەسەردەچێت.',
+    backToSignIn: 'گەڕانەوە بۆ چوونەژوورەوە',
+    setPassword: 'وشەی نهێنیی نوێ هەڵبژێرە',
+    resetLead: 'شتێک هەڵبژێرە کە لەبیرت دەمێنێت. ڕاستەوخۆ دەچیتە ژوورەوە.',
+    resetNoToken: 'ئەم پەڕەیە پێویستی بە بەستەرەکەی ئیمەیڵەکەتە. تکایە لە نامەکەوە بیکەرەوە.',
+    weak: 'تکایە بەلایەنی کەمەوە ٨ پیت بەکاربهێنە.',
+    show: 'پیشاندان',
+    hide: 'شاردنەوە',
+    passwordHint: 'بەلایەنی کەمەوە ٨ پیت. ڕستەیەکی کورت باشترە لە وشەیەکی کورت.',
+    phoneHint: 'ئەو ژمارەیەی پێی حیجز دەکەیت، تا ئەو مانەوانەی پێش هەژمارەکەت لەگەڵت بێن.',
+    history: 'مێژووی خاڵەکان',
+    noHistory: 'خاڵەکان لێرە دەردەکەون دوای یەکەم مانەوەی تەواوبوو.',
+    earnLead: 'خاڵەکان دوای تەواوبوونی مانەوەکە زیاد دەکرێن.',
+    earns: 'دەیهێنێت',
+    keepItTitle: 'ئەم حیجزە بپارێزە',
+    keepItLead:
+      'وشەیەکی نهێنی دابنێ و ئەم مانەوەیە، و هەموو ئەوانەی دوای، لە هەژمارەکەت دەپارێزرێن.',
+    keepIt: 'هەژمارەکەم دروست بکە',
     email: 'ئیمەیل',
     password: 'وشەی نهێنی',
     haveAccount: 'هەژمارت هەیە؟',
@@ -805,6 +868,26 @@ const ar: Dictionary = {
     myBookings: 'حجوزاتي',
     gateTitle: 'سجّل الدخول أو أنشئ حساباً',
     gateLead: 'احفظ حجوزاتك في مكان واحد واجمع النقاط مع كل إقامة.',
+    forgot: 'نسيت كلمة المرور',
+    forgotLead: 'أدخل بريدك الإلكتروني وسنرسل لك رابطاً لتعيين كلمة مرور جديدة.',
+    sendReset: 'أرسل الرابط',
+    resetSent: 'إذا كان لهذا البريد حساب، فالرابط في طريقه إليك. تنتهي صلاحيته خلال ساعة.',
+    backToSignIn: 'العودة إلى تسجيل الدخول',
+    setPassword: 'اختر كلمة مرور جديدة',
+    resetLead: 'اختر شيئاً تتذكره. سيتم تسجيل دخولك مباشرة.',
+    resetNoToken: 'تحتاج هذه الصفحة إلى الرابط من بريدك. يرجى فتحه من الرسالة التي أرسلناها.',
+    weak: 'يرجى استخدام 8 أحرف على الأقل.',
+    show: 'إظهار',
+    hide: 'إخفاء',
+    passwordHint: '8 أحرف على الأقل. عبارة قصيرة أفضل من كلمة قصيرة.',
+    phoneHint: 'الرقم الذي تحجز به، لتأتي معك الإقامات التي تمت قبل إنشاء الحساب.',
+    history: 'سجل النقاط',
+    noHistory: 'تظهر النقاط هنا بعد أول إقامة مكتملة.',
+    earnLead: 'تُضاف النقاط بعد انتهاء الإقامة.',
+    earns: 'يكسب',
+    keepItTitle: 'احتفظ بهذا الحجز',
+    keepItLead: 'عيّن كلمة مرور وسيُحفظ هذا الحجز، وكل ما بعده، في حسابك.',
+    keepIt: 'أنشئ حسابي',
     email: 'البريد الإلكتروني',
     password: 'كلمة المرور',
     haveAccount: 'لديك حساب بالفعل؟',

@@ -6,7 +6,7 @@ import { getPayload } from 'payload'
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { formatNumber } from '@/utilities/format'
-import { pointsBalance } from '@/utilities/points'
+import { pointsBalance, pointsForStay, pointsHistory, pointsRate } from '@/utilities/points'
 import { currentGuest, signOut } from '@/actions/account'
 import { cn } from '@/utilities/ui'
 import { SignInForm, SignUpForm } from '@/components/site/AccountForms'
@@ -70,7 +70,12 @@ export default async function AccountPage({ params }: Args) {
     overrideAccess: true,
   })
 
-  const balance = await pointsBalance(payload, guest.id)
+  const [balance, history, rate] = await Promise.all([
+    pointsBalance(payload, guest.id),
+    pointsHistory(payload, guest.id),
+    pointsRate(payload),
+  ])
+
   const today = new Date().toISOString().slice(0, 10)
   const upcoming = bookings.filter((b) => day(b.checkIn) >= today && b.status !== 'cancelled')
   const past = bookings.filter((b) => day(b.checkIn) < today || b.status === 'cancelled')
@@ -78,6 +83,16 @@ export default async function AccountPage({ params }: Args) {
   const Row = ({ booking }: { booking: (typeof bookings)[number] }) => {
     const branch = typeof booking.branch === 'object' ? (booking.branch as Branch) : null
     const room = typeof booking.room === 'object' ? (booking.room as Room) : null
+
+    // What this stay is worth, and whether it has paid out yet. A guest looking
+    // at a booking should not have to work out why the balance has not moved.
+    const willEarn =
+      rate.enabled && booking.currency === 'IQD' && booking.totalAmount
+        ? pointsForStay(booking.totalAmount, rate.perThousand)
+        : 0
+    const earned = booking.status === 'completed'
+    const cancelled = booking.status === 'cancelled'
+
     return (
       <li className="flex flex-wrap items-start justify-between gap-5 rounded-2xl border border-line bg-card p-6">
         <div className="min-w-0">
@@ -94,6 +109,18 @@ export default async function AccountPage({ params }: Args) {
           <p className="mt-1 text-[0.8rem] text-muted-ink">
             {booking.nights ? `${formatNumber(booking.nights, locale)} ${t.booking.nights}` : ''}
           </p>
+          {willEarn > 0 && !cancelled && (
+            <p
+              className={cn(
+                'mt-2 text-[0.8rem]',
+                earned ? 'font-semibold text-brand' : 'text-muted-ink',
+              )}
+            >
+              {earned ? '+' : ''}
+              {formatNumber(willEarn, locale)} {t.account.points.toLowerCase()}
+              {earned ? '' : ` · ${t.account.pending}`}
+            </p>
+          )}
         </div>
       </li>
     )
@@ -150,6 +177,46 @@ export default async function AccountPage({ params }: Args) {
                 </div>
               )}
             </>
+          )}
+
+          {/* The statement behind the number. A balance nobody can audit is a
+              number a guest has to take on trust, and the first time it looks
+              wrong to them there is nothing either side can point at. */}
+          {rate.enabled && (
+            <div className="mt-14">
+              <SectionHeading title={t.account.history} align="start" className="mb-6" />
+              {history.length === 0 ? (
+                <p className="rounded-2xl border border-dashed border-line p-8 text-center text-[0.95rem] text-muted-ink">
+                  {t.account.noHistory}
+                </p>
+              ) : (
+                <ul className="divide-y divide-line rounded-2xl border border-line bg-card">
+                  {history.map((entry) => (
+                    <li
+                      key={entry.id}
+                      className="flex items-center justify-between gap-5 px-6 py-4"
+                    >
+                      <div className="min-w-0">
+                        <p className="truncate text-[0.95rem] text-ink">{entry.reason}</p>
+                        <p className="mt-0.5 text-[0.8rem] text-muted-ink" dir="ltr">
+                          {entry.createdAt.slice(0, 10)}
+                        </p>
+                      </div>
+                      <p
+                        className={cn(
+                          'font-display shrink-0 text-lg',
+                          entry.points >= 0 ? 'text-brand' : 'text-muted-ink',
+                        )}
+                        dir="ltr"
+                      >
+                        {entry.points >= 0 ? '+' : ''}
+                        {formatNumber(entry.points, locale)}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           )}
         </div>
       </section>

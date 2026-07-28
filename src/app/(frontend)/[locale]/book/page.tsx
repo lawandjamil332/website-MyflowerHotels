@@ -9,6 +9,8 @@ import { getDictionary } from '@/i18n/dictionaries'
 import { getBranches } from '@/utilities/branches'
 import { availableRoomsAcross, nightsBetween, type AvailableRoom } from '@/utilities/booking'
 import { formatNumber } from '@/utilities/format'
+import { pointsForStay, pointsRate } from '@/utilities/points'
+import { currentGuest } from '@/actions/account'
 import { Price } from '@/components/site/Currency'
 import { cn } from '@/utilities/ui'
 import { BookingForm } from '@/components/site/BookingForm'
@@ -63,10 +65,11 @@ export default async function BookPage({ params, searchParams }: Args) {
   const targets = branch ? [branch] : open
   const groupSearch = !branch
 
+  const payload = await getPayload({ config: configPromise })
+
   let rooms: AvailableRoom[] = []
   let hotelHasRooms = true
   if (searchable) {
-    const payload = await getPayload({ config: configPromise })
     rooms = await availableRoomsAcross(payload, {
       branchIds: targets.map((b) => b.id),
       checkIn: checkIn!,
@@ -90,6 +93,14 @@ export default async function BookPage({ params, searchParams }: Args) {
   const nights = searchable ? nightsBetween(checkIn!, checkOut!) : 0
   const chosen = rooms.find((room) => room.id === chosenRoomId) ?? null
   const total = chosen?.priceFrom ? chosen.priceFrom * nights : null
+
+  // What this stay is worth in points, worked out here so the confirm step can
+  // say it before the guest commits rather than leaving them to find out.
+  const [guest, rate] = await Promise.all([currentGuest(), pointsRate(payload)])
+  const earns =
+    rate.enabled && chosen && chosen.currency === 'IQD' && total
+      ? pointsForStay(total, rate.perThousand)
+      : 0
 
   // Which hotel the guest is actually booking into. When they searched the
   // whole group there is no hotel in the URL, so it comes from the room they
@@ -174,6 +185,8 @@ export default async function BookPage({ params, searchParams }: Args) {
               guests={guests}
               nights={nights}
               total={total}
+              earns={earns}
+              signedIn={Boolean(guest)}
               t={t}
             />
           </div>
