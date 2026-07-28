@@ -113,8 +113,17 @@ export function StayFinder({
     if (guests) params.set('guests', guests)
     const query = params.toString()
 
-    // With a hotel chosen the guest goes straight to it; without one, to the
-    // page that lists them all.
+    // With a hotel and both dates, this is a real search and goes to the
+    // booking page, which can answer it. Anything less cannot be answered —
+    // availability needs a hotel and two nights — so it falls back to the
+    // hotel's own page, or the enquiry, exactly as it did before booking
+    // existed.
+    if (hotel && checkIn && checkOut) {
+      params.set('hotel', hotel)
+      router.push(`/${locale}/book?${params.toString()}`)
+      return
+    }
+
     const target = hotel ? `/${locale}/branches/${hotel}` : `/${locale}/contact`
     router.push(`${target}${query ? `?${query}` : ''}#enquire`)
   }

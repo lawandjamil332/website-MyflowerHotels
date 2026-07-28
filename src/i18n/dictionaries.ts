@@ -121,6 +121,26 @@ export type Dictionary = {
     orWhatsApp: string
   }
   contact: { eyebrow: string; lead: string }
+  booking: {
+    title: string
+    lead: string
+    nights: string
+    roomsLeft: string
+    none: string
+    changeDates: string
+    reserve: string
+    confirmTitle: string
+    confirmLead: string
+    payAtHotel: string
+    submit: string
+    sending: string
+    doneTitle: string
+    doneLead: string
+    reference: string
+    total: string
+    errorGone: string
+    errorGeneric: string
+  }
   bed: Record<'single' | 'double' | 'twin' | 'king' | 'suite', string>
   amenity: Record<string, string>
   common: {
@@ -187,8 +207,7 @@ const en: Dictionary = {
     viewAllRooms: 'View all rooms',
     ctaEyebrow: 'Reservations',
     ctaTitle: 'Tell us when you are coming',
-    ctaLead:
-      'Send the dates and the number of guests. We will confirm availability and the rate.',
+    ctaLead: 'Send the dates and the number of guests. We will confirm availability and the rate.',
   },
   branch: {
     openingSoon: 'Opening soon',
@@ -274,6 +293,27 @@ const en: Dictionary = {
     errorGeneric: 'That did not send. Please message us on WhatsApp instead.',
     orWhatsApp: 'Or message us directly',
   },
+  booking: {
+    title: 'Rooms free for your dates',
+    lead: 'Choose a room. Nothing is charged now — you pay at the hotel.',
+    nights: 'nights',
+    roomsLeft: 'left',
+    none: 'Nothing is free for those dates. Try different nights, or message us and we will look.',
+    changeDates: 'Change dates',
+    reserve: 'Reserve this room',
+    confirmTitle: 'Confirm your booking',
+    confirmLead: 'We only need a name and a number. You pay at the hotel on arrival.',
+    payAtHotel: 'Pay at the hotel',
+    submit: 'Confirm booking',
+    sending: 'Confirming',
+    doneTitle: 'Your room is booked.',
+    doneLead: 'We have sent the details on. Keep this reference — it is what to quote at the desk.',
+    reference: 'Booking reference',
+    total: 'Total',
+    errorGone: 'Those dates went while you were deciding. Please pick again.',
+    errorGeneric:
+      'That did not go through. Please message us on WhatsApp and we will book it by hand.',
+  },
   contact: {
     eyebrow: 'Get in touch',
     lead: 'Reach any of our hotels directly. WhatsApp is answered fastest.',
@@ -342,7 +382,8 @@ const ku: Dictionary = {
       'ساڵانێکە لە هەولێر چاودێری گەشتیارەکان دەکەین. هەموو هۆتێلەکانمان بە یەک شێواز بەڕێوە دەبرێن: پاک، ئارام و نزیک لە ناوەندی شار.',
     offersTitle: 'داشکاندن و پاکێجەکان',
     offersEverywhere: 'لە هەموو هۆتێلەکاندا',
-    offersLead: 'ئەو ڕێککەوتنانەی ئێستا لە هۆتێلەکاندا هەن. کاتێک پەیوەندیمان پێوە دەکەیت بە ناوی داوای بکە.',
+    offersLead:
+      'ئەو ڕێککەوتنانەی ئێستا لە هۆتێلەکاندا هەن. کاتێک پەیوەندیمان پێوە دەکەیت بە ناوی داوای بکە.',
     assuranceTitle: 'بۆچی ڕاستەوخۆ لەگەڵمان جێگە بگریت',
     assurance: [
       {
@@ -450,6 +491,27 @@ const ku: Dictionary = {
     errorGeneric: 'نەنێردرا. تکایە لە جیاتی ئەوە لە واتساپ نامەمان بۆ بنێرە.',
     orWhatsApp: 'یان ڕاستەوخۆ نامەمان بۆ بنێرە',
   },
+  booking: {
+    title: 'ژوورە بەردەستەکان بۆ ڕۆژەکانت',
+    lead: 'ژوورێک هەڵبژێرە. ئێستا هیچ پارەیەک وەرناگیرێت — لە هۆتێلەکە دەدەیت.',
+    nights: 'شەو',
+    roomsLeft: 'ماوە',
+    none: 'هیچ ژوورێک بەردەست نییە بۆ ئەو ڕۆژانە. ڕۆژی تر تاقی بکەرەوە، یان پەیوەندیمان پێوە بکە.',
+    changeDates: 'گۆڕینی ڕۆژەکان',
+    reserve: 'ئەم ژوورە بگرە',
+    confirmTitle: 'دڵنیاکردنەوەی حیجزەکەت',
+    confirmLead: 'تەنها ناو و ژمارەیەکمان پێویستە. لە کاتی گەیشتن لە هۆتێلەکە دەدەیت.',
+    payAtHotel: 'پارەدان لە هۆتێلەکە',
+    submit: 'دڵنیاکردنەوەی حیجز',
+    sending: 'دڵنیا دەکرێتەوە',
+    doneTitle: 'ژوورەکەت گیرا.',
+    doneLead: 'زانیارییەکانمان ناردووە. ئەم ژمارەیە بپارێزە — لە پێشوازی پێویستت پێیەتی.',
+    reference: 'ژمارەی حیجز',
+    total: 'کۆی گشتی',
+    errorGone: 'ئەو ڕۆژانە گیران لە کاتی بڕیاردانت. تکایە دووبارە هەڵبژێرە.',
+    errorGeneric:
+      'سەرکەوتوو نەبوو. تکایە لە واتساپ پەیوەندیمان پێوە بکە و بە دەست حیجزت بۆ دەکەین.',
+  },
   contact: {
     eyebrow: 'پەیوەندیمان پێوە بکە',
     lead: 'ڕاستەوخۆ پەیوەندی بە هەر یەکێک لە هۆتێلەکانمانەوە بکە. واتساپ خێراترین وەڵام دەداتەوە.',
@@ -544,8 +606,7 @@ const ar: Dictionary = {
   },
   branch: {
     openingSoon: 'يفتتح قريباً',
-    openingBody:
-      'هذا الفندق لم يفتتح بعد. راسلنا وسنخبرك فور بدء استقباله للنزلاء.',
+    openingBody: 'هذا الفندق لم يفتتح بعد. راسلنا وسنخبرك فور بدء استقباله للنزلاء.',
     overviewEyebrow: 'الفندق',
     stayEyebrow: 'إقامتك',
     galleryEyebrow: 'بالصور',
@@ -625,6 +686,26 @@ const ar: Dictionary = {
     errorRequired: 'من فضلك اكتب الاسم ورقماً نرد عليه.',
     errorGeneric: 'لم يتم الإرسال. راسلنا على واتساب من فضلك.',
     orWhatsApp: 'أو راسلنا مباشرة',
+  },
+  booking: {
+    title: 'الغرف المتاحة في تواريخك',
+    lead: 'اختر غرفة. لا يُدفع شيء الآن — الدفع في الفندق.',
+    nights: 'ليالٍ',
+    roomsLeft: 'متبقية',
+    none: 'لا تتوفر غرف في هذه التواريخ. جرّب ليالي أخرى، أو راسلنا وسنبحث لك.',
+    changeDates: 'تغيير التواريخ',
+    reserve: 'احجز هذه الغرفة',
+    confirmTitle: 'تأكيد الحجز',
+    confirmLead: 'نحتاج الاسم ورقم الهاتف فقط. الدفع في الفندق عند الوصول.',
+    payAtHotel: 'الدفع في الفندق',
+    submit: 'تأكيد الحجز',
+    sending: 'جارٍ التأكيد',
+    doneTitle: 'تم حجز غرفتك.',
+    doneLead: 'أرسلنا التفاصيل. احتفظ بهذا الرقم — هو ما تذكره عند الاستقبال.',
+    reference: 'رقم الحجز',
+    total: 'الإجمالي',
+    errorGone: 'حُجزت هذه التواريخ أثناء اختيارك. الرجاء الاختيار من جديد.',
+    errorGeneric: 'لم تتم العملية. راسلنا على واتساب وسنحجز لك يدويًا.',
   },
   contact: {
     eyebrow: 'تواصل معنا',

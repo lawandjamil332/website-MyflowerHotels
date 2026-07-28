@@ -181,3 +181,85 @@ export const createBooking = async (
     client.release()
   }
 }
+
+export type AvailableRoom = {
+  id: number
+  name: string
+  slug: string
+  priceFrom: number | null
+  currency: string
+  maxGuests: number | null
+  bedType: string | null
+  left: number
+}
+
+/**
+ * Every room type at a hotel that can actually be had for these dates.
+ *
+ * One query rather than one per room: a hotel with a dozen types would
+ * otherwise open a dozen round trips to answer a single search, and the whole
+ * page waits on the slowest.
+ *
+ * Room types withdrawn from the website are excluded here rather than filtered
+ * later, so a room nobody is offering can never appear in a search result and
+ * then be refused at the last step.
+ */
+export const availableRooms = async (
+  payload: Payload,
+  {
+    branchId,
+    checkIn,
+    checkOut,
+    guests,
+    locale = 'en',
+  }: {
+    branchId: number
+    checkIn: Date
+    checkOut: Date
+    guests?: number | null
+    locale?: string
+  },
+): Promise<AvailableRoom[]> => {
+  if (checkOut <= checkIn) throw new InvalidDatesError()
+
+  const { rows } = await pool(payload).query(
+    `SELECT r.id,
+            COALESCE(rl.name, rf.name) AS name,
+            r.slug,
+            r.price_from::float AS price_from,
+            r.currency,
+            r.max_guests::int   AS max_guests,
+            r.bed_type,
+            r.quantity::int     AS quantity,
+            COALESCE((
+              SELECT COUNT(*) FROM bookings b
+               WHERE b.room_id = r.id
+                 AND b.status = ANY($2)
+                 AND b.check_in < $4
+                 AND b.check_out > $3
+            ), 0)::int AS taken
+       FROM rooms r
+       -- Falls back to English when a room has not been named in this
+       -- language yet, so a search never returns a room with no name.
+       LEFT JOIN rooms_locales rl ON rl._parent_id = r.id AND rl._locale = $5
+       LEFT JOIN rooms_locales rf ON rf._parent_id = r.id AND rf._locale = 'en'
+      WHERE r.branch_id = $1
+        AND r.is_available IS NOT FALSE
+        AND ($6::int IS NULL OR r.max_guests IS NULL OR r.max_guests >= $6::int)
+      ORDER BY r.price_from NULLS LAST, r.id`,
+    [branchId, OCCUPYING, checkIn, checkOut, locale, guests ?? null],
+  )
+
+  return rows
+    .map((row: Record<string, unknown>) => ({
+      id: row.id as number,
+      name: (row.name as string) ?? '',
+      slug: (row.slug as string) ?? '',
+      priceFrom: (row.price_from as number) ?? null,
+      currency: (row.currency as string) ?? 'IQD',
+      maxGuests: (row.max_guests as number) ?? null,
+      bedType: (row.bed_type as string) ?? null,
+      left: Math.max(0, (row.quantity as number) - (row.taken as number)),
+    }))
+    .filter((room: AvailableRoom) => room.left > 0)
+}
