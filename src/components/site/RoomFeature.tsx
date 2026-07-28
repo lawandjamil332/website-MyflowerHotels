@@ -5,6 +5,7 @@ import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
 import { mediaUrl, mediaAlt } from '@/utilities/media'
 import { formatNumber } from '@/utilities/format'
+import { layoutParts } from '@/utilities/layout'
 import { cn } from '@/utilities/ui'
 import { Price } from './Currency'
 import { PhotoFrame } from './PhotoFrame'
@@ -39,6 +40,7 @@ export function RoomFeature({
   const facts = [
     room.maxGuests ? `${t.room.guests} ${formatNumber(room.maxGuests, locale)}` : null,
     room.bedType ? (t.bed[room.bedType] ?? room.bedType) : null,
+    ...layoutParts(room, t, locale),
     room.sizeSqm ? `${formatNumber(room.sizeSqm, locale)} m²` : null,
   ].filter(Boolean) as string[]
 
@@ -71,7 +73,6 @@ export function RoomFeature({
           flipped ? 'lg:order-1 lg:col-start-1 lg:row-start-1' : 'lg:order-2',
         )}
       >
-
         <h3 className="font-display display-lg mt-4 text-ink">
           <Link href={`/${locale}/rooms/${room.slug}`} className="link-line">
             {room.name}

@@ -80,6 +80,27 @@ export const Settings: GlobalConfig = {
       },
     },
     {
+      // When to start saying how few are left.
+      //
+      // Deliberately a threshold and not a fixed number to print. Saying "2
+      // left" when nine are free is a false statement of fact to a guest, and
+      // it is the exact practice the UK regulator forced Booking.com and five
+      // other sites to drop in 2019 — the EU followed. A hotel this size does
+      // not need it: with a handful of each room type the real number is
+      // usually low anyway, and a true "Only 2 left" is believed, where a
+      // permanent one is eventually noticed and believed about nothing else on
+      // the site either.
+      name: 'lowStockAt',
+      type: 'number',
+      label: 'Say how many are left when this few remain',
+      min: 0,
+      defaultValue: 3,
+      admin: {
+        description:
+          'Above this number the site says nothing about how many rooms are free, so the count only ever appears when it is genuinely low. Set to 0 to never show it.',
+      },
+    },
+    {
       name: 'logo',
       type: 'upload',
       relationTo: 'media',

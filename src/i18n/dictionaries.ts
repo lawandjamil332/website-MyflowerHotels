@@ -72,6 +72,14 @@ export type Dictionary = {
     guests: string
     bedType: string
     size: string
+    bedroom: string
+    bedrooms: string
+    hall: string
+    halls: string
+    bathroom: string
+    bathrooms: string
+    kitchen: string
+    layout: string
     amenities: string
     enquire: string
     backToBranch: string
@@ -169,6 +177,7 @@ export type Dictionary = {
     lead: string
     nights: string
     roomsLeft: string
+    onlyLeft: string
     none: string
     changeDates: string
     noRoomsYet: string
@@ -293,6 +302,14 @@ const en: Dictionary = {
     perNight: 'per night',
     guests: 'Sleeps',
     bedType: 'Bed',
+    bedroom: 'bedroom',
+    bedrooms: 'bedrooms',
+    hall: 'hall',
+    halls: 'halls',
+    bathroom: 'bathroom',
+    bathrooms: 'bathrooms',
+    kitchen: 'Kitchen',
+    layout: 'Layout',
     size: 'Size',
     amenities: 'In this room',
     enquire: 'Enquire about this room',
@@ -399,6 +416,7 @@ const en: Dictionary = {
     lead: 'Choose a room. Nothing is charged now — you pay at the hotel.',
     nights: 'nights',
     roomsLeft: 'left',
+    onlyLeft: 'Only {count} left',
     none: 'Nothing is free for those dates. Try different nights, or message us and we will look.',
     changeDates: 'Change dates',
     noRoomsYet:
@@ -550,6 +568,14 @@ const ku: Dictionary = {
     perNight: 'بۆ شەوێک',
     guests: 'گونجاوە بۆ',
     bedType: 'جێگا',
+    bedroom: 'ژووری نوستن',
+    bedrooms: 'ژووری نوستن',
+    hall: 'هۆڵ',
+    halls: 'هۆڵ',
+    bathroom: 'حەمام',
+    bathrooms: 'حەمام',
+    kitchen: 'چێشتخانە',
+    layout: 'پێکهاتە',
     size: 'قەبارە',
     amenities: 'لەم ژوورەدا',
     enquire: 'داواکاری دەربارەی ئەم ژوورە',
@@ -655,6 +681,7 @@ const ku: Dictionary = {
     lead: 'ژوورێک هەڵبژێرە. ئێستا هیچ پارەیەک وەرناگیرێت — لە هۆتێلەکە دەدەیت.',
     nights: 'شەو',
     roomsLeft: 'ماوە',
+    onlyLeft: 'تەنها {count} ماوە',
     none: 'هیچ ژوورێک بەردەست نییە بۆ ئەو ڕۆژانە. ڕۆژی تر تاقی بکەرەوە، یان پەیوەندیمان پێوە بکە.',
     changeDates: 'گۆڕینی ڕۆژەکان',
     noRoomsYet:
@@ -804,6 +831,14 @@ const ar: Dictionary = {
     perNight: 'لليلة',
     guests: 'تتسع لـ',
     bedType: 'السرير',
+    bedroom: 'غرفة نوم',
+    bedrooms: 'غرف نوم',
+    hall: 'صالة',
+    halls: 'صالات',
+    bathroom: 'حمام',
+    bathrooms: 'حمامات',
+    kitchen: 'مطبخ',
+    layout: 'التقسيم',
     size: 'المساحة',
     amenities: 'في هذه الغرفة',
     enquire: 'استفسر عن هذه الغرفة',
@@ -908,6 +943,7 @@ const ar: Dictionary = {
     lead: 'اختر غرفة. لا يُدفع شيء الآن — الدفع في الفندق.',
     nights: 'ليالٍ',
     roomsLeft: 'متبقية',
+    onlyLeft: 'بقيت {count} فقط',
     none: 'لا تتوفر غرف في هذه التواريخ. جرّب ليالي أخرى، أو راسلنا وسنبحث لك.',
     changeDates: 'تغيير التواريخ',
     noRoomsYet: 'هذا الفندق لا يستقبل الحجز عبر الإنترنت بعد. راسلنا وسنرتب إقامتك.',

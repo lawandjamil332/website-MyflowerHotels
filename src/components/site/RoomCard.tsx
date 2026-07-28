@@ -5,6 +5,7 @@ import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
 import { mediaUrl, mediaAlt } from '@/utilities/media'
 import { formatNumber } from '@/utilities/format'
+import { layoutParts } from '@/utilities/layout'
 import { cn } from '@/utilities/ui'
 import { Price } from './Currency'
 import { PhotoFrame } from './PhotoFrame'
@@ -36,6 +37,7 @@ export function RoomCard({
     showBranch && branch ? branch.name : null,
     room.maxGuests ? `${t.room.guests} ${formatNumber(room.maxGuests, locale)}` : null,
     room.bedType ? (t.bed[room.bedType] ?? room.bedType) : null,
+    ...layoutParts(room, t, locale),
   ].filter(Boolean) as string[]
 
   return (

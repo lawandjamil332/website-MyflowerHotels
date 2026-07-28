@@ -515,6 +515,16 @@ export interface Room {
   maxGuests?: number | null;
   bedType?: ('single' | 'double' | 'twin' | 'king' | 'suite') | null;
   sizeSqm?: number | null;
+  /**
+   * Separate sleeping rooms.
+   */
+  bedrooms?: number | null;
+  /**
+   * A hall counts here.
+   */
+  livingRooms?: number | null;
+  bathrooms?: number | null;
+  hasKitchen?: boolean | null;
   amenities?:
     | (
         | 'air_conditioning'
@@ -1556,6 +1566,10 @@ export interface RoomsSelect<T extends boolean = true> {
   maxGuests?: T;
   bedType?: T;
   sizeSqm?: T;
+  bedrooms?: T;
+  livingRooms?: T;
+  bathrooms?: T;
+  hasKitchen?: T;
   amenities?: T;
   quantity?: T;
   isAvailable?: T;
@@ -2205,6 +2219,10 @@ export interface Setting {
    */
   pointsPer1000Iqd?: number | null;
   /**
+   * Above this number the site says nothing about how many rooms are free, so the count only ever appears when it is genuinely low. Set to 0 to never show it.
+   */
+  lowStockAt?: number | null;
+  /**
    * Shown in the header. A transparent PNG or SVG works best.
    */
   logo?: (number | null) | Media;
@@ -2296,6 +2314,7 @@ export interface SettingsSelect<T extends boolean = true> {
   iqdPerUsd?: T;
   pointsEnabled?: T;
   pointsPer1000Iqd?: T;
+  lowStockAt?: T;
   logo?: T;
   socialShareImage?: T;
   phone?: T;

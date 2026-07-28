@@ -7,6 +7,7 @@ import { getDictionary } from '@/i18n/dictionaries'
 import { getRoomBySlug, getRoomsForBranch } from '@/utilities/branches'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { formatNumber, formatPrice } from '@/utilities/format'
+import { layoutLine } from '@/utilities/layout'
 import { Price } from '@/components/site/Currency'
 import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { shareImage } from '@/utilities/shareImage'
@@ -62,6 +63,12 @@ export default async function RoomPage({ params }: Args) {
     room.sizeSqm ? { label: t.room.size, value: `${formatNumber(room.sizeSqm, locale)} m²` } : null,
   ].filter(Boolean) as { label: string; value: string }[]
 
+  // Kept out of the band above and given a line of its own. That band is four
+  // numbers at display size; "2 bedrooms · 1 hall · 2 bathrooms · Kitchen" is a
+  // phrase, and as a fifth cell it would either sit alone on a second row or
+  // squeeze five columns where the longest value needs the most room.
+  const layout = layoutLine(room, t, locale)
+
   // The opening photograph carries the hero, so the mosaic below shows the
   // rest rather than repeating it.
   const gallery: GalleryItem[] = images.slice(1).map((item) => ({
@@ -87,18 +94,32 @@ export default async function RoomPage({ params }: Args) {
       </PageHero>
 
       {/* The four numbers a guest decides on, given a band of their own. */}
-      {facts.length > 0 && (
+      {(facts.length > 0 || layout) && (
         <section className="border-b border-line bg-card">
-          <dl className={cn(shell, 'grid gap-px sm:grid-cols-2 lg:grid-cols-4')}>
-            {facts.map((fact) => (
-              <div key={fact.label} className="py-8 lg:pe-8">
-                <dt className="text-[0.6rem] tracking-[0.22em] text-muted-ink uppercase rtl:tracking-normal">
-                  {fact.label}
-                </dt>
-                <dd className="font-display mt-2 text-2xl leading-tight text-ink">{fact.value}</dd>
+          {facts.length > 0 && (
+            <dl className={cn(shell, 'grid gap-px sm:grid-cols-2 lg:grid-cols-4')}>
+              {facts.map((fact) => (
+                <div key={fact.label} className="py-8 lg:pe-8">
+                  <dt className="text-[0.6rem] tracking-[0.22em] text-muted-ink uppercase rtl:tracking-normal">
+                    {fact.label}
+                  </dt>
+                  <dd className="font-display mt-2 text-2xl leading-tight text-ink">
+                    {fact.value}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+          )}
+          {layout && (
+            <div className={cn(shell, facts.length > 0 && 'border-t border-line')}>
+              <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 py-6">
+                <span className="text-[0.6rem] tracking-[0.22em] text-muted-ink uppercase rtl:tracking-normal">
+                  {t.room.layout}
+                </span>
+                <span className="text-[1.05rem] text-ink">{layout}</span>
               </div>
-            ))}
-          </dl>
+            </div>
+          )}
         </section>
       )}
 

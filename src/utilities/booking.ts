@@ -281,6 +281,10 @@ export type AvailableRoom = {
   currency: string
   maxGuests: number | null
   bedType: string | null
+  bedrooms: number | null
+  livingRooms: number | null
+  bathrooms: number | null
+  hasKitchen: boolean | null
   left: number
 }
 
@@ -325,6 +329,10 @@ export const availableRoomsAcross = async (
             r.currency,
             r.max_guests::int   AS max_guests,
             r.bed_type,
+            r.bedrooms::int     AS bedrooms,
+            r.living_rooms::int AS living_rooms,
+            r.bathrooms::int    AS bathrooms,
+            r.has_kitchen,
             r.quantity::int     AS quantity,
             COALESCE((
               SELECT COUNT(*) FROM bookings b
@@ -355,6 +363,10 @@ export const availableRoomsAcross = async (
       currency: (row.currency as string) ?? 'IQD',
       maxGuests: (row.max_guests as number) ?? null,
       bedType: (row.bed_type as string) ?? null,
+      bedrooms: (row.bedrooms as number) ?? null,
+      livingRooms: (row.living_rooms as number) ?? null,
+      bathrooms: (row.bathrooms as number) ?? null,
+      hasKitchen: (row.has_kitchen as boolean) ?? null,
       left: Math.max(0, (row.quantity as number) - (row.taken as number)),
     }))
     .filter((room: AvailableRoom) => room.left > 0)

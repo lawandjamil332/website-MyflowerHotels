@@ -9,6 +9,8 @@ import { getDictionary } from '@/i18n/dictionaries'
 import { getBranches } from '@/utilities/branches'
 import { availableRoomsAcross, nightsBetween, type AvailableRoom } from '@/utilities/booking'
 import { formatNumber } from '@/utilities/format'
+import { getSettings } from '@/utilities/getSettings'
+import { layoutParts } from '@/utilities/layout'
 import { pointsForStay, pointsRate } from '@/utilities/points'
 import { currentGuest } from '@/actions/account'
 import { Price } from '@/components/site/Currency'
@@ -111,6 +113,13 @@ export default async function BookPage({ params, searchParams }: Args) {
     `/${locale}/book?checkIn=${checkInRaw}&checkOut=${checkOutRaw}` +
     (hotelSlug ? `&hotel=${hotelSlug}` : '') +
     (guests ? `&guests=${guests}` : '')
+
+  // Above the owner's threshold the site says nothing about how many are free,
+  // so "Only 2 left" is a fact rather than a permanent fixture. A threshold of
+  // 0 turns the line off entirely.
+  const settings = await getSettings(locale)
+  const lowStockAt = settings.lowStockAt ?? 3
+  const isLow = (left: number) => lowStockAt > 0 && left > 0 && left <= lowStockAt
 
   const byHotel = targets
     .map((b) => ({ hotel: b, rooms: rooms.filter((r) => r.branchId === b.id) }))
@@ -251,11 +260,32 @@ export default async function BookPage({ params, searchParams }: Args) {
                                 room.bedType
                                   ? (t.bed[room.bedType as keyof typeof t.bed] ?? room.bedType)
                                   : null,
-                                `${formatNumber(room.left, locale)} ${t.booking.roomsLeft}`,
+                                // An apartment has to read as one here too —
+                                // this is the list a guest actually chooses from.
+                                ...layoutParts(room, t, locale),
                               ]
                                 .filter(Boolean)
                                 .join(' · ')}
                             </p>
+
+                            {/* Said only when it is true, and then said loudly.
+                                The count used to print against every room —
+                                "9 left" — which is noise where the number is
+                                high and, by the time it matters, a line the
+                                guest has already learned to skip. */}
+                            {isLow(room.left) && (
+                              <p className="mt-2.5 text-[0.85rem] font-semibold text-brand">
+                                {/* A digit, not a spelled-out word. fillCount
+                                    is for prose — "Four hotels in Erbil" — and
+                                    "Only Two left" reads as a sentence at the
+                                    exact moment the guest is meant to catch a
+                                    number at a glance. */}
+                                {t.booking.onlyLeft.replace(
+                                  '{count}',
+                                  formatNumber(room.left, locale),
+                                )}
+                              </p>
+                            )}
                           </div>
 
                           <div className="flex flex-wrap items-center gap-5">

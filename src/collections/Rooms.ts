@@ -96,6 +96,7 @@ export const Rooms: CollectionConfig = {
             {
               name: 'bedType',
               type: 'select',
+              label: 'Main bed',
               options: [
                 { label: 'Single', value: 'single' },
                 { label: 'Double', value: 'double' },
@@ -111,6 +112,55 @@ export const Rooms: CollectionConfig = {
               label: 'Size (m²)',
               min: 0,
               admin: { width: '33%' },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      // What the unit actually consists of.
+      //
+      // Some of these hotels let apartments — two bedrooms and a hall — and
+      // there was nowhere to say so. "Max guests 6, bed: suite" describes that
+      // no better than it describes one large room with six beds in it, and the
+      // difference is the entire reason a family picks one over the other.
+      //
+      // Counts rather than a written description, so the site can put them in a
+      // line in three languages without anybody writing that line three times.
+      type: 'collapsible',
+      label: 'Layout',
+      admin: {
+        description:
+          'Leave these blank for an ordinary single room. Fill them in for apartments and suites.',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'bedrooms',
+              type: 'number',
+              min: 0,
+              admin: { width: '25%', description: 'Separate sleeping rooms.' },
+            },
+            {
+              name: 'livingRooms',
+              type: 'number',
+              label: 'Halls / living rooms',
+              min: 0,
+              admin: { width: '25%', description: 'A hall counts here.' },
+            },
+            {
+              name: 'bathrooms',
+              type: 'number',
+              min: 0,
+              admin: { width: '25%' },
+            },
+            {
+              name: 'hasKitchen',
+              type: 'checkbox',
+              label: 'Kitchen',
+              admin: { width: '25%' },
             },
           ],
         },
