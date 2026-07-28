@@ -67,6 +67,7 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    bookings: Booking;
     branches: Branch;
     rooms: Room;
     offers: Offer;
@@ -93,6 +94,7 @@ export interface Config {
     };
   };
   collectionsSelect: {
+    bookings: BookingsSelect<false> | BookingsSelect<true>;
     branches: BranchesSelect<false> | BranchesSelect<true>;
     rooms: RoomsSelect<false> | RoomsSelect<true>;
     offers: OffersSelect<false> | OffersSelect<true>;
@@ -160,6 +162,43 @@ export interface UserAuthOperations {
     email: string;
     password: string;
   };
+}
+/**
+ * Reservations made on the website. Newest first.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookings".
+ */
+export interface Booking {
+  id: number;
+  /**
+   * What the guest quotes at the desk.
+   */
+  reference: string;
+  guestName: string;
+  guestPhone: string;
+  guestEmail?: string | null;
+  branch: number | Branch;
+  room: number | Room;
+  checkIn: string;
+  checkOut: string;
+  guests?: number | null;
+  nights?: number | null;
+  /**
+   * What the guest was quoted, at the time of booking.
+   */
+  totalAmount?: number | null;
+  currency?: ('IQD' | 'USD') | null;
+  /**
+   * Held and Confirmed take a room out of stock. Cancelled and No-show give it back.
+   */
+  status: 'held' | 'confirmed' | 'cancelled' | 'completed' | 'noShow';
+  /**
+   * Anything the guest asked for, or anything staff need to remember.
+   */
+  notes?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * Each hotel in the group. The homepage lists these in the order set below.
@@ -437,7 +476,11 @@ export interface Room {
       )[]
     | null;
   /**
-   * Uncheck to hide this room from the website without deleting it.
+   * How many rooms of this type this hotel has. Nine identical doubles is one room type with a quantity of 9 — not nine room types.
+   */
+  quantity: number;
+  /**
+   * Uncheck to take this room type off the website entirely — it stops being bookable and stops being listed.
    */
   isAvailable?: boolean | null;
   updatedAt: string;
@@ -1207,6 +1250,10 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
+        relationTo: 'bookings';
+        value: number | Booking;
+      } | null)
+    | ({
         relationTo: 'branches';
         value: number | Branch;
       } | null)
@@ -1306,6 +1353,28 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "bookings_select".
+ */
+export interface BookingsSelect<T extends boolean = true> {
+  reference?: T;
+  guestName?: T;
+  guestPhone?: T;
+  guestEmail?: T;
+  branch?: T;
+  room?: T;
+  checkIn?: T;
+  checkOut?: T;
+  guests?: T;
+  nights?: T;
+  totalAmount?: T;
+  currency?: T;
+  status?: T;
+  notes?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "branches_select".
  */
 export interface BranchesSelect<T extends boolean = true> {
@@ -1356,6 +1425,7 @@ export interface RoomsSelect<T extends boolean = true> {
   bedType?: T;
   sizeSqm?: T;
   amenities?: T;
+  quantity?: T;
   isAvailable?: T;
   updatedAt?: T;
   createdAt?: T;

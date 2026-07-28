@@ -5,6 +5,7 @@ import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
+import { Bookings } from './collections/Bookings'
 import { Branches } from './collections/Branches'
 import { Categories } from './collections/Categories'
 import { Enquiries } from './collections/Enquiries'
@@ -117,7 +118,18 @@ export default buildConfig({
     defaultLocale: 'en',
     fallback: true,
   },
-  collections: [Branches, Rooms, Offers, Enquiries, Pages, Posts, Media, Categories, Users],
+  collections: [
+    Bookings,
+    Branches,
+    Rooms,
+    Offers,
+    Enquiries,
+    Pages,
+    Posts,
+    Media,
+    Categories,
+    Users,
+  ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Settings, Header, Footer],
   plugins,

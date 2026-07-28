@@ -123,12 +123,29 @@ export const Rooms: CollectionConfig = {
       options: roomAmenityOptions,
     },
     {
+      // How many rooms of this type the hotel actually has. Without it the
+      // site knows a "Deluxe Double" exists but not whether the ninth guest
+      // asking for one in August can have it, which is the whole question a
+      // booking system exists to answer.
+      name: 'quantity',
+      type: 'number',
+      required: true,
+      min: 0,
+      defaultValue: 1,
+      admin: {
+        position: 'sidebar',
+        description:
+          'How many rooms of this type this hotel has. Nine identical doubles is one room type with a quantity of 9 — not nine room types.',
+      },
+    },
+    {
       name: 'isAvailable',
       type: 'checkbox',
       defaultValue: true,
       admin: {
         position: 'sidebar',
-        description: 'Uncheck to hide this room from the website without deleting it.',
+        description:
+          'Uncheck to take this room type off the website entirely — it stops being bookable and stops being listed.',
       },
     },
   ],
