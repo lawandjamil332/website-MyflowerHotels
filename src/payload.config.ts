@@ -23,6 +23,7 @@ import { Settings } from './globals/Settings/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
+import { forceIPv4Smtp } from './utilities/forceIPv4Smtp'
 import { getServerSideURL } from './utilities/getURL'
 
 const filename = fileURLToPath(import.meta.url)
@@ -40,6 +41,8 @@ const dirname = path.dirname(filename)
 const smtpHost = process.env.SMTP_HOST
 const smtpUser = process.env.SMTP_USER
 const smtpPass = process.env.SMTP_PASS
+
+if (smtpHost && smtpUser && smtpPass) forceIPv4Smtp()
 
 const email =
   smtpHost && smtpUser && smtpPass
