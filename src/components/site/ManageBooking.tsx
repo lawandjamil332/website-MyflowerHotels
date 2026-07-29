@@ -3,7 +3,12 @@
 import { useActionState, useState } from 'react'
 
 import type { Dictionary } from '@/i18n/dictionaries'
-import { cancelBooking, findBooking, type LookupResult } from '@/actions/manageBooking'
+import {
+  cancelBooking,
+  findBooking,
+  submitReview,
+  type LookupResult,
+} from '@/actions/manageBooking'
 import { cn } from '@/utilities/ui'
 import { btnOutline, btnPrimary } from './ui'
 
@@ -30,8 +35,10 @@ export function ManageBooking({ t }: { t: Dictionary }) {
     cancelBooking,
     null,
   )
+  const [reviewed, review, reviewing] = useActionState<LookupResult, FormData>(submitReview, null)
+  const [stars, setStars] = useState(0)
 
-  const state = cancelled ?? found
+  const state = reviewed ?? cancelled ?? found
   const booking = state && 'booking' in state ? state.booking : null
 
   return (
@@ -77,11 +84,13 @@ export function ManageBooking({ t }: { t: Dictionary }) {
             ? t.booking.notFound
             : state.message === 'tooMany'
               ? t.booking.tooMany
-              : state.message === 'tooLate'
-                ? t.booking.tooLate
-                : state.message === 'required'
-                  ? t.form.errorRequired
-                  : t.booking.errorGeneric}
+              : state.message === 'alreadyReviewed'
+                ? t.reviews.already
+                : state.message === 'tooLate'
+                  ? t.booking.tooLate
+                  : state.message === 'required'
+                    ? t.form.errorRequired
+                    : t.booking.errorGeneric}
         </p>
       )}
 
@@ -118,8 +127,63 @@ export function ManageBooking({ t }: { t: Dictionary }) {
                 {t.booking.cancel}
               </button>
             </form>
-          ) : (
+          ) : booking.reviewable ? null : (
             <p className="mt-7 text-[0.9rem] text-muted-ink">{t.booking.tooLate}</p>
+          )}
+
+          {/* Offered only after they have left, and only once. The stay is
+              already proven by the reference and number above, so there is
+              nothing further to ask them for beyond the opinion itself. */}
+          {state?.status === 'reviewed' ? (
+            <p className="mt-7 rounded-xl bg-brand/10 px-4 py-3 text-[0.95rem] text-brand">
+              {t.reviews.thanks}
+            </p>
+          ) : (
+            booking.reviewable && (
+              <form action={review} className="mt-8 border-t border-line pt-7">
+                <input type="hidden" name="reference" value={booking.reference} />
+                <input type="hidden" name="phone" value={phone} />
+                <input type="hidden" name="rating" value={stars} />
+
+                <h3 className="font-display text-xl text-ink">{t.reviews.leaveTitle}</h3>
+                <p className="mt-2 text-[0.9rem] text-muted-ink">{t.reviews.leaveLead}</p>
+
+                <div className="mt-5 flex items-center gap-1.5">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <button
+                      key={n}
+                      type="button"
+                      onClick={() => setStars(n)}
+                      aria-label={`${n}`}
+                      aria-pressed={stars === n}
+                      className="tap-safe tap-safe-lg p-0.5"
+                    >
+                      <svg viewBox="0 0 24 24" className="h-7 w-7">
+                        <path
+                          d="M12 2.5l2.9 6.05 6.6.9-4.8 4.6 1.2 6.55L12 17.5l-5.9 3.1 1.2-6.55-4.8-4.6 6.6-.9z"
+                          className={n <= stars ? 'fill-brand' : 'fill-line'}
+                        />
+                      </svg>
+                    </button>
+                  ))}
+                </div>
+
+                <label className={cn(label, 'mt-6')} htmlFor="mb-comment">
+                  {t.form.message}{' '}
+                  <span className="font-normal text-muted-ink">({t.form.optional})</span>
+                </label>
+                <textarea id="mb-comment" name="comment" rows={3} className={field} />
+
+                <button
+                  type="submit"
+                  disabled={reviewing || stars === 0}
+                  className={cn(btnPrimary, 'mt-6 disabled:opacity-40')}
+                >
+                  {t.reviews.send}
+                </button>
+                <p className="mt-3 text-[0.78rem] text-muted-ink">{t.reviews.moderated}</p>
+              </form>
+            )
           )}
         </div>
       )}

@@ -22,6 +22,8 @@ import { Reveal } from '@/components/site/Reveal'
 import { RoomCard } from '@/components/site/RoomCard'
 import { SectionHeading } from '@/components/site/SectionHeading'
 import { HotelSchema } from '@/components/site/StructuredData'
+import { ReviewList } from '@/components/site/Reviews'
+import { getRating, getReviews } from '@/utilities/reviews'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
 import RichText from '@/components/RichText'
 import {
@@ -44,9 +46,11 @@ export default async function BranchPage({ params }: Args) {
   const branch = await getBranchBySlug(slug, locale)
   if (!branch) notFound()
 
-  const [rooms, settings] = await Promise.all([
+  const [rooms, settings, reviews, rating] = await Promise.all([
     getRoomsForBranch(branch.id, locale),
     getSettings(locale),
+    getReviews(branch.id),
+    getRating(branch.id),
   ])
   const maps = toMapsHref(branch.googleMapsUrl, branch.latitude, branch.longitude)
   const wa = toWhatsAppHref(branch.whatsapp, `${t.branch.enquire} — ${branch.name}`)
@@ -75,7 +79,7 @@ export default async function BranchPage({ params }: Args) {
 
   return (
     <>
-      <HotelSchema branch={branch} locale={locale} stars={settings.stars} />
+      <HotelSchema branch={branch} locale={locale} stars={settings.stars} rating={rating} />
       <PageHero
         title={branch.name}
         lead={branch.tagline ?? undefined}
@@ -260,6 +264,14 @@ export default async function BranchPage({ params }: Args) {
               <Gallery items={gallery} />
             </Reveal>
           </div>
+        </section>
+      )}
+
+      {reviews.length > 0 && (
+        <section className={cn(shell, sectionY)}>
+          <Reveal>
+            <ReviewList reviews={reviews} rating={rating} t={t} locale={locale} />
+          </Reveal>
         </section>
       )}
 

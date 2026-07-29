@@ -206,6 +206,18 @@ export type Dictionary = {
     errorGone: string
     errorGeneric: string
   }
+  reviews: {
+    title: string
+    fromCount: string
+    verified: string
+    leaveTitle: string
+    leaveLead: string
+    send: string
+    thanks: string
+    moderated: string
+    already: string
+    guestsSay: string
+  }
   bed: Record<'single' | 'double' | 'twin' | 'king' | 'suite', string>
   amenity: Record<string, string>
   common: {
@@ -450,6 +462,18 @@ const en: Dictionary = {
   contact: {
     eyebrow: 'Get in touch',
     lead: 'Reach any of our hotels directly. WhatsApp is answered fastest.',
+  },
+  reviews: {
+    title: 'What guests said',
+    fromCount: 'from {count} reviews',
+    verified: 'Verified stay',
+    leaveTitle: 'How was your stay?',
+    leaveLead: 'You stayed with us, so your review carries a verified mark.',
+    send: 'Send my review',
+    thanks: 'Thank you — we have it. It appears once we have read it.',
+    moderated: 'Reviews are read before they are published.',
+    already: 'This stay has already been reviewed, or is not finished yet.',
+    guestsSay: 'What our guests say',
   },
   bed: { single: 'Single', double: 'Double', twin: 'Twin', king: 'King', suite: 'Suite' },
   amenity: {
@@ -716,6 +740,18 @@ const ku: Dictionary = {
     eyebrow: 'پەیوەندیمان پێوە بکە',
     lead: 'ڕاستەوخۆ پەیوەندی بە هەر یەکێک لە هۆتێلەکانمانەوە بکە. واتساپ خێراترین وەڵام دەداتەوە.',
   },
+  reviews: {
+    title: 'میوانەکان چییان وت',
+    fromCount: 'لە {count} پێداچوونەوە',
+    verified: 'مانەوەی پشتڕاستکراو',
+    leaveTitle: 'مانەوەکەت چۆن بوو؟',
+    leaveLead: 'تۆ لای ئێمە مایتەوە، بۆیە پێداچوونەوەکەت نیشانەی پشتڕاستکردنەوەی هەیە.',
+    send: 'پێداچوونەوەکەم بنێرە',
+    thanks: 'سوپاس — وەرمانگرت. دوای خوێندنەوەی دەردەکەوێت.',
+    moderated: 'پێداچوونەوەکان پێش بڵاوکردنەوە دەخوێنرێنەوە.',
+    already: 'ئەم مانەوەیە پێشتر پێداچوونەوەی بۆ کراوە، یان هێشتا تەواو نەبووە.',
+    guestsSay: 'میوانەکانمان چی دەڵێن',
+  },
   bed: { single: 'تاکە', double: 'دوانە', twin: 'دوو جێگا', king: 'شاهانە', suite: 'سویت' },
   amenity: {
     wifi: 'وای‌فای',
@@ -975,6 +1011,18 @@ const ar: Dictionary = {
   contact: {
     eyebrow: 'تواصل معنا',
     lead: 'تواصل مباشرة مع أي من فنادقنا. واتساب هو الأسرع في الرد.',
+  },
+  reviews: {
+    title: 'ماذا قال الضيوف',
+    fromCount: 'من {count} تقييم',
+    verified: 'إقامة موثقة',
+    leaveTitle: 'كيف كانت إقامتك؟',
+    leaveLead: 'لقد أقمت لدينا، لذا يحمل تقييمك علامة التوثيق.',
+    send: 'أرسل تقييمي',
+    thanks: 'شكراً — وصلنا تقييمك. سيظهر بعد قراءته.',
+    moderated: 'تُقرأ التقييمات قبل نشرها.',
+    already: 'تم تقييم هذه الإقامة من قبل، أو أنها لم تنتهِ بعد.',
+    guestsSay: 'ماذا يقول ضيوفنا',
   },
   bed: { single: 'مفرد', double: 'مزدوج', twin: 'سريران', king: 'كينغ', suite: 'جناح' },
   amenity: {

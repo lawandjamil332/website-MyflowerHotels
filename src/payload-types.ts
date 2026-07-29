@@ -71,6 +71,7 @@ export interface Config {
     bookings: Booking;
     guests: Guest;
     'point-entries': PointEntry;
+    reviews: Review;
     branches: Branch;
     rooms: Room;
     offers: Offer;
@@ -100,6 +101,7 @@ export interface Config {
     bookings: BookingsSelect<false> | BookingsSelect<true>;
     guests: GuestsSelect<false> | GuestsSelect<true>;
     'point-entries': PointEntriesSelect<false> | PointEntriesSelect<true>;
+    reviews: ReviewsSelect<false> | ReviewsSelect<true>;
     branches: BranchesSelect<false> | BranchesSelect<true>;
     rooms: RoomsSelect<false> | RoomsSelect<true>;
     offers: OffersSelect<false> | OffersSelect<true>;
@@ -569,6 +571,37 @@ export interface PointEntry {
   /**
    * The stay that earned them, where there is one.
    */
+  booking?: (number | null) | Booking;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Guest reviews. Nothing shows on the website until "Approved" is ticked. Ticking it also changes the star rating Google prints beside your search result.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews".
+ */
+export interface Review {
+  id: number;
+  guestName: string;
+  /**
+   * 1 to 5.
+   */
+  rating: number;
+  /**
+   * Optional. A rating on its own still counts towards the average and still shows.
+   */
+  comment?: string | null;
+  branch: number | Branch;
+  /**
+   * Until this is ticked the review is invisible and counts towards nothing.
+   */
+  approved?: boolean | null;
+  /**
+   * Set by the website when the review arrived through a real booking reference for a stay that had finished. Not editable — that is what makes it worth printing.
+   */
+  verified?: boolean | null;
+  stayedOn?: string | null;
   booking?: (number | null) | Booking;
   updatedAt: string;
   createdAt: string;
@@ -1349,6 +1382,10 @@ export interface PayloadLockedDocument {
         value: number | PointEntry;
       } | null)
     | ({
+        relationTo: 'reviews';
+        value: number | Review;
+      } | null)
+    | ({
         relationTo: 'branches';
         value: number | Branch;
       } | null)
@@ -1511,6 +1548,22 @@ export interface PointEntriesSelect<T extends boolean = true> {
   guest?: T;
   points?: T;
   reason?: T;
+  booking?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "reviews_select".
+ */
+export interface ReviewsSelect<T extends boolean = true> {
+  guestName?: T;
+  rating?: T;
+  comment?: T;
+  branch?: T;
+  approved?: T;
+  verified?: T;
+  stayedOn?: T;
   booking?: T;
   updatedAt?: T;
   createdAt?: T;

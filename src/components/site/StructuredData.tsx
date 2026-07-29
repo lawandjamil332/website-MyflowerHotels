@@ -32,10 +32,13 @@ export function HotelSchema({
   branch,
   locale,
   stars,
+  rating,
 }: {
   branch: Branch
   locale: Locale
   stars?: string | null
+  /** Approved reviews only, and omitted entirely when there are none. */
+  rating?: { average: number; count: number }
 }) {
   const base = getServerSideURL()
   const image = mediaUrl(branch.heroImage, 'og') || mediaUrl(branch.heroImage)
@@ -66,6 +69,21 @@ export function HotelSchema({
             }
           : undefined,
       starRating: stars ? { '@type': 'Rating', ratingValue: Number(stars) } : undefined,
+      // What puts ★ 4.6 (12) beside this hotel in a Google result. Google
+      // requires the reviews producing it to be visible on the same page, so
+      // this is emitted only from the same numbers the page prints, and never
+      // at all when nothing has been approved yet — a fabricated rating here
+      // is the kind of thing that costs a site its rich results permanently.
+      aggregateRating:
+        rating && rating.count > 0
+          ? {
+              '@type': 'AggregateRating',
+              ratingValue: rating.average,
+              reviewCount: rating.count,
+              bestRating: 5,
+              worstRating: 1,
+            }
+          : undefined,
       checkinTime: branch.checkInAnyTime ? '00:00' : (branch.checkInTime ?? undefined),
       checkoutTime: branch.checkOutTime ?? undefined,
       amenityFeature: branch.amenities?.length

@@ -21,6 +21,7 @@ import * as migration_20260727_090000_branch_social_and_maps from './20260727_09
 import * as migration_20260727_100000_repin_branches from './20260727_100000_repin_branches'
 import * as migration_20260727_110000_fourth_hotel_phones from './20260727_110000_fourth_hotel_phones'
 import * as migration_20260727_120000_first_hotel_second_line from './20260727_120000_first_hotel_second_line'
+import * as migration_20260728_080100_reviews from './20260728_080100_reviews'
 
 export const migrations = [
   {
@@ -139,5 +140,10 @@ export const migrations = [
     up: migration_20260727_120000_first_hotel_second_line.up,
     down: migration_20260727_120000_first_hotel_second_line.down,
     name: '20260727_120000_first_hotel_second_line',
+  },
+  {
+    up: migration_20260728_080100_reviews.up,
+    down: migration_20260728_080100_reviews.down,
+    name: '20260728_080100_reviews',
   },
 ]

@@ -14,6 +14,7 @@ import { Enquiries } from './collections/Enquiries'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
+import { Reviews } from './collections/Reviews'
 import { Rooms } from './collections/Rooms'
 import { Offers } from './collections/Offers'
 import { Users } from './collections/Users'
@@ -124,6 +125,7 @@ export default buildConfig({
     Bookings,
     Guests,
     PointEntries,
+    Reviews,
     Branches,
     Rooms,
     Offers,

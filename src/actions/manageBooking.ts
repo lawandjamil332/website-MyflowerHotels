@@ -16,12 +16,20 @@ export type FoundBooking = {
   nights: number | null
   status: string
   cancellable: boolean
+  /** A finished stay with nothing said about it yet. */
+  reviewable: boolean
+  branchId: number | null
+  bookingId: number
 }
 
 export type LookupResult =
   | { status: 'found'; booking: FoundBooking }
   | { status: 'cancelled'; booking: FoundBooking }
-  | { status: 'error'; message: 'notFound' | 'required' | 'tooLate' | 'generic' | 'tooMany' }
+  | { status: 'reviewed'; booking: FoundBooking }
+  | {
+      status: 'error'
+      message: 'notFound' | 'required' | 'tooLate' | 'generic' | 'tooMany' | 'alreadyReviewed'
+    }
   | null
 
 const text = (v: FormDataEntryValue | null) => (typeof v === 'string' ? v.trim() : '')
@@ -51,9 +59,10 @@ const samePhone = (a: string, b: string): boolean => {
 
 const day = (v?: string | null) => (v ? String(v).slice(0, 10) : '')
 
-const shape = (booking: any): FoundBooking => {
+const shape = (booking: any, reviewed = false): FoundBooking => {
   const checkIn = day(booking.checkIn)
   const today = new Date().toISOString().slice(0, 10)
+  const branch = typeof booking.branch === 'object' ? booking.branch : null
   return {
     reference: booking.reference,
     guestName: booking.guestName,
@@ -65,6 +74,13 @@ const shape = (booking: any): FoundBooking => {
     status: booking.status,
     // A stay already under way is the front desk's business, not a web form's.
     cancellable: ['held', 'confirmed'].includes(booking.status) && checkIn > today,
+    // Only after they have actually left, and only once. Asking someone to
+    // review a stay they have not had yet is how review sections fill up with
+    // opinions about a website.
+    reviewable:
+      !reviewed && !['cancelled'].includes(booking.status) && day(booking.checkOut) <= today,
+    branchId: branch?.id ?? null,
+    bookingId: Number(booking.id),
   }
 }
 
@@ -80,6 +96,19 @@ const load = async (reference: string, phone: string) => {
   const booking = docs[0]
   if (!booking || !samePhone(phone, booking.guestPhone ?? '')) return null
   return { payload, booking }
+}
+
+/** One review per stay. The database enforces it too; this is so the form knows. */
+const alreadyReviewed = async (payload: any, bookingId: number): Promise<boolean> => {
+  try {
+    const { totalDocs } = await payload.count({
+      collection: 'reviews',
+      where: { booking: { equals: bookingId } },
+    })
+    return totalDocs > 0
+  } catch {
+    return false
+  }
 }
 
 /**
@@ -98,7 +127,10 @@ export async function findBooking(_prev: LookupResult, formData: FormData): Prom
   try {
     const found = await load(reference, phone)
     if (!found) return { status: 'error', message: 'notFound' }
-    return { status: 'found', booking: shape(found.booking) }
+    return {
+      status: 'found',
+      booking: shape(found.booking, await alreadyReviewed(found.payload, Number(found.booking.id))),
+    }
   } catch {
     return { status: 'error', message: 'generic' }
   }
@@ -137,6 +169,77 @@ export async function cancelBooking(
 
     return { status: 'cancelled', booking: { ...current, status: 'cancelled', cancellable: false } }
   } catch {
+    return { status: 'error', message: 'generic' }
+  }
+}
+
+/**
+ * A review, left by somebody who can prove they stayed.
+ *
+ * The proof is the same pair that opens the booking — a reference and the
+ * number it was made on — so this needs no new way in and no account. It is
+ * also the whole value of the thing: a review section anybody can post to is
+ * worth nothing to a guest reading it, and the hotels this group is competing
+ * against are trusted precisely because their reviews are attached to stays.
+ *
+ * Three conditions, all checked here rather than in the form: the stay must
+ * exist, must have finished, and must not already have been reviewed. The form
+ * hides the option when they are not met, but a hidden form field is a
+ * suggestion, not a rule.
+ *
+ * Arrives unapproved. Nothing reaches the website, or the average, until the
+ * owner has read it.
+ */
+export async function submitReview(_prev: LookupResult, formData: FormData): Promise<LookupResult> {
+  const reference = text(formData.get('reference'))
+  const phone = text(formData.get('phone'))
+  const rating = Number(text(formData.get('rating')))
+  const comment = text(formData.get('comment'))
+
+  if (!reference || !phone) return { status: 'error', message: 'required' }
+  if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+    return { status: 'error', message: 'required' }
+  }
+  if (!(await guard())) return { status: 'error', message: 'tooMany' }
+
+  try {
+    const found = await load(reference, phone)
+    if (!found) return { status: 'error', message: 'notFound' }
+
+    const current = shape(
+      found.booking,
+      await alreadyReviewed(found.payload, Number(found.booking.id)),
+    )
+    if (!current.reviewable) {
+      return { status: 'error', message: 'alreadyReviewed' }
+    }
+    // A review has to belong to a hotel — it is what the average is grouped by
+    // and what the page reads. A booking with no branch cannot produce one.
+    if (!current.branchId) return { status: 'error', message: 'generic' }
+
+    await found.payload.create({
+      collection: 'reviews',
+      data: {
+        guestName: current.guestName,
+        rating: Math.round(rating),
+        comment: comment || undefined,
+        branch: current.branchId,
+        booking: current.bookingId,
+        stayedOn: found.booking.checkOut ?? undefined,
+        // Set here and nowhere else. It is the only claim on a review that
+        // cannot be typed by a person, which is what makes it worth showing.
+        verified: true,
+        approved: false,
+      },
+      overrideAccess: true,
+    })
+
+    return { status: 'reviewed', booking: { ...current, reviewable: false } }
+  } catch (error) {
+    // The unique index catches a second review that raced the check above.
+    if ((error as { code?: string })?.code === '23505') {
+      return { status: 'error', message: 'alreadyReviewed' }
+    }
     return { status: 'error', message: 'generic' }
   }
 }
