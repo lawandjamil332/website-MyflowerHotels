@@ -25,6 +25,7 @@ import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { forceIPv4Smtp } from './utilities/forceIPv4Smtp'
+import { gmailApiAdapter } from './utilities/gmailApiAdapter'
 import { getServerSideURL } from './utilities/getURL'
 
 const filename = fileURLToPath(import.meta.url)
@@ -39,55 +40,80 @@ const dirname = path.dirname(filename)
  * what it needs to work: half-configured mail that throws on every enquiry
  * would be worse than no mail at all.
  *
- * Resend is tried first. Direct SMTP to Gmail from a Railway container hits a
- * connection the platform simply will not open — proven by testing both the
- * ordinary submission port and the implicit-TLS one and getting the identical
- * timeout on each, which is a network policy on Railway's side, not anything
- * wrong with the Gmail account or anything a setting here can route around.
- * Resend sends over an ordinary HTTPS request instead of opening a raw mail
- * connection, so there is no port for a host to block in the first place.
+ * Direct SMTP to Gmail from a Railway container hits a connection the
+ * platform simply will not open — proven by testing both the ordinary
+ * submission port and the implicit-TLS one and getting the identical timeout
+ * on each, which is a network policy on Railway's side, not anything wrong
+ * with the Gmail account or anything a setting here can route around.
  *
- * SMTP is kept as a fallback rather than deleted, for a deploy that runs
- * somewhere SMTP is not blocked — Railway is not the only place this runs
- * during development, and the code should not assume it always will be.
+ * Two ways around that, tried in this order:
+ *
+ *  1. The Gmail API — the same Gmail account, sent over an ordinary HTTPS
+ *     request instead of the connection Railway blocks. Chosen first because
+ *     it keeps the owner's own inbox as the one place bookings are sent from
+ *     and read from, with nothing else in between.
+ *  2. Resend, if the owner would rather use a service built for sending mail
+ *     than wire up their own Gmail account for it.
+ *
+ * SMTP is kept as a last-resort fallback rather than deleted, for a deploy
+ * that runs somewhere SMTP is not blocked — Railway is not the only place
+ * this runs during development, and the code should not assume it always
+ * will be.
  */
+const gmailClientId = process.env.GMAIL_CLIENT_ID
+const gmailClientSecret = process.env.GMAIL_CLIENT_SECRET
+const gmailRefreshToken = process.env.GMAIL_REFRESH_TOKEN
+const gmailFromAddress = process.env.GMAIL_FROM_ADDRESS
+
 const resendKey = process.env.RESEND_API_KEY
 const smtpHost = process.env.SMTP_HOST
 const smtpUser = process.env.SMTP_USER
 const smtpPass = process.env.SMTP_PASS
 
-if (!resendKey && smtpHost && smtpUser && smtpPass) forceIPv4Smtp()
+const usingGmailApi = Boolean(
+  gmailClientId && gmailClientSecret && gmailRefreshToken && gmailFromAddress,
+)
 
-const email = resendKey
-  ? resendAdapter({
-      apiKey: resendKey,
+if (!usingGmailApi && !resendKey && smtpHost && smtpUser && smtpPass) forceIPv4Smtp()
+
+const email = usingGmailApi
+  ? gmailApiAdapter({
+      clientId: gmailClientId!,
+      clientSecret: gmailClientSecret!,
+      refreshToken: gmailRefreshToken!,
+      defaultFromAddress: gmailFromAddress!,
       defaultFromName: process.env.SMTP_FROM_NAME || 'My Flower Hotels',
-      // Resend requires the from-address's domain to be verified with them —
-      // an address at a Gmail domain will be rejected outright, which is the
-      // one setting here worth getting wrong loudly rather than silently.
-      defaultFromAddress:
-        process.env.SMTP_FROM || `bookings@${new URL(getServerSideURL()).hostname}`,
     })
-  : smtpHost && smtpUser && smtpPass
-    ? nodemailerAdapter({
-        // Do not dial the mail server while booting. `npm run start` is
-        // check-env && migrate && next start, so a verification handshake
-        // against a slow or unreachable SMTP host does not fail the deploy —
-        // it hangs it, before the site has served a single page. Mail is worth
-        // nothing next to the site being up, and a send that fails is already
-        // caught and logged with the enquiry attached.
-        skipVerify: true,
+  : resendKey
+    ? resendAdapter({
+        apiKey: resendKey,
         defaultFromName: process.env.SMTP_FROM_NAME || 'My Flower Hotels',
-        defaultFromAddress: process.env.SMTP_FROM || smtpUser,
-        transportOptions: {
-          host: smtpHost,
-          port: Number(process.env.SMTP_PORT || 587),
-          // 465 is implicit TLS; everything else upgrades with STARTTLS.
-          secure: Number(process.env.SMTP_PORT || 587) === 465,
-          auth: { user: smtpUser, pass: smtpPass },
-        },
+        // Resend requires the from-address's domain to be verified with them —
+        // an address at a Gmail domain will be rejected outright, which is the
+        // one setting here worth getting wrong loudly rather than silently.
+        defaultFromAddress:
+          process.env.SMTP_FROM || `bookings@${new URL(getServerSideURL()).hostname}`,
       })
-    : undefined
+    : smtpHost && smtpUser && smtpPass
+      ? nodemailerAdapter({
+          // Do not dial the mail server while booting. `npm run start` is
+          // check-env && migrate && next start, so a verification handshake
+          // against a slow or unreachable SMTP host does not fail the deploy —
+          // it hangs it, before the site has served a single page. Mail is worth
+          // nothing next to the site being up, and a send that fails is already
+          // caught and logged with the enquiry attached.
+          skipVerify: true,
+          defaultFromName: process.env.SMTP_FROM_NAME || 'My Flower Hotels',
+          defaultFromAddress: process.env.SMTP_FROM || smtpUser,
+          transportOptions: {
+            host: smtpHost,
+            port: Number(process.env.SMTP_PORT || 587),
+            // 465 is implicit TLS; everything else upgrades with STARTTLS.
+            secure: Number(process.env.SMTP_PORT || 587) === 465,
+            auth: { user: smtpUser, pass: smtpPass },
+          },
+        })
+      : undefined
 
 export default buildConfig({
   ...(email ? { email } : {}),
