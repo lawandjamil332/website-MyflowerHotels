@@ -1,6 +1,7 @@
 import type { Payload } from 'payload'
 
 import { getServerSideURL } from './getURL'
+import { diagnoseMailNetwork } from './mailNetworkDiagnosis'
 
 /**
  * The password-reset mail.
@@ -71,6 +72,8 @@ export const sendPasswordReset = async (
   } catch (error) {
     // Logged with the link, so a guest locked out while the mail server is down
     // can still be helped by somebody with access to the logs.
-    payload.logger.error(`Password reset for ${email} could not be sent — ${error}`)
+    payload.logger.error(
+      `Password reset for ${email} could not be sent — ${error}${await diagnoseMailNetwork()}`,
+    )
   }
 }

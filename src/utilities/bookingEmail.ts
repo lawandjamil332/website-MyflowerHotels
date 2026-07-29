@@ -1,5 +1,6 @@
 import type { Payload } from 'payload'
 
+import { diagnoseMailNetwork } from './mailNetworkDiagnosis'
 import { notifyRecipients } from './notifyEmail'
 
 /**
@@ -90,8 +91,11 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
         })
         payload.logger.info(`Booking ${booking.reference} sent to ${hotelInbox}`)
       } catch (error) {
+        // The measurement goes in the same line as the failure, because that
+        // is the line somebody is already reading when they want to know why.
         payload.logger.error(
-          `Booking ${booking.reference} could not be emailed — ${error}\n${stay}`,
+          `Booking ${booking.reference} could not be emailed — ${error}` +
+            `${await diagnoseMailNetwork()}\n${stay}`,
         )
       }
     }
@@ -151,7 +155,10 @@ export const sendCancellationEmails = async (
         })
         payload.logger.info(`Cancellation ${booking.reference} sent to ${hotelInbox}`)
       } catch (error) {
-        payload.logger.error(`Cancellation ${booking.reference} not emailed — ${error}\n${notice}`)
+        payload.logger.error(
+          `Cancellation ${booking.reference} not emailed — ${error}` +
+            `${await diagnoseMailNetwork()}\n${notice}`,
+        )
       }
     }
 

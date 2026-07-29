@@ -2,6 +2,7 @@ import type { Payload } from 'payload'
 
 import type { Branch, Enquiry, Room } from '@/payload-types'
 
+import { diagnoseMailNetwork } from './mailNetworkDiagnosis'
 import { notifyRecipients } from './notifyEmail'
 
 /**
@@ -81,7 +82,8 @@ export const sendEnquiryEmail = async ({
   } catch (error) {
     // Logged with the enquiry attached, so nothing is lost to a mail outage.
     payload.logger.error(
-      `Enquiry ${enquiry.id} could not be emailed to ${to} — ${error}\n${summary}`,
+      `Enquiry ${enquiry.id} could not be emailed to ${to} — ${error}` +
+        `${await diagnoseMailNetwork()}\n${summary}`,
     )
   }
 }
