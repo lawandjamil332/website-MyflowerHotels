@@ -26,6 +26,7 @@ import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
+import { GOOGLE_SITE_VERIFICATION } from '@/utilities/site'
 import { dir, isLocale, locales, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { CurrencyProvider } from '@/components/site/Currency'
@@ -145,4 +146,8 @@ export default async function LocaleLayout({ children, params }: Args) {
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   openGraph: mergeOpenGraph(),
+  // Search Console's ownership check. Emitted on every page rather than only
+  // the homepage: the site's root redirects to /en, and a verifier that does
+  // not follow that redirect would find nothing at the address it was given.
+  verification: { google: GOOGLE_SITE_VERIFICATION },
 }

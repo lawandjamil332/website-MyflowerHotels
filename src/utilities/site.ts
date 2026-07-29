@@ -20,5 +20,21 @@ export const SITE_NAME = 'My Flower Hotels'
  */
 export const SITE_URL = 'https://myflowerhotels.com'
 
+/**
+ * Google Search Console's proof that this site belongs to its owner.
+ *
+ * Public by design — it proves nothing on its own, it only matches a value
+ * Google already holds. Kept here rather than in an environment variable so it
+ * cannot go missing from a deploy and quietly un-verify the property months
+ * later, which is the failure nobody notices until they need the data.
+ *
+ * There is a second proof beside this one: public/google6d13b2b6bf038d72.html,
+ * the file method. Either alone is enough. Both are kept because they fail
+ * differently — a tag can be lost to a layout change, a file to a build that
+ * stops copying public/ — and Search Console drops a property that can no
+ * longer prove itself.
+ */
+export const GOOGLE_SITE_VERIFICATION = '5FtrThzn115CgCmt_cubesRkeP3XW4rJG-6Z6paj77g'
+
 export const SITE_DESCRIPTION =
   'Four hotels in Erbil, Kurdistan Region of Iraq. One standard of hospitality. Book direct and pay at the hotel.'
