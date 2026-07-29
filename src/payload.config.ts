@@ -1,5 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
+import { resendAdapter } from '@payloadcms/email-resend'
 import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
@@ -34,18 +35,40 @@ const dirname = path.dirname(filename)
  *
  * Enquiries are announced by email, and with no transport configured Payload
  * writes them to the console instead — which is the correct fallback and is
- * exactly what this site did before. So the adapter is attached only when the
- * SMTP settings are actually present: half-configured mail that throws on every
- * enquiry would be worse than no mail at all.
+ * exactly what this site did before. So an adapter is attached only when it has
+ * what it needs to work: half-configured mail that throws on every enquiry
+ * would be worse than no mail at all.
+ *
+ * Resend is tried first. Direct SMTP to Gmail from a Railway container hits a
+ * connection the platform simply will not open — proven by testing both the
+ * ordinary submission port and the implicit-TLS one and getting the identical
+ * timeout on each, which is a network policy on Railway's side, not anything
+ * wrong with the Gmail account or anything a setting here can route around.
+ * Resend sends over an ordinary HTTPS request instead of opening a raw mail
+ * connection, so there is no port for a host to block in the first place.
+ *
+ * SMTP is kept as a fallback rather than deleted, for a deploy that runs
+ * somewhere SMTP is not blocked — Railway is not the only place this runs
+ * during development, and the code should not assume it always will be.
  */
+const resendKey = process.env.RESEND_API_KEY
 const smtpHost = process.env.SMTP_HOST
 const smtpUser = process.env.SMTP_USER
 const smtpPass = process.env.SMTP_PASS
 
-if (smtpHost && smtpUser && smtpPass) forceIPv4Smtp()
+if (!resendKey && smtpHost && smtpUser && smtpPass) forceIPv4Smtp()
 
-const email =
-  smtpHost && smtpUser && smtpPass
+const email = resendKey
+  ? resendAdapter({
+      apiKey: resendKey,
+      defaultFromName: process.env.SMTP_FROM_NAME || 'My Flower Hotels',
+      // Resend requires the from-address's domain to be verified with them —
+      // an address at a Gmail domain will be rejected outright, which is the
+      // one setting here worth getting wrong loudly rather than silently.
+      defaultFromAddress:
+        process.env.SMTP_FROM || `bookings@${new URL(getServerSideURL()).hostname}`,
+    })
+  : smtpHost && smtpUser && smtpPass
     ? nodemailerAdapter({
         // Do not dial the mail server while booting. `npm run start` is
         // check-env && migrate && next start, so a verification handshake
