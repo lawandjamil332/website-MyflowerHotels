@@ -1,5 +1,7 @@
 import type { Payload } from 'payload'
 
+import { notifyRecipients } from './notifyEmail'
+
 /**
  * Tells the hotel, and the guest, that a room has been booked.
  *
@@ -57,7 +59,13 @@ const gather = async (payload: Payload, reference: string) => {
     (booking.totalAmount ? `Quoted: ${booking.totalAmount} ${booking.currency}\n` : '') +
     (booking.notes ? `Notes: ${booking.notes}\n` : '')
 
-  const hotelInbox = branch?.email || settings?.email || process.env.ENQUIRY_NOTIFY_EMAIL || null
+  // Every address that is actually set, not just the first one found — see
+  // notifyRecipients for why "first found wins" was the wrong rule here.
+  const hotelInbox = notifyRecipients(
+    branch?.email,
+    settings?.email,
+    process.env.ENQUIRY_NOTIFY_EMAIL,
+  )
 
   return { booking, branch, room, settings, stay, hotelInbox }
 }

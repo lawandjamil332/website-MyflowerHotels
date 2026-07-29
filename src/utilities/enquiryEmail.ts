@@ -2,6 +2,8 @@ import type { Payload } from 'payload'
 
 import type { Branch, Enquiry, Room } from '@/payload-types'
 
+import { notifyRecipients } from './notifyEmail'
+
 /**
  * Tells somebody an enquiry has arrived.
  *
@@ -22,11 +24,11 @@ import type { Branch, Enquiry, Room } from '@/payload-types'
 
 const line = (label: string, value?: string | null) => (value ? `${label}: ${value}\n` : '')
 
-/** The address to tell, in order of who most wants to know. */
+/** Every address that is actually set — the hotel's, the site's, and the env var. */
 export const enquiryRecipient = (
   branch: Branch | null,
   groupEmail?: string | null,
-): string | null => branch?.email || groupEmail || process.env.ENQUIRY_NOTIFY_EMAIL || null
+): string | null => notifyRecipients(branch?.email, groupEmail, process.env.ENQUIRY_NOTIFY_EMAIL)
 
 export const sendEnquiryEmail = async ({
   payload,
