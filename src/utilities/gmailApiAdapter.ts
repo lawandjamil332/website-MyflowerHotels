@@ -55,21 +55,61 @@ const encodeSubject = (subject: string): string =>
     ? subject
     : `=?UTF-8?B?${Buffer.from(subject, 'utf8').toString('base64')}?=`
 
+/**
+ * Base64 for a MIME body, wrapped at 76 characters as RFC 2045 requires.
+ *
+ * The parts were declared 7bit while carrying UTF-8, which is a lie in every
+ * message that is not pure ASCII — that is every Kurdish and Arabic
+ * confirmation this site sends. Base64 makes the declaration true.
+ */
+const mimeBase64 = (value: string): string =>
+  (Buffer.from(value, 'utf8').toString('base64').match(/.{1,76}/g) ?? []).join('\r\n')
+
 const buildRawMessage = (args: {
   from: string
   fromName: string
   to: string
   subject: string
   text: string
+  html?: string
 }): string => {
-  const message =
+  const headers =
     `From: ${args.fromName} <${args.from}>\r\n` +
     `To: ${args.to}\r\n` +
     `Subject: ${encodeSubject(args.subject)}\r\n` +
-    `MIME-Version: 1.0\r\n` +
+    `MIME-Version: 1.0\r\n`
+
+  // No HTML to offer: a single plain part, which is the whole message.
+  if (!args.html) {
+    const message =
+      headers +
+      `Content-Type: text/plain; charset="UTF-8"\r\n` +
+      `Content-Transfer-Encoding: base64\r\n\r\n` +
+      mimeBase64(args.text)
+    return base64url(message)
+  }
+
+  // Both, as alternatives to each other. A mail client picks the richest part
+  // it can render and falls back to the text on its own — which is why the
+  // text version is not a stub but the whole message written out plainly.
+  //
+  // The order is required: least rich first, richest last. Reversed, clients
+  // that take the final part they understand show the plain text and silently
+  // discard the designed message — which is exactly what happened when this
+  // function ignored `html` altogether and sent nothing but text.
+  const boundary = `mf_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`
+  const message =
+    headers +
+    `Content-Type: multipart/alternative; boundary="${boundary}"\r\n\r\n` +
+    `--${boundary}\r\n` +
     `Content-Type: text/plain; charset="UTF-8"\r\n` +
-    `Content-Transfer-Encoding: 7bit\r\n\r\n` +
-    args.text
+    `Content-Transfer-Encoding: base64\r\n\r\n` +
+    `${mimeBase64(args.text)}\r\n` +
+    `--${boundary}\r\n` +
+    `Content-Type: text/html; charset="UTF-8"\r\n` +
+    `Content-Transfer-Encoding: base64\r\n\r\n` +
+    `${mimeBase64(args.html)}\r\n` +
+    `--${boundary}--`
   return base64url(message)
 }
 
@@ -121,7 +161,7 @@ const getAccessToken = async (args: GmailApiAdapterArgs): Promise<string> => {
   return entry.value
 }
 
-/** The one shape every call in this codebase actually uses: to, subject, text. */
+/** Payload hands recipients as a string, an array, or an object with an address. */
 const asRecipientString = (to: unknown): string => {
   if (typeof to === 'string') return to
   if (Array.isArray(to)) {
@@ -147,6 +187,7 @@ export const gmailApiAdapter = (args: GmailApiAdapterArgs): EmailAdapter => {
         to: asRecipientString(message.to),
         subject: message.subject ?? '',
         text: typeof message.text === 'string' ? message.text : '',
+        html: typeof message.html === 'string' ? message.html : undefined,
       })
 
       const response = await fetch(SEND_URL, {
