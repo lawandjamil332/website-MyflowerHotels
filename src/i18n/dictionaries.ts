@@ -232,6 +232,8 @@ export type Dictionary = {
     priceA: string
     familyQ: string
     familyA: string
+    breakfastQ: string
+    breakfastA: string
     powerQ: string
     powerA: string
     wifiQ: string
@@ -620,6 +622,9 @@ const en: Dictionary = {
     familyQ: 'Do you have rooms for families at {hotel}?',
     familyA:
       'Yes. {hotel} has apartment-style units with separate bedrooms and a hall, which suit families and longer stays better than a single large room. The layout of each is listed with the room.',
+    breakfastQ: 'Is breakfast included?',
+    breakfastA:
+      'Yes. Breakfast is served every morning at {hotel} and is included in the room — there is nothing extra to pay for it at the desk.',
     powerQ: 'Does the power stay on?',
     powerA:
       'Yes. {hotel} runs on full generator backup, so the lift, the air conditioning and the Wi-Fi keep working through a city outage.',
@@ -747,6 +752,7 @@ const en: Dictionary = {
   bed: { single: 'Single', double: 'Double', twin: 'Twin', king: 'King', suite: 'Suite' },
   amenity: {
     wifi: 'Wi-Fi',
+    breakfast: 'Breakfast',
     parking: 'Parking',
     restaurant: 'Restaurant',
     gym: 'Gym',
@@ -1041,6 +1047,9 @@ const ku: Dictionary = {
     familyQ: 'لە {hotel} ژووری خێزانی هەیە؟',
     familyA:
       'بەڵێ. {hotel} یەکەی شوقەیی هەیە بە ژووری نوستنی جیاواز و هۆڵ، کە بۆ خێزان و مانەوەی درێژخایەن گونجاوترن لە یەک ژووری گەورە. پێکهاتەی هەریەکەیان لەگەڵ ژوورەکەدا نووسراوە.',
+    breakfastQ: 'ئایا نانی بەیانی لەگەڵدایە؟',
+    breakfastA:
+      'بەڵێ. نانی بەیانی هەموو بەیانییەک لە {hotel} پێشکەش دەکرێت و لە نرخی ژوورەکەدا هەژمار کراوە — هیچ شتێکی زیادە لە پێشوازیدا نادەیت.',
     powerQ: 'کارەبا نابڕێت؟',
     powerA:
       'بەڵێ. {hotel} مۆلێدەی تەواوی هەیە، بۆیە ئاسانسۆر و کۆندیشن و وایفای لە کاتی کوژانەوەی کارەبای شار بەردەوام دەبن.',
@@ -1168,6 +1177,7 @@ const ku: Dictionary = {
   bed: { single: 'تاکە', double: 'دوانە', twin: 'دوو جێگا', king: 'شاهانە', suite: 'سویت' },
   amenity: {
     wifi: 'وای‌فای',
+    breakfast: 'نانی بەیانی',
     parking: 'پارکینگ',
     restaurant: 'چێشتخانە',
     gym: 'هۆڵی وەرزش',
@@ -1457,6 +1467,9 @@ const ar: Dictionary = {
     familyQ: 'هل توجد غرف عائلية في {hotel}؟',
     familyA:
       'نعم. في {hotel} وحدات على شكل شقق بغرف نوم منفصلة وصالة، وهي أنسب للعائلات وللإقامات الطويلة من غرفة واحدة كبيرة. تقسيم كل وحدة مذكور مع الغرفة.',
+    breakfastQ: 'هل الفطور مشمول؟',
+    breakfastA:
+      'نعم. يُقدَّم الفطور كل صباح في {hotel} وهو مشمول ضمن سعر الغرفة — لا تدفع عنه شيئاً إضافياً عند الاستقبال.',
     powerQ: 'هل تبقى الكهرباء مستمرة؟',
     powerA:
       'نعم. يعمل {hotel} بمولد احتياطي كامل، فيستمر المصعد والتكييف والإنترنت أثناء انقطاع كهرباء المدينة.',
@@ -1583,6 +1596,7 @@ const ar: Dictionary = {
   bed: { single: 'مفرد', double: 'مزدوج', twin: 'سريران', king: 'كينغ', suite: 'جناح' },
   amenity: {
     wifi: 'واي فاي',
+    breakfast: 'فطور',
     parking: 'موقف سيارات',
     restaurant: 'مطعم',
     gym: 'صالة رياضية',

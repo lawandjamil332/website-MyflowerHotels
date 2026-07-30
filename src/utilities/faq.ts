@@ -98,8 +98,12 @@ export const buildFaq = (
     })
   }
 
-  // The amenity questions worth asking here rather than in a list — power and
-  // internet are what a traveller to this city actually worries about.
+  // The amenity questions worth asking here rather than in a list. Breakfast
+  // first: it is the one every guest checks, and the one the amenity list had
+  // no box for until a hotel's own Google listing turned out to advertise a
+  // buffet the website could not mention.
+  if (has('breakfast'))
+    entries.push({ q: t.faq.breakfastQ, a: t.faq.breakfastA.replace('{hotel}', name) })
   if (has('generator')) entries.push({ q: t.faq.powerQ, a: t.faq.powerA.replace('{hotel}', name) })
   if (has('wifi')) entries.push({ q: t.faq.wifiQ, a: t.faq.wifiA.replace('{hotel}', name) })
   if (has('parking'))

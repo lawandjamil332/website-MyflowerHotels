@@ -7,6 +7,7 @@ import type { Option } from 'payload'
  */
 export const branchAmenityOptions: Option[] = [
   { label: 'Wi-Fi', value: 'wifi' },
+  { label: 'Breakfast', value: 'breakfast' },
   { label: 'Parking', value: 'parking' },
   { label: 'Restaurant', value: 'restaurant' },
   { label: 'Gym', value: 'gym' },

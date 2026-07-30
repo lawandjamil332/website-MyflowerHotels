@@ -23,6 +23,7 @@ import * as migration_20260727_110000_fourth_hotel_phones from './20260727_11000
 import * as migration_20260727_120000_first_hotel_second_line from './20260727_120000_first_hotel_second_line'
 import * as migration_20260728_080100_reviews from './20260728_080100_reviews'
 import * as migration_20260730_130000_booking_locale from './20260730_130000_booking_locale'
+import * as migration_20260730_150000_breakfast_amenity from './20260730_150000_breakfast_amenity'
 
 export const migrations = [
   {
@@ -151,5 +152,10 @@ export const migrations = [
     up: migration_20260730_130000_booking_locale.up,
     down: migration_20260730_130000_booking_locale.down,
     name: '20260730_130000_booking_locale',
+  },
+  {
+    up: migration_20260730_150000_breakfast_amenity.up,
+    down: migration_20260730_150000_breakfast_amenity.down,
+    name: '20260730_150000_breakfast_amenity',
   },
 ]

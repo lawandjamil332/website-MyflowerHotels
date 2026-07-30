@@ -331,7 +331,18 @@ export interface Branch {
   facebook?: string | null;
   instagram?: string | null;
   amenities?:
-    ('wifi' | 'parking' | 'restaurant' | 'gym' | 'pool' | 'airport_shuttle' | 'family_rooms' | 'generator')[] | null;
+    | (
+        | 'wifi'
+        | 'breakfast'
+        | 'parking'
+        | 'restaurant'
+        | 'gym'
+        | 'pool'
+        | 'airport_shuttle'
+        | 'family_rooms'
+        | 'generator'
+      )[]
+    | null;
   checkInAnyTime?: boolean | null;
   /**
    * Only needed when check-in is not available around the clock.
