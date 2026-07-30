@@ -305,8 +305,16 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
           arriving: g.arriving,
           nights: g.nights ? `${g.nights} ${t.email.lNights}` : '',
         }),
-        heroUrl: g.heroUrl,
-        heroAlt: branch?.name ?? siteName,
+        // No photograph, deliberately. It is the one element that depends on a
+        // fetch this code cannot make on the guest's behalf, and when that
+        // fetch fails it does not fail quietly — it leaves a dead 200px band
+        // above the message, which is worse than the message simply not
+        // having a picture. The letter carries perfectly well without it.
+        //
+        // To put it back: pass `heroUrl: g.heroUrl` here. The shell still
+        // renders one, and g.heroUrl is still computed. Do it once the
+        // address it produces has been opened in a browser and shown to be a
+        // photograph — not before.
         eyebrow: t.email.confirmEyebrow,
         title: fill(t.email.confirmTitle, { name: iso(booking.guestName) }),
         body:

@@ -121,7 +121,11 @@ export const emailShell = ({
 <div style="display:none;font-size:1px;color:${PAGE};line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">${esc(preheader)}</div>
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;background:${PAGE};">
   <tr><td align="center" style="padding:28px 12px;">
-    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="600" style="border-collapse:collapse;width:600px;max-width:600px;">
+    <!-- 100% up to 600, not a flat 600. Fixed at 600px this was wider than
+         every phone it was read on, so the message overflowed sideways, the
+         right edge was cut off and the vertical scroll fought back — which is
+         what "cannot scroll all the way down" was. -->
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;width:100%;max-width:600px;">
 
       <tr><td align="center" style="padding:0 0 22px 0;">
         <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:22px;letter-spacing:3px;text-transform:uppercase;color:${INK};">${esc(siteName)}</p>
@@ -130,8 +134,12 @@ export const emailShell = ({
 
       ${
         heroUrl
-          ? `<tr><td style="padding:0 0 18px 0;">
-               <img src="${esc(heroUrl)}" width="600" alt="${esc(heroAlt || siteName)}" style="display:block;width:100%;max-width:600px;height:auto;border:0;border-radius:10px;">
+          ? // alt is deliberately empty. A picture that fails to load should
+            // leave nothing behind — with alt text, a broken image becomes a
+            // grey box carrying the hotel's name, which reads as a fault in
+            // the message rather than as a picture that did not arrive.
+            `<tr><td style="padding:0 0 18px 0;">
+               <img src="${esc(heroUrl)}" width="600" height="315" alt="" style="display:block;width:100%;max-width:600px;height:auto;border:0;border-radius:10px;">
              </td></tr>`
           : ''
       }
