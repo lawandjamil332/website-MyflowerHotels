@@ -49,30 +49,75 @@ if (!dbUrl) {
   })
 }
 
-// Not fatal: the site runs perfectly well without a bucket. Photographs just
-// silently disappear on the next rebuild, which is far worse than a loud
-// warning here at start-up.
-const bucketVars = ['S3_ENDPOINT', 'S3_ACCESS_KEY_ID', 'S3_SECRET_ACCESS_KEY', 'S3_BUCKET']
-const missingBucket = bucketVars.filter((name) => !process.env[name])
+// Where uploaded photographs are kept. This is a statement of fact at
+// start-up, not a warning: there is nothing here that needs fixing either way.
+//
+// It used to warn that photographs would "vanish on the next redeploy" and
+// tell the reader to go and create a bucket. That stopped being true the day
+// uploads started going into Postgres, and the message was never updated — so
+// the logs kept insisting a solved problem was unsolved. It also only looked
+// for the four S3_* names, so attaching Railway's own bucket, which uses its
+// own names, would not have silenced it.
+//
+// The name lists below mirror src/utilities/storageEnv.ts, which is the source
+// of truth the application itself uses. This file is plain JavaScript and
+// cannot import it; if a name is added there, add it here too.
+const anyOf = (...names) => names.some((name) => process.env[name]?.trim())
 
-if (missingBucket.length > 0) {
-  console.warn(
-    [
-      '',
-      '  WARNING: photo storage is not connected.',
-      '',
-      `  Missing: ${missingBucket.join(', ')}`,
-      '',
-      '  Photos uploaded in the admin panel will be written to this',
-      "  container's disk, and Railway erases that on every redeploy —",
-      '  so the pictures will vanish and the site will show empty frames.',
-      '',
-      '  Fix: Railway -> + Create -> Storage Bucket, then copy its four',
-      '  values into this service\'s Variables and redeploy.',
-      '',
-    ].join('\n'),
+const bucketConfigured =
+  anyOf(
+    'S3_ENDPOINT',
+    'BUCKET_ENDPOINT',
+    'BUCKET_ENDPOINT_URL',
+    'STORAGE_ENDPOINT',
+    'AWS_ENDPOINT_URL_S3',
+    'AWS_ENDPOINT_URL',
+    'AWS_S3_ENDPOINT',
+    'RAILWAY_BUCKET_ENDPOINT',
+  ) &&
+  anyOf(
+    'S3_BUCKET',
+    'BUCKET_NAME',
+    'BUCKET',
+    'STORAGE_BUCKET',
+    'AWS_S3_BUCKET_NAME',
+    'AWS_S3_BUCKET',
+    'AWS_BUCKET_NAME',
+    'AWS_BUCKET',
+    'RAILWAY_BUCKET_NAME',
+  ) &&
+  anyOf(
+    'S3_ACCESS_KEY_ID',
+    'BUCKET_ACCESS_KEY_ID',
+    'STORAGE_ACCESS_KEY_ID',
+    'AWS_ACCESS_KEY_ID',
+    'RAILWAY_BUCKET_ACCESS_KEY_ID',
+  ) &&
+  anyOf(
+    'S3_SECRET_ACCESS_KEY',
+    'BUCKET_SECRET_ACCESS_KEY',
+    'BUCKET_SECRET_KEY',
+    'STORAGE_SECRET_ACCESS_KEY',
+    'AWS_SECRET_ACCESS_KEY',
+    'RAILWAY_BUCKET_SECRET_ACCESS_KEY',
   )
-}
+
+console.log(
+  bucketConfigured
+    ? '  Photo storage: storage bucket (uploads go to the bucket).\n'
+    : [
+        '  Photo storage: the database.',
+        '',
+        '  No storage bucket is configured, so uploaded photographs are stored',
+        '  in Postgres, which keeps its own permanent volume. They survive a',
+        '  redeploy. Nothing needs doing.',
+        '',
+        '  A bucket is optional: it would hand the serving of images off to the',
+        '  storage service instead of this app. If one is ever attached, the',
+        '  site switches to it on the next start with no code change.',
+        '',
+      ].join('\n'),
+)
 
 if (problems.length > 0) {
   const lines = [
