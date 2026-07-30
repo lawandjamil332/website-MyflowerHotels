@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { useActionState, useState } from 'react'
 
 import type { Dictionary } from '@/i18n/dictionaries'
+import type { Locale } from '@/i18n/config'
+import { formatNumber } from '@/utilities/format'
 import type { AvailableRoom } from '@/utilities/booking'
 import { cn } from '@/utilities/ui'
 import { submitBooking, type BookingResult } from '@/actions/booking'
@@ -123,9 +125,10 @@ export function BookingForm({
       <input type="hidden" name="branch" value={branchId} />
       <input type="hidden" name="checkIn" value={checkIn} />
       <input type="hidden" name="checkOut" value={checkOut} />
-      {guests ? <input type="hidden" name="guests" value={guests} /> : null}
       {total ? <input type="hidden" name="totalAmount" value={total} /> : null}
       <input type="hidden" name="currency" value={room.currency} />
+      {/* So the confirmation can be written in the language they booked in. */}
+      <input type="hidden" name="locale" value={locale} />
 
       <div className="mt-8 grid gap-6 sm:grid-cols-2">
         <div>
@@ -155,6 +158,37 @@ export function BookingForm({
             className={field}
           />
         </div>
+        {/* How many are actually coming.
+            This was a hidden field, carried through only from a search that
+            named a number — so a guest who reached the room from the rooms
+            list or a link stated nothing, and the booking email reaching the
+            front desk read "Guests: —". The desk needs the party size to put
+            the right beds in the room, and it is the guest's answer to give,
+            not something to infer from the room's maximum.
+
+            The list stops at what the room sleeps, so a party too large for it
+            cannot be entered here at all — the server enforces the same limit,
+            and this simply means nobody has to be told no after filling the
+            form in. */}
+        <div>
+          <label className={label} htmlFor="booking-guests">
+            {t.search.guests}
+          </label>
+          <select
+            id="booking-guests"
+            name="guests"
+            required
+            defaultValue={String(Math.min(guests || 1, room.maxGuests || 1))}
+            className={field}
+          >
+            {Array.from({ length: room.maxGuests || 1 }, (_, i) => i + 1).map((n) => (
+              <option key={n} value={n}>
+                {formatNumber(n, locale as Locale)}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="sm:col-span-2">
           <label className={label} htmlFor="booking-email">
             {t.form.email} <span className="font-normal text-muted-ink">({t.form.optional})</span>

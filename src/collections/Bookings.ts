@@ -171,6 +171,20 @@ export const Bookings: CollectionConfig = {
       type: 'textarea',
       admin: { description: 'Anything the guest asked for, or anything staff need to remember.' },
     },
+    {
+      name: 'locale',
+      type: 'select',
+      options: [
+        { label: 'English', value: 'en' },
+        { label: 'Kurdish', value: 'ku' },
+        { label: 'Arabic', value: 'ar' },
+      ],
+      admin: {
+        readOnly: true,
+        description:
+          'The language this guest booked in. Their confirmation is written in it — useful to know before you ring them.',
+      },
+    },
   ],
   timestamps: true,
 }

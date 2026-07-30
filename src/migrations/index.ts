@@ -22,6 +22,7 @@ import * as migration_20260727_100000_repin_branches from './20260727_100000_rep
 import * as migration_20260727_110000_fourth_hotel_phones from './20260727_110000_fourth_hotel_phones'
 import * as migration_20260727_120000_first_hotel_second_line from './20260727_120000_first_hotel_second_line'
 import * as migration_20260728_080100_reviews from './20260728_080100_reviews'
+import * as migration_20260730_130000_booking_locale from './20260730_130000_booking_locale'
 
 export const migrations = [
   {
@@ -145,5 +146,10 @@ export const migrations = [
     up: migration_20260728_080100_reviews.up,
     down: migration_20260728_080100_reviews.down,
     name: '20260728_080100_reviews',
+  },
+  {
+    up: migration_20260730_130000_booking_locale.up,
+    down: migration_20260730_130000_booking_locale.down,
+    name: '20260730_130000_booking_locale',
   },
 ]

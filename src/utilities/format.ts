@@ -35,3 +35,34 @@ export const formatNumber = (value?: number | null, locale: Locale = 'en'): stri
   if (typeof value !== 'number' || Number.isNaN(value)) return ''
   return new Intl.NumberFormat(numberLocale(locale)).format(value)
 }
+
+/**
+ * "Saturday, 01 August 2026" — a date written out for somebody to read.
+ *
+ * Confirmation emails used "2026-08-01", which is unambiguous to a machine and
+ * to nobody else: a guest checking whether they booked the right night should
+ * not have to count months. The weekday is there because it is the first thing
+ * anybody actually checks about a hotel date.
+ *
+ * Kept in the guest's own language, so a booking made in Kurdish is confirmed
+ * in Kurdish.
+ */
+export const formatDateLong = (
+  value?: string | Date | null,
+  locale: Locale = 'en',
+): string => {
+  if (!value) return ''
+  const date = value instanceof Date ? value : new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+  try {
+    return new Intl.DateTimeFormat(numberLocale(locale), {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+      timeZone: 'UTC',
+    }).format(date)
+  } catch {
+    return date.toISOString().slice(0, 10)
+  }
+}

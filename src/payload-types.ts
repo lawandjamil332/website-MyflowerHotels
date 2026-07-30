@@ -226,6 +226,10 @@ export interface Booking {
    * Anything the guest asked for, or anything staff need to remember.
    */
   notes?: string | null;
+  /**
+   * The language this guest booked in. Their confirmation is written in it — useful to know before you ring them.
+   */
+  locale?: ('en' | 'ku' | 'ar') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1513,6 +1517,7 @@ export interface BookingsSelect<T extends boolean = true> {
   currency?: T;
   status?: T;
   notes?: T;
+  locale?: T;
   updatedAt?: T;
   createdAt?: T;
 }

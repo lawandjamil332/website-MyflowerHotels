@@ -51,6 +51,10 @@ export async function submitBooking(
   const guests = Number(text(formData.get('guests')))
   const totalAmount = Number(text(formData.get('totalAmount')))
   const currency = text(formData.get('currency')) === 'USD' ? 'USD' : 'IQD'
+  // The language the form was filled in. Carried so the confirmation can be
+  // written in it rather than in English by default.
+  const submitted = text(formData.get('locale'))
+  const locale = submitted === 'ku' || submitted === 'ar' ? submitted : 'en'
 
   if (!Number.isFinite(roomId) || !Number.isFinite(branchId)) {
     return { status: 'error', message: 'generic' }
@@ -80,6 +84,7 @@ export async function submitBooking(
       notes: text(formData.get('notes')) || null,
       guestId: guest ? Number(guest.id) : null,
       idempotencyKey: text(formData.get('idempotencyKey')) || null,
+      locale,
     })
 
     // Not awaited: the room is already held by the time this runs, and a guest

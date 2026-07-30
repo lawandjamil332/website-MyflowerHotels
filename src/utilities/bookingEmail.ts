@@ -2,36 +2,63 @@ import type { Payload } from 'payload'
 
 import { diagnoseMailNetwork } from './mailNetworkDiagnosis'
 import { notifyRecipients } from './notifyEmail'
+import { getDictionary } from '@/i18n/dictionaries'
+import { isLocale, type Locale } from '@/i18n/config'
+import { formatDateLong, formatNumber, formatPrice } from './format'
+import { getServerSideURL } from './getURL'
+import { mediaUrl } from './media'
+import { toMapsHref, toWhatsAppHref } from './contact'
+import {
+  button,
+  emailShell,
+  esc,
+  noticeBand,
+  panel,
+  para,
+  referenceBlock,
+  row,
+  type Dir,
+} from './emailLayout'
 
 /**
  * Tells the hotel, and the guest, that a room has been booked.
  *
  * Two messages with different jobs. The hotel's is a work order — who, which
- * room, which nights — and goes to whoever answers that hotel. The guest's is a
- * receipt, and its only real content is the reference: it is what they will
- * read out at the desk, and the thing they will look for in their inbox at
- * midnight when they cannot remember whether the booking went through.
+ * room, which nights — and goes to whoever answers that hotel. The guest's is
+ * the document they will keep: the reference they read out at the desk, the
+ * dates they will check twice, and the two facts that make booking direct
+ * worth doing — nothing charged, cancel free.
+ *
+ * Both were nine lines of plain text, which is a receipt from a cash machine
+ * rather than a confirmation from a hotel. They are written as proper
+ * documents now, in the language the guest booked in, right-to-left where that
+ * is the language.
  *
  * The guest's copy is skipped when they gave no email, which is most of them:
  * the form asks for a phone number and treats email as optional, because a
  * booking should never be lost over an address somebody does not want to type.
  *
  * Nothing here throws. The booking exists; a mail failure must not suggest
- * otherwise, and the log keeps a copy either way.
+ * otherwise, and the log keeps a full copy either way.
  */
-const day = (value?: string | null) => (value ? String(value).slice(0, 10) : '—')
+
+const dirOf = (locale: Locale): Dir => (locale === 'en' ? 'ltr' : 'rtl')
+
+const fill = (template: string, values: Record<string, string>) =>
+  Object.entries(values).reduce((out, [key, value]) => out.replaceAll(`{${key}}`, value), template)
 
 /**
  * Everything both messages need, gathered once.
  *
- * Returns null when the booking has gone, which is not an error worth raising:
- * both callers run detached from the request that caused them.
+ * depth 2 rather than 1: the hotel's photograph lives one relationship further
+ * down than the hotel, and at depth 1 it arrives as a bare id — which is how
+ * an email with a picture in it ends up with no picture in it.
  */
 const gather = async (payload: Payload, reference: string) => {
   const { docs } = await payload.find({
     collection: 'bookings',
     where: { reference: { equals: reference } },
-    depth: 1,
+    depth: 2,
     limit: 1,
     overrideAccess: true,
   })
@@ -39,82 +66,254 @@ const gather = async (payload: Payload, reference: string) => {
   const booking = docs[0]
   if (!booking) return null
 
-  const branch = typeof booking.branch === 'object' ? booking.branch : null
-  const room = typeof booking.room === 'object' ? booking.room : null
-  const settings = (await payload.findGlobal({ slug: 'settings', depth: 0 })) as {
-    email?: string | null
-    siteName?: string | null
-  }
+  const locale: Locale = isLocale(booking.locale ?? '') ? (booking.locale as Locale) : 'en'
+  const t = getDictionary(locale)
+  const dir = dirOf(locale)
 
-  const stay =
-    `Reference: ${booking.reference}\n` +
-    `Guest: ${booking.guestName}\n` +
-    `Phone: ${booking.guestPhone}\n` +
-    (booking.guestEmail ? `Email: ${booking.guestEmail}\n` : '') +
-    `Hotel: ${branch?.name ?? '—'}\n` +
-    `Room: ${room?.name ?? '—'}\n` +
-    `Arriving: ${day(booking.checkIn)}\n` +
-    `Leaving: ${day(booking.checkOut)}\n` +
-    `Nights: ${booking.nights ?? '—'}\n` +
-    `Guests: ${booking.guests ?? '—'}\n` +
-    (booking.totalAmount ? `Quoted: ${booking.totalAmount} ${booking.currency}\n` : '') +
-    (booking.notes ? `Notes: ${booking.notes}\n` : '')
+  // Re-read the hotel and room in the guest's language, so a Kurdish
+  // confirmation does not name an English room.
+  const branchId = typeof booking.branch === 'object' ? booking.branch?.id : booking.branch
+  const roomId = typeof booking.room === 'object' ? booking.room?.id : booking.room
 
-  // Every address that is actually set, not just the first one found — see
-  // notifyRecipients for why "first found wins" was the wrong rule here.
+  const [branch, room, settings] = await Promise.all([
+    branchId
+      ? payload
+          .findByID({ collection: 'branches', id: branchId, locale, depth: 1, overrideAccess: true })
+          .catch(() => null)
+      : null,
+    roomId
+      ? payload
+          .findByID({ collection: 'rooms', id: roomId, locale, depth: 0, overrideAccess: true })
+          .catch(() => null)
+      : null,
+    payload.findGlobal({ slug: 'settings', locale, depth: 1 }) as Promise<{
+      email?: string | null
+      siteName?: string | null
+      whatsapp?: string | null
+      phone?: string | null
+    }>,
+  ])
+
+  const base = getServerSideURL()
+  const siteName = settings?.siteName || 'My Flower Hotels'
+
+  const arriving = formatDateLong(booking.checkIn, locale)
+  const leaving = formatDateLong(booking.checkOut, locale)
+  const nights = formatNumber(Number(booking.nights) || null, locale)
+  const guests = formatNumber(Number(booking.guests) || null, locale)
+  const quoted = formatPrice(Number(booking.totalAmount) || null, booking.currency, locale)
+
+  // The plain-text twin. Every client can read it, it is what lands in the log
+  // when a send fails, and a message with no text alternative is more likely to
+  // be filed as spam.
+  const plain =
+    `${t.email.refLabel}: ${booking.reference}\n` +
+    `${t.email.lName}: ${booking.guestName}\n` +
+    `${t.email.lPhone}: ${booking.guestPhone}\n` +
+    (booking.guestEmail ? `${t.email.lEmail}: ${booking.guestEmail}\n` : '') +
+    `${t.email.lHotel}: ${branch?.name ?? '—'}\n` +
+    `${t.email.lRoom}: ${room?.name ?? '—'}\n` +
+    `${t.email.lArriving}: ${arriving}\n` +
+    `${t.email.lLeaving}: ${leaving}\n` +
+    `${t.email.lNights}: ${nights || '—'}\n` +
+    `${t.email.lGuests}: ${guests || '—'}\n` +
+    (quoted ? `${t.email.lQuoted}: ${quoted}\n` : '') +
+    (booking.notes ? `${t.email.lNotes}: ${booking.notes}\n` : '')
+
   const hotelInbox = notifyRecipients(
     branch?.email,
     settings?.email,
     process.env.ENQUIRY_NOTIFY_EMAIL,
   )
 
-  return { booking, branch, room, settings, stay, hotelInbox }
+  const heroPath = mediaUrl(branch?.heroImage, 'large') || mediaUrl(branch?.heroImage)
+  const heroUrl = heroPath ? (/^https?:\/\//.test(heroPath) ? heroPath : `${base}${heroPath}`) : null
+
+  return {
+    booking,
+    branch,
+    room,
+    settings,
+    siteName,
+    locale,
+    t,
+    dir,
+    base,
+    arriving,
+    leaving,
+    nights,
+    guests,
+    quoted,
+    plain,
+    hotelInbox,
+    heroUrl,
+  }
+}
+
+type Gathered = NonNullable<Awaited<ReturnType<typeof gather>>>
+
+/** The stay itself, as both sides need to see it. */
+const stayPanel = (g: Gathered) => {
+  const { t, dir } = g
+  return panel(
+    t.email.stayTitle,
+    `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
+      ${row(t.email.lHotel, esc(g.branch?.name ?? '—'), dir, { strong: true })}
+      ${row(t.email.lRoom, esc(g.room?.name ?? '—'), dir, { strong: true })}
+      ${row(t.email.lArriving, esc(g.arriving), dir, { strong: true })}
+      ${row(t.email.lLeaving, esc(g.leaving), dir)}
+      ${g.nights ? row(t.email.lNights, esc(g.nights), dir) : ''}
+      ${g.guests ? row(t.email.lGuests, esc(g.guests), dir) : ''}
+      ${g.quoted ? row(t.email.lQuoted, esc(g.quoted), dir) : ''}
+      ${g.booking.notes ? row(t.email.lNotes, esc(g.booking.notes), dir) : ''}
+    </table>`,
+    dir,
+  )
+}
+
+/** Where the hotel is and how to reach it — the guest's copy only. */
+const hotelPanel = (g: Gathered) => {
+  const { t, dir, branch } = g
+  if (!branch) return ''
+  const checkIn = branch.checkInAnyTime ? t.branch.anyTime : branch.checkInTime
+  return panel(
+    t.email.hotelTitle,
+    `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
+      ${branch.address ? row(t.email.lAddress, esc(branch.address).replace(/\n/g, '<br>'), dir) : ''}
+      ${branch.phone ? row(t.email.lPhone, `<a href="tel:${esc(branch.phone.replace(/\s/g, ''))}" style="color:#0f2f4a;text-decoration:none;" dir="ltr">${esc(branch.phone)}</a>`, dir) : ''}
+      ${checkIn ? row(t.email.lCheckIn, esc(checkIn), dir) : ''}
+      ${branch.checkOutTime ? row(t.email.lCheckOut, esc(branch.checkOutTime), dir) : ''}
+    </table>`,
+    dir,
+  )
+}
+
+/** Who booked it — the hotel's copy only. */
+const guestPanel = (g: Gathered) => {
+  const { t, dir, booking } = g
+  const langName = { en: 'English', ku: 'Kurdish', ar: 'Arabic' }[g.locale]
+  return panel(
+    t.email.guestTitle,
+    `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
+      ${row(t.email.lName, esc(booking.guestName), dir, { strong: true })}
+      ${row(t.email.lPhone, `<a href="tel:${esc(booking.guestPhone.replace(/\s/g, ''))}" style="color:#0f2f4a;text-decoration:none;" dir="ltr">${esc(booking.guestPhone)}</a>`, dir, { strong: true })}
+      ${booking.guestEmail ? row(t.email.lEmail, `<a href="mailto:${esc(booking.guestEmail)}" style="color:#0f2f4a;text-decoration:none;" dir="ltr">${esc(booking.guestEmail)}</a>`, dir) : ''}
+      ${row(t.email.lLanguage, esc(langName), dir)}
+    </table>`,
+    dir,
+  )
+}
+
+const send = async (
+  payload: Payload,
+  reference: string,
+  to: string,
+  subject: string,
+  html: string,
+  text: string,
+  { critical }: { critical: boolean },
+) => {
+  try {
+    await payload.sendEmail({ to, subject, html, text })
+    payload.logger.info(`Booking ${reference} → ${to}`)
+  } catch (error) {
+    if (critical) {
+      // The measurement goes in the same line as the failure, because that is
+      // the line somebody is already reading when they want to know why.
+      payload.logger.error(
+        `Booking ${reference} could not be emailed to ${to} — ${error}` +
+          `${await diagnoseMailNetwork()}\n${text}`,
+      )
+    } else {
+      payload.logger.warn(`Booking ${reference}: copy to ${to} not sent — ${error}`)
+    }
+  }
 }
 
 export const sendBookingEmails = async (payload: Payload, reference: string): Promise<void> => {
   try {
-    const gathered = await gather(payload, reference)
-    if (!gathered) return
-    const { booking, branch, settings, stay, hotelInbox } = gathered
+    const g = await gather(payload, reference)
+    if (!g) return
+    const { booking, branch, t, dir, base, locale, siteName, plain, hotelInbox } = g
 
+    const manageUrl = `${base}/${locale}/booking`
+    const maps = toMapsHref(branch?.googleMapsUrl, branch?.latitude, branch?.longitude)
+    const wa = toWhatsAppHref(branch?.whatsapp, `${booking.reference}`)
+
+    // ---- the hotel's work order ----
     if (!hotelInbox) {
       payload.logger.warn(
         `Booking ${booking.reference} has nowhere to be sent — set an email on the hotel, on ` +
-          `Settings, or as ENQUIRY_NOTIFY_EMAIL. The booking is made and is in the admin panel:\n${stay}`,
+          `Settings, or as ENQUIRY_NOTIFY_EMAIL. The booking is made and is in the admin panel:\n${plain}`,
       )
     } else {
-      try {
-        await payload.sendEmail({
-          to: hotelInbox,
-          subject: `Booking ${booking.reference} — ${branch?.name ?? ''} — ${day(booking.checkIn)}`,
-          text: stay,
-        })
-        payload.logger.info(`Booking ${booking.reference} sent to ${hotelInbox}`)
-      } catch (error) {
-        // The measurement goes in the same line as the failure, because that
-        // is the line somebody is already reading when they want to know why.
-        payload.logger.error(
-          `Booking ${booking.reference} could not be emailed — ${error}` +
-            `${await diagnoseMailNetwork()}\n${stay}`,
-        )
-      }
+      const html = emailShell({
+        dir: 'ltr',
+        siteName,
+        preheader: fill(t.email.preHotel, {
+          guest: booking.guestName,
+          room: g.room?.name ?? '',
+          arriving: g.arriving,
+        }),
+        eyebrow: t.email.newEyebrow,
+        title: fill(t.email.newTitle, { hotel: branch?.name ?? siteName }),
+        body:
+          para(esc(t.email.newLead), 'ltr') +
+          referenceBlock(t.email.refLabel, booking.reference, 'ltr') +
+          guestPanel(g) +
+          stayPanel(g) +
+          `<div style="padding:2px 4px 0 4px;">${button(`${base}/admin/collections/bookings`, 'Open in the admin panel')}</div>`,
+        footer: esc(t.email.footerHotel),
+      })
+
+      await send(
+        payload,
+        booking.reference,
+        hotelInbox,
+        fill(t.email.subjHotel, {
+          ref: booking.reference,
+          hotel: branch?.name ?? '',
+          date: g.arriving,
+        }),
+        html,
+        plain,
+        { critical: true },
+      )
     }
 
+    // ---- the guest's document ----
     if (booking.guestEmail) {
-      try {
-        await payload.sendEmail({
-          to: booking.guestEmail,
-          subject: `Your booking at ${branch?.name ?? settings?.siteName ?? 'My Flower Hotels'} — ${booking.reference}`,
-          text:
-            `Thank you — your room is booked.\n\n${stay}\n` +
-            `You pay at the hotel when you arrive. Quote ${booking.reference} at the desk.\n` +
-            (branch?.phone ? `\nAny questions: ${branch.phone}\n` : ''),
-        })
-      } catch (error) {
-        // The hotel has it; failing to send the guest their copy is not worth
-        // an error anybody has to act on.
-        payload.logger.warn(`Booking ${booking.reference}: guest copy not sent — ${error}`)
-      }
+      const html = emailShell({
+        dir,
+        siteName,
+        preheader: fill(t.email.preGuest, {
+          ref: booking.reference,
+          arriving: g.arriving,
+          nights: g.nights ? `${g.nights} ${t.email.lNights}` : '',
+        }),
+        heroUrl: g.heroUrl,
+        heroAlt: branch?.name ?? siteName,
+        eyebrow: t.email.confirmEyebrow,
+        title: fill(t.email.confirmTitle, { name: esc(booking.guestName) }),
+        body:
+          para(esc(t.email.confirmLead), dir) +
+          referenceBlock(t.email.refLabel, booking.reference, dir) +
+          stayPanel(g) +
+          noticeBand([t.email.payNotice, t.email.cancelNotice, esc(t.email.deskNotice)], dir) +
+          hotelPanel(g) +
+          `<div style="padding:2px 4px 0 4px;text-align:${dir === 'rtl' ? 'right' : 'left'};">${button(manageUrl, esc(t.email.btnManage))}${maps ? button(maps, esc(t.email.btnDirections)) : ''}${wa ? button(wa, esc(t.email.btnWhatsApp), 'green') : ''}</div>`,
+        footer: esc(t.email.footerGuest),
+      })
+
+      await send(
+        payload,
+        booking.reference,
+        booking.guestEmail,
+        fill(t.email.subjGuest, { hotel: branch?.name ?? siteName, ref: booking.reference }),
+        html,
+        `${fill(t.email.confirmTitle, { name: booking.guestName })}\n\n${plain}\n${t.email.deskNotice}\n${manageUrl}\n`,
+        { critical: false },
+      )
     }
   } catch (error) {
     payload.logger.error(`Booking ${reference}: could not be announced — ${error}`)
@@ -138,42 +337,71 @@ export const sendCancellationEmails = async (
   reference: string,
 ): Promise<void> => {
   try {
-    const gathered = await gather(payload, reference)
-    if (!gathered) return
-    const { booking, branch, settings, stay, hotelInbox } = gathered
-
-    const notice = `This booking has been cancelled by the guest on the website.\n\n${stay}`
+    const g = await gather(payload, reference)
+    if (!g) return
+    const { booking, branch, t, dir, siteName, plain, hotelInbox } = g
 
     if (!hotelInbox) {
-      payload.logger.warn(`Booking ${booking.reference} cancelled, nowhere to send it:\n${notice}`)
+      payload.logger.warn(`Booking ${booking.reference} cancelled, nowhere to send it:\n${plain}`)
     } else {
-      try {
-        await payload.sendEmail({
-          to: hotelInbox,
-          subject: `CANCELLED — ${booking.reference} — ${branch?.name ?? ''} — ${day(booking.checkIn)}`,
-          text: notice,
-        })
-        payload.logger.info(`Cancellation ${booking.reference} sent to ${hotelInbox}`)
-      } catch (error) {
-        payload.logger.error(
-          `Cancellation ${booking.reference} not emailed — ${error}` +
-            `${await diagnoseMailNetwork()}\n${notice}`,
-        )
-      }
+      const html = emailShell({
+        dir: 'ltr',
+        siteName,
+        preheader: fill(t.email.preHotelCx, {
+          guest: booking.guestName,
+          room: g.room?.name ?? '',
+          arriving: g.arriving,
+        }),
+        eyebrow: t.email.cxEyebrow,
+        title: fill(t.email.cxHotelTitle, { hotel: branch?.name ?? siteName }),
+        body:
+          para(esc(t.email.cxHotelLead), 'ltr') +
+          referenceBlock(t.email.refLabel, booking.reference, 'ltr') +
+          guestPanel(g) +
+          stayPanel(g),
+        footer: esc(t.email.footerHotel),
+      })
+
+      await send(
+        payload,
+        booking.reference,
+        hotelInbox,
+        fill(t.email.subjHotelCx, {
+          ref: booking.reference,
+          hotel: branch?.name ?? '',
+          date: g.arriving,
+        }),
+        html,
+        `CANCELLED\n\n${plain}`,
+        { critical: true },
+      )
     }
 
     if (booking.guestEmail) {
-      try {
-        await payload.sendEmail({
-          to: booking.guestEmail,
-          subject: `Cancelled — ${booking.reference} — ${branch?.name ?? settings?.siteName ?? 'My Flower Hotels'}`,
-          text:
-            `Your booking has been cancelled. There is nothing to pay.\n\n${stay}\n` +
-            (branch?.phone ? `If this was not you, call us: ${branch.phone}\n` : ''),
-        })
-      } catch (error) {
-        payload.logger.warn(`Cancellation ${booking.reference}: guest copy not sent — ${error}`)
-      }
+      const html = emailShell({
+        dir,
+        siteName,
+        preheader: fill(t.email.preGuestCx, { ref: booking.reference }),
+        eyebrow: t.email.cxEyebrow,
+        title: esc(t.email.cxTitle),
+        body:
+          para(esc(t.email.cxLead), dir) +
+          referenceBlock(t.email.refLabel, booking.reference, dir) +
+          stayPanel(g) +
+          noticeBand([esc(t.email.cxNotice)], dir) +
+          hotelPanel(g),
+        footer: esc(t.email.footerGuest),
+      })
+
+      await send(
+        payload,
+        booking.reference,
+        booking.guestEmail,
+        fill(t.email.subjGuestCx, { ref: booking.reference, hotel: branch?.name ?? siteName }),
+        html,
+        `${t.email.cxTitle}\n\n${plain}`,
+        { critical: false },
+      )
     }
   } catch (error) {
     payload.logger.error(`Booking ${reference}: cancellation could not be announced — ${error}`)

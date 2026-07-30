@@ -149,6 +149,8 @@ export type NewBooking = {
   guestId?: number | null
   /** One per rendering of the form. Two presses share it; the second is refused. */
   idempotencyKey?: string | null
+  /** The language the form was filled in, so the confirmation can match it. */
+  locale?: string | null
 }
 
 /**
@@ -219,8 +221,8 @@ export const createBooking = async (
           `INSERT INTO bookings
              (reference, guest_name, guest_phone, guest_email, branch_id, room_id,
               check_in, check_out, guests, nights, total_amount, currency, status, notes,
-              guest_id, idempotency_key)
-           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'confirmed',$13,$14,$15)
+              guest_id, idempotency_key, locale)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'confirmed',$13,$14,$15,$16)
            RETURNING id, reference`,
           [
             reference,
@@ -238,6 +240,7 @@ export const createBooking = async (
             input.notes ?? null,
             input.guestId ?? null,
             input.idempotencyKey ?? null,
+            input.locale ?? null,
           ],
         )
         break

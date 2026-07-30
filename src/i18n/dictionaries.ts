@@ -261,6 +261,56 @@ export type Dictionary = {
     groupContactQ: string
     groupContactA: string
   }
+  email: {
+    confirmEyebrow: string
+    confirmTitle: string
+    confirmLead: string
+    refLabel: string
+    stayTitle: string
+    hotelTitle: string
+    guestTitle: string
+    knowTitle: string
+    lHotel: string
+    lRoom: string
+    lArriving: string
+    lLeaving: string
+    lNights: string
+    lGuests: string
+    lQuoted: string
+    lAddress: string
+    lPhone: string
+    lName: string
+    lEmail: string
+    lNotes: string
+    lLanguage: string
+    lCheckIn: string
+    lCheckOut: string
+    payNotice: string
+    cancelNotice: string
+    deskNotice: string
+    btnManage: string
+    btnDirections: string
+    btnWhatsApp: string
+    footerGuest: string
+    footerHotel: string
+    subjGuest: string
+    subjHotel: string
+    preGuest: string
+    preHotel: string
+    newEyebrow: string
+    newTitle: string
+    newLead: string
+    cxEyebrow: string
+    cxTitle: string
+    cxLead: string
+    cxNotice: string
+    cxHotelTitle: string
+    cxHotelLead: string
+    subjGuestCx: string
+    subjHotelCx: string
+    preGuestCx: string
+    preHotelCx: string
+  }
   seo: {
     hotelIn: string
     hotelsIn: string
@@ -596,6 +646,62 @@ const en: Dictionary = {
     groupContactQ: 'How do I reach you?',
     groupContactA:
       'WhatsApp or call {phone}. It reaches us directly, day or night, and it is the fastest way to ask about any of the hotels.',
+  },
+  email: {
+    confirmEyebrow: 'Reservation confirmed',
+    confirmTitle: 'Your room is booked, {name}',
+    confirmLead:
+      'Thank you for booking directly with us. Everything you need is below — the only thing worth keeping is the reference.',
+    refLabel: 'Your reference',
+    stayTitle: 'Your stay',
+    hotelTitle: 'The hotel',
+    guestTitle: 'Guest',
+    knowTitle: 'Good to know',
+    lHotel: 'Hotel',
+    lRoom: 'Room',
+    lArriving: 'Arriving',
+    lLeaving: 'Leaving',
+    lNights: 'Nights',
+    lGuests: 'Guests',
+    lQuoted: 'Quoted',
+    lAddress: 'Address',
+    lPhone: 'Phone',
+    lName: 'Name',
+    lEmail: 'Email',
+    lNotes: 'Notes',
+    lLanguage: 'Booked in',
+    lCheckIn: 'Check-in from',
+    lCheckOut: 'Check-out by',
+    payNotice:
+      '<strong>Nothing has been charged.</strong> You pay at the hotel when you arrive — cash or card, whichever suits you.',
+    cancelNotice:
+      '<strong>Free cancellation</strong> any time before the day you arrive, and you can do it yourself from the link below.',
+    deskNotice: 'At the desk, give your name or read out the reference above. That is all we need.',
+    btnManage: 'View or cancel this booking',
+    btnDirections: 'Get directions',
+    btnWhatsApp: 'Message us on WhatsApp',
+    footerGuest:
+      'We are looking forward to having you. If anything about this booking is wrong, reply to this email or send us a WhatsApp — a person reads both.',
+    footerHotel: 'Sent by the website when a guest books. The booking is already in the admin panel.',
+    subjGuest: 'Your booking at {hotel} — {ref}',
+    subjHotel: 'New booking {ref} — {hotel} — {date}',
+    preGuest: '{ref} · {arriving} · {nights}',
+    preHotel: '{guest} · {room} · {arriving}',
+    newEyebrow: 'New booking',
+    newTitle: 'New booking at {hotel}',
+    newLead: 'A guest has booked through the website. The room is already out of stock for these nights.',
+    cxEyebrow: 'Booking cancelled',
+    cxTitle: 'Your booking is cancelled',
+    cxLead: 'This is your record of it. There is nothing to pay, and nothing further to do.',
+    cxNotice:
+      'If you did not cancel this, call us straight away and we will put it back if the room is still free.',
+    cxHotelTitle: 'Cancelled — {hotel}',
+    cxHotelLead:
+      'The guest cancelled this on the website. The room is back on sale — take it out of the book.',
+    subjGuestCx: 'Cancelled — {ref} — {hotel}',
+    subjHotelCx: 'CANCELLED {ref} — {hotel} — {date}',
+    preGuestCx: '{ref} cancelled. Nothing to pay.',
+    preHotelCx: '{guest} · {room} · {arriving} — room back on sale',
   },
   seo: {
     hotelIn: 'Hotel in',
@@ -951,6 +1057,62 @@ const ku: Dictionary = {
     groupContactA:
       'واتساپ یان پەیوەندی بکە بە {phone}. ڕاستەوخۆ دەگاتە ئێمە، شەو و ڕۆژ، و خێراترین ڕێگایە بۆ پرسیار دەربارەی هەر کام لە هۆتێلەکان.',
   },
+  email: {
+    confirmEyebrow: 'حیجزەکە پشتڕاستکرایەوە',
+    confirmTitle: 'ژوورەکەت حیجز کرا، {name}',
+    confirmLead:
+      'سوپاس بۆ حیجزکردنی ڕاستەوخۆ لەگەڵمان. هەموو ئەوەی پێویستت پێیەتی لە خوارەوەیە — تەنها شتێک کە دەبێت بیهێڵیتەوە ژمارەی حیجزە.',
+    refLabel: 'ژمارەی حیجزت',
+    stayTitle: 'مانەوەکەت',
+    hotelTitle: 'هۆتێل',
+    guestTitle: 'میوان',
+    knowTitle: 'باشە بزانرێت',
+    lHotel: 'هۆتێل',
+    lRoom: 'ژوور',
+    lArriving: 'گەیشتن',
+    lLeaving: 'ڕۆیشتن',
+    lNights: 'شەو',
+    lGuests: 'میوان',
+    lQuoted: 'نرخی خەملێنراو',
+    lAddress: 'ناونیشان',
+    lPhone: 'تەلەفۆن',
+    lName: 'ناو',
+    lEmail: 'ئیمەیل',
+    lNotes: 'تێبینی',
+    lLanguage: 'حیجزکراوە بە',
+    lCheckIn: 'چوونەژوورەوە لە',
+    lCheckOut: 'چوونەدەرەوە پێش',
+    payNotice:
+      '<strong>هیچ بڕێک وەرنەگیراوە.</strong> لە هۆتێلەکەدا دەدەیت کاتێک دەگەیت — کاش یان کارت، هەرکامت پێ باشە.',
+    cancelNotice:
+      '<strong>هەڵوەشاندنەوەی بێبەرامبەر</strong> لە هەر کاتێکدا پێش ئەو ڕۆژەی دێیت، و خۆت دەتوانیت لە بەستەرەکەی خوارەوە بیکەیت.',
+    deskNotice: 'لە پێشوازیدا، ناوت بڵێ یان ژمارەی حیجزی سەرەوە بخوێنەوە. هەر ئەوەندە پێویستە.',
+    btnManage: 'بینین یان هەڵوەشاندنەوەی ئەم حیجزە',
+    btnDirections: 'ڕێنمایی ڕێگا',
+    btnWhatsApp: 'نامە بنێرە بە واتساپ',
+    footerGuest:
+      'بە خۆشحاڵییەوە چاوەڕێت دەکەین. ئەگەر شتێک لەم حیجزەدا هەڵە بوو، وەڵامی ئەم ئیمەیلە بدەرەوە یان واتساپێکمان بۆ بنێرە — کەسێک هەردووکیان دەخوێنێتەوە.',
+    footerHotel: 'لە لایەن ماڵپەڕەکە نێردراوە کاتێک میوانێک حیجز دەکات. حیجزەکە پێشتر لە پانێڵی بەڕێوەبردندایە.',
+    subjGuest: 'حیجزەکەت لە {hotel} — {ref}',
+    subjHotel: 'حیجزی نوێ {ref} — {hotel} — {date}',
+    preGuest: '{ref} · {arriving} · {nights}',
+    preHotel: '{guest} · {room} · {arriving}',
+    newEyebrow: 'حیجزی نوێ',
+    newTitle: 'حیجزی نوێ لە {hotel}',
+    newLead: 'میوانێک لە ڕێگەی ماڵپەڕەوە حیجزی کردووە. ژوورەکە بۆ ئەم شەوانە لە بەردەستدا نییە.',
+    cxEyebrow: 'حیجز هەڵوەشێنرایەوە',
+    cxTitle: 'حیجزەکەت هەڵوەشێنرایەوە',
+    cxLead: 'ئەمە تۆمارەکەی تۆیە. هیچ شتێک بۆ دان نییە و هیچ کارێکی تر پێویست نییە.',
+    cxNotice:
+      'ئەگەر تۆ ئەمە هەڵنەوەشێنراوەتەوە، یەکسەر پەیوەندیمان پێوە بکە و ئەگەر ژوورەکە هێشتا بەردەست بێت دەیگەڕێنینەوە.',
+    cxHotelTitle: 'هەڵوەشێنرایەوە — {hotel}',
+    cxHotelLead:
+      'میوانەکە لە ماڵپەڕەکەدا هەڵیوەشاندەوە. ژوورەکە گەڕاوەتەوە بۆ فرۆشتن — لە دەفتەرەکە لابەرە.',
+    subjGuestCx: 'هەڵوەشێنرایەوە — {ref} — {hotel}',
+    subjHotelCx: 'هەڵوەشێنرایەوە {ref} — {hotel} — {date}',
+    preGuestCx: '{ref} هەڵوەشێنرایەوە. هیچ بۆ دان نییە.',
+    preHotelCx: '{guest} · {room} · {arriving} — ژوور گەڕاوەتەوە بۆ فرۆشتن',
+  },
   seo: {
     hotelIn: 'هۆتێل لە',
     hotelsIn: 'هۆتێلەکان لە',
@@ -1299,6 +1461,61 @@ const ar: Dictionary = {
     groupContactQ: 'كيف أتواصل معكم؟',
     groupContactA:
       'راسلنا على واتساب أو اتصل على {phone}. يصل إلينا مباشرة ليلاً أو نهاراً، وهو أسرع طريقة للسؤال عن أي من الفنادق.',
+  },
+  email: {
+    confirmEyebrow: 'تم تأكيد الحجز',
+    confirmTitle: 'تم حجز غرفتك، {name}',
+    confirmLead:
+      'شكراً لحجزك معنا مباشرة. كل ما تحتاجه أدناه — والشيء الوحيد الجدير بالحفظ هو رقم الحجز.',
+    refLabel: 'رقم حجزك',
+    stayTitle: 'إقامتك',
+    hotelTitle: 'الفندق',
+    guestTitle: 'الضيف',
+    knowTitle: 'معلومات مهمة',
+    lHotel: 'الفندق',
+    lRoom: 'الغرفة',
+    lArriving: 'الوصول',
+    lLeaving: 'المغادرة',
+    lNights: 'الليالي',
+    lGuests: 'عدد الضيوف',
+    lQuoted: 'السعر المقدَّر',
+    lAddress: 'العنوان',
+    lPhone: 'الهاتف',
+    lName: 'الاسم',
+    lEmail: 'البريد',
+    lNotes: 'ملاحظات',
+    lLanguage: 'حُجز بلغة',
+    lCheckIn: 'الدخول من',
+    lCheckOut: 'الخروج قبل',
+    payNotice:
+      '<strong>لم يُخصم أي مبلغ.</strong> تدفع في الفندق عند وصولك — نقداً أو بالبطاقة، كما يناسبك.',
+    cancelNotice:
+      '<strong>إلغاء مجاني</strong> في أي وقت قبل يوم الوصول، ويمكنك ذلك بنفسك من الرابط أدناه.',
+    deskNotice: 'عند الاستقبال، اذكر اسمك أو رقم الحجز أعلاه. هذا كل ما نحتاجه.',
+    btnManage: 'عرض الحجز أو إلغاؤه',
+    btnDirections: 'الحصول على الاتجاهات',
+    btnWhatsApp: 'راسلنا على واتساب',
+    footerGuest:
+      'نتطلع لاستقبالك. إن كان أي شيء في هذا الحجز غير صحيح، ردّ على هذا البريد أو راسلنا على واتساب — يقرأهما شخص حقيقي.',
+    footerHotel: 'أُرسل من الموقع عند حجز ضيف. الحجز موجود بالفعل في لوحة الإدارة.',
+    subjGuest: 'حجزك في {hotel} — {ref}',
+    subjHotel: 'حجز جديد {ref} — {hotel} — {date}',
+    preGuest: '{ref} · {arriving} · {nights}',
+    preHotel: '{guest} · {room} · {arriving}',
+    newEyebrow: 'حجز جديد',
+    newTitle: 'حجز جديد في {hotel}',
+    newLead: 'حجز ضيف من خلال الموقع. الغرفة خارج المتاح لهذه الليالي.',
+    cxEyebrow: 'أُلغي الحجز',
+    cxTitle: 'تم إلغاء حجزك',
+    cxLead: 'هذا سجلك بذلك. لا شيء للدفع، ولا شيء آخر عليك فعله.',
+    cxNotice:
+      'إن لم تكن أنت من ألغى الحجز، اتصل بنا فوراً وسنعيده إن كانت الغرفة ما زالت متاحة.',
+    cxHotelTitle: 'أُلغي — {hotel}',
+    cxHotelLead: 'ألغى الضيف الحجز من الموقع. الغرفة عادت للبيع — احذفها من الدفتر.',
+    subjGuestCx: 'أُلغي — {ref} — {hotel}',
+    subjHotelCx: 'أُلغي {ref} — {hotel} — {date}',
+    preGuestCx: 'أُلغي {ref}. لا شيء للدفع.',
+    preHotelCx: '{guest} · {room} · {arriving} — الغرفة عادت للبيع',
   },
   seo: {
     hotelIn: 'فندق في',
