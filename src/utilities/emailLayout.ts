@@ -31,6 +31,26 @@ export const esc = (value: unknown): string =>
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
 
+/**
+ * Escapes, and fences the result off from the sentence around it.
+ *
+ * "My Flower 1" and "Lawand Jamil" are Latin script sitting inside Kurdish and
+ * Arabic sentences, and the rules for laying out mixed direction do not stop at
+ * the value — a Latin run at the end of a right-to-left line gets dragged to
+ * the far side, taking the comma before it along, so the heading came out as
+ * "Lawand Jamil ،ژوورەکەت حیجز کرا".
+ *
+ * U+2068 and U+2069 are the first-strong isolate and its terminator: they tell
+ * the layout to treat what is between them as one opaque object with its own
+ * direction, and to leave the sentence around it alone. Plain characters, not
+ * markup, so no mail client has to support anything — <bdi> would be the web
+ * answer and half of them ignore it.
+ */
+export const iso = (value: unknown): string => {
+  const text = esc(value)
+  return text ? `⁨${text}⁩` : text
+}
+
 /** One labelled line inside a panel. */
 export const row = (label: string, value: string, dir: Dir, opts: { strong?: boolean } = {}) => {
   const start = dir === 'rtl' ? 'right' : 'left'

@@ -17,6 +17,7 @@ import {
   para,
   referenceBlock,
   row,
+  iso,
   type Dir,
 } from './emailLayout'
 
@@ -126,7 +127,20 @@ const gather = async (payload: Payload, reference: string) => {
     process.env.ENQUIRY_NOTIFY_EMAIL,
   )
 
-  const heroPath = mediaUrl(branch?.heroImage, 'large') || mediaUrl(branch?.heroImage)
+  // "large" is not generated for every photograph — Payload only makes the
+  // sizes that are smaller than the original, and these are portrait shots
+  // about 1100px wide. Asking for it fell through to the original: a
+  // 1100x1471 portrait dropped into a 600px-wide letter, which is the tall
+  // empty column that appeared instead of a picture.
+  //
+  // "og" is the one size always produced and the only one shaped like a
+  // header — 1200x630, landscape, about 50KB. The rest are a ladder down for
+  // an image too small even for that.
+  const heroPath =
+    mediaUrl(branch?.heroImage, 'og') ||
+    mediaUrl(branch?.heroImage, 'medium') ||
+    mediaUrl(branch?.heroImage, 'small') ||
+    mediaUrl(branch?.heroImage)
   const heroUrl = heroPath ? (/^https?:\/\//.test(heroPath) ? heroPath : `${base}${heroPath}`) : null
 
   return {
@@ -158,14 +172,14 @@ const stayPanel = (g: Gathered) => {
   return panel(
     t.email.stayTitle,
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
-      ${row(t.email.lHotel, esc(g.branch?.name ?? '—'), dir, { strong: true })}
-      ${row(t.email.lRoom, esc(g.room?.name ?? '—'), dir, { strong: true })}
-      ${row(t.email.lArriving, esc(g.arriving), dir, { strong: true })}
-      ${row(t.email.lLeaving, esc(g.leaving), dir)}
+      ${row(t.email.lHotel, iso(g.branch?.name ?? '—'), dir, { strong: true })}
+      ${row(t.email.lRoom, iso(g.room?.name ?? '—'), dir, { strong: true })}
+      ${row(t.email.lArriving, iso(g.arriving), dir, { strong: true })}
+      ${row(t.email.lLeaving, iso(g.leaving), dir)}
       ${g.nights ? row(t.email.lNights, esc(g.nights), dir) : ''}
       ${g.guests ? row(t.email.lGuests, esc(g.guests), dir) : ''}
       ${g.quoted ? row(t.email.lQuoted, esc(g.quoted), dir) : ''}
-      ${g.booking.notes ? row(t.email.lNotes, esc(g.booking.notes), dir) : ''}
+      ${g.booking.notes ? row(t.email.lNotes, iso(g.booking.notes), dir) : ''}
     </table>`,
     dir,
   )
@@ -179,7 +193,7 @@ const hotelPanel = (g: Gathered) => {
   return panel(
     t.email.hotelTitle,
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
-      ${branch.address ? row(t.email.lAddress, esc(branch.address).replace(/\n/g, '<br>'), dir) : ''}
+      ${branch.address ? row(t.email.lAddress, iso(branch.address).replace(/\n/g, '<br>'), dir) : ''}
       ${branch.phone ? row(t.email.lPhone, `<a href="tel:${esc(branch.phone.replace(/\s/g, ''))}" style="color:#0f2f4a;text-decoration:none;" dir="ltr">${esc(branch.phone)}</a>`, dir) : ''}
       ${checkIn ? row(t.email.lCheckIn, esc(checkIn), dir) : ''}
       ${branch.checkOutTime ? row(t.email.lCheckOut, esc(branch.checkOutTime), dir) : ''}
@@ -195,7 +209,7 @@ const guestPanel = (g: Gathered) => {
   return panel(
     t.email.guestTitle,
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
-      ${row(t.email.lName, esc(booking.guestName), dir, { strong: true })}
+      ${row(t.email.lName, iso(booking.guestName), dir, { strong: true })}
       ${row(t.email.lPhone, `<a href="tel:${esc(booking.guestPhone.replace(/\s/g, ''))}" style="color:#0f2f4a;text-decoration:none;" dir="ltr">${esc(booking.guestPhone)}</a>`, dir, { strong: true })}
       ${booking.guestEmail ? row(t.email.lEmail, `<a href="mailto:${esc(booking.guestEmail)}" style="color:#0f2f4a;text-decoration:none;" dir="ltr">${esc(booking.guestEmail)}</a>`, dir) : ''}
       ${row(t.email.lLanguage, esc(langName), dir)}
@@ -256,7 +270,7 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
           arriving: g.arriving,
         }),
         eyebrow: t.email.newEyebrow,
-        title: fill(t.email.newTitle, { hotel: branch?.name ?? siteName }),
+        title: fill(t.email.newTitle, { hotel: iso(branch?.name ?? siteName) }),
         body:
           para(esc(t.email.newLead), 'ltr') +
           referenceBlock(t.email.refLabel, booking.reference, 'ltr') +
@@ -294,7 +308,7 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
         heroUrl: g.heroUrl,
         heroAlt: branch?.name ?? siteName,
         eyebrow: t.email.confirmEyebrow,
-        title: fill(t.email.confirmTitle, { name: esc(booking.guestName) }),
+        title: fill(t.email.confirmTitle, { name: iso(booking.guestName) }),
         body:
           para(esc(t.email.confirmLead), dir) +
           referenceBlock(t.email.refLabel, booking.reference, dir) +
@@ -353,7 +367,7 @@ export const sendCancellationEmails = async (
           arriving: g.arriving,
         }),
         eyebrow: t.email.cxEyebrow,
-        title: fill(t.email.cxHotelTitle, { hotel: branch?.name ?? siteName }),
+        title: fill(t.email.cxHotelTitle, { hotel: iso(branch?.name ?? siteName) }),
         body:
           para(esc(t.email.cxHotelLead), 'ltr') +
           referenceBlock(t.email.refLabel, booking.reference, 'ltr') +
