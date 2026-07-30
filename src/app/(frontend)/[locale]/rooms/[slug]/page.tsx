@@ -20,7 +20,7 @@ import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
 import { RoomCard } from '@/components/site/RoomCard'
 import { SectionHeading } from '@/components/site/SectionHeading'
-import { RoomSchema } from '@/components/site/StructuredData'
+import { BreadcrumbSchema, RoomSchema } from '@/components/site/StructuredData'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
 import RichText from '@/components/RichText'
 import { btnOutline, btnSmall, btnWhatsApp, sectionY, shell } from '@/components/site/ui'
@@ -80,6 +80,14 @@ export default async function RoomPage({ params }: Args) {
   return (
     <>
       <RoomSchema room={room} branch={branch} locale={locale} />
+      <BreadcrumbSchema
+        locale={locale}
+        trail={[
+          { name: t.nav.rooms, path: '/rooms' },
+          ...(branch ? [{ name: branch.name, path: `/branches/${branch.slug}` }] : []),
+          { name: room.name },
+        ]}
+      />
       <PageHero
         title={room.name}
         imageUrl={mediaUrl(images[0], 'xlarge')}
@@ -260,10 +268,38 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
 
   const branchName = typeof room.branch === 'object' ? room.branch?.name : undefined
 
+  const t = getDictionary(locale)
+
+  // Room names are already written as "Deluxe Double — My Flower 1", so
+  // appending the hotel again produced "Deluxe Double — My Flower 1 — My
+  // Flower 1, Erbil". Only what is missing gets added.
+  const named = branchName && room.name.includes(branchName)
+  const title = named
+    ? `${room.name}, ${t.seo.locality}`
+    : branchName
+      ? `${room.name} — ${branchName}, ${t.seo.locality}`
+      : room.name
+
+  // Assembled from what the room actually is, so no room page ships without a
+  // description. A room whose search result summarises the site navigation is
+  // one nobody clicks, and that is what an empty description produces.
+  const description = [
+    named
+      ? `${room.name}, ${t.seo.locality}`
+      : `${room.name}${branchName ? ` — ${branchName}, ${t.seo.locality}` : ''}`,
+    room.maxGuests ? `${t.room.guests} ${room.maxGuests}` : null,
+    layoutLine(room, t, locale) || null,
+    t.seo.bookDirect,
+  ]
+    .filter(Boolean)
+    .join('. ')
+
   return {
-    title: room.name,
+    title,
+    description,
     openGraph: {
-      title: room.name,
+      title,
+      description,
       images: shareImage(mediaUrl(room.images?.[0], 'og'), room.name, branchName),
     },
   }

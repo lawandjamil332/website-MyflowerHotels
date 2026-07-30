@@ -206,6 +206,15 @@ export type Dictionary = {
     errorGone: string
     errorGeneric: string
   }
+  seo: {
+    hotelIn: string
+    hotelsIn: string
+    /** The city's name in this language — "Erbil", "هەولێر", "أربيل". */
+    locality: string
+    /** The wider region, likewise. */
+    region: string
+    bookDirect: string
+  }
   reviews: {
     title: string
     fromCount: string
@@ -462,6 +471,13 @@ const en: Dictionary = {
   contact: {
     eyebrow: 'Get in touch',
     lead: 'Reach any of our hotels directly. WhatsApp is answered fastest.',
+  },
+  seo: {
+    hotelIn: 'Hotel in',
+    hotelsIn: 'Hotels in',
+    locality: 'Erbil',
+    region: 'Kurdistan Region, Iraq',
+    bookDirect: 'Book direct and pay at the hotel',
   },
   reviews: {
     title: 'What guests said',
@@ -740,6 +756,13 @@ const ku: Dictionary = {
     eyebrow: 'پەیوەندیمان پێوە بکە',
     lead: 'ڕاستەوخۆ پەیوەندی بە هەر یەکێک لە هۆتێلەکانمانەوە بکە. واتساپ خێراترین وەڵام دەداتەوە.',
   },
+  seo: {
+    hotelIn: 'هۆتێل لە',
+    hotelsIn: 'هۆتێلەکان لە',
+    locality: 'هەولێر',
+    region: 'هەرێمی کوردستان، عێراق',
+    bookDirect: 'ڕاستەوخۆ حیجز بکە و لە هۆتێلەکە پارە بدە',
+  },
   reviews: {
     title: 'میوانەکان چییان وت',
     fromCount: 'لە {count} پێداچوونەوە',
@@ -1011,6 +1034,13 @@ const ar: Dictionary = {
   contact: {
     eyebrow: 'تواصل معنا',
     lead: 'تواصل مباشرة مع أي من فنادقنا. واتساب هو الأسرع في الرد.',
+  },
+  seo: {
+    hotelIn: 'فندق في',
+    hotelsIn: 'فنادق في',
+    locality: 'أربيل',
+    region: 'إقليم كردستان، العراق',
+    bookDirect: 'احجز مباشرة وادفع في الفندق',
   },
   reviews: {
     title: 'ماذا قال الضيوف',

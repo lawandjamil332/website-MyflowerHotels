@@ -345,11 +345,15 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const siteName = settings.siteName || 'My Flower Hotels'
   const count = (template: string) => fillCount(template, branches.length, locale)
 
+  // The homepage competes for the city, not for the brand — somebody typing
+  // the brand will find it regardless.
+  const title = `${siteName} — ${t.seo.hotelsIn} ${t.seo.locality}, ${t.seo.region}`
+
   return {
-    title: siteName,
+    title,
     description: `${count(t.home.heroLead)} ${t.home.chooseBranchLead}`,
     openGraph: {
-      title: siteName,
+      title,
       images: shareImage(mediaUrl(branches[0]?.heroImage, 'og'), siteName, t.home.heroEyebrow),
     },
   }

@@ -36,5 +36,17 @@ export const SITE_URL = 'https://myflowerhotels.com'
  */
 export const GOOGLE_SITE_VERIFICATION = '5FtrThzn115CgCmt_cubesRkeP3XW4rJG-6Z6paj77g'
 
+/**
+ * Where these hotels are, in the words somebody would actually type.
+ *
+ * Nobody searches "My Flower 1" who does not already know the group — and a
+ * guest who already knows the name is not the one worth winning. The searches
+ * that bring new business say the city: "hotel in Erbil", "hotel near Erbil
+ * airport". Every page title carries the place for that reason, not for
+ * decoration.
+ */
+export const SITE_LOCALITY = 'Erbil'
+export const SITE_REGION = 'Kurdistan Region, Iraq'
+
 export const SITE_DESCRIPTION =
   'Four hotels in Erbil, Kurdistan Region of Iraq. One standard of hospitality. Book direct and pay at the hotel.'

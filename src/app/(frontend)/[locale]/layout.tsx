@@ -26,7 +26,7 @@ import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
-import { GOOGLE_SITE_VERIFICATION } from '@/utilities/site'
+import { GOOGLE_SITE_VERIFICATION, SITE_NAME } from '@/utilities/site'
 import { dir, isLocale, locales, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { CurrencyProvider } from '@/components/site/Currency'
@@ -145,6 +145,14 @@ export default async function LocaleLayout({ children, params }: Args) {
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
+  // Every page's own title, then the group's name. Set once here rather than
+  // appended by hand on each page — the page that forgot would be the one
+  // whose search result read "Contact" and nothing else, which tells a
+  // searcher nothing about whose contact page it is.
+  title: {
+    template: `%s | ${SITE_NAME}`,
+    default: SITE_NAME,
+  },
   openGraph: mergeOpenGraph(),
   // Search Console's ownership check. Emitted on every page rather than only
   // the homepage: the site's root redirects to /en, and a verifier that does

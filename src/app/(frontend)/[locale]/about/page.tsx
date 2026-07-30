@@ -97,5 +97,14 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { locale: raw } = await params
   const locale = (isLocale(raw) ? raw : 'en') as Locale
   const t = getDictionary(locale)
-  return { title: t.nav.about, description: t.about.lead }
+  // The lead carries a {count} placeholder meant to be filled from the number
+  // of hotels actually published. Passed straight to `description` it was not
+  // filled at all, so the search result for this page literally read
+  // "{count} hotels in Erbil" — visible to every searcher, invisible on the
+  // page itself, which is why it survived this long.
+  const branches = await getBranches(locale)
+  return {
+    title: `${t.nav.about} — ${t.seo.hotelsIn} ${t.seo.locality}`,
+    description: fillCount(t.about.lead, branches.length, locale),
+  }
 }

@@ -170,3 +170,39 @@ export function GroupSchema({
     }),
   )
 }
+
+/**
+ * The trail from the homepage down to this page.
+ *
+ * Google prints it in place of the bare URL under a result — "myflowerhotels
+ * .com › Hotels › My Flower 1" reads as a place in a structured site, where a
+ * raw address reads as a page somebody happened to leave lying about. It costs
+ * nothing and it is one of the few rich results a small site reliably gets.
+ *
+ * Positions are 1-based and must be contiguous, which is why the trail is
+ * built from an ordered list here rather than assembled by each caller.
+ */
+export function BreadcrumbSchema({
+  locale,
+  trail,
+}: {
+  locale: Locale
+  /** Ancestors then self, without the homepage — that is added here. */
+  trail: { name: string; path?: string }[]
+}) {
+  const base = getServerSideURL()
+  const items = [{ name: 'My Flower Hotels', path: '' }, ...trail]
+
+  return json({
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((entry, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: entry.name,
+      // The last crumb is the page being looked at, and Google asks that it
+      // carry no item of its own.
+      ...(index < items.length - 1 ? { item: `${base}/${locale}${entry.path ?? ''}` } : {}),
+    })),
+  })
+}

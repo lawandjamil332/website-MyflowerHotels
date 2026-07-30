@@ -21,7 +21,7 @@ import { ReserveBar } from '@/components/site/ReserveBar'
 import { Reveal } from '@/components/site/Reveal'
 import { RoomCard } from '@/components/site/RoomCard'
 import { SectionHeading } from '@/components/site/SectionHeading'
-import { HotelSchema } from '@/components/site/StructuredData'
+import { BreadcrumbSchema, HotelSchema } from '@/components/site/StructuredData'
 import { ReviewList } from '@/components/site/Reviews'
 import { getRating, getReviews } from '@/utilities/reviews'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
@@ -80,6 +80,10 @@ export default async function BranchPage({ params }: Args) {
   return (
     <>
       <HotelSchema branch={branch} locale={locale} stars={settings.stars} rating={rating} />
+      <BreadcrumbSchema
+        locale={locale}
+        trail={[{ name: t.nav.branches, path: '#collection' }, { name: branch.name }]}
+      />
       <PageHero
         title={branch.name}
         lead={branch.tagline ?? undefined}
@@ -374,13 +378,34 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const locale = (isLocale(raw) ? raw : 'en') as Locale
   const branch = await getBranchBySlug(slug, locale)
   if (!branch) return {}
+  const t = getDictionary(locale)
+
+  // The place goes in the title because that is what is actually searched.
+  // "My Flower 1" is typed only by somebody who already knows the group;
+  // "hotel in Erbil" is typed by the guest worth winning.
+  const title = `${branch.name} — ${t.seo.hotelIn} ${t.seo.locality}`
+
+  // Never left empty. Without one Google writes its own from whatever text it
+  // finds first, which on a hotel page is the navigation menu — and a result
+  // whose summary reads "Home Our hotels Rooms About Contact" is one nobody
+  // clicks. Built from the hotel's own words where it has them, and from the
+  // facts that are always true of it where it does not.
+  const description =
+    branch.tagline ||
+    [
+      `${branch.name}, ${t.seo.hotelIn} ${t.seo.locality}`,
+      branch.neighbourhood || branch.address,
+      t.seo.bookDirect,
+    ]
+      .filter(Boolean)
+      .join('. ')
 
   return {
-    title: branch.name,
-    description: branch.tagline ?? undefined,
+    title,
+    description,
     openGraph: {
-      title: branch.name,
-      description: branch.tagline ?? undefined,
+      title,
+      description,
       images: shareImage(
         mediaUrl(branch.heroImage, 'og'),
         branch.name,
