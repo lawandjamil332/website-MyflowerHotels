@@ -12,12 +12,14 @@ import {
   button,
   emailShell,
   esc,
+  iso,
   noticeBand,
   panel,
   para,
   referenceBlock,
   row,
-  iso,
+  rule,
+  stayDates,
   type Dir,
 } from './emailLayout'
 
@@ -103,6 +105,26 @@ const gather = async (payload: Payload, reference: string) => {
   const nights = formatNumber(Number(booking.nights) || null, locale)
   const guests = formatNumber(Number(booking.guests) || null, locale)
   const quoted = formatPrice(Number(booking.totalAmount) || null, booking.currency, locale)
+  const rate = formatPrice(Number(room?.priceFrom) || null, booking.currency, locale)
+
+  // The day the free cancellation actually runs out, rather than the phrase
+  // "before the day you arrive" and an invitation to work it out. Written from
+  // the booking's own arrival date, so it cannot drift from the policy.
+  const deadline = new Date(booking.checkIn)
+  deadline.setUTCDate(deadline.getUTCDate() - 1)
+  const cancelBy = formatDateLong(deadline, locale)
+
+  // An all-day event in whatever calendar the guest uses. A link rather than
+  // an attached .ics file: attachments are stripped by some providers and
+  // ignored on most phones, and this needs no download to work.
+  const stamp = (value: string | Date) =>
+    new Date(value).toISOString().slice(0, 10).replace(/-/g, '')
+  const calendarUrl =
+    `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+    `&text=${encodeURIComponent(`${branch?.name ?? siteName} — ${booking.reference}`)}` +
+    `&dates=${stamp(booking.checkIn)}/${stamp(booking.checkOut)}` +
+    `&details=${encodeURIComponent(`${t.email.refLabel}: ${booking.reference}`)}` +
+    `&location=${encodeURIComponent(branch?.address ?? '')}`
 
   // The plain-text twin. Every client can read it, it is what lands in the log
   // when a send fails, and a message with no text alternative is more likely to
@@ -158,6 +180,9 @@ const gather = async (payload: Payload, reference: string) => {
     nights,
     guests,
     quoted,
+    rate,
+    cancelBy,
+    calendarUrl,
     plain,
     hotelInbox,
     heroUrl,
@@ -166,7 +191,31 @@ const gather = async (payload: Payload, reference: string) => {
 
 type Gathered = NonNullable<Awaited<ReturnType<typeof gather>>>
 
-/** The stay itself, as both sides need to see it. */
+/** Arrival and departure, as the block a guest re-opens the message for. */
+const datesBlock = (g: Gathered) => {
+  const { t, dir, branch } = g
+  const arrivalNote = branch?.checkInAnyTime
+    ? esc(t.email.checkInAny)
+    : branch?.checkInTime
+      ? `${t.email.lCheckIn} ${esc(branch.checkInTime)}`
+      : null
+  return stayDates(
+    dir,
+    {
+      label: t.email.lArriving,
+      date: iso(g.arriving),
+      note: arrivalNote,
+    },
+    {
+      label: t.email.lLeaving,
+      date: iso(g.leaving),
+      note: branch?.checkOutTime ? `${t.email.lCheckOut} ${esc(branch.checkOutTime)}` : null,
+    },
+    g.nights ? fill(t.email.lStayLength, { count: g.nights }) : null,
+  )
+}
+
+/** What was booked, and what it comes to. */
 const stayPanel = (g: Gathered) => {
   const { t, dir } = g
   return panel(
@@ -174,11 +223,9 @@ const stayPanel = (g: Gathered) => {
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
       ${row(t.email.lHotel, iso(g.branch?.name ?? '—'), dir, { strong: true })}
       ${row(t.email.lRoom, iso(g.room?.name ?? '—'), dir, { strong: true })}
-      ${row(t.email.lArriving, iso(g.arriving), dir, { strong: true })}
-      ${row(t.email.lLeaving, iso(g.leaving), dir)}
-      ${g.nights ? row(t.email.lNights, esc(g.nights), dir) : ''}
       ${g.guests ? row(t.email.lGuests, esc(g.guests), dir) : ''}
-      ${g.quoted ? row(t.email.lQuoted, esc(g.quoted), dir) : ''}
+      ${g.rate ? row(t.email.lRate, iso(g.rate), dir) : ''}
+      ${g.quoted ? row(t.email.lTotal, `${iso(g.quoted)} <span style="color:#8a8378;">· ${esc(t.email.payAtHotel)}</span>`, dir, { strong: true }) : ''}
       ${g.booking.notes ? row(t.email.lNotes, iso(g.booking.notes), dir) : ''}
     </table>`,
     dir,
@@ -189,14 +236,11 @@ const stayPanel = (g: Gathered) => {
 const hotelPanel = (g: Gathered) => {
   const { t, dir, branch } = g
   if (!branch) return ''
-  const checkIn = branch.checkInAnyTime ? t.branch.anyTime : branch.checkInTime
   return panel(
     t.email.hotelTitle,
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
       ${branch.address ? row(t.email.lAddress, iso(branch.address).replace(/\n/g, '<br>'), dir) : ''}
       ${branch.phone ? row(t.email.lPhone, `<a href="tel:${esc(branch.phone.replace(/\s/g, ''))}" style="color:#0f2f4a;text-decoration:none;" dir="ltr">${esc(branch.phone)}</a>`, dir) : ''}
-      ${checkIn ? row(t.email.lCheckIn, esc(checkIn), dir) : ''}
-      ${branch.checkOutTime ? row(t.email.lCheckOut, esc(branch.checkOutTime), dir) : ''}
     </table>`,
     dir,
   )
@@ -274,10 +318,19 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
         body:
           para(esc(t.email.newLead), 'ltr') +
           referenceBlock(t.email.refLabel, booking.reference, 'ltr') +
+          datesBlock({ ...g, dir: 'ltr' }) +
           guestPanel(g) +
-          stayPanel(g) +
-          `<div style="padding:2px 4px 0 4px;">${button(`${base}/admin/collections/bookings`, 'Open in the admin panel')}</div>`,
-        footer: esc(t.email.footerHotel),
+          stayPanel({ ...g, dir: 'ltr' }) +
+          rule() +
+          button(`${base}/admin/collections/bookings`, 'Open in the admin panel'),
+        footerLines: [
+          fill(t.email.footerContact, {
+            hotel: iso(branch?.name ?? siteName),
+            address: iso(branch?.address?.replace(/\n/g, ', ') ?? ''),
+            phone: iso(branch?.phone ?? ''),
+          }),
+          esc(t.email.footerHotel),
+        ],
       })
 
       await send(
@@ -320,11 +373,31 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
         body:
           para(esc(t.email.confirmLead), dir) +
           referenceBlock(t.email.refLabel, booking.reference, dir) +
+          datesBlock(g) +
           stayPanel(g) +
-          noticeBand([t.email.payNotice, t.email.cancelNotice, esc(t.email.deskNotice)], dir) +
+          rule() +
+          noticeBand(
+            [
+              t.email.payNotice,
+              `<strong>${esc(fill(t.email.freeUntil, { date: g.cancelBy }))}</strong> ${esc(t.email.cancelSelf)}`,
+              esc(t.email.deskNotice),
+            ],
+            dir,
+          ) +
           hotelPanel(g) +
-          `<div style="padding:2px 4px 0 4px;text-align:${dir === 'rtl' ? 'right' : 'left'};">${button(manageUrl, esc(t.email.btnManage))}${maps ? button(maps, esc(t.email.btnDirections)) : ''}${wa ? button(wa, esc(t.email.btnWhatsApp), 'green') : ''}</div>`,
-        footer: esc(t.email.footerGuest),
+          button(manageUrl, esc(t.email.btnManage)) +
+          button(g.calendarUrl, esc(t.email.btnCalendar), 'quiet') +
+          (maps ? button(maps, esc(t.email.btnDirections), 'quiet') : '') +
+          (wa ? button(wa, esc(t.email.btnWhatsApp), 'green') : ''),
+        footerLines: [
+          fill(t.email.footerContact, {
+            hotel: iso(branch?.name ?? siteName),
+            address: iso(branch?.address?.replace(/\n/g, ', ') ?? ''),
+            phone: iso(branch?.phone ?? ''),
+          }),
+          esc(t.email.footerGuest),
+          esc(t.email.footerWhy),
+        ],
       })
 
       await send(
@@ -379,9 +452,10 @@ export const sendCancellationEmails = async (
         body:
           para(esc(t.email.cxHotelLead), 'ltr') +
           referenceBlock(t.email.refLabel, booking.reference, 'ltr') +
+          datesBlock({ ...g, dir: 'ltr' }) +
           guestPanel(g) +
-          stayPanel(g),
-        footer: esc(t.email.footerHotel),
+          stayPanel({ ...g, dir: 'ltr' }),
+        footerLines: [esc(t.email.footerHotel)],
       })
 
       await send(
@@ -412,7 +486,14 @@ export const sendCancellationEmails = async (
           stayPanel(g) +
           noticeBand([esc(t.email.cxNotice)], dir) +
           hotelPanel(g),
-        footer: esc(t.email.footerGuest),
+        footerLines: [
+          fill(t.email.footerContact, {
+            hotel: iso(branch?.name ?? siteName),
+            address: iso(branch?.address?.replace(/\n/g, ', ') ?? ''),
+            phone: iso(branch?.phone ?? ''),
+          }),
+          esc(t.email.footerWhy),
+        ],
       })
 
       await send(

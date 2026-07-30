@@ -310,6 +310,16 @@ export type Dictionary = {
     subjHotelCx: string
     preGuestCx: string
     preHotelCx: string
+    lRate: string
+    lTotal: string
+    lStayLength: string
+    freeUntil: string
+    btnCalendar: string
+    footerContact: string
+    footerWhy: string
+    payAtHotel: string
+    checkInAny: string
+    cancelSelf: string
   }
   seo: {
     hotelIn: string
@@ -702,6 +712,16 @@ const en: Dictionary = {
     subjHotelCx: 'CANCELLED {ref} — {hotel} — {date}',
     preGuestCx: '{ref} cancelled. Nothing to pay.',
     preHotelCx: '{guest} · {room} · {arriving} — room back on sale',
+    lRate: 'Per night',
+    lTotal: 'Total',
+    lStayLength: '{count} nights',
+    freeUntil: 'Free to cancel until {date}',
+    btnCalendar: 'Add to my calendar',
+    footerContact: '{hotel}<br>{address}<br>{phone}',
+    footerWhy: 'You are receiving this because this address was given when the booking was made.',
+    payAtHotel: 'Payable at the hotel',
+    checkInAny: 'Reception open 24 hours',
+    cancelSelf: '— and you can do it yourself, from the button below.',
   },
   seo: {
     hotelIn: 'Hotel in',
@@ -1112,6 +1132,16 @@ const ku: Dictionary = {
     subjHotelCx: 'هەڵوەشێنرایەوە {ref} — {hotel} — {date}',
     preGuestCx: '{ref} هەڵوەشێنرایەوە. هیچ بۆ دان نییە.',
     preHotelCx: '{guest} · {room} · {arriving} — ژوور گەڕاوەتەوە بۆ فرۆشتن',
+    lRate: 'بۆ شەوێک',
+    lTotal: 'کۆی گشتی',
+    lStayLength: '{count} شەو',
+    freeUntil: 'بێبەرامبەر دەتوانرێت هەڵبوەشێنرێتەوە هەتا {date}',
+    btnCalendar: 'زیادی بکە بۆ ڕۆژژمێرەکەم',
+    footerContact: '{hotel}<br>{address}<br>{phone}',
+    footerWhy: 'ئەم نامەیەت پێگەیشت چونکە ئەم ناونیشانە لە کاتی حیجزکردندا دراوە.',
+    payAtHotel: 'لە هۆتێلەکەدا دەدرێت',
+    checkInAny: 'پێشوازی ٢٤ کاتژمێر کراوەیە',
+    cancelSelf: '— و خۆت دەتوانیت لە دوگمەی خوارەوە بیکەیت.',
   },
   seo: {
     hotelIn: 'هۆتێل لە',
@@ -1516,6 +1546,16 @@ const ar: Dictionary = {
     subjHotelCx: 'أُلغي {ref} — {hotel} — {date}',
     preGuestCx: 'أُلغي {ref}. لا شيء للدفع.',
     preHotelCx: '{guest} · {room} · {arriving} — الغرفة عادت للبيع',
+    lRate: 'لليلة',
+    lTotal: 'الإجمالي',
+    lStayLength: '{count} ليالٍ',
+    freeUntil: 'الإلغاء مجاني حتى {date}',
+    btnCalendar: 'أضِف إلى التقويم',
+    footerContact: '{hotel}<br>{address}<br>{phone}',
+    footerWhy: 'وصلتك هذه الرسالة لأن هذا العنوان أُدخل عند إجراء الحجز.',
+    payAtHotel: 'تُدفع في الفندق',
+    checkInAny: 'الاستقبال مفتوح ٢٤ ساعة',
+    cancelSelf: '— ويمكنك ذلك بنفسك من الزر أدناه.',
   },
   seo: {
     hotelIn: 'فندق في',
