@@ -5,7 +5,7 @@ import type { Metadata } from 'next'
 
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
-import { getBranchBySlug, getRoomsForBranch } from '@/utilities/branches'
+import { getBranchBySlug, getBranches, getRoomsForBranch } from '@/utilities/branches'
 import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
@@ -14,6 +14,7 @@ import { shippedPhoto } from '@/utilities/shippedPhoto'
 import { shareImage } from '@/utilities/shareImage'
 import { cn } from '@/utilities/ui'
 import { AmenityList } from '@/components/site/AmenityList'
+import { BranchCard } from '@/components/site/BranchCard'
 import { CardRail, RailCard } from '@/components/site/CardRail'
 import { Gallery, type GalleryItem } from '@/components/site/Gallery'
 import { EnquiryForm } from '@/components/site/EnquiryForm'
@@ -51,12 +52,14 @@ export default async function BranchPage({ params }: Args) {
   const branch = await getBranchBySlug(slug, locale)
   if (!branch) notFound()
 
-  const [rooms, settings, reviews, rating] = await Promise.all([
+  const [rooms, settings, reviews, rating, allBranches] = await Promise.all([
     getRoomsForBranch(branch.id, locale),
     getSettings(locale),
     getReviews(branch.id),
     getRating(branch.id),
+    getBranches(locale),
   ])
+  const otherBranches = allBranches.filter((b) => b.id !== branch.id)
 
   // Answered from what this hotel has actually been told about itself, so a
   // question only appears where there is a true answer for it.
@@ -90,7 +93,14 @@ export default async function BranchPage({ params }: Args) {
 
   return (
     <>
-      <HotelSchema branch={branch} locale={locale} stars={settings.stars} rating={rating} />
+      <HotelSchema
+        branch={branch}
+        locale={locale}
+        stars={settings.stars}
+        rating={rating}
+        rooms={rooms}
+        amenityLabel={(key) => t.amenity[key]}
+      />
       <BreadcrumbSchema
         locale={locale}
         trail={[{ name: t.nav.branches, path: '#collection' }, { name: branch.name }]}
@@ -317,6 +327,26 @@ export default async function BranchPage({ params }: Args) {
           ) : (
             <p className="text-muted-ink">{t.branch.noRooms}</p>
           )}
+        </section>
+      )}
+
+      {/* The other hotels in the group.
+          On a hotel that has not opened, this is the whole point: every other
+          section is hidden until it does, which left the page with not one
+          link leading out of it — and it is in the sitemap, so people land on
+          it from search and find a dead end. On an open hotel it answers the
+          quieter version of the same thing: this one is full, or wrong, or in
+          the wrong part of town. */}
+      {otherBranches.length > 0 && (
+        <section className={cn(shell, sectionY)}>
+          <SectionHeading title={t.branch.otherHotels} className="mb-12 lg:mb-16" />
+          <CardRail label={t.branch.otherHotels}>
+            {otherBranches.map((other) => (
+              <RailCard key={other.id}>
+                <BranchCard branch={other} locale={locale} t={t} />
+              </RailCard>
+            ))}
+          </CardRail>
         </section>
       )}
 

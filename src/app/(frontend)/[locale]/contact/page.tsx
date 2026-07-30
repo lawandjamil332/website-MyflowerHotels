@@ -15,6 +15,7 @@ import { EnquiryForm } from '@/components/site/EnquiryForm'
 import { GroupMap } from '@/components/site/GroupMap'
 import { PageHero } from '@/components/site/PageHero'
 import { SectionHeading } from '@/components/site/SectionHeading'
+import { BreadcrumbSchema, ContactSchema } from '@/components/site/StructuredData'
 import { Reveal } from '@/components/site/Reveal'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
 import { btnOutline, btnSmall, btnWhatsApp, shell } from '@/components/site/ui'
@@ -32,6 +33,14 @@ export default async function ContactPage({ params }: Args) {
 
   return (
     <>
+      <ContactSchema
+        siteName={settings.siteName || 'My Flower Hotels'}
+        locale={locale}
+        branches={branches}
+        phone={settings.phone}
+        email={settings.email}
+      />
+      <BreadcrumbSchema locale={locale} trail={[{ name: t.nav.contact }]} />
       <PageHero
         eyebrow={t.contact.eyebrow}
         title={t.nav.contact}

@@ -10,6 +10,7 @@ import { cn } from '@/utilities/ui'
 import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
 import { RoomCard } from '@/components/site/RoomCard'
+import { BreadcrumbSchema, RoomListSchema } from '@/components/site/StructuredData'
 import { shell } from '@/components/site/ui'
 import type { Branch } from '@/payload-types'
 
@@ -74,12 +75,27 @@ export default async function RoomsPage({ params, searchParams }: Args) {
         : 'border-line text-muted-ink hover:border-ink hover:text-ink',
     )
 
+  // In the order the hotels are published, so the page does not reshuffle
+  // itself when a filter is applied. A hotel with nothing matching drops out
+  // rather than showing an empty heading.
+  const grouped = branches
+    .map((branch) => ({
+      branch,
+      rooms: filtered.filter((room) => {
+        const b = typeof room.branch === 'object' ? (room.branch as Branch) : null
+        return b?.id === branch.id
+      }),
+    }))
+    .filter((group) => group.rooms.length > 0)
+
   const heroSource = branches[0]?.heroImage
   const beds: Array<keyof typeof t.bed> = ['single', 'double', 'twin', 'king', 'suite']
   const anyFilter = Boolean(hotel || guests || bed)
 
   return (
     <>
+      <RoomListSchema rooms={filtered} locale={locale} name={t.roomsPage.title} />
+      <BreadcrumbSchema locale={locale} trail={[{ name: t.nav.rooms }]} />
       <PageHero
         eyebrow={t.roomsPage.eyebrow}
         title={t.roomsPage.title}
@@ -144,12 +160,37 @@ export default async function RoomsPage({ params, searchParams }: Args) {
           </div>
         </div>
 
-        {filtered.length > 0 ? (
-          <div className="mt-14 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((room, i) => (
-              <Reveal key={room.id} delay={(i % 3) * 90}>
-                <RoomCard room={room} locale={locale} t={t} showBranch priority={i < 3} />
-              </Reveal>
+        {/* Grouped under the hotel each room belongs to, the way the search
+            results already are. Eighteen cards in one grid, each repeating its
+            hotel's name in small type, was a pile — and it left the page with
+            no headings at all, on the page that carries more links than any
+            other on the site. The hotel name doubles as the way through to
+            the hotel. */}
+        {grouped.length > 0 ? (
+          <div className="mt-14 space-y-20">
+            {grouped.map(({ branch, rooms: group }, gi) => (
+              <div key={branch.id}>
+                <h2 className="font-display border-b border-line pb-4 text-2xl text-ink">
+                  <Link
+                    href={`/${locale}/branches/${branch.slug}`}
+                    className="link-line tap-safe hover:text-brand"
+                  >
+                    {branch.name}
+                  </Link>
+                </h2>
+                <div className="mt-10 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+                  {group.map((room, i) => (
+                    <Reveal key={room.id} delay={(i % 3) * 90}>
+                      <RoomCard
+                        room={room}
+                        locale={locale}
+                        t={t}
+                        priority={gi === 0 && i < 3}
+                      />
+                    </Reveal>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         ) : (
@@ -164,5 +205,11 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { locale: raw } = await params
   const locale = (isLocale(raw) ? raw : 'en') as Locale
   const t = getDictionary(locale)
-  return { title: t.roomsPage.title, description: t.roomsPage.lead }
+  // Neither the title nor the lead said where any of these rooms are, so the
+  // one page listing every room in the group was invisible to anybody
+  // searching for a room in the city it is in.
+  return {
+    title: `${t.roomsPage.title} — ${t.seo.hotelsIn} ${t.seo.locality}`,
+    description: `${t.roomsPage.lead} ${t.seo.hotelsIn} ${t.seo.locality}. ${t.seo.bookDirect}.`,
+  }
 }

@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+import configPromise from '@payload-config'
+import { getPayload } from 'payload'
 import type { Metadata } from 'next'
 
 import { isLocale, type Locale } from '@/i18n/config'
@@ -22,7 +24,10 @@ import { Reveal } from '@/components/site/Reveal'
 import { RoomCard } from '@/components/site/RoomCard'
 import { SectionHeading } from '@/components/site/SectionHeading'
 import { StayFinder } from '@/components/site/StayFinder'
-import { GroupSchema } from '@/components/site/StructuredData'
+import { FaqSchema, GroupSchema } from '@/components/site/StructuredData'
+import { Faq } from '@/components/site/Faq'
+import { buildGroupFaq } from '@/utilities/faq'
+import { pointsRate } from '@/utilities/points'
 import { Stars } from '@/components/site/Stars'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
 import { btnLight, btnOnDark, btnPrimary, sectionY, shell } from '@/components/site/ui'
@@ -60,6 +65,13 @@ export default async function HomePage({ params }: Args) {
   const n = branches.length
   const count = (template: string) => fillCount(template, n, locale)
 
+  const payload = await getPayload({ config: configPromise })
+  const rate = await pointsRate(payload)
+  const faq = buildGroupFaq(branches, t, locale, {
+    pointsEnabled: rate.enabled,
+    phone: settings.whatsapp || settings.phone,
+  })
+
   return (
     <>
       <GroupSchema
@@ -67,8 +79,18 @@ export default async function HomePage({ params }: Args) {
         locale={locale}
         branches={branches}
         phone={settings.phone}
+        email={settings.email}
         establishedYear={settings.establishedYear}
+        logoUrl={mediaUrl(settings.logo)}
+        imageUrl={mediaUrl(settings.socialShareImage, 'og') || heroUrl}
+        social={[
+          settings.social?.instagram,
+          settings.social?.facebook,
+          settings.social?.tiktok,
+          settings.social?.youtube,
+        ]}
       />
+      <FaqSchema entries={faq} />
       {/* The search box sits at the top of the picture, above the name, which
           is where the reference puts it and is the right way round: the one
           control a guest came to use should not be something they scroll to.
@@ -286,6 +308,20 @@ export default async function HomePage({ params }: Args) {
                   </RailCard>
                 ))}
               </CardRail>
+            </div>
+          </section>
+        )}
+
+        {/* The questions, before the closing picture.
+            This is the page that has to compete for "hotels in Erbil", and it
+            was the thinnest of the main pages — a hero, four cards and a
+            slogan. Somebody arriving on the name alone had to click into a
+            hotel before the site told them anything: how many there are,
+            whether a card is needed, whether a booking can be undone. */}
+        {faq.length > 0 && (
+          <section className={cn(shell, sectionY)}>
+            <div className="mx-auto max-w-3xl">
+              <Faq entries={faq} title={t.faq.groupTitle} />
             </div>
           </section>
         )}

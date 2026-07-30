@@ -63,6 +63,7 @@ export type Dictionary = {
     enquire: string
     bookNow: string
     noRooms: string
+    otherHotels: string
   }
   room: {
     detailsEyebrow: string
@@ -369,6 +370,7 @@ const en: Dictionary = {
     enquire: 'Enquire about a stay',
     bookNow: 'Book instantly',
     noRooms: 'Rooms for this hotel are being added.',
+    otherHotels: 'Our other hotels',
   },
   room: {
     detailsEyebrow: 'The room',
@@ -723,6 +725,7 @@ const ku: Dictionary = {
     enquire: 'داواکاری بۆ مانەوە',
     bookNow: 'حیجزی خێرا',
     noRooms: 'ژوورەکانی ئەم هۆتێلە زیاد دەکرێن.',
+    otherHotels: 'هۆتێلەکانی تریمان',
   },
   room: {
     detailsEyebrow: 'ژوورەکە',
@@ -1074,6 +1077,7 @@ const ar: Dictionary = {
     enquire: 'استفسر عن الإقامة',
     bookNow: 'احجز فوراً',
     noRooms: 'تتم إضافة غرف هذا الفندق.',
+    otherHotels: 'فنادقنا الأخرى',
   },
   room: {
     detailsEyebrow: 'الغرفة',
