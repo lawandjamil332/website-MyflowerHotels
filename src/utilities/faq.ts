@@ -117,6 +117,69 @@ export const buildFaq = (
   return entries
 }
 
+/**
+ * The questions asked before a hotel has been chosen.
+ *
+ * The About page had 138 words on it: two paragraphs about the family and a
+ * row of photographs. That is the page somebody lands on when they have heard
+ * the name and want to know what it is — and it did not tell them how many
+ * hotels there are, where they are, or how booking works.
+ *
+ * Built from the branches themselves, so it stays right when a fifth opens.
+ */
+export const buildGroupFaq = (
+  branches: Branch[],
+  t: Dictionary,
+  locale: Locale,
+  opts: { pointsEnabled?: boolean; phone?: string | null } = {},
+): FaqEntry[] => {
+  const entries: FaqEntry[] = []
+  if (branches.length === 0) return entries
+
+  // "My Flower 1 (100m Street), My Flower 3 (Kirkuk Street), My Flower 4
+  // (opening soon)" — a hotel with no address entered yet is named without
+  // one rather than given empty brackets.
+  const list = branches
+    .map((b) => {
+      const note =
+        b.status === 'openingSoon'
+          ? t.branch.openingSoon.toLowerCase()
+          : b.neighbourhood || b.address?.split('\n')[0]
+      return note ? `${b.name} (${note})` : b.name
+    })
+    .join(', ')
+
+  entries.push({
+    q: t.faq.countQ.replace('{count}', formatNumber(branches.length, locale)),
+    a: t.faq.countA
+      .replace('{count}', formatNumber(branches.length, locale))
+      .replace('{city}', t.seo.locality)
+      .replace('{list}', list),
+  })
+
+  // Only worth asking once there is a choice to make.
+  if (branches.length > 1) {
+    entries.push({
+      q: t.faq.chooseQ,
+      a: t.faq.chooseA.replace('{city}', t.seo.locality),
+    })
+  }
+
+  entries.push({ q: t.faq.payQ, a: t.faq.payA })
+  entries.push({ q: t.faq.cancelQ, a: t.faq.cancelA })
+
+  if (opts.pointsEnabled) entries.push({ q: t.faq.pointsQ, a: t.faq.pointsA })
+
+  if (opts.phone) {
+    entries.push({
+      q: t.faq.groupContactQ,
+      a: t.faq.groupContactA.replace('{phone}', opts.phone),
+    })
+  }
+
+  return entries
+}
+
 /** The amenities of a room, written out as a list a sentence can use. */
 const amenityList = (room: Room, t: Dictionary): string | null => {
   const named = (room.amenities ?? []).map((a) => t.amenity[a]).filter(Boolean)

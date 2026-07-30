@@ -252,6 +252,13 @@ export type Dictionary = {
     roomBookQ: string
     roomBookA: string
     roomBookPhoneA: string
+    groupTitle: string
+    countQ: string
+    countA: string
+    chooseQ: string
+    chooseA: string
+    groupContactQ: string
+    groupContactA: string
   }
   seo: {
     hotelIn: string
@@ -578,6 +585,15 @@ const en: Dictionary = {
       'Choose your dates on this page and confirm with a name and a phone number. You will get a reference straight away, and you can cancel it yourself free of charge any time before you arrive.',
     roomBookPhoneA:
       'Choose your dates on this page and confirm with a name and a phone number — you will get a reference straight away. If you would rather speak to someone, WhatsApp or call {phone}.',
+    groupTitle: 'Questions about the group',
+    countQ: 'How many My Flower hotels are there?',
+    countA: 'There are {count}, all in {city}: {list}.',
+    chooseQ: 'Which one should I stay at?',
+    chooseA:
+      'They are in different parts of {city}, so the one to choose is usually whichever is nearest to where you need to be. Each hotel has its own page listing its rooms, its prices and its exact location on the map.',
+    groupContactQ: 'How do I reach you?',
+    groupContactA:
+      'WhatsApp or call {phone}. It reaches us directly, day or night, and it is the fastest way to ask about any of the hotels.',
   },
   seo: {
     hotelIn: 'Hotel in',
@@ -922,6 +938,15 @@ const ku: Dictionary = {
       'بەرواری خۆت لەم لاپەڕەیەدا هەڵبژێرە و بە ناو و ژمارەی مۆبایل پشتڕاستی بکەرەوە. یەکسەر ژمارەی حیجز وەردەگریت، و دەتوانیت خۆت بێبەرامبەر هەڵیبوەشێنیتەوە پێش ئەو ڕۆژەی دێیت.',
     roomBookPhoneA:
       'بەرواری خۆت لەم لاپەڕەیەدا هەڵبژێرە و بە ناو و ژمارەی مۆبایل پشتڕاستی بکەرەوە — یەکسەر ژمارەی حیجز وەردەگریت. ئەگەر پێت باشترە قسە لەگەڵ کەسێک بکەیت، واتساپ یان پەیوەندی بکە بە {phone}.',
+    groupTitle: 'پرسیار دەربارەی گرووپەکە',
+    countQ: 'چەند هۆتێلی ماي فلاوەر هەیە؟',
+    countA: '{count} هەیە، هەموویان لە {city}: {list}.',
+    chooseQ: 'لە کامیاندا بمێنمەوە؟',
+    chooseA:
+      'لە بەشە جیاوازەکانی {city} دان، بۆیە باشترین هەڵبژاردن زۆرجار ئەوەیە کە نزیکترە لەو شوێنەی پێویستت پێیەتی. هەر هۆتێلێک لاپەڕەی خۆی هەیە کە ژوورەکان، نرخەکان و شوێنی وردی لەسەر نەخشە پیشان دەدات.',
+    groupContactQ: 'چۆن پەیوەندیتان پێوە بکەم؟',
+    groupContactA:
+      'واتساپ یان پەیوەندی بکە بە {phone}. ڕاستەوخۆ دەگاتە ئێمە، شەو و ڕۆژ، و خێراترین ڕێگایە بۆ پرسیار دەربارەی هەر کام لە هۆتێلەکان.',
   },
   seo: {
     hotelIn: 'هۆتێل لە',
@@ -1261,6 +1286,15 @@ const ar: Dictionary = {
       'اختر تواريخك في هذه الصفحة وأكّد الحجز باسم ورقم هاتف. يصلك رقم الحجز فوراً، ويمكنك إلغاؤه بنفسك مجاناً في أي وقت قبل يوم الوصول.',
     roomBookPhoneA:
       'اختر تواريخك في هذه الصفحة وأكّد الحجز باسم ورقم هاتف — يصلك رقم الحجز فوراً. وإن كنت تفضّل التحدث إلى أحد، راسلنا على واتساب أو اتصل على {phone}.',
+    groupTitle: 'أسئلة عن المجموعة',
+    countQ: 'كم فندقاً لدى ماي فلاور؟',
+    countA: 'لدينا {count}، جميعها في {city}: {list}.',
+    chooseQ: 'في أيها أقيم؟',
+    chooseA:
+      'هي في مناطق مختلفة من {city}، لذا الأنسب عادةً هو الأقرب إلى المكان الذي تحتاج أن تكون فيه. لكل فندق صفحته التي تعرض غرفه وأسعاره وموقعه بالضبط على الخريطة.',
+    groupContactQ: 'كيف أتواصل معكم؟',
+    groupContactA:
+      'راسلنا على واتساب أو اتصل على {phone}. يصل إلينا مباشرة ليلاً أو نهاراً، وهو أسرع طريقة للسؤال عن أي من الفنادق.',
   },
   seo: {
     hotelIn: 'فندق في',

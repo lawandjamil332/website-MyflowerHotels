@@ -1,6 +1,8 @@
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
+import configPromise from '@payload-config'
+import { getPayload } from 'payload'
 
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
@@ -14,6 +16,10 @@ import { CardRail, RailCard } from '@/components/site/CardRail'
 import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
 import { SectionHeading } from '@/components/site/SectionHeading'
+import { Faq } from '@/components/site/Faq'
+import { BreadcrumbSchema, FaqSchema } from '@/components/site/StructuredData'
+import { buildGroupFaq } from '@/utilities/faq'
+import { pointsRate } from '@/utilities/points'
 import { sectionY, shell } from '@/components/site/ui'
 
 type Args = { params: Promise<{ locale: string }> }
@@ -32,8 +38,17 @@ export default async function AboutPage({ params }: Args) {
   const heroSource = settings.socialShareImage ?? branches[0]?.heroImage
   const interlude = branches[1]?.heroImage ?? branches[0]?.heroImage
 
+  const payload = await getPayload({ config: configPromise })
+  const rate = await pointsRate(payload)
+  const faq = buildGroupFaq(branches, t, locale, {
+    pointsEnabled: rate.enabled,
+    phone: settings.whatsapp || settings.phone,
+  })
+
   return (
     <>
+      <BreadcrumbSchema locale={locale} trail={[{ name: t.nav.about }]} />
+      <FaqSchema entries={faq} />
       <PageHero
         title={siteName}
         lead={fillCount(t.about.lead, branches.length, locale)}
@@ -87,6 +102,18 @@ export default async function AboutPage({ params }: Args) {
               </RailCard>
             ))}
           </CardRail>
+        </section>
+      )}
+
+      {/* What somebody who has just heard the name wants to know: how many
+          there are, where, and how booking works. */}
+      {faq.length > 0 && (
+        <section className="bg-sand">
+          <div className={cn(shell, sectionY)}>
+            <Reveal className="mx-auto max-w-3xl">
+              <Faq entries={faq} title={t.faq.groupTitle} />
+            </Reveal>
+          </div>
         </section>
       )}
     </>
