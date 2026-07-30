@@ -1,7 +1,8 @@
 import type { Branch, Room } from '@/payload-types'
 import type { Dictionary } from '@/i18n/dictionaries'
 import type { Locale } from '@/i18n/config'
-import { formatPrice } from './format'
+import { formatNumber, formatPrice } from './format'
+import { layoutLine } from './layout'
 
 export type FaqEntry = { q: string; a: string }
 
@@ -112,6 +113,144 @@ export const buildFaq = (
   }
 
   if (opts.pointsEnabled) entries.push({ q: t.faq.pointsQ, a: t.faq.pointsA })
+
+  return entries
+}
+
+/** The amenities of a room, written out as a list a sentence can use. */
+const amenityList = (room: Room, t: Dictionary): string | null => {
+  const named = (room.amenities ?? []).map((a) => t.amenity[a]).filter(Boolean)
+  return named.length > 0 ? named.join(', ') : null
+}
+
+/**
+ * A description of the room, composed from the room.
+ *
+ * Not one room in the admin panel has had a description typed into it, and
+ * writing eighteen of them by hand is a job nobody is going to do. So the page
+ * says what it can already prove: who it sleeps, what bed, how it is laid out,
+ * how big, what is in it, where it is and what it costs. Every clause comes
+ * from a filled field and disappears with it.
+ *
+ * It steps aside the moment a real description exists. This is the floor, not
+ * the ceiling — anything the owner writes is better than anything assembled
+ * here, and the page should prefer it.
+ */
+export const roomSummary = (
+  room: Room,
+  branch: Branch | null,
+  t: Dictionary,
+  locale: Locale,
+): string[] => {
+  const sentences: string[] = []
+  const name = room.name
+
+  if (room.maxGuests) {
+    const guests = formatNumber(room.maxGuests, locale)
+    // "in a Suite bed" is not a sentence anybody would write — a suite is the
+    // room, not the bed. The clause is only added for beds that are beds.
+    const bed = room.bedType && room.bedType !== 'suite' ? t.bed[room.bedType] : null
+    sentences.push(
+      bed
+        ? t.room.summarySleepsBed
+            .replace('{room}', name)
+            .replace('{guests}', guests)
+            .replace('{bed}', bed.toLowerCase())
+        : t.room.summarySleeps.replace('{room}', name).replace('{guests}', guests),
+    )
+  }
+
+  const layout = layoutLine(room, t, locale)
+  if (layout) sentences.push(t.room.summaryLayout.replace('{layout}', layout))
+
+  if (room.sizeSqm)
+    sentences.push(t.room.summarySize.replace('{size}', formatNumber(room.sizeSqm, locale)))
+
+  // No amenity sentence here on purpose. The amenity list is rendered
+  // directly beneath this paragraph, so naming them in prose first printed
+  // "Wi-Fi, Air conditioning, Flat-screen TV" twice within a few centimetres.
+  // The question below asks it once more, but that one is folded shut and
+  // only opens for somebody who asked.
+
+  // Nothing at all was filled in. Better an empty column than a paragraph
+  // made of the room's name repeated back at the reader.
+  if (sentences.length === 0) return []
+
+  const second: string[] = []
+  const where = branch ? branch.neighbourhood || branch.address : null
+  if (branch && where) {
+    second.push(
+      t.room.summaryWhere
+        .replace('{hotel}', branch.name)
+        .replace('{where}', where)
+        .replace('{city}', t.seo.locality),
+    )
+  }
+  const price = formatPrice(room.priceFrom, room.currency, locale)
+  second.push(price ? t.room.summaryPrice.replace('{price}', price) : t.room.summaryPay)
+
+  return [sentences.join(' '), second.join(' ')]
+}
+
+/**
+ * The room's own questions.
+ *
+ * Deliberately shorter than the hotel's, and deliberately not the same six
+ * answers again. Everything about the building — the power, the Wi-Fi, the
+ * parking, where it is — is answered in full one click away on the hotel page,
+ * and repeating it on all eighteen room pages would make eighteen pages that
+ * are mostly each other. What stays here is what changes from room to room,
+ * plus the two that decide a booking: what it costs to hold, and whether it
+ * can be undone.
+ */
+export const buildRoomFaq = (
+  room: Room,
+  branch: Branch | null,
+  t: Dictionary,
+  locale: Locale,
+): FaqEntry[] => {
+  const entries: FaqEntry[] = []
+  const name = room.name
+
+  if (room.maxGuests) {
+    const guests = formatNumber(room.maxGuests, locale)
+    const layout = layoutLine(room, t, locale)
+    entries.push({
+      q: t.faq.roomSleepsQ.replace('{room}', name),
+      a: layout
+        ? t.faq.roomSleepsLayoutA
+            .replace('{room}', name)
+            .replace('{guests}', guests)
+            .replace('{layout}', layout)
+        : t.faq.roomSleepsA.replace('{room}', name).replace('{guests}', guests),
+    })
+  }
+
+  const amenities = amenityList(room, t)
+  if (amenities) {
+    entries.push({
+      q: t.faq.roomIncludesQ.replace('{room}', name),
+      a: t.faq.roomIncludesA.replace('{list}', amenities),
+    })
+  }
+
+  const price = formatPrice(room.priceFrom, room.currency, locale)
+  if (price) {
+    entries.push({
+      q: t.faq.roomPriceQ.replace('{room}', name),
+      a: t.faq.roomPriceA.replace('{room}', name).replace('{price}', price),
+    })
+  }
+
+  entries.push({ q: t.faq.payQ, a: t.faq.payA })
+  entries.push({ q: t.faq.cancelQ, a: t.faq.cancelA })
+
+  entries.push({
+    q: t.faq.roomBookQ.replace('{room}', name),
+    a: branch?.phone
+      ? t.faq.roomBookPhoneA.replace('{phone}', branch.phone)
+      : t.faq.roomBookA,
+  })
 
   return entries
 }

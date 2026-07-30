@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 
@@ -53,8 +54,17 @@ export default async function ContactPage({ params }: Args) {
                 <Reveal as="li" key={branch.id} delay={(i % 3) * 100}>
                   <div className="grid gap-8 border-b border-line py-12 lg:grid-cols-[0.5fr_1fr_0.8fr] lg:gap-12 lg:py-14">
                     <div>
+                      {/* The name is the way through to the hotel. Without
+                          this the page was a list of four addresses with no
+                          exit — a guest who decided here had to go back to
+                          the menu and start again. */}
                       <h2 className="font-display text-3xl leading-tight text-ink">
-                        {branch.name}
+                        <Link
+                          href={`/${locale}/branches/${branch.slug}`}
+                          className="link-line tap-safe hover:text-brand"
+                        >
+                          {branch.name}
+                        </Link>
                       </h2>
                       {branchLocative(branch) && (
                         <p className="mt-2 max-w-[22ch] text-sm leading-relaxed text-muted-ink">

@@ -84,6 +84,14 @@ export type Dictionary = {
     enquire: string
     backToBranch: string
     unavailable: string
+    /** The composed paragraph, used only where nothing has been written by hand. */
+    summarySleeps: string
+    summarySleepsBed: string
+    summaryLayout: string
+    summarySize: string
+    summaryWhere: string
+    summaryPrice: string
+    summaryPay: string
   }
   about: { eyebrow: string; lead: string; body1: string; body2: string }
   search: {
@@ -233,6 +241,17 @@ export type Dictionary = {
     contactA: string
     pointsQ: string
     pointsA: string
+    roomTitle: string
+    roomSleepsQ: string
+    roomSleepsA: string
+    roomSleepsLayoutA: string
+    roomIncludesQ: string
+    roomIncludesA: string
+    roomPriceQ: string
+    roomPriceA: string
+    roomBookQ: string
+    roomBookA: string
+    roomBookPhoneA: string
   }
   seo: {
     hotelIn: string
@@ -364,6 +383,15 @@ const en: Dictionary = {
     enquire: 'Enquire about this room',
     backToBranch: 'Back to the hotel',
     unavailable: 'Currently unavailable',
+    summarySleeps: '{room} sleeps up to {guests}.',
+    summarySleepsBed: '{room} sleeps up to {guests}, in a {bed} bed.',
+    summaryLayout: 'The layout is {layout}.',
+    summarySize: 'It measures {size} m².',
+    summaryWhere: 'It is at {hotel}, {where}, in {city}.',
+    summaryPrice:
+      'From {price} a night, paid at the hotel when you arrive — no card is taken to hold the room and there is no booking fee.',
+    summaryPay:
+      'You pay at the hotel when you arrive — no card is taken to hold the room and there is no booking fee.',
   },
   about: {
     eyebrow: 'About the group',
@@ -535,6 +563,21 @@ const en: Dictionary = {
     pointsQ: 'Do I earn anything by booking direct?',
     pointsA:
       'Yes. Open a free account and every completed stay earns points towards future stays. Points are added after you have stayed, not when you book.',
+    roomTitle: 'Questions about this room',
+    roomSleepsQ: 'How many people can stay in {room}?',
+    roomSleepsA: '{room} takes up to {guests}.',
+    roomSleepsLayoutA:
+      '{room} takes up to {guests}, and is laid out as {layout} — so a family or a longer stay is not sharing one room.',
+    roomIncludesQ: 'What is included in {room}?',
+    roomIncludesA: '{list}. Included in the price, with nothing added at the desk.',
+    roomPriceQ: 'How much is {room} per night?',
+    roomPriceA:
+      '{room} starts from {price} a night. Search your dates on this page and the price you are shown is the price you pay at the hotel.',
+    roomBookQ: 'How do I book {room}?',
+    roomBookA:
+      'Choose your dates on this page and confirm with a name and a phone number. You will get a reference straight away, and you can cancel it yourself free of charge any time before you arrive.',
+    roomBookPhoneA:
+      'Choose your dates on this page and confirm with a name and a phone number — you will get a reference straight away. If you would rather speak to someone, WhatsApp or call {phone}.',
   },
   seo: {
     hotelIn: 'Hotel in',
@@ -685,6 +728,15 @@ const ku: Dictionary = {
     enquire: 'داواکاری دەربارەی ئەم ژوورە',
     backToBranch: 'گەڕانەوە بۆ هۆتێل',
     unavailable: 'لە ئێستادا بەردەست نییە',
+    summarySleeps: '{room} هەتا {guests} وەردەگرێت.',
+    summarySleepsBed: '{room} هەتا {guests} وەردەگرێت، لەگەڵ قەرەوێڵەی {bed}.',
+    summaryLayout: 'پێکهاتووە لە {layout}.',
+    summarySize: 'ڕووبەرەکەی {size} م².',
+    summaryWhere: 'لە {hotel} دایە، {where}، لە {city}.',
+    summaryPrice:
+      'لە {price} بۆ شەوێک دەست پێدەکات، لە هۆتێلەکەدا دەدرێت کاتێک دەگەیت — هیچ کارتێک وەرناگیرێت بۆ گرتنی ژوورەکە و هیچ کرێی حیجزکردن نییە.',
+    summaryPay:
+      'لە هۆتێلەکەدا دەدەیت کاتێک دەگەیت — هیچ کارتێک وەرناگیرێت بۆ گرتنی ژوورەکە و هیچ کرێی حیجزکردن نییە.',
   },
   about: {
     eyebrow: 'دەربارەی کۆمەڵەکە',
@@ -855,6 +907,21 @@ const ku: Dictionary = {
     pointsQ: 'ئایا بە حیجزی ڕاستەوخۆ شتێک بەدەست دەهێنم؟',
     pointsA:
       'بەڵێ. هەژمارێکی بێبەرامبەر بکەرەوە و هەر مانەوەیەکی تەواوبوو خاڵت بۆ کۆدەکاتەوە بۆ مانەوەکانی داهاتوو. خاڵەکان دوای مانەوەکە زیاد دەکرێن، نەک لە کاتی حیجزکردن.',
+    roomTitle: 'پرسیار دەربارەی ئەم ژوورە',
+    roomSleepsQ: 'چەند کەس دەتوانن لە {room} بمێننەوە؟',
+    roomSleepsA: '{room} هەتا {guests} وەردەگرێت.',
+    roomSleepsLayoutA:
+      '{room} هەتا {guests} وەردەگرێت و پێکهاتووە لە {layout} — بۆیە خێزان یان مانەوەی درێژخایەن پێویست ناکات هەموویان لە یەک ژوور بن.',
+    roomIncludesQ: 'چی لە {room} دا هەیە؟',
+    roomIncludesA: '{list}. لە نرخەکەدا هەژمار کراوە و هیچ شتێکی زیادە لە پێشوازیدا زیاد ناکرێت.',
+    roomPriceQ: 'نرخی {room} بۆ شەوێک چەندە؟',
+    roomPriceA:
+      '{room} لە {price} بۆ شەوێک دەست پێدەکات. بەرواری خۆت لەم لاپەڕەیەدا بگەڕێ و ئەو نرخەی پیشانت دەدرێت هەمان ئەو نرخەیە کە لە هۆتێلەکەدا دەیدەیت.',
+    roomBookQ: 'چۆن {room} حیجز بکەم؟',
+    roomBookA:
+      'بەرواری خۆت لەم لاپەڕەیەدا هەڵبژێرە و بە ناو و ژمارەی مۆبایل پشتڕاستی بکەرەوە. یەکسەر ژمارەی حیجز وەردەگریت، و دەتوانیت خۆت بێبەرامبەر هەڵیبوەشێنیتەوە پێش ئەو ڕۆژەی دێیت.',
+    roomBookPhoneA:
+      'بەرواری خۆت لەم لاپەڕەیەدا هەڵبژێرە و بە ناو و ژمارەی مۆبایل پشتڕاستی بکەرەوە — یەکسەر ژمارەی حیجز وەردەگریت. ئەگەر پێت باشترە قسە لەگەڵ کەسێک بکەیت، واتساپ یان پەیوەندی بکە بە {phone}.',
   },
   seo: {
     hotelIn: 'هۆتێل لە',
@@ -1003,6 +1070,15 @@ const ar: Dictionary = {
     enquire: 'استفسر عن هذه الغرفة',
     backToBranch: 'العودة إلى الفندق',
     unavailable: 'غير متاحة حالياً',
+    summarySleeps: 'تتسع {room} حتى {guests}.',
+    summarySleepsBed: 'تتسع {room} حتى {guests}، بسرير {bed}.',
+    summaryLayout: 'تتكوّن من {layout}.',
+    summarySize: 'مساحتها {size} م².',
+    summaryWhere: 'تقع في {hotel}، {where}، في {city}.',
+    summaryPrice:
+      'تبدأ من {price} في الليلة، تُدفع في الفندق عند الوصول — لا تُؤخذ بطاقة لحجز الغرفة ولا توجد رسوم حجز.',
+    summaryPay:
+      'تدفع في الفندق عند الوصول — لا تُؤخذ بطاقة لحجز الغرفة ولا توجد رسوم حجز.',
   },
   about: {
     eyebrow: 'عن المجموعة',
@@ -1170,6 +1246,21 @@ const ar: Dictionary = {
     pointsQ: 'هل أستفيد شيئاً بالحجز المباشر؟',
     pointsA:
       'نعم. أنشئ حساباً مجانياً وكل إقامة مكتملة تجمع نقاطاً لإقامات لاحقة. تُضاف النقاط بعد الإقامة وليس عند الحجز.',
+    roomTitle: 'أسئلة عن هذه الغرفة',
+    roomSleepsQ: 'كم شخصاً تتسع له {room}؟',
+    roomSleepsA: 'تتسع {room} حتى {guests}.',
+    roomSleepsLayoutA:
+      'تتسع {room} حتى {guests}، وتتكوّن من {layout} — فلا تضطر العائلة أو الإقامة الطويلة إلى غرفة واحدة.',
+    roomIncludesQ: 'ماذا يشمل حجز {room}؟',
+    roomIncludesA: '{list}. كل ذلك ضمن السعر، ولا يُضاف شيء عند الاستقبال.',
+    roomPriceQ: 'كم سعر {room} في الليلة؟',
+    roomPriceA:
+      'تبدأ {room} من {price} في الليلة. ابحث بتواريخك في هذه الصفحة، والسعر الذي يظهر لك هو ما تدفعه في الفندق.',
+    roomBookQ: 'كيف أحجز {room}؟',
+    roomBookA:
+      'اختر تواريخك في هذه الصفحة وأكّد الحجز باسم ورقم هاتف. يصلك رقم الحجز فوراً، ويمكنك إلغاؤه بنفسك مجاناً في أي وقت قبل يوم الوصول.',
+    roomBookPhoneA:
+      'اختر تواريخك في هذه الصفحة وأكّد الحجز باسم ورقم هاتف — يصلك رقم الحجز فوراً. وإن كنت تفضّل التحدث إلى أحد، راسلنا على واتساب أو اتصل على {phone}.',
   },
   seo: {
     hotelIn: 'فندق في',

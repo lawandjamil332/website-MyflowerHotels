@@ -20,7 +20,9 @@ import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
 import { RoomCard } from '@/components/site/RoomCard'
 import { SectionHeading } from '@/components/site/SectionHeading'
-import { BreadcrumbSchema, RoomSchema } from '@/components/site/StructuredData'
+import { BreadcrumbSchema, FaqSchema, RoomSchema } from '@/components/site/StructuredData'
+import { Faq } from '@/components/site/Faq'
+import { buildRoomFaq, roomSummary } from '@/utilities/faq'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
 import RichText from '@/components/RichText'
 import { btnOutline, btnSmall, btnWhatsApp, sectionY, shell } from '@/components/site/ui'
@@ -41,7 +43,13 @@ export default async function RoomPage({ params }: Args) {
   const images = (room.images ?? []).filter((i) => mediaUrl(i))
   const price = formatPrice(room.priceFrom, room.currency, locale)
 
-  const hasDetails = Boolean(room.description) || (room.amenities?.length ?? 0) > 0
+  // Written by hand if anybody has, composed from the room's own fields if
+  // not. The first is always better, so it always wins.
+  const summary = room.description ? [] : roomSummary(room, branch, t, locale)
+  const faq = buildRoomFaq(room, branch, t, locale)
+
+  const hasDetails =
+    Boolean(room.description) || summary.length > 0 || (room.amenities?.length ?? 0) > 0
 
   // Every other room in this hotel, for the rail at the foot of the page.
   const siblings = branch
@@ -80,6 +88,7 @@ export default async function RoomPage({ params }: Args) {
   return (
     <>
       <RoomSchema room={room} branch={branch} locale={locale} />
+      <FaqSchema entries={faq} />
       <BreadcrumbSchema
         locale={locale}
         trail={[
@@ -151,8 +160,27 @@ export default async function RoomPage({ params }: Args) {
                 </Reveal>
               )}
 
+              {summary.length > 0 && (
+                <Reveal>
+                  <p className="eyebrow">{t.room.detailsEyebrow}</p>
+                  <div className="mt-7 space-y-5">
+                    {summary.map((paragraph) => (
+                      <p
+                        key={paragraph}
+                        className="text-[1.0625rem] leading-[1.85] text-ink-soft"
+                      >
+                        {paragraph}
+                      </p>
+                    ))}
+                  </div>
+                </Reveal>
+              )}
+
               {room.amenities && room.amenities.length > 0 && (
-                <Reveal delay={150} className={room.description ? 'mt-14' : undefined}>
+                <Reveal
+                  delay={150}
+                  className={room.description || summary.length > 0 ? 'mt-14' : undefined}
+                >
                   <h3 className="font-display text-2xl text-ink">{t.room.amenities}</h3>
                   <AmenityList amenities={room.amenities} t={t} className="mt-7" columns={2} />
                 </Reveal>
@@ -224,6 +252,16 @@ export default async function RoomPage({ params }: Args) {
               <Gallery items={gallery} />
             </Reveal>
           </div>
+        </section>
+      )}
+
+      {/* What a guest would otherwise have to ring the desk to find out
+          before they are willing to commit to this particular room. */}
+      {faq.length > 0 && (
+        <section className={cn(shell, sectionY)}>
+          <Reveal className="mx-auto max-w-3xl">
+            <Faq entries={faq} title={t.faq.roomTitle} />
+          </Reveal>
         </section>
       )}
 
