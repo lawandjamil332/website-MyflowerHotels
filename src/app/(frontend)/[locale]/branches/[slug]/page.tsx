@@ -1,4 +1,6 @@
 import { notFound } from 'next/navigation'
+import configPromise from '@payload-config'
+import { getPayload } from 'payload'
 import type { Metadata } from 'next'
 
 import { isLocale, type Locale } from '@/i18n/config'
@@ -21,7 +23,10 @@ import { ReserveBar } from '@/components/site/ReserveBar'
 import { Reveal } from '@/components/site/Reveal'
 import { RoomCard } from '@/components/site/RoomCard'
 import { SectionHeading } from '@/components/site/SectionHeading'
-import { BreadcrumbSchema, HotelSchema } from '@/components/site/StructuredData'
+import { BreadcrumbSchema, FaqSchema, HotelSchema } from '@/components/site/StructuredData'
+import { Faq } from '@/components/site/Faq'
+import { buildFaq } from '@/utilities/faq'
+import { pointsRate } from '@/utilities/points'
 import { ReviewList } from '@/components/site/Reviews'
 import { getRating, getReviews } from '@/utilities/reviews'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
@@ -52,6 +57,12 @@ export default async function BranchPage({ params }: Args) {
     getReviews(branch.id),
     getRating(branch.id),
   ])
+
+  // Answered from what this hotel has actually been told about itself, so a
+  // question only appears where there is a true answer for it.
+  const payload = await getPayload({ config: configPromise })
+  const rate = await pointsRate(payload)
+  const faq = buildFaq(branch, rooms, t, locale, { pointsEnabled: rate.enabled })
   const maps = toMapsHref(branch.googleMapsUrl, branch.latitude, branch.longitude)
   const wa = toWhatsAppHref(branch.whatsapp, `${t.branch.enquire} — ${branch.name}`)
   const tel = toTelHref(branch.phone)
@@ -84,6 +95,7 @@ export default async function BranchPage({ params }: Args) {
         locale={locale}
         trail={[{ name: t.nav.branches, path: '#collection' }, { name: branch.name }]}
       />
+      <FaqSchema entries={faq} />
       <PageHero
         title={branch.name}
         lead={branch.tagline ?? undefined}
@@ -276,6 +288,18 @@ export default async function BranchPage({ params }: Args) {
           <Reveal>
             <ReviewList reviews={reviews} rating={rating} t={t} locale={locale} />
           </Reveal>
+        </section>
+      )}
+
+      {faq.length > 0 && (
+        <section className="bg-sand">
+          <div className={cn(shell, sectionY)}>
+            <div className="mx-auto max-w-3xl">
+              <Reveal>
+                <Faq entries={faq} title={t.faq.title} />
+              </Reveal>
+            </div>
+          </div>
         </section>
       )}
 

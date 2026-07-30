@@ -206,3 +206,26 @@ export function BreadcrumbSchema({
     })),
   })
 }
+
+/**
+ * The same questions, told to Google.
+ *
+ * Earns the expandable question rows that appear under a result and take up
+ * several times the height of an ordinary listing. Google requires that every
+ * question and answer here also be visible on the page itself, which is why
+ * this is only ever rendered from the same array the page prints — a schema
+ * describing answers a visitor cannot find is the kind of thing that costs a
+ * site its rich results for good.
+ */
+export function FaqSchema({ entries }: { entries: { q: string; a: string }[] }) {
+  if (entries.length === 0) return null
+  return json({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: entries.map((entry) => ({
+      '@type': 'Question',
+      name: entry.q,
+      acceptedAnswer: { '@type': 'Answer', text: entry.a },
+    })),
+  })
+}

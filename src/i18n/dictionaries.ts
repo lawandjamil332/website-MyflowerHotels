@@ -206,6 +206,34 @@ export type Dictionary = {
     errorGone: string
     errorGeneric: string
   }
+  faq: {
+    title: string
+    checkInQ: string
+    checkInAnyA: string
+    checkInAtA: string
+    checkOutQ: string
+    checkOutA: string
+    payQ: string
+    payA: string
+    cancelQ: string
+    cancelA: string
+    whereQ: string
+    whereA: string
+    priceQ: string
+    priceA: string
+    familyQ: string
+    familyA: string
+    powerQ: string
+    powerA: string
+    wifiQ: string
+    wifiA: string
+    parkingQ: string
+    parkingA: string
+    contactQ: string
+    contactA: string
+    pointsQ: string
+    pointsA: string
+  }
   seo: {
     hotelIn: string
     hotelsIn: string
@@ -471,6 +499,42 @@ const en: Dictionary = {
   contact: {
     eyebrow: 'Get in touch',
     lead: 'Reach any of our hotels directly. WhatsApp is answered fastest.',
+  },
+  faq: {
+    title: 'Questions guests ask',
+    checkInQ: 'What time can I check in at {hotel}?',
+    checkInAnyA:
+      'Any time. Reception at {hotel} is staffed 24 hours, so you can arrive on a night flight or an early bus and your room will be ready for you.',
+    checkInAtA: 'Check-in at {hotel} is from {time}.',
+    checkOutQ: 'What time is check-out?',
+    checkOutA:
+      'Check-out is at {time}. If you need a later departure, ask at the desk on the day and we will do what we can.',
+    payQ: 'Do I have to pay online to book?',
+    payA: 'No. Booking here takes a name and a phone number, and you pay at the hotel when you arrive. We do not ask for a card and nothing is charged in advance.',
+    cancelQ: 'Can I cancel my booking?',
+    cancelA:
+      'Yes, free of charge, any time before the day you arrive. Use "Find your booking" with your reference and the number you booked with, and the room is released straight away.',
+    whereQ: 'Where is {hotel}?',
+    whereA: '{hotel} is on {where}, in {city}. The exact pin and directions are on this page.',
+    priceQ: 'How much is a room at {hotel}?',
+    priceA:
+      'Rooms at {hotel} start from {price} a night. The price you see when you search your dates is the price you pay at the desk — there is no booking fee.',
+    familyQ: 'Do you have rooms for families at {hotel}?',
+    familyA:
+      'Yes. {hotel} has apartment-style units with separate bedrooms and a hall, which suit families and longer stays better than a single large room. The layout of each is listed with the room.',
+    powerQ: 'Does the power stay on?',
+    powerA:
+      'Yes. {hotel} runs on full generator backup, so the lift, the air conditioning and the Wi-Fi keep working through a city outage.',
+    wifiQ: 'Is there Wi-Fi?',
+    wifiA: 'Yes, Wi-Fi throughout {hotel}, included in the room and with no charge or time limit.',
+    parkingQ: 'Is there parking?',
+    parkingA: 'Yes, {hotel} has parking for guests.',
+    contactQ: 'How do I reach {hotel} fastest?',
+    contactA:
+      'WhatsApp on {phone} reaches the front desk directly and is usually answered within minutes, day or night. The same number takes ordinary calls.',
+    pointsQ: 'Do I earn anything by booking direct?',
+    pointsA:
+      'Yes. Open a free account and every completed stay earns points towards future stays. Points are added after you have stayed, not when you book.',
   },
   seo: {
     hotelIn: 'Hotel in',
@@ -756,6 +820,42 @@ const ku: Dictionary = {
     eyebrow: 'پەیوەندیمان پێوە بکە',
     lead: 'ڕاستەوخۆ پەیوەندی بە هەر یەکێک لە هۆتێلەکانمانەوە بکە. واتساپ خێراترین وەڵام دەداتەوە.',
   },
+  faq: {
+    title: 'پرسیارە باوەکانی میوانان',
+    checkInQ: 'لە {hotel} لە چ کاتێک دەتوانم بچمە ژوورەوە؟',
+    checkInAnyA:
+      'هەر کاتێک. پێشوازی لە {hotel} ٢٤ کاتژمێر کارا دەبێت، بۆیە بە فڕۆکەی شەوانە یان پاسی بەیانی زوو بگەیت، ژوورەکەت ئامادەیە.',
+    checkInAtA: 'چوونەژوورەوە لە {hotel} لە {time}ـەوە دەستپێدەکات.',
+    checkOutQ: 'کاتی چوونەدەرەوە کەیە؟',
+    checkOutA:
+      'چوونەدەرەوە لە {time}ـە. ئەگەر پێویستت بە درەنگتر بوو، هەمان ڕۆژ لە پێشوازی داوای بکە و ئەوەی لە دەستمان بێت دەیکەین.',
+    payQ: 'پێویستە پێشوەخت پارە بدەم بۆ حیجزکردن؟',
+    payA: 'نەخێر. حیجزکردن لێرە تەنها ناو و ژمارەی تەلەفۆن دەوێت، و لە هۆتێلەکە پارە دەدەیت کاتێک دەگەیت. داوای کارتی بانکی ناکەین و هیچ پارەیەک پێشوەخت وەرناگیرێت.',
+    cancelQ: 'دەتوانم حیجزەکەم هەڵبوەشێنمەوە؟',
+    cancelA:
+      'بەڵێ، بەخۆڕایی، هەر کاتێک پێش ئەو ڕۆژەی دێیت. لە «حیجزەکەت بدۆزەرەوە» ژمارەی حیجز و ئەو ژمارەیەی پێی حیجزت کرد بنووسە، ژوورەکە یەکسەر ئازاد دەبێت.',
+    whereQ: '{hotel} لە کوێیە؟',
+    whereA: '{hotel} لە {where}ـە، لە {city}. نیشانەی وردی شوێن و ڕێنمایی لەم پەڕەیەدایە.',
+    priceQ: 'نرخی ژوور لە {hotel} چەندە؟',
+    priceA:
+      'ژوورەکانی {hotel} لە {price}ـەوە دەستپێدەکەن بۆ شەوێک. ئەو نرخەی لە کاتی گەڕان دەیبینیت هەمان ئەو نرخەیە لە پێشوازی دەیدەیت — هیچ کرێیەکی زیادە نییە.',
+    familyQ: 'لە {hotel} ژووری خێزانی هەیە؟',
+    familyA:
+      'بەڵێ. {hotel} یەکەی شوقەیی هەیە بە ژووری نوستنی جیاواز و هۆڵ، کە بۆ خێزان و مانەوەی درێژخایەن گونجاوترن لە یەک ژووری گەورە. پێکهاتەی هەریەکەیان لەگەڵ ژوورەکەدا نووسراوە.',
+    powerQ: 'کارەبا نابڕێت؟',
+    powerA:
+      'بەڵێ. {hotel} مۆلێدەی تەواوی هەیە، بۆیە ئاسانسۆر و کۆندیشن و وایفای لە کاتی کوژانەوەی کارەبای شار بەردەوام دەبن.',
+    wifiQ: 'وایفای هەیە؟',
+    wifiA: 'بەڵێ، وایفای لە هەموو {hotel}، لەگەڵ ژوورەکەدایە و بێ کرێ و بێ سنووری کات.',
+    parkingQ: 'شوێنی وەستانی ئۆتۆمبێل هەیە؟',
+    parkingA: 'بەڵێ، {hotel} شوێنی وەستانی ئۆتۆمبێلی هەیە بۆ میوانان.',
+    contactQ: 'چۆن زووترین پەیوەندی بە {hotel} بکەم؟',
+    contactA:
+      'واتساپ لەسەر {phone} ڕاستەوخۆ دەگاتە پێشوازی و زۆرجار لە ماوەی چەند خولەکێکدا وەڵام دەدرێتەوە، شەو و ڕۆژ. هەمان ژمارە پەیوەندی ئاساییش وەردەگرێت.',
+    pointsQ: 'ئایا بە حیجزی ڕاستەوخۆ شتێک بەدەست دەهێنم؟',
+    pointsA:
+      'بەڵێ. هەژمارێکی بێبەرامبەر بکەرەوە و هەر مانەوەیەکی تەواوبوو خاڵت بۆ کۆدەکاتەوە بۆ مانەوەکانی داهاتوو. خاڵەکان دوای مانەوەکە زیاد دەکرێن، نەک لە کاتی حیجزکردن.',
+  },
   seo: {
     hotelIn: 'هۆتێل لە',
     hotelsIn: 'هۆتێلەکان لە',
@@ -1034,6 +1134,42 @@ const ar: Dictionary = {
   contact: {
     eyebrow: 'تواصل معنا',
     lead: 'تواصل مباشرة مع أي من فنادقنا. واتساب هو الأسرع في الرد.',
+  },
+  faq: {
+    title: 'أسئلة يسألها الضيوف',
+    checkInQ: 'متى يمكنني تسجيل الوصول في {hotel}؟',
+    checkInAnyA:
+      'في أي وقت. الاستقبال في {hotel} يعمل ٢٤ ساعة، فسواء وصلت برحلة ليلية أو بحافلة مبكرة ستجد غرفتك جاهزة.',
+    checkInAtA: 'تسجيل الوصول في {hotel} من {time}.',
+    checkOutQ: 'متى موعد المغادرة؟',
+    checkOutA:
+      'المغادرة في {time}. إذا احتجت وقتاً أطول، اسأل في الاستقبال في اليوم نفسه وسنبذل ما بوسعنا.',
+    payQ: 'هل يجب الدفع مسبقاً عبر الإنترنت؟',
+    payA: 'لا. الحجز هنا يحتاج اسماً ورقم هاتف فقط، وتدفع في الفندق عند وصولك. لا نطلب بطاقة ولا يُخصم أي مبلغ مسبقاً.',
+    cancelQ: 'هل يمكنني إلغاء الحجز؟',
+    cancelA:
+      'نعم، مجاناً، في أي وقت قبل يوم وصولك. استخدم «ابحث عن حجزك» برقم الحجز والهاتف الذي حجزت به، وتعود الغرفة للتوفر فوراً.',
+    whereQ: 'أين يقع {hotel}؟',
+    whereA: 'يقع {hotel} في {where}، في {city}. الموقع الدقيق والاتجاهات موجودة في هذه الصفحة.',
+    priceQ: 'كم سعر الغرفة في {hotel}؟',
+    priceA:
+      'تبدأ غرف {hotel} من {price} لليلة. السعر الذي تراه عند البحث عن تواريخك هو ما تدفعه في الاستقبال — بدون رسوم حجز.',
+    familyQ: 'هل توجد غرف عائلية في {hotel}؟',
+    familyA:
+      'نعم. في {hotel} وحدات على شكل شقق بغرف نوم منفصلة وصالة، وهي أنسب للعائلات وللإقامات الطويلة من غرفة واحدة كبيرة. تقسيم كل وحدة مذكور مع الغرفة.',
+    powerQ: 'هل تبقى الكهرباء مستمرة؟',
+    powerA:
+      'نعم. يعمل {hotel} بمولد احتياطي كامل، فيستمر المصعد والتكييف والإنترنت أثناء انقطاع كهرباء المدينة.',
+    wifiQ: 'هل يوجد واي فاي؟',
+    wifiA: 'نعم، واي فاي في كامل {hotel}، مشمول مع الغرفة وبدون رسوم أو حد زمني.',
+    parkingQ: 'هل يوجد موقف سيارات؟',
+    parkingA: 'نعم، يوفر {hotel} موقفاً للضيوف.',
+    contactQ: 'ما أسرع طريقة للتواصل مع {hotel}؟',
+    contactA:
+      'واتساب على {phone} يصل إلى الاستقبال مباشرة ويُرد عليه عادة خلال دقائق، ليلاً أو نهاراً. الرقم نفسه يستقبل المكالمات العادية.',
+    pointsQ: 'هل أستفيد شيئاً بالحجز المباشر؟',
+    pointsA:
+      'نعم. أنشئ حساباً مجانياً وكل إقامة مكتملة تجمع نقاطاً لإقامات لاحقة. تُضاف النقاط بعد الإقامة وليس عند الحجز.',
   },
   seo: {
     hotelIn: 'فندق في',
