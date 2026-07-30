@@ -505,3 +505,58 @@ html[data-theme='light'] {
     background: var(--color-brand-bright);
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Print.
+
+   Written for one page in particular — the booking confirmation a guest saves
+   as a PDF from their phone — but correct everywhere, because nobody printing
+   a page from a hotel website wants the navigation bar and a thousand pixels
+   of navy footer coming with it. On the confirmation those two took up more of
+   the sheet than the booking did.
+
+   Everything here is print-only. Nothing below changes what anyone sees on a
+   screen.
+   --------------------------------------------------------------------------- */
+@media print {
+  /* The site around the page, which on paper is neither navigable nor useful. */
+  header,
+  footer,
+  .print\:hidden {
+    display: none !important;
+  }
+
+  /* ...but a document inside the page may have a masthead of its own, and the
+     rule above hid it: the confirmation printed with no name on it at all,
+     which is the one thing a voucher has to carry. Anything inside <main> is
+     the page's own content, not the furniture around it. */
+  main header,
+  main footer {
+    display: revert !important;
+  }
+
+  /* Ink is expensive and beige backgrounds print as grey wash. */
+  html,
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  main {
+    padding-block: 0 !important;
+  }
+
+  /* A confirmation split across two sheets is a confirmation somebody hands
+     over half of. */
+  article {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Underlines on things that cannot be clicked read as emphasis that is not
+     there. */
+  a {
+    text-decoration: none !important;
+    color: inherit !important;
+  }
+}

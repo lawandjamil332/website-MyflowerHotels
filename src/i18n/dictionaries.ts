@@ -315,6 +315,7 @@ export type Dictionary = {
     lStayLength: string
     freeUntil: string
     btnCalendar: string
+    btnPass: string
     footerContact: string
     footerWhy: string
     payAtHotel: string
@@ -717,6 +718,7 @@ const en: Dictionary = {
     lStayLength: '{count} nights',
     freeUntil: 'Free to cancel until {date}',
     btnCalendar: 'Add to my calendar',
+    btnPass: 'View or print your confirmation',
     footerContact: '{hotel}<br>{address}<br>{phone}',
     footerWhy: 'You are receiving this because this address was given when the booking was made.',
     payAtHotel: 'Payable at the hotel',
@@ -1137,6 +1139,7 @@ const ku: Dictionary = {
     lStayLength: '{count} شەو',
     freeUntil: 'بێبەرامبەر دەتوانرێت هەڵبوەشێنرێتەوە هەتا {date}',
     btnCalendar: 'زیادی بکە بۆ ڕۆژژمێرەکەم',
+    btnPass: 'بینین یان چاپکردنی پشتڕاستکردنەوەکەت',
     footerContact: '{hotel}<br>{address}<br>{phone}',
     footerWhy: 'ئەم نامەیەت پێگەیشت چونکە ئەم ناونیشانە لە کاتی حیجزکردندا دراوە.',
     payAtHotel: 'لە هۆتێلەکەدا دەدرێت',
@@ -1551,6 +1554,7 @@ const ar: Dictionary = {
     lStayLength: '{count} ليالٍ',
     freeUntil: 'الإلغاء مجاني حتى {date}',
     btnCalendar: 'أضِف إلى التقويم',
+    btnPass: 'عرض أو طباعة تأكيد الحجز',
     footerContact: '{hotel}<br>{address}<br>{phone}',
     footerWhy: 'وصلتك هذه الرسالة لأن هذا العنوان أُدخل عند إجراء الحجز.',
     payAtHotel: 'تُدفع في الفندق',

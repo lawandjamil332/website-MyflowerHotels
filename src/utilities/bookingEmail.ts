@@ -7,7 +7,8 @@ import { isLocale, type Locale } from '@/i18n/config'
 import { formatDateLong, formatNumber, formatPrice } from './format'
 import { getServerSideURL } from './getURL'
 import { mediaUrl } from './media'
-import { toMapsHref, toWhatsAppHref } from './contact'
+import { toMapsHref, toTelHref, toWhatsAppHref } from './contact'
+import { signReference } from './bookingToken'
 import {
   button,
   emailShell,
@@ -295,6 +296,9 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
     const { booking, branch, t, dir, base, locale, siteName, plain, hotelInbox } = g
 
     const manageUrl = `${base}/${locale}/booking`
+    // Opens this booking directly, with no reference to retype — whoever has
+    // the email already has everything the form would ask for.
+    const passUrl = `${base}/${locale}/booking/pass?ref=${booking.reference}&t=${signReference(booking.reference)}`
     const maps = toMapsHref(branch?.googleMapsUrl, branch?.latitude, branch?.longitude)
     const wa = toWhatsAppHref(branch?.whatsapp, `${booking.reference}`)
 
@@ -322,7 +326,15 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
           guestPanel(g) +
           stayPanel({ ...g, dir: 'ltr' }) +
           rule() +
-          button(`${base}/admin/collections/bookings`, 'Open in the admin panel'),
+          (toWhatsAppHref(booking.guestPhone, booking.reference)
+            ? button(
+                toWhatsAppHref(booking.guestPhone, booking.reference),
+                'WhatsApp the guest',
+                'green',
+              )
+            : '') +
+          (toTelHref(booking.guestPhone) ? button(toTelHref(booking.guestPhone), `Call ${esc(booking.guestName)}`, 'quiet') : '') +
+          button(`${base}/admin/collections/bookings`, 'Open in the admin panel', 'quiet'),
         footerLines: [
           fill(t.email.footerContact, {
             hotel: iso(branch?.name ?? siteName),
@@ -385,7 +397,8 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
             dir,
           ) +
           hotelPanel(g) +
-          button(manageUrl, esc(t.email.btnManage)) +
+          button(passUrl, esc(t.email.btnPass)) +
+          button(manageUrl, esc(t.email.btnManage), 'quiet') +
           button(g.calendarUrl, esc(t.email.btnCalendar), 'quiet') +
           (maps ? button(maps, esc(t.email.btnDirections), 'quiet') : '') +
           (wa ? button(wa, esc(t.email.btnWhatsApp), 'green') : ''),
