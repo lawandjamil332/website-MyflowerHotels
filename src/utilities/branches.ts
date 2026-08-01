@@ -66,15 +66,43 @@ export const getRoomsForBranch = async (branchId: number, locale: Locale): Promi
 export const getFeaturedRooms = async (locale: Locale, limit = 6): Promise<Room[]> => {
   try {
     const payload = await getPayload({ config: configPromise })
+    // Read more than are needed, because the first four rows in the table all
+    // belong to whichever hotel was entered first — the homepage said "rooms
+    // across every hotel in the group" above four rooms from My Flower 3.
     const { docs } = await payload.find({
       collection: 'rooms',
       locale,
       depth: 2,
-      limit,
+      limit: Math.max(limit * 6, 24),
       where: { isAvailable: { not_equals: false } },
       overrideAccess: false,
     })
-    return docs
+
+    // One from each hotel, then a second from each, and so on. Four hotels and
+    // four slots means one apiece; two hotels and four slots means two apiece,
+    // rather than four from the hotel that happens to sort first.
+    const byBranch = new Map<number | string, Room[]>()
+    for (const room of docs) {
+      const key = typeof room.branch === 'object' ? (room.branch?.id ?? '?') : (room.branch ?? '?')
+      const list = byBranch.get(key)
+      if (list) list.push(room)
+      else byBranch.set(key, [room])
+    }
+
+    const spread: Room[] = []
+    const queues = [...byBranch.values()]
+    for (let round = 0; spread.length < limit; round++) {
+      let added = false
+      for (const queue of queues) {
+        const room = queue[round]
+        if (!room) continue
+        spread.push(room)
+        added = true
+        if (spread.length === limit) break
+      }
+      if (!added) break
+    }
+    return spread
   } catch {
     return []
   }

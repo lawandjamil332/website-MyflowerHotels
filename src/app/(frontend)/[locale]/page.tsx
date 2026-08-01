@@ -189,7 +189,12 @@ export default async function HomePage({ params }: Args) {
               action={{ href: `/${locale}/about`, label: t.nav.about }}
             />
 
-            <ul className="mt-14 grid gap-x-8 gap-y-10 sm:grid-cols-2 lg:mt-16 lg:grid-cols-3 xl:grid-cols-5">
+            {/* Two across on a phone, not one. Five numbers stacked in a
+                single column ran to about five hundred pixels of scrolling to
+                deliver five short facts — and they are meant to be taken in at
+                a glance, which a column cannot do. They are short enough to
+                pair. */}
+            <ul className="mt-12 grid grid-cols-2 gap-x-6 gap-y-9 sm:gap-x-8 sm:gap-y-10 lg:mt-16 lg:grid-cols-3 xl:grid-cols-5">
               {[
                 // Dropped rather than shown as zero when the branch query comes
                 // back empty: "0 hotels in Erbil" is worse than saying nothing.

@@ -156,7 +156,12 @@ export function RailCard({
 }) {
   return (
     <article
-      className={cn('w-[78%] shrink-0 snap-start sm:w-[46%] lg:w-[31.5%] xl:w-[23.5%]', className)}
+      // Three across at the widest, not four. At 1440px a four-up rail gave
+      // each hotel about 230 pixels — the photographs are the reason anybody
+      // books, and at that size they were thumbnails. Three lets them breathe
+      // and leaves the fourth card half-shown at the edge, which is the thing
+      // that tells a reader the row scrolls at all.
+      className={cn('w-[80%] shrink-0 snap-start sm:w-[46%] lg:w-[31.5%]', className)}
     >
       {children}
     </article>

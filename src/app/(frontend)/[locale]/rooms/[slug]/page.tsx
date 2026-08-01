@@ -181,7 +181,11 @@ export default async function RoomPage({ params }: Args) {
                   delay={150}
                   className={room.description || summary.length > 0 ? 'mt-14' : undefined}
                 >
-                  <h3 className="font-display text-2xl text-ink">{t.room.amenities}</h3>
+                  {/* h2, not h3. The page heading is the room's name and there
+                      is no h2 between them, so this skipped a level — which a
+                      screen reader announces as a missing section, and which
+                      the hotel page next door already gets right. */}
+                  <h2 className="font-display text-2xl text-ink">{t.room.amenities}</h2>
                   <AmenityList amenities={room.amenities} t={t} className="mt-7" columns={2} />
                 </Reveal>
               )}
