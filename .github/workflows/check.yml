@@ -1,0 +1,57 @@
+# Runs on every push and pull request.
+#
+# The site deploys straight from main, so until now the first thing to
+# discover a broken build was the deploy — which means the website. This
+# catches it a few minutes earlier and costs nothing.
+#
+# Deliberately not the end-to-end suites: those need a database and a running
+# site, and a check that is slow or flaky is a check people learn to ignore.
+# What is here is the part that is fast and always true: does it compile, does
+# it pass its own lint rules, does it build.
+name: Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A second push supersedes the first; no point finishing a run for a commit
+# that is already history.
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Types
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+        env:
+          # The build must not need a reachable database — every page that
+          # reads one is force-dynamic precisely so a deploy cannot be held
+          # hostage by it. If this step ever starts failing for want of a
+          # database, that property has been lost and is worth knowing about.
+          PAYLOAD_SECRET: build-only-not-a-real-secret
+          NEXT_PUBLIC_SERVER_URL: https://myflowerhotels.com
+          # Playwright's browser is not needed to build, and downloading one
+          # would add minutes to every run.
+          PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: '1'
