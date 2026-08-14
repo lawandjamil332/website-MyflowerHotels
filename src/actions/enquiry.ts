@@ -2,6 +2,7 @@
 
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import { allow, callerKey } from '@/utilities/throttle'
 
 export type EnquiryState = {
   status: 'idle' | 'success' | 'error'
@@ -31,6 +32,14 @@ export async function submitEnquiry(
   // Honeypot. A real guest never sees this field; automated submitters fill
   // every input they find.
   if (text(formData.get('company'))) {
+    return { status: 'success' }
+  }
+
+  // The honeypot catches the lazy ones. This catches the rest: every enquiry
+  // is a database row and an email to the hotel, so a loop here fills the
+  // inbox the front desk actually reads. Answered as success, because telling
+  // a submitter it has been throttled is telling it to slow down and continue.
+  if (!allow(await callerKey('enquiry'), 6, 10 * 60_000)) {
     return { status: 'success' }
   }
 

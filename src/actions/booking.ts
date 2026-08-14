@@ -11,6 +11,7 @@ import {
 } from '@/utilities/booking'
 import { currentGuest } from '@/actions/account'
 import { sendBookingEmails } from '@/utilities/bookingEmail'
+import { allow, callerKey } from '@/utilities/throttle'
 
 export type BookingResult =
   | { status: 'success'; reference: string }
@@ -36,6 +37,23 @@ export async function submitBooking(
   _previous: BookingResult | null,
   formData: FormData,
 ): Promise<BookingResult> {
+  // A booking here costs nothing to make: no card, no account, no deposit.
+  // That is the point for a guest and the whole problem for everybody else —
+  // a script posting this form in a loop can take every room in the group out
+  // of stock for any date it likes, and the front desk would find out on the
+  // day, from a book full of names that never arrive.
+  //
+  // Twenty, not eight. Mobile networks in Iraq put a great many subscribers
+  // behind one address, so a limit tuned to "one person booking" is really a
+  // limit on everyone sharing that carrier at the time — and the failure is
+  // silent and looks like the site being broken. Twenty still turns emptying
+  // a three-hundred-room group into hours of work against a site that has
+  // already stopped answering, which is the point; it just does not do it by
+  // locking out a street in Erbil.
+  if (!allow(await callerKey('book'), 20, 10 * 60_000)) {
+    return { status: 'error', message: 'generic' }
+  }
+
   const guestName = text(formData.get('guestName'))
   const guestPhone = text(formData.get('guestPhone'))
 

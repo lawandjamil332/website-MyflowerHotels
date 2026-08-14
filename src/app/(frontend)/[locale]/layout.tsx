@@ -109,6 +109,11 @@ export default async function LocaleLayout({ children, params }: Args) {
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
         <link href="/favicon-32.png" rel="icon" type="image/png" sizes="32x32" />
         <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
+        {/* The icons existed in /public and nothing pointed at the manifest,
+            so "Add to Home Screen" saved a browser screenshot rather than the
+            hotel. */}
+        <link href="/manifest.webmanifest" rel="manifest" />
+        <meta name="theme-color" content="#0f2f4a" />
         <meta name="theme-color" content="#0f3a5e" />
         <Hreflang locale={locale} />
       </head>

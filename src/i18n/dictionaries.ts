@@ -324,6 +324,14 @@ export type Dictionary = {
     checkInAny: string
     cancelSelf: string
   }
+  errors: {
+    eyebrow: string
+    title: string
+    body: string
+    retry: string
+    home: string
+    reference: string
+  }
   seo: {
     hotelIn: string
     hotelsIn: string
@@ -729,6 +737,14 @@ const en: Dictionary = {
     payAtHotel: 'Payable at the hotel',
     checkInAny: 'Reception open 24 hours',
     cancelSelf: '— and you can do it yourself, from the button below.',
+  },
+  errors: {
+    eyebrow: 'Something went wrong',
+    title: 'This page did not load',
+    body: 'The fault is ours, not yours. Try again — and if it keeps happening, ring the hotel and we will take your booking over the phone.',
+    retry: 'Try again',
+    home: 'Back to the homepage',
+    reference: 'Reference',
   },
   seo: {
     hotelIn: 'Hotel in',
@@ -1155,6 +1171,14 @@ const ku: Dictionary = {
     checkInAny: 'پێشوازی ٢٤ کاتژمێر کراوەیە',
     cancelSelf: '— و خۆت دەتوانیت لە دوگمەی خوارەوە بیکەیت.',
   },
+  errors: {
+    eyebrow: 'شتێک هەڵە بوو',
+    title: 'ئەم لاپەڕەیە بار نەبوو',
+    body: 'هەڵەکە لای ئێمەیە، نەک لای تۆ. دووبارە هەوڵ بدەرەوە — و ئەگەر بەردەوام بوو، پەیوەندی بە هۆتێلەکەوە بکە و بە تەلەفۆن حیجزەکەت وەردەگرین.',
+    retry: 'دووبارە هەوڵ بدەرەوە',
+    home: 'گەڕانەوە بۆ لاپەڕەی سەرەکی',
+    reference: 'ژمارەی هەڵە',
+  },
   seo: {
     hotelIn: 'هۆتێل لە',
     hotelsIn: 'هۆتێلەکان لە',
@@ -1573,6 +1597,14 @@ const ar: Dictionary = {
     payAtHotel: 'تُدفع في الفندق',
     checkInAny: 'الاستقبال مفتوح ٢٤ ساعة',
     cancelSelf: '— ويمكنك ذلك بنفسك من الزر أدناه.',
+  },
+  errors: {
+    eyebrow: 'حدث خطأ ما',
+    title: 'لم تُحمَّل هذه الصفحة',
+    body: 'الخطأ منّا لا منك. حاول مرة أخرى — وإن تكرر، اتصل بالفندق وسنأخذ حجزك عبر الهاتف.',
+    retry: 'حاول مرة أخرى',
+    home: 'العودة إلى الصفحة الرئيسية',
+    reference: 'رقم الخطأ',
   },
   seo: {
     hotelIn: 'فندق في',
