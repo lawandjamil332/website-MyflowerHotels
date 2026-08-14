@@ -88,6 +88,12 @@ export function HotelSchema({
     clean({
       '@context': 'https://schema.org',
       '@type': 'Hotel',
+      // A stable identity, and a declared parent. Without these, four hotel
+      // pages are four unrelated hotels that happen to share a word in their
+      // names — which is exactly how the rest of the internet reads them
+      // today, and why nothing describes this as a group of four.
+      '@id': `${base}/${locale}/branches/${branch.slug}#hotel`,
+      parentOrganization: { '@id': `${base}/#organization` },
       name: branch.name,
       description: branch.tagline ?? undefined,
       url: `${base}/${locale}/branches/${branch.slug}`,
@@ -147,7 +153,12 @@ export function HotelSchema({
             value: true,
           }))
         : undefined,
-      sameAs: [branch.facebook, branch.instagram].filter(Boolean) as string[],
+      // The Booking.com listing belongs here rather than nowhere: it is the
+      // same building, carrying reviews and an address this page cannot claim,
+      // and sameAs is how a search engine is told two records are one place.
+      sameAs: [branch.facebook, branch.instagram, branch.bookingComUrl].filter(
+        Boolean,
+      ) as string[],
     }),
   )
 }
@@ -243,7 +254,15 @@ export function GroupSchema({
     clean({
       '@context': 'https://schema.org',
       '@type': 'HotelGroup',
+      // The identity every hotel page points its parentOrganization at. One
+      // company stated once, in a place four pages can all refer to, is the
+      // difference between a group and four hotels with a word in common.
+      '@id': `${base}/#organization`,
       name: siteName,
+      // Both spellings, because the Booking.com listing and the sign outside
+      // do not agree with each other and a search engine has no way to know
+      // they are the same company unless it is told.
+      alternateName: ['MyFlower Hotels', 'My Flower Hotel', 'MyFlower'],
       url: `${base}/${locale}`,
       // Without these the group had no picture and no logo of its own, so the
       // one entry meant to represent the whole business was the thinnest
@@ -263,9 +282,13 @@ export function GroupSchema({
       sameAs: social.filter(Boolean) as string[],
       // Each hotel with its own address, so this one block establishes four
       // places rather than four names.
+      // How many hotels this actually is, stated as a number rather than left
+      // to be counted off a list.
+      numberOfLocations: branches.length,
       subOrganization: branches.map((b) =>
         clean({
           '@type': 'Hotel',
+          '@id': `${base}/${locale}/branches/${b.slug}#hotel`,
           name: b.name,
           url: `${base}/${locale}/branches/${b.slug}`,
           telephone: b.phone ?? undefined,
