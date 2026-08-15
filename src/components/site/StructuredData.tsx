@@ -236,6 +236,7 @@ export function GroupSchema({
   logoUrl,
   imageUrl,
   social = [],
+  description,
 }: {
   siteName: string
   locale: Locale
@@ -247,6 +248,8 @@ export function GroupSchema({
   imageUrl?: string
   /** Instagram, Facebook and the rest — how Google ties the site to the profiles. */
   social?: (string | null | undefined)[]
+  /** What this company is, in one sentence, in the reader's language. */
+  description?: string
 }) {
   const base = getServerSideURL()
 
@@ -263,6 +266,21 @@ export function GroupSchema({
       // do not agree with each other and a search engine has no way to know
       // they are the same company unless it is told.
       alternateName: ['MyFlower Hotels', 'My Flower Hotel', 'MyFlower'],
+      // The one sentence worth quoting about this company, in the field made
+      // for it. The group had no description at all, so anything summarising
+      // it had a name, a phone number and nothing to say.
+      description,
+      // Where the company itself started, which is not the same statement as
+      // where its hotels happen to be.
+      foundingLocation: {
+        '@type': 'Place',
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Erbil',
+          addressRegion: 'Kurdistan Region',
+          addressCountry: 'IQ',
+        },
+      },
       url: `${base}/${locale}`,
       // Without these the group had no picture and no logo of its own, so the
       // one entry meant to represent the whole business was the thinnest

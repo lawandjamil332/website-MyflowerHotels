@@ -94,7 +94,7 @@ export type Dictionary = {
     summaryPrice: string
     summaryPay: string
   }
-  about: { eyebrow: string; lead: string; body1: string; body2: string }
+  about: { eyebrow: string; lead: string; body1: string; body2: string; identity: string }
   search: {
     title: string
     hotel: string
@@ -480,6 +480,8 @@ const en: Dictionary = {
       'We opened our first hotel in Erbil to look after the travellers who come here for work, for family, and for the city itself. Others followed, each in a different part of town, each run the same way.',
     body2:
       'We are not a chain. The same people who own these hotels are the ones you will meet at the desk. If something is not right during your stay, tell us and it is put right that day.',
+    identity:
+      'My Flower Hotels is an independent, Iraqi-owned group, run by one family. We opened our first hotel in Erbil in 2012 and now run four, all in the same city — the same owners, the same standard, four addresses.',
   },
   search: {
     title: 'Plan your stay',
@@ -914,6 +916,8 @@ const ku: Dictionary = {
       'یەکەم هۆتێلمان لە هەولێر کردەوە بۆ چاودێریکردنی ئەو گەشتیارانەی بۆ کار، بۆ خێزان و بۆ خودی شارەکە دێن. هۆتێلی تر دوای ئەوان هاتن، هەریەکە لە بەشێکی جیاوازی شار، هەموویان بە یەک شێواز بەڕێوە دەبرێن.',
     body2:
       'ئێمە زنجیرەیەک نین. هەمان ئەو کەسانەی خاوەنی ئەم هۆتێلانەن، ئەوانەن کە لە پێشوازی دەیانبینیت. ئەگەر شتێک لە کاتی مانەوەکەتدا ڕێک نەبوو، پێمان بڵێ و هەر ئەو ڕۆژە چاک دەکرێتەوە.',
+    identity:
+      'هۆتێلەکانی ماي فلاوەر گرووپێکی سەربەخۆی عێراقییە، لەلایەن یەک خێزانەوە بەڕێوە دەبرێت. یەکەم هۆتێلمان لە ساڵی 2012 لە هەولێر کردەوە و ئێستا چوار هۆتێلمان هەیە، هەموویان لە هەمان شاردا — هەمان خاوەن، هەمان ئاست، چوار ناونیشان.',
   },
   search: {
     title: 'مانەوەکەت پلان بکە',
@@ -1345,6 +1349,8 @@ const ar: Dictionary = {
       'افتتحنا فندقنا الأول في أربيل لاستقبال المسافرين القادمين للعمل أو لزيارة الأهل أو لرؤية المدينة نفسها. ثم تبعته فنادق أخرى، كل واحد في حيّ مختلف، وكلها تُدار بالطريقة نفسها.',
     body2:
       'نحن لسنا سلسلة فنادق. أصحاب هذه الفنادق هم أنفسهم من ستقابلهم عند الاستقبال. وإذا لم يكن شيء على ما يرام أثناء إقامتك، أخبرنا ويُعالَج في اليوم نفسه.',
+    identity:
+      'فنادق ماي فلاور مجموعة عراقية مستقلة تديرها عائلة واحدة. افتتحنا أول فنادقنا في أربيل عام 2012 ونُدير اليوم أربعة فنادق، جميعها في المدينة نفسها — المُلّاك أنفسهم، والمستوى نفسه، وأربعة عناوين.',
   },
   search: {
     title: 'خطط لإقامتك',

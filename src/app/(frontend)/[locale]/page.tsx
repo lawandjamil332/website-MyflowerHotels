@@ -81,6 +81,7 @@ export default async function HomePage({ params }: Args) {
         phone={settings.phone}
         email={settings.email}
         establishedYear={settings.establishedYear}
+        description={t.about.identity}
         logoUrl={mediaUrl(settings.logo)}
         imageUrl={mediaUrl(settings.socialShareImage, 'og') || heroUrl}
         social={[
