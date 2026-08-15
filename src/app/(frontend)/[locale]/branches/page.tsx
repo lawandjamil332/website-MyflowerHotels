@@ -255,9 +255,9 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   return {
     title: `${t.nav.branches} — ${fillCount(t.branchesPage.title, branches.length, locale)}`,
     description: fillCount(t.branchesPage.metaDescription, branches.length, locale),
-    alternates: {
-      canonical: `/${locale}/branches`,
-      languages: { en: '/en/branches', ku: '/ku/branches', ar: '/ar/branches' },
-    },
+    // No `alternates` here. The <Hreflang> component in the locale layout
+    // already emits the canonical and the three translations for every page,
+    // and declaring them again produced two canonical tags pointing at the
+    // same URL — which is not a tie Google is obliged to break in your favour.
   }
 }

@@ -46,6 +46,12 @@ export async function GET(): Promise<Response> {
     .filter((p): p is number => typeof p === 'number' && p > 0)
   const from = prices.length > 0 ? formatPrice(Math.min(...prices), rooms[0]?.currency, locale) : ''
 
+  // How many rooms there actually are, which is the measure the hotel trade
+  // uses for the size of a group and the one figure nothing on this site
+  // stated. It is a small number and it is the true one; a company that
+  // publishes its own capacity is easier to believe about everything else.
+  const roomCount = rooms.reduce((sum, r) => sum + (r.quantity ?? 0), 0)
+
   const hotel = (b: (typeof branches)[number]) => {
     const facts = [
       b.neighbourhood || b.address?.replace(/\n/g, ', '),
@@ -68,7 +74,7 @@ export async function GET(): Promise<Response> {
 - Founded: ${settings.establishedYear ?? 'not stated'}, in Erbil
 - Hotels: ${branches.length} (${open.length} open${branches.length > open.length ? `, ${branches.length - open.length} opening soon` : ''})
 - Location: ${[...new Set(branches.map((b) => b.city).filter(Boolean))].join(', ') || 'Erbil'}, Kurdistan Region, Iraq
-- Room types published: ${rooms.length}${from ? `\n- Rooms from: ${from} per night` : ''}
+- Room types published: ${rooms.length}${roomCount > 0 ? `\n- Rooms in total: ${roomCount} across the open hotels` : ''}${from ? `\n- Rooms from: ${from} per night` : ''}
 - Also written as: MyFlower, MyFlower Hotels, My Flower Hotel
 
 ## Booking
