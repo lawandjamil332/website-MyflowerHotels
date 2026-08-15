@@ -9,6 +9,7 @@ import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { countWord, fillCount } from '@/i18n/count'
 import { getBranches, getFeaturedRooms, getOffers } from '@/utilities/branches'
+import { groupIdentity } from '@/utilities/group'
 import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { shippedPhoto } from '@/utilities/shippedPhoto'
@@ -81,7 +82,7 @@ export default async function HomePage({ params }: Args) {
         phone={settings.phone}
         email={settings.email}
         establishedYear={settings.establishedYear}
-        description={t.about.identity}
+        description={groupIdentity(branches, t, locale, settings.establishedYear)}
         logoUrl={mediaUrl(settings.logo)}
         imageUrl={mediaUrl(settings.socialShareImage, 'og') || heroUrl}
         social={[

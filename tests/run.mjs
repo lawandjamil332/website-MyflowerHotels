@@ -19,6 +19,13 @@ import { fileURLToPath } from 'node:url'
  * BASE_URL overrides the address; DATABASE_URI and PAYLOAD_SECRET are read
  * from the environment, because the suites seed and clean up their own rows
  * rather than depending on whatever is in the database already.
+ *
+ * One thing to know: the booking form is rate limited per address, and a full
+ * pass makes about a dozen bookings from one. Two passes inside ten minutes
+ * trips that limit, and the failures look like missing rooms rather than the
+ * guard doing its job. Start the site with BOOKING_ATTEMPTS_PER_WINDOW=500
+ * when you intend to run this repeatedly, or simply restart it between runs —
+ * the counters live in memory.
  */
 const here = dirname(fileURLToPath(import.meta.url))
 const only = process.argv[2]

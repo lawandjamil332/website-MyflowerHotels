@@ -50,7 +50,15 @@ export async function submitBooking(
   // a three-hundred-room group into hours of work against a site that has
   // already stopped answering, which is the point; it just does not do it by
   // locking out a street in Erbil.
-  if (!allow(await callerKey('book'), 20, 10 * 60_000)) {
+  //
+  // Overridable, and unset in production. Running the test suite twice inside
+  // ten minutes makes more bookings from one address than any guest ever
+  // would, and the second run then fails on the limit rather than on anything
+  // real — which reads as a broken site and wastes an afternoon. An attacker
+  // cannot reach the server's environment; whoever can set this is choosing
+  // to.
+  const perWindow = Number(process.env.BOOKING_ATTEMPTS_PER_WINDOW) || 20
+  if (!allow(await callerKey('book'), perWindow, 10 * 60_000)) {
     return { status: 'error', message: 'generic' }
   }
 

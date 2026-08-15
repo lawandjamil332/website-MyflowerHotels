@@ -1,5 +1,14 @@
 import { chromium } from 'playwright-core'
-const b = await chromium.launch({ executablePath: '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--no-sandbox'] })
+import { execFileSync } from 'node:child_process'
+
+// Every run of this file books a room for the same nights and leaves it
+// booked, so the third or fourth run finds those nights genuinely sold out and
+// fails reporting no rooms — the site being right, not wrong. The run clears
+// its own leftovers instead of trusting whatever state it inherits.
+execFileSync('psql', [process.env.DATABASE_URI, '-qc',
+  "delete from bookings where guest_name = 'Test Guest'"], { stdio: 'ignore' })
+
+const b = await chromium.launch({ executablePath: process.env.CHROME_PATH || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome', args: ['--no-sandbox'] })
 let fails = 0
 const ok = (l,c,d='') => { console.log(`${c?'PASS':'FAIL'}  ${l}${d?'  — '+d:''}`); if(!c) fails++ }
 const base = 'http://localhost:3000'

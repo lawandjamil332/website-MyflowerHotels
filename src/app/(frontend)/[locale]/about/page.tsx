@@ -9,6 +9,7 @@ import { getDictionary } from '@/i18n/dictionaries'
 import { fillCount } from '@/i18n/count'
 import { getSettings } from '@/utilities/getSettings'
 import { getBranches } from '@/utilities/branches'
+import { groupIdentity } from '@/utilities/group'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { cn } from '@/utilities/ui'
 import { BranchCard } from '@/components/site/BranchCard'
@@ -37,6 +38,10 @@ export default async function AboutPage({ params }: Args) {
   // before anyone has uploaded a share image in settings.
   const heroSource = settings.socialShareImage ?? branches[0]?.heroImage
   const interlude = branches[1]?.heroImage ?? branches[0]?.heroImage
+
+  // Counted from the hotels rather than written down, so "all in Erbil"
+  // becomes "across Iraq" on its own the day one opens elsewhere.
+  const identity = groupIdentity(branches, t, locale, settings.establishedYear)
 
   const payload = await getPayload({ config: configPromise })
   const rate = await pointsRate(payload)
@@ -78,7 +83,7 @@ export default async function AboutPage({ params }: Args) {
               genuinely unusual thing here, and it was nowhere on the site. */}
           <Reveal delay={200} className="mx-auto mt-10 max-w-2xl">
             <p className="border-t border-line pt-8 text-center text-[1.02rem] leading-[1.8] text-ink">
-              {t.about.identity}
+              {identity}
             </p>
           </Reveal>
         </div>

@@ -94,7 +94,16 @@ export type Dictionary = {
     summaryPrice: string
     summaryPay: string
   }
-  about: { eyebrow: string; lead: string; body1: string; body2: string; identity: string }
+  about: {
+    eyebrow: string
+    lead: string
+    body1: string
+    body2: string
+    identityLead: string
+    identityOpened: string
+    identityOneCity: string
+    identityManyCities: string
+  }
   search: {
     title: string
     hotel: string
@@ -339,6 +348,8 @@ export type Dictionary = {
     locality: string
     /** The wider region, likewise. */
     region: string
+    /** The country, named in this language. */
+    country: string
     bookDirect: string
   }
   reviews: {
@@ -480,8 +491,11 @@ const en: Dictionary = {
       'We opened our first hotel in Erbil to look after the travellers who come here for work, for family, and for the city itself. Others followed, each in a different part of town, each run the same way.',
     body2:
       'We are not a chain. The same people who own these hotels are the ones you will meet at the desk. If something is not right during your stay, tell us and it is put right that day.',
-    identity:
-      'My Flower Hotels is an independent, Iraqi-owned group, run by one family. We opened our first hotel in Erbil in 2012 and now run four, all in the same city — the same owners, the same standard, four addresses.',
+    identityLead: 'My Flower Hotels is an independent, Iraqi-owned group, run by one family.',
+    identityOpened: 'We opened our first hotel in {city} in {year}.',
+    identityOneCity:
+      'Today we run {count}, all of them in {city}, {country} — the same owners, the same standard, {count} addresses.',
+    identityManyCities: 'Today we run {count} across {country}, in {cities}.',
   },
   search: {
     title: 'Plan your stay',
@@ -753,6 +767,7 @@ const en: Dictionary = {
     hotelsIn: 'Hotels in',
     locality: 'Erbil',
     region: 'Kurdistan Region, Iraq',
+    country: 'Iraq',
     bookDirect: 'Book direct and pay at the hotel',
   },
   reviews: {
@@ -916,8 +931,12 @@ const ku: Dictionary = {
       'یەکەم هۆتێلمان لە هەولێر کردەوە بۆ چاودێریکردنی ئەو گەشتیارانەی بۆ کار، بۆ خێزان و بۆ خودی شارەکە دێن. هۆتێلی تر دوای ئەوان هاتن، هەریەکە لە بەشێکی جیاوازی شار، هەموویان بە یەک شێواز بەڕێوە دەبرێن.',
     body2:
       'ئێمە زنجیرەیەک نین. هەمان ئەو کەسانەی خاوەنی ئەم هۆتێلانەن، ئەوانەن کە لە پێشوازی دەیانبینیت. ئەگەر شتێک لە کاتی مانەوەکەتدا ڕێک نەبوو، پێمان بڵێ و هەر ئەو ڕۆژە چاک دەکرێتەوە.',
-    identity:
-      'هۆتێلەکانی ماي فلاوەر گرووپێکی سەربەخۆی عێراقییە، لەلایەن یەک خێزانەوە بەڕێوە دەبرێت. یەکەم هۆتێلمان لە ساڵی 2012 لە هەولێر کردەوە و ئێستا چوار هۆتێلمان هەیە، هەموویان لە هەمان شاردا — هەمان خاوەن، هەمان ئاست، چوار ناونیشان.',
+    identityLead:
+      'هۆتێلەکانی ماي فلاوەر گرووپێکی سەربەخۆی عێراقییە، لەلایەن یەک خێزانەوە بەڕێوە دەبرێت.',
+    identityOpened: 'یەکەم هۆتێلمان لە ساڵی {year} لە {city} کردەوە.',
+    identityOneCity:
+      'ئەمڕۆ {count} هۆتێلمان هەیە، هەموویان لە {city}، {country} — هەمان خاوەن، هەمان ئاست، {count} ناونیشان.',
+    identityManyCities: 'ئەمڕۆ {count} هۆتێلمان هەیە بەسەر {country} دا، لە {cities}.',
   },
   search: {
     title: 'مانەوەکەت پلان بکە',
@@ -1188,6 +1207,7 @@ const ku: Dictionary = {
     hotelsIn: 'هۆتێلەکان لە',
     locality: 'هەولێر',
     region: 'هەرێمی کوردستان، عێراق',
+    country: 'عێراق',
     bookDirect: 'ڕاستەوخۆ حیجز بکە و لە هۆتێلەکە پارە بدە',
   },
   reviews: {
@@ -1349,8 +1369,11 @@ const ar: Dictionary = {
       'افتتحنا فندقنا الأول في أربيل لاستقبال المسافرين القادمين للعمل أو لزيارة الأهل أو لرؤية المدينة نفسها. ثم تبعته فنادق أخرى، كل واحد في حيّ مختلف، وكلها تُدار بالطريقة نفسها.',
     body2:
       'نحن لسنا سلسلة فنادق. أصحاب هذه الفنادق هم أنفسهم من ستقابلهم عند الاستقبال. وإذا لم يكن شيء على ما يرام أثناء إقامتك، أخبرنا ويُعالَج في اليوم نفسه.',
-    identity:
-      'فنادق ماي فلاور مجموعة عراقية مستقلة تديرها عائلة واحدة. افتتحنا أول فنادقنا في أربيل عام 2012 ونُدير اليوم أربعة فنادق، جميعها في المدينة نفسها — المُلّاك أنفسهم، والمستوى نفسه، وأربعة عناوين.',
+    identityLead: 'فنادق ماي فلاور مجموعة عراقية مستقلة تديرها عائلة واحدة.',
+    identityOpened: 'افتتحنا أول فنادقنا في {city} عام {year}.',
+    identityOneCity:
+      'ونُدير اليوم {count} فنادق، جميعها في {city}، {country} — المُلّاك أنفسهم، والمستوى نفسه، و{count} عناوين.',
+    identityManyCities: 'ونُدير اليوم {count} فنادق في أنحاء {country}، في {cities}.',
   },
   search: {
     title: 'خطط لإقامتك',
@@ -1617,6 +1640,7 @@ const ar: Dictionary = {
     hotelsIn: 'فنادق في',
     locality: 'أربيل',
     region: 'إقليم كردستان، العراق',
+    country: 'العراق',
     bookDirect: 'احجز مباشرة وادفع في الفندق',
   },
   reviews: {
