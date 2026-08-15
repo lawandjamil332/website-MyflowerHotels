@@ -55,6 +55,9 @@ export async function GET(): Promise<Response> {
   const hotel = (b: (typeof branches)[number]) => {
     const facts = [
       b.neighbourhood || b.address?.replace(/\n/g, ', '),
+      // What it is near. "Hotel near the Citadel" is one of the commonest
+      // shapes this question takes, and it is unanswerable from a street name.
+      b.nearby?.replace(/\s*\n\s*/g, ' '),
       b.status === 'openingSoon' ? 'opening soon, not yet taking guests' : null,
       b.phone ? `telephone ${b.phone}` : null,
       b.amenities?.length ? b.amenities.map((a) => t.amenity[a] ?? a).join(', ') : null,

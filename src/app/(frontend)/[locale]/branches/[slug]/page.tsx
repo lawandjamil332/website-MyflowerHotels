@@ -170,6 +170,17 @@ export default async function BranchPage({ params }: Args) {
                   </p>
                 )}
 
+                {/* What this hotel is near, in the owner's own words. Guests
+                    look for a room by what it is close to far more often than
+                    by the name of the hotel, and until this field existed a
+                    page about a hotel ten minutes from the Citadel contained
+                    neither the word Citadel nor the ten minutes. */}
+                {branch.nearby && (
+                  <p className="mt-4 text-sm leading-relaxed whitespace-pre-line text-muted-ink">
+                    {branch.nearby}
+                  </p>
+                )}
+
                 {!openingSoon &&
                   (branch.checkInAnyTime || branch.checkInTime || branch.checkOutTime) && (
                     <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-line pt-6">

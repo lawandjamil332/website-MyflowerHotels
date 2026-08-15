@@ -123,6 +123,15 @@ export const Branches: CollectionConfig = {
           },
         },
         {
+          name: 'nearby',
+          type: 'textarea',
+          localized: true,
+          admin: {
+            description:
+              'What this hotel is near, in a sentence or two — "Ten minutes from the Citadel and the bazaar, five from Family Mall, twenty from the airport." Guests search for a hotel near a place far more often than by name, and this is the only thing on the page that can answer them. Write it the way you would say it on the phone.',
+          },
+        },
+        {
           // Two plain numbers rather than Payload's `point` type: `point`
           // compiles to a PostGIS `geometry` column, and Railway's Postgres
           // does not ship PostGIS. A map pin only needs these two values.

@@ -314,6 +314,10 @@ export interface Branch {
    */
   neighbourhood?: string | null;
   /**
+   * What this hotel is near, in a sentence or two — "Ten minutes from the Citadel and the bazaar, five from Family Mall, twenty from the airport." Guests search for a hotel near a place far more often than by name, and this is the only thing on the page that can answer them. Write it the way you would say it on the phone.
+   */
+  nearby?: string | null;
+  /**
    * Filled in automatically from the Google Maps link above. Only type these in by hand if the map does not appear.
    */
   latitude?: number | null;
@@ -1604,6 +1608,7 @@ export interface BranchesSelect<T extends boolean = true> {
   address?: T;
   city?: T;
   neighbourhood?: T;
+  nearby?: T;
   latitude?: T;
   longitude?: T;
   googleMapsUrl?: T;

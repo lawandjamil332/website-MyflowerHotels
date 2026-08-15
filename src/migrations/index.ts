@@ -25,6 +25,7 @@ import * as migration_20260728_080100_reviews from './20260728_080100_reviews'
 import * as migration_20260730_130000_booking_locale from './20260730_130000_booking_locale'
 import * as migration_20260730_150000_breakfast_amenity from './20260730_150000_breakfast_amenity'
 import * as migration_20260815_120000_review_requested from './20260815_120000_review_requested'
+import * as migration_20260815_140000_branch_nearby from './20260815_140000_branch_nearby'
 
 export const migrations = [
   {
@@ -163,5 +164,10 @@ export const migrations = [
     up: migration_20260815_120000_review_requested.up,
     down: migration_20260815_120000_review_requested.down,
     name: '20260815_120000_review_requested',
+  },
+  {
+    up: migration_20260815_140000_branch_nearby.up,
+    down: migration_20260815_140000_branch_nearby.down,
+    name: '20260815_140000_branch_nearby',
   },
 ]
