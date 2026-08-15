@@ -230,6 +230,10 @@ export interface Booking {
    * The language this guest booked in. Their confirmation is written in it — useful to know before you ring them.
    */
   locale?: ('en' | 'ku' | 'ar') | null;
+  /**
+   * When this guest was asked to review their stay. Set once, automatically, when you mark the booking as Stayed — nobody is asked twice.
+   */
+  reviewRequestedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1529,6 +1533,7 @@ export interface BookingsSelect<T extends boolean = true> {
   status?: T;
   notes?: T;
   locale?: T;
+  reviewRequestedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }

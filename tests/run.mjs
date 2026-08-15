@@ -34,6 +34,7 @@ import { fileURLToPath } from 'node:url'
  */
 const here = dirname(fileURLToPath(import.meta.url))
 const only = process.argv[2]
+const tsx = join(here, '..', 'node_modules', '.bin', 'tsx')
 
 const suites = readdirSync(join(here, 'e2e'))
   .filter((f) => f.endsWith('.mjs'))
@@ -58,7 +59,17 @@ for (const file of suites) {
   const name = file.replace(/\.mjs$/, '')
   process.stdout.write(`\n─── ${name} ${'─'.repeat(Math.max(0, 60 - name.length))}\n`)
   try {
-    execFileSync('node', [join(here, 'e2e', file)], { stdio: 'inherit' })
+    // Run through tsx rather than node: most suites drive the site over HTTP
+    // and need neither, but the ones that test a Payload hook have to import
+    // the TypeScript config to get a Payload at all, and plain node cannot.
+    //
+    // NODE_ENV=production for the same reason the server sets it — Payload's
+    // Postgres adapter tries to push the schema in development, which against
+    // a database that migrations already own fails on the first query.
+    execFileSync(tsx, [join(here, 'e2e', file)], {
+      stdio: 'inherit',
+      env: { ...process.env, NODE_ENV: 'production' },
+    })
     results.push({ name, ok: true })
   } catch {
     results.push({ name, ok: false })

@@ -8,19 +8,33 @@ import { ManageBooking } from '@/components/site/ManageBooking'
 import { PageHero } from '@/components/site/PageHero'
 import { sectionY, shell } from '@/components/site/ui'
 
-type Args = { params: Promise<{ locale: string }> }
+type Args = {
+  params: Promise<{ locale: string }>
+  searchParams: Promise<{ reference?: string | string[] }>
+}
 
-export default async function ManageBookingPage({ params }: Args) {
+export default async function ManageBookingPage({ params, searchParams }: Args) {
   const { locale: raw } = await params
   if (!isLocale(raw)) notFound()
   const locale = raw as Locale
   const t = getDictionary(locale)
 
+  // Carried by the link in the review request, so a guest who has been asked
+  // how their stay went does not have to go and find their reference first.
+  // Trimmed to the shape a reference actually has rather than passed through:
+  // it is rendered into an input, and the length cap is what stops the page
+  // being used to put a paragraph of somebody else's choosing on the screen.
+  const { reference: fromLink } = await searchParams
+  const reference = (Array.isArray(fromLink) ? fromLink[0] : fromLink || '')
+    .replace(/[^A-Za-z0-9-]/g, '')
+    .slice(0, 24)
+    .toUpperCase()
+
   return (
     <>
       <PageHero title={t.booking.manageTitle} lead={t.booking.manageLead} />
       <section className={cn(shell, sectionY)}>
-        <ManageBooking t={t} />
+        <ManageBooking t={t} reference={reference} />
       </section>
     </>
   )

@@ -25,7 +25,19 @@ const label = 'block text-[0.72rem] font-semibold text-ink'
  * phone number is the second thing, and the two are not discoverable from each
  * other.
  */
-export function ManageBooking({ t }: { t: Dictionary }) {
+export function ManageBooking({
+  t,
+  reference = '',
+}: {
+  t: Dictionary
+  /**
+   * Filled in from ?reference= when the guest arrived from the email asking
+   * them to review their stay. It saves them digging the confirmation out of
+   * their inbox, and it gives nothing away: the telephone number is still
+   * required below, which is the half of the pair that is actually secret.
+   */
+  reference?: string
+}) {
   // Held here rather than read back out of the DOM at render time: the cancel
   // step has to prove the number again, and reaching into the document during
   // render gives an empty string on the server and a stale one after.
@@ -55,7 +67,9 @@ export function ManageBooking({ t }: { t: Dictionary }) {
               required
               dir="ltr"
               placeholder="MF-XXXXXX"
+              defaultValue={reference}
               className={cn(field, 'uppercase')}
+              autoFocus={!reference}
             />
           </div>
           <div>

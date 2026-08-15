@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { awardPointsForBooking } from '../utilities/points'
+import { sendReviewRequest } from '../utilities/reviewEmail'
 
 /**
  * A reservation. One row per stay.
@@ -46,6 +47,18 @@ export const Bookings: CollectionConfig = {
         // to ask it the same question every time staff touch a row.
         if (doc.status === 'completed' && previousDoc?.status !== 'completed') {
           void awardPointsForBooking(req.payload, doc.id).catch(() => {})
+
+          // And ask them how it went. This is the only moment the site knows a
+          // guest has something to review, and until now it was the moment
+          // nothing happened — which is the entire reason this hotel group has
+          // no reviews, no star rating in Google, and nothing an assistant can
+          // say about whether the rooms are any good.
+          //
+          // The context flag stops the loop: sending stamps reviewRequestedAt
+          // on this same booking, which fires this hook again.
+          if (!req.context?.skipReviewRequest) {
+            void sendReviewRequest(req.payload, doc.id).catch(() => {})
+          }
         }
         return doc
       },
@@ -183,6 +196,15 @@ export const Bookings: CollectionConfig = {
         readOnly: true,
         description:
           'The language this guest booked in. Their confirmation is written in it — useful to know before you ring them.',
+      },
+    },
+    {
+      name: 'reviewRequestedAt',
+      type: 'date',
+      admin: {
+        readOnly: true,
+        description:
+          'When this guest was asked to review their stay. Set once, automatically, when you mark the booking as Stayed — nobody is asked twice.',
       },
     },
   ],
