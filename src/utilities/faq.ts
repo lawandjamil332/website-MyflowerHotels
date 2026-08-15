@@ -169,6 +169,19 @@ export const buildGroupFaq = (
     })
   }
 
+  // Two questions asked of an assistant rather than of a hotel: who runs this,
+  // and where in the city to stay. Both are answered from the branches, and
+  // neither claims to be the best or the biggest anything — the checkable fact
+  // is the ownership, and the useful answer to "where" is the list itself.
+  entries.push({ q: t.faq.ownedQ, a: t.faq.ownedA })
+  entries.push({
+    q: t.faq.erbilQ.replace('{city}', t.seo.locality),
+    a: t.faq.erbilA
+      .replace('{count}', formatNumber(branches.length, locale))
+      .replaceAll('{city}', t.seo.locality)
+      .replace('{list}', list),
+  })
+
   entries.push({ q: t.faq.payQ, a: t.faq.payA })
   entries.push({ q: t.faq.cancelQ, a: t.faq.cancelA })
 

@@ -1,5 +1,7 @@
 import type { Payload } from 'payload'
 
+import { dbPool as pool } from '@/utilities/db'
+
 /**
  * Points: what a stay earns, and what a guest has.
  *
@@ -13,8 +15,6 @@ import type { Payload } from 'payload'
  * The balance is never stored. It is the sum of the ledger, so it cannot
  * disagree with the rows that explain it.
  */
-
-const pool = (payload: Payload) => (payload.db as unknown as { pool: any }).pool
 
 /** What a stay of this value is worth, at the rate the owner has set. */
 export const pointsForStay = (totalIqd: number, perThousand: number): number =>
@@ -68,7 +68,7 @@ export const pointsHistory = async (
 }
 
 export const pointsBalance = async (payload: Payload, guestId: number): Promise<number> => {
-  const { rows } = await pool(payload).query(
+  const { rows } = await pool(payload).query<{ balance: number }>(
     `SELECT COALESCE(SUM(points), 0)::int AS balance FROM point_entries WHERE guest_id = $1`,
     [guestId],
   )
@@ -98,7 +98,13 @@ export const awardPointsForBooking = async (
     const perThousand = settings?.pointsPer1000Iqd ?? 1
     if (!perThousand || perThousand <= 0) return 0
 
-    const { rows } = await pool(payload).query(
+    const { rows } = await pool(payload).query<{
+      guest_id: number | null
+      total: number | null
+      currency: string | null
+      reference: string | null
+      status: string | null
+    }>(
       `SELECT guest_id, total_amount::float AS total, currency, reference, status
          FROM bookings WHERE id = $1`,
       [bookingId],

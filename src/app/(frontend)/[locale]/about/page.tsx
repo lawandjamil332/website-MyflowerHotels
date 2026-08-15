@@ -18,7 +18,7 @@ import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
 import { SectionHeading } from '@/components/site/SectionHeading'
 import { Faq } from '@/components/site/Faq'
-import { BreadcrumbSchema, FaqSchema } from '@/components/site/StructuredData'
+import { BreadcrumbSchema, FaqSchema, GroupSchema } from '@/components/site/StructuredData'
 import { buildGroupFaq } from '@/utilities/faq'
 import { pointsRate } from '@/utilities/points'
 import { sectionY, shell } from '@/components/site/ui'
@@ -53,6 +53,28 @@ export default async function AboutPage({ params }: Args) {
   return (
     <>
       <BreadcrumbSchema locale={locale} trail={[{ name: t.nav.about }]} />
+      {/* The company, on the page about the company. This lived only on the
+          homepage, so the one URL a person or a crawler follows to find out
+          who runs these hotels described the hotels and never the group —
+          and every `parentOrganization` on the site pointed at an entity this
+          page did not itself declare. Same `@id`, so the two are one record. */}
+      <GroupSchema
+        siteName={siteName}
+        locale={locale}
+        branches={branches}
+        phone={settings.phone}
+        email={settings.email}
+        establishedYear={settings.establishedYear}
+        description={identity}
+        logoUrl={mediaUrl(settings.logo)}
+        imageUrl={mediaUrl(settings.socialShareImage, 'og') || mediaUrl(heroSource, 'og')}
+        social={[
+          settings.social?.instagram,
+          settings.social?.facebook,
+          settings.social?.tiktok,
+          settings.social?.youtube,
+        ]}
+      />
       <FaqSchema entries={faq} />
       <PageHero
         title={siteName}

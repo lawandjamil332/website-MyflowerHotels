@@ -113,7 +113,7 @@ export async function SiteFooter({
             <Link href={`/${locale}`} className={columnLink}>
               {t.nav.home}
             </Link>
-            <Link href={`/${locale}#collection`} className={columnLink}>
+            <Link href={`/${locale}/branches`} className={columnLink}>
               {t.nav.branches}
             </Link>
             <Link href={`/${locale}/rooms`} className={columnLink}>

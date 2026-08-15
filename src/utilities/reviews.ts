@@ -1,5 +1,7 @@
 import configPromise from '@payload-config'
-import { getPayload, type Payload } from 'payload'
+import { getPayload } from 'payload'
+
+import { dbPool as pool } from '@/utilities/db'
 
 export type Review = {
   id: number
@@ -13,8 +15,6 @@ export type Review = {
 }
 
 export type Rating = { average: number; count: number }
-
-const pool = (payload: Payload) => (payload.db as unknown as { pool: { query: Function } }).pool
 
 /**
  * Approved reviews, newest first.

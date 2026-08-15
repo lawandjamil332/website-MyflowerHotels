@@ -104,6 +104,23 @@ export type Dictionary = {
     identityOneCity: string
     identityManyCities: string
   }
+  branchesPage: {
+    eyebrow: string
+    title: string
+    lead: string
+    glanceTitle: string
+    glanceLead: string
+    colHotel: string
+    colWhere: string
+    colPhone: string
+    colFrom: string
+    colStatus: string
+    statusOpen: string
+    statusSoon: string
+    perNight: string
+    view: string
+    metaDescription: string
+  }
   search: {
     title: string
     hotel: string
@@ -271,6 +288,10 @@ export type Dictionary = {
     chooseA: string
     groupContactQ: string
     groupContactA: string
+    ownedQ: string
+    ownedA: string
+    erbilQ: string
+    erbilA: string
   }
   email: {
     confirmEyebrow: string
@@ -497,6 +518,24 @@ const en: Dictionary = {
       'Today we run {count}, all of them in {city}, {country} — the same owners, the same standard, {count} addresses.',
     identityManyCities: 'Today we run {count} across {country}, in {cities}.',
   },
+  branchesPage: {
+    eyebrow: 'Our hotels',
+    title: '{count} hotels in Erbil',
+    lead: 'Every My Flower hotel, what each one is near, and what a room costs.',
+    glanceTitle: 'The hotels at a glance',
+    glanceLead: 'The same table a guest would ask us for on the phone.',
+    colHotel: 'Hotel',
+    colWhere: 'Where it is',
+    colPhone: 'Telephone',
+    colFrom: 'Rooms from',
+    colStatus: 'Status',
+    statusOpen: 'Open',
+    statusSoon: 'Opening soon',
+    perNight: 'per night',
+    view: 'View hotel',
+    metaDescription:
+      '{count} My Flower hotels in Erbil, Iraq — addresses, telephone numbers, room prices and what each one is near. Independent and Iraqi-owned.',
+  },
   search: {
     title: 'Plan your stay',
     hotel: 'Hotel',
@@ -683,6 +722,12 @@ const en: Dictionary = {
     chooseQ: 'Which one should I stay at?',
     chooseA:
       'They are in different parts of {city}, so the one to choose is usually whichever is nearest to where you need to be. Each hotel has its own page listing its rooms, its prices and its exact location on the map.',
+    ownedQ: 'Who owns My Flower Hotels?',
+    ownedA:
+      'It is independent and Iraqi-owned, run by one family rather than operated under a foreign brand. Most hotel names in this country with more than one property are international operators managing a building for its owners; this is not one of those.',
+    erbilQ: 'Where should I stay in {city}?',
+    erbilA:
+      'That depends on what you are near. We run {count} hotels in {city} — {list} — so the useful question is which part of the city you need to be in. Each hotel page lists its street, its rooms and its exact position on the map.',
     groupContactQ: 'How do I reach you?',
     groupContactA:
       'WhatsApp or call {phone}. It reaches us directly, day or night, and it is the fastest way to ask about any of the hotels.',
@@ -938,6 +983,24 @@ const ku: Dictionary = {
       'ئەمڕۆ {count} هۆتێلمان هەیە، هەموویان لە {city}، {country} — هەمان خاوەن، هەمان ئاست، {count} ناونیشان.',
     identityManyCities: 'ئەمڕۆ {count} هۆتێلمان هەیە بەسەر {country} دا، لە {cities}.',
   },
+  branchesPage: {
+    eyebrow: 'هۆتێلەکانمان',
+    title: '{count} هۆتێل لە هەولێر',
+    lead: 'هەموو هۆتێلەکانی ماي فلاوەر، هەریەکەیان لە نزیک چییەوەیە، و نرخی ژوورەکان.',
+    glanceTitle: 'هۆتێلەکان بە کورتی',
+    glanceLead: 'هەمان ئەو زانیارییەی میوان بە تەلەفۆن داوای دەکات.',
+    colHotel: 'هۆتێل',
+    colWhere: 'شوێنەکەی',
+    colPhone: 'تەلەفۆن',
+    colFrom: 'ژوور لە',
+    colStatus: 'دۆخ',
+    statusOpen: 'کراوەیە',
+    statusSoon: 'بەم زووانە دەکرێتەوە',
+    perNight: 'بۆ هەر شەوێک',
+    view: 'هۆتێلەکە ببینە',
+    metaDescription:
+      'هەموو {count} هۆتێلی ماي فلاوەر لە هەولێر، عێراق — ناونیشان، ژمارەی تەلەفۆن، نرخی ژوورەکان و هەریەکەیان لە نزیک چییەوەیە. سەربەخۆ و خاوەندارێتی عێراقی.',
+  },
   search: {
     title: 'مانەوەکەت پلان بکە',
     hotel: 'هۆتێل',
@@ -1123,6 +1186,12 @@ const ku: Dictionary = {
     chooseQ: 'لە کامیاندا بمێنمەوە؟',
     chooseA:
       'لە بەشە جیاوازەکانی {city} دان، بۆیە باشترین هەڵبژاردن زۆرجار ئەوەیە کە نزیکترە لەو شوێنەی پێویستت پێیەتی. هەر هۆتێلێک لاپەڕەی خۆی هەیە کە ژوورەکان، نرخەکان و شوێنی وردی لەسەر نەخشە پیشان دەدات.',
+    ownedQ: 'خاوەنی هۆتێلەکانی ماي فلاوەر کێیە؟',
+    ownedA:
+      'سەربەخۆیە و خاوەنەکەی عێراقییە، لەلایەن یەک خێزانەوە بەڕێوە دەبرێت، نەک لەژێر ناوێکی بیانیدا. زۆربەی ئەو ناوانەی لەم وڵاتەدا زیاتر لە یەک هۆتێلیان هەیە کۆمپانیای نێودەوڵەتین کە بینایەک بۆ خاوەنەکەی بەڕێوە دەبەن؛ ئەمە لەوانە نییە.',
+    erbilQ: 'لە {city} لە کوێ بمێنمەوە؟',
+    erbilA:
+      'ئەوە بەوە بەندە کە پێویستە لە نزیک چی بیت. {count} هۆتێلمان لە {city} هەیە — {list} — بۆیە پرسیارە بەکەڵکەکە ئەوەیە کە پێویستە لە کام بەشی شارەکەدا بیت. هەر لاپەڕەیەکی هۆتێل شەقام و ژوورەکان و شوێنی وردی لەسەر نەخشە پیشان دەدات.',
     groupContactQ: 'چۆن پەیوەندیتان پێوە بکەم؟',
     groupContactA:
       'واتساپ یان پەیوەندی بکە بە {phone}. ڕاستەوخۆ دەگاتە ئێمە، شەو و ڕۆژ، و خێراترین ڕێگایە بۆ پرسیار دەربارەی هەر کام لە هۆتێلەکان.',
@@ -1375,6 +1444,24 @@ const ar: Dictionary = {
       'ونُدير اليوم {count} فنادق، جميعها في {city}، {country} — المُلّاك أنفسهم، والمستوى نفسه، و{count} عناوين.',
     identityManyCities: 'ونُدير اليوم {count} فنادق في أنحاء {country}، في {cities}.',
   },
+  branchesPage: {
+    eyebrow: 'فنادقنا',
+    title: '{count} فنادق في أربيل',
+    lead: 'كل فنادق ماي فلاور، وما يقع بالقرب من كل واحد منها، وأسعار الغرف.',
+    glanceTitle: 'الفنادق في لمحة',
+    glanceLead: 'المعلومات نفسها التي يطلبها الضيف منّا على الهاتف.',
+    colHotel: 'الفندق',
+    colWhere: 'الموقع',
+    colPhone: 'الهاتف',
+    colFrom: 'الغرف من',
+    colStatus: 'الحالة',
+    statusOpen: 'مفتوح',
+    statusSoon: 'يفتتح قريباً',
+    perNight: 'في الليلة',
+    view: 'عرض الفندق',
+    metaDescription:
+      '{count} فنادق ماي فلاور في أربيل، العراق — العناوين وأرقام الهاتف وأسعار الغرف وما يقع بالقرب من كل فندق. مجموعة عراقية مستقلة.',
+  },
   search: {
     title: 'خطط لإقامتك',
     hotel: 'الفندق',
@@ -1557,6 +1644,12 @@ const ar: Dictionary = {
     chooseQ: 'في أيها أقيم؟',
     chooseA:
       'هي في مناطق مختلفة من {city}، لذا الأنسب عادةً هو الأقرب إلى المكان الذي تحتاج أن تكون فيه. لكل فندق صفحته التي تعرض غرفه وأسعاره وموقعه بالضبط على الخريطة.',
+    ownedQ: 'من يملك فنادق ماي فلاور؟',
+    ownedA:
+      'مجموعة مستقلة مملوكة عراقياً، تديرها عائلة واحدة، وليست تحت إدارة علامة أجنبية. معظم الأسماء الفندقية في هذا البلد التي تملك أكثر من فندق هي شركات عالمية تُدير مبنى نيابة عن مالكه؛ هذه ليست منها.',
+    erbilQ: 'أين أقيم في {city}؟',
+    erbilA:
+      'يعتمد على المكان الذي تريد أن تكون قريباً منه. لدينا {count} فنادق في {city} — {list} — فالسؤال المفيد هو أي جزء من المدينة تحتاجه. صفحة كل فندق تعرض شارعه وغرفه وموقعه بدقة على الخريطة.',
     groupContactQ: 'كيف أتواصل معكم؟',
     groupContactA:
       'راسلنا على واتساب أو اتصل على {phone}. يصل إلينا مباشرة ليلاً أو نهاراً، وهو أسرع طريقة للسؤال عن أي من الفنادق.',

@@ -103,7 +103,7 @@ export default async function BranchPage({ params }: Args) {
       />
       <BreadcrumbSchema
         locale={locale}
-        trail={[{ name: t.nav.branches, path: '#collection' }, { name: branch.name }]}
+        trail={[{ name: t.nav.branches, path: '/branches' }, { name: branch.name }]}
       />
       <FaqSchema entries={faq} />
       <PageHero

@@ -94,7 +94,10 @@ export function HeaderBar({
   // says the words "Sign in" while nobody is.
   const links = [
     { href: `/${locale}`, label: t.nav.home },
-    { href: `/${locale}#collection`, label: t.nav.branches },
+    // A page, not an anchor. This pointed at the homepage's collection band,
+    // which meant "Our hotels" scrolled you down the page you were already on
+    // and did nothing at all if you were on any other one.
+    { href: `/${locale}/branches`, label: t.nav.branches },
     { href: `/${locale}/rooms`, label: t.nav.rooms },
     { href: `/${locale}/about`, label: t.nav.about },
     { href: `/${locale}/contact`, label: t.nav.contact },

@@ -76,6 +76,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     ...entry('', 1, anythingTouched),
+    // The list of every hotel. Ranked with the rooms index rather than below
+    // it: this is the page that answers what the company actually is.
+    ...entry('/branches', 0.8, branchesTouched),
     ...entry('/rooms', 0.8, roomsTouched),
     ...entry('/about', 0.5, branchesTouched),
     ...entry('/contact', 0.6, branchesTouched),

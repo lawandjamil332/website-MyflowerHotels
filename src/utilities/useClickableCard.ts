@@ -4,13 +4,20 @@ import type { RefObject } from 'react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef } from 'react'
 
+/**
+ * The two refs, returned as refs.
+ *
+ * They used to come back wrapped a level deeper, as `{ card: { ref } }`, so
+ * every caller wrote `ref={card.ref}` in its JSX. React's rules-of-hooks
+ * lint reads any `.ref` in a render body as reading a ref's value during
+ * render — which is a real mistake worth catching, and is not what this was
+ * doing; passing a ref object to `ref=` is the whole point of one. Returned
+ * flat, the callers read `ref={cardRef}`, which is both what everything else
+ * in this codebase looks like and no longer a false alarm.
+ */
 type UseClickableCardType<T extends HTMLElement> = {
-  card: {
-    ref: RefObject<T | null>
-  }
-  link: {
-    ref: RefObject<HTMLAnchorElement | null>
-  }
+  cardRef: RefObject<T | null>
+  linkRef: RefObject<HTMLAnchorElement | null>
 }
 
 interface Props {
@@ -95,14 +102,7 @@ function useClickableCard<T extends HTMLElement>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [card, link, router])
 
-  return {
-    card: {
-      ref: card,
-    },
-    link: {
-      ref: link,
-    },
-  }
+  return { cardRef: card, linkRef: link }
 }
 
 export default useClickableCard

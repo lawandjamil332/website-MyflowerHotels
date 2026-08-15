@@ -5,6 +5,19 @@ import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react
 import { cn } from '@/utilities/ui'
 
 /**
+ * useLayoutEffect in the browser, useEffect on the server.
+ *
+ * React warns that useLayoutEffect does nothing during server rendering, and
+ * the usual dodge is to pick between the two. That choice used to be made
+ * inside the component, which put a hook behind a local variable the linter
+ * could not follow: it stopped recognising the call below as an effect at all
+ * and started reporting the ref read inside it as a ref read during render.
+ * Hoisted here it is a module constant named like a hook, which is both the
+ * conventional spelling of this and legible to the rules.
+ */
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
+
+/**
  * A row of cards you swipe, with a pair of round arrows for the people who
  * will not swipe.
  *
@@ -57,9 +70,7 @@ export function CardRail({
   // the browser has painted would shift everything below the rail up by the
   // height of a control the guest never saw. Measured before paint, the row
   // simply arrives in its settled state.
-  const useMeasureEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
-
-  useMeasureEffect(() => {
+  useIsomorphicLayoutEffect(() => {
     const el = rail.current
     if (!el) return
     measure()

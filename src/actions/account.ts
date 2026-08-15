@@ -6,6 +6,7 @@ import { cookies, headers as nextHeaders } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 import { awardPointsForBooking } from '@/utilities/points'
+import { dbPool } from '@/utilities/db'
 import { sendPasswordReset } from '@/utilities/accountEmail'
 import { allow, callerKey } from '@/utilities/throttle'
 
@@ -128,8 +129,7 @@ const claimBookings = async (
   const tail = digits.length >= 9 ? digits.slice(-9) : ''
 
   try {
-    const pool = (payload.db as unknown as { pool: { query: Function } }).pool
-    const { rows } = await pool.query(
+    const { rows } = await dbPool(payload).query<{ id: number; status: string }>(
       `UPDATE bookings SET guest_id = $1
         WHERE guest_id IS NULL
           AND ( LOWER(guest_email) = $2

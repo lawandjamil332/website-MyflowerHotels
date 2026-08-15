@@ -32,6 +32,28 @@ export default function robots(): MetadataRoute.Robots {
         allow: '/',
         disallow: ['/admin', '/api', '/next', '/*/account', '/*/booking'],
       },
+      // The assistants, named rather than left to the wildcard.
+      //
+      // They are already allowed by the rule above — this changes nothing
+      // technically. It is here so that the next person to edit this file has
+      // to decide about them deliberately: a hotel that wants to be the answer
+      // when somebody asks an assistant where to stay in Erbil cannot afford
+      // to block the things doing the answering, and that is exactly the kind
+      // of line that gets added by accident.
+      {
+        userAgent: [
+          'GPTBot',
+          'OAI-SearchBot',
+          'ChatGPT-User',
+          'ClaudeBot',
+          'Claude-User',
+          'PerplexityBot',
+          'Google-Extended',
+          'Applebot-Extended',
+        ],
+        allow: '/',
+        disallow: ['/admin', '/api', '/next', '/*/account', '/*/booking'],
+      },
     ],
     sitemap: `${base}/sitemap.xml`,
     host: base,

@@ -410,6 +410,58 @@ export function RoomListSchema({
 }
 
 /**
+ * Every hotel in the group, as one ordered list of places.
+ *
+ * The group's own markup lives on the homepage, and each hotel's lives on its
+ * own page, so nothing on this site ever presented the hotels the way somebody
+ * actually asks about them: as a set, at one address, countable. This is the
+ * page that answers "how many are there and where", and `numberOfItems` beside
+ * `itemListElement` is that answer in the one form a machine reads without
+ * having to crawl four more URLs first.
+ *
+ * Each entry is a real Hotel with its own `@id`, not a bare link, so this list
+ * and the four hotel pages resolve to the same four things rather than to eight.
+ */
+export function HotelListSchema({
+  branches,
+  locale,
+  name,
+}: {
+  branches: Branch[]
+  locale: Locale
+  name: string
+}) {
+  if (branches.length === 0) return null
+  const base = getServerSideURL()
+
+  return json({
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name,
+    numberOfItems: branches.length,
+    itemListElement: branches.map((branch, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      item: clean({
+        '@type': 'Hotel',
+        '@id': `${base}/${locale}/branches/${branch.slug}#hotel`,
+        name: branch.name,
+        url: `${base}/${locale}/branches/${branch.slug}`,
+        telephone: branch.phone ?? undefined,
+        parentOrganization: { '@id': `${base}/#organization` },
+        address: clean({
+          '@type': 'PostalAddress',
+          streetAddress: branch.neighbourhood ?? branch.address ?? undefined,
+          addressLocality: branch.city ?? 'Erbil',
+          addressRegion: 'Kurdistan Region',
+          addressCountry: 'IQ',
+        }),
+      }),
+    })),
+  })
+}
+
+/**
  * The trail from the homepage down to this page.
  *
  * Google prints it in place of the bare URL under a result — "myflowerhotels

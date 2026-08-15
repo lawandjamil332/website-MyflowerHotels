@@ -23,9 +23,14 @@ import { fileURLToPath } from 'node:url'
  * One thing to know: the booking form is rate limited per address, and a full
  * pass makes about a dozen bookings from one. Two passes inside ten minutes
  * trips that limit, and the failures look like missing rooms rather than the
- * guard doing its job. Start the site with BOOKING_ATTEMPTS_PER_WINDOW=500
- * when you intend to run this repeatedly, or simply restart it between runs —
- * the counters live in memory.
+ * guard doing its job.
+ *
+ * Restart the site between runs — the counters live in memory, so a restart
+ * clears them. Do NOT raise BOOKING_ATTEMPTS_PER_WINDOW to get around it: the
+ * throttle suite exists to prove the limit refuses a flood, so lifting the
+ * limit makes that suite fail, and it fails saying "never refused" rather than
+ * saying you lifted the limit. This was written down the wrong way round here
+ * for a while and cost an afternoon.
  */
 const here = dirname(fileURLToPath(import.meta.url))
 const only = process.argv[2]
