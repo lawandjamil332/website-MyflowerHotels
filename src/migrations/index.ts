@@ -27,6 +27,7 @@ import * as migration_20260730_150000_breakfast_amenity from './20260730_150000_
 import * as migration_20260815_120000_review_requested from './20260815_120000_review_requested'
 import * as migration_20260815_140000_branch_nearby from './20260815_140000_branch_nearby'
 import * as migration_20260815_150000_pin_and_link_hotels from './20260815_150000_pin_and_link_hotels'
+import * as migration_20260815_160000_booking_reputation from './20260815_160000_booking_reputation'
 
 export const migrations = [
   {
@@ -175,5 +176,10 @@ export const migrations = [
     up: migration_20260815_150000_pin_and_link_hotels.up,
     down: migration_20260815_150000_pin_and_link_hotels.down,
     name: '20260815_150000_pin_and_link_hotels',
+  },
+  {
+    up: migration_20260815_160000_booking_reputation.up,
+    down: migration_20260815_160000_booking_reputation.down,
+    name: '20260815_160000_booking_reputation',
   },
 ]

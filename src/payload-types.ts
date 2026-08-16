@@ -365,6 +365,15 @@ export interface Branch {
    */
   bookingComUrl?: string | null;
   /**
+   * Out of 10.
+   */
+  bookingComScore?: number | null;
+  bookingComReviews?: number | null;
+  /**
+   * The page says this date, so an old score reads as old rather than wrong.
+   */
+  bookingComChecked?: string | null;
+  /**
    * Set to "Opening soon" and the hotel is shown with its photo and a notice instead of phone numbers and rooms.
    */
   status?: ('open' | 'openingSoon') | null;
@@ -1623,6 +1632,9 @@ export interface BranchesSelect<T extends boolean = true> {
   checkInTime?: T;
   checkOutTime?: T;
   bookingComUrl?: T;
+  bookingComScore?: T;
+  bookingComReviews?: T;
+  bookingComChecked?: T;
   status?: T;
   openingNote?: T;
   order?: T;

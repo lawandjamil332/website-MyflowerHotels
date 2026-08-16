@@ -45,6 +45,8 @@ export type Dictionary = {
     ctaLead: string
   }
   branch: {
+    ratedOn: string
+    ratedOnChecked: string
     openingSoon: string
     openingBody: string
     overviewEyebrow: string
@@ -454,6 +456,8 @@ const en: Dictionary = {
     ctaLead: 'Send the dates and the number of guests. We will confirm availability and the rate.',
   },
   branch: {
+    ratedOn: 'Rated {score}/10 by {count} guests on Booking.com',
+    ratedOnChecked: 'as of {date}',
     openingSoon: 'Opening soon',
     openingBody:
       'This hotel is not open yet. Send us a message and we will tell you as soon as it is taking guests.',
@@ -918,6 +922,8 @@ const ku: Dictionary = {
     ctaLead: 'ڕێککەوت و ژمارەی میوانەکان بنێرە. بەردەستبوون و نرخەکەت بۆ پشتڕاست دەکەینەوە.',
   },
   branch: {
+    ratedOn: 'نمرەی {score}/10 لەلایەن {count} میوانەوە لە Booking.com',
+    ratedOnChecked: 'تا {date}',
     openingSoon: 'بەم زووانە دەکرێتەوە',
     openingBody:
       'ئەم هۆتێلە هێشتا نەکراوەتەوە. نامەیەکمان بۆ بنێرە و هەرکە میوانی وەرگرت ئاگادارت دەکەینەوە.',
@@ -1381,6 +1387,8 @@ const ar: Dictionary = {
     ctaLead: 'أرسل التواريخ وعدد الضيوف، ونؤكد لك التوفر والسعر.',
   },
   branch: {
+    ratedOn: 'تقييم {score}/10 من {count} ضيفاً على Booking.com',
+    ratedOnChecked: 'حتى {date}',
     openingSoon: 'يفتتح قريباً',
     openingBody: 'هذا الفندق لم يفتتح بعد. راسلنا وسنخبرك فور بدء استقباله للنزلاء.',
     overviewEyebrow: 'الفندق',

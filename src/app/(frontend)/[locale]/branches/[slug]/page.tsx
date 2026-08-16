@@ -10,6 +10,7 @@ import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { branchLocative } from '@/utilities/teasers'
+import { formatDateLong, formatNumber } from '@/utilities/format'
 import { shippedPhoto } from '@/utilities/shippedPhoto'
 import { shareImage } from '@/utilities/shareImage'
 import { cn } from '@/utilities/ui'
@@ -180,6 +181,58 @@ export default async function BranchPage({ params }: Args) {
                     {branch.nearby}
                   </p>
                 )}
+
+                {/* The reputation this hotel already has, where it actually
+                    lives. The reviews section further down is empty on every
+                    hotel — nobody has left one here — while Booking.com holds
+                    over a thousand for one of these. A guest choosing between
+                    this page and a listing site saw nothing here and a score
+                    there, and booked there, at fifteen per cent.
+
+                    Attributed and linked rather than absorbed: these are
+                    somebody else's reviews on somebody else's site, so the
+                    sentence says so and the date says when it was true. It is
+                    deliberately not fed into aggregateRating markup — Google
+                    requires the reviews behind a rating to be on the page
+                    carrying it, and claiming these as our own is how a domain
+                    loses its rich results for good. */}
+                {typeof branch.bookingComScore === 'number' &&
+                  typeof branch.bookingComReviews === 'number' &&
+                  branch.bookingComReviews > 0 &&
+                  (() => {
+                    const line = t.branch.ratedOn
+                      .replace('{score}', formatNumber(branch.bookingComScore ?? 0, locale))
+                      .replace('{count}', formatNumber(branch.bookingComReviews ?? 0, locale))
+                    return (
+                      <p className="mt-5 border-t border-line pt-5 text-sm leading-relaxed text-muted-ink">
+                        {branch.bookingComUrl ? (
+                          <a
+                            href={branch.bookingComUrl}
+                            target="_blank"
+                            rel="noopener noreferrer nofollow"
+                            className="text-ink underline decoration-line underline-offset-4 transition-colors hover:text-brand"
+                          >
+                            {line}
+                          </a>
+                        ) : (
+                          line
+                        )}
+                        {/* A real space, not only the margin below. Anything
+                            reading this page as text — which is the entire
+                            point of publishing the figure — sees the two runs
+                            joined into "Booking.comas of" without it. */}
+                        {branch.bookingComChecked && ' '}
+                        {branch.bookingComChecked && (
+                          <span className="text-[0.8rem]">
+                            {t.branch.ratedOnChecked.replace(
+                              '{date}',
+                              formatDateLong(branch.bookingComChecked, locale),
+                            )}
+                          </span>
+                        )}
+                      </p>
+                    )
+                  })()}
 
                 {!openingSoon &&
                   (branch.checkInAnyTime || branch.checkInTime || branch.checkOutTime) && (

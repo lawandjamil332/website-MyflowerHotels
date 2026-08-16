@@ -271,6 +271,40 @@ export const Branches: CollectionConfig = {
             description: 'Optional. Shows an "instant reservation" button when filled in.',
           },
         },
+        {
+          // Typed in, not fetched. A score read live from another site is a
+          // dependency that can fail or change shape on a page that has to
+          // render; three numbers checked now and then are enough, and the
+          // date is what keeps them honest.
+          type: 'row',
+          fields: [
+            {
+              name: 'bookingComScore',
+              type: 'number',
+              label: 'Booking.com score',
+              min: 0,
+              max: 10,
+              admin: { width: '33%', placeholder: '7.3', description: 'Out of 10.' },
+            },
+            {
+              name: 'bookingComReviews',
+              type: 'number',
+              label: 'Booking.com reviews',
+              min: 0,
+              admin: { width: '33%', placeholder: '1558' },
+            },
+            {
+              name: 'bookingComChecked',
+              type: 'date',
+              label: 'Checked on',
+              admin: {
+                width: '33%',
+                date: { pickerAppearance: 'dayOnly' },
+                description: 'The page says this date, so an old score reads as old rather than wrong.',
+              },
+            },
+          ],
+        },
       ],
     },
     {

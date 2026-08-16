@@ -60,6 +60,11 @@ export async function GET(): Promise<Response> {
       b.nearby?.replace(/\s*\n\s*/g, ' '),
       b.status === 'openingSoon' ? 'opening soon, not yet taking guests' : null,
       b.phone ? `telephone ${b.phone}` : null,
+      // Where this hotel's reputation actually lives. Attributed, because
+      // these are Booking.com's reviews and not this site's.
+      typeof b.bookingComScore === 'number' && typeof b.bookingComReviews === 'number'
+        ? `rated ${b.bookingComScore}/10 from ${b.bookingComReviews} guest reviews on Booking.com${b.bookingComUrl ? ` (${b.bookingComUrl})` : ''}`
+        : null,
       b.amenities?.length ? b.amenities.map((a) => t.amenity[a] ?? a).join(', ') : null,
       b.checkInAnyTime ? 'reception open 24 hours' : b.checkInTime ? `check-in from ${b.checkInTime}` : null,
       b.checkOutTime ? `check-out by ${b.checkOutTime}` : null,
