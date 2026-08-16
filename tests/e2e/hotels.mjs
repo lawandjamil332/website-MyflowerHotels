@@ -108,6 +108,38 @@ let published = 0
   ok('and every link opens', reachable === hrefs.length, `${reachable}/${hrefs.length}`)
 }
 
+// A hotel that exists elsewhere under a different spelling. Booking.com
+// carries these as "MyFlower N Hotel" where the sign outside says "My Flower
+// N", which is what splits one brand into several properties. Two things fix
+// it and both are asserted here: the listing declared with sameAs, and the
+// spellings declared outright.
+{
+  const p = await load(`${base}/en/branches/my-flower-3`)
+  const hotel = (await jsonld(p)).find((d) => d['@type'] === 'Hotel')
+  await p.close()
+
+  ok('the hotel page describes a hotel', !!hotel)
+  ok(
+    'it is pinned to real coordinates',
+    typeof hotel?.geo?.latitude === 'number' && typeof hotel?.geo?.longitude === 'number',
+    hotel?.geo && `${hotel.geo.latitude}, ${hotel.geo.longitude}`,
+  )
+  ok(
+    'and points at its Booking.com listing',
+    (hotel?.sameAs ?? []).some((u) => u.includes('booking.com')),
+    (hotel?.sameAs ?? []).join(' '),
+  )
+  // The spelling Booking.com actually uses has to be in there, or the two
+  // records stay two hotels.
+  const aka = hotel?.alternateName ?? []
+  ok('it declares the other spellings of its name', aka.length > 0, aka.join(' / '))
+  ok(
+    'including the one-word spelling the listings use',
+    aka.some((n) => /^MyFlower/.test(n)),
+  )
+  ok('and never repeats its own name back', !aka.includes(hotel?.name))
+}
+
 // The header and footer must reach it. This page replaced an anchor on the
 // homepage that both of them pointed at, and a page nothing links to is a page
 // that is only ever found by accident.

@@ -2,6 +2,7 @@ import type { Branch, Room } from '@/payload-types'
 import type { Locale } from '@/i18n/config'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mediaUrl } from '@/utilities/media'
+import { nameVariants } from '@/utilities/nameVariants'
 
 /**
  * schema.org markup, so a search result for one of these hotels can carry its
@@ -95,6 +96,10 @@ export function HotelSchema({
       '@id': `${base}/${locale}/branches/${branch.slug}#hotel`,
       parentOrganization: { '@id': `${base}/#organization` },
       name: branch.name,
+      // The other spellings of this same name. Booking.com writes these hotels
+      // as "MyFlower 1 Hotel"; the sign outside says "My Flower 1". Stating
+      // both is what stops one brand being read as several properties.
+      alternateName: nameVariants(branch.name),
       description: branch.tagline ?? undefined,
       url: `${base}/${locale}/branches/${branch.slug}`,
       image: image || undefined,
