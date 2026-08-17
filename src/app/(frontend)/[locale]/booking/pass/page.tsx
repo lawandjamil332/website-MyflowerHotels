@@ -10,7 +10,8 @@ import { verifyReference } from '@/utilities/bookingToken'
 import { formatDateLong, formatNumber, formatPrice } from '@/utilities/format'
 import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { cn } from '@/utilities/ui'
-import { shell } from '@/components/site/ui'
+import { btnPrimary, btnSmall, shell } from '@/components/site/ui'
+import { PrintButton } from '@/components/site/PrintButton'
 import type { Branch, Room } from '@/payload-types'
 
 type Args = {
@@ -80,19 +81,43 @@ export default async function BookingPassPage({ params, searchParams }: Args) {
   const wa = toWhatsAppHref(branch?.whatsapp, reference)
   const tel = toTelHref(branch?.phone)
 
-  const line = (label: string, value?: string | null) =>
+  // `ltr` for values that are not prose. A telephone number set in Arabic or
+  // Kurdish is reordered by the bidi algorithm — "+964 750 111 2222" printed
+  // as "2222 111 750 964+", with the plus on the wrong end — on the one
+  // document a guest hands to a front desk. Isolating the run fixes it without
+  // disturbing the line it sits on.
+  const line = (label: string, value?: string | null, ltr = false) =>
     value ? (
       <div className="flex gap-4 border-b border-line py-3 last:border-0">
         <dt className="w-[38%] shrink-0 text-[0.78rem] text-muted-ink">{label}</dt>
-        <dd className="text-[0.95rem] text-ink">{value}</dd>
+        <dd className="text-[0.95rem] text-ink">
+          {ltr ? (
+            <span dir="ltr" className="inline-block">
+              {value}
+            </span>
+          ) : (
+            value
+          )}
+        </dd>
       </div>
     ) : null
 
   return (
     <section className={cn(shell, 'py-10 sm:py-14 print:py-0')}>
       <div className="mx-auto max-w-2xl">
-        {/* Screen only: the two things somebody does with this page. */}
-        <div className="mb-8 flex flex-wrap gap-3 print:hidden">
+        {/* Screen only: the two things somebody does with this page.
+
+            Saving it comes first and looks like a button, because the whole
+            point of this page is to become a file the guest can show at the
+            desk — and without something to press, guests were screenshotting
+            it instead. The browser's print dialog is what turns it into a PDF,
+            and it is also the only thing in the stack that lays Arabic and
+            Kurdish out correctly. */}
+        <div className="mb-8 flex flex-wrap items-center gap-4 print:hidden">
+          <PrintButton
+            label={t.booking.savePdf}
+            className={cn(btnPrimary, btnSmall, 'tap-safe')}
+          />
           <Link
             href={`/${locale}/booking`}
             className="link-line tap-safe text-sm text-muted-ink hover:text-ink"
@@ -160,7 +185,7 @@ export default async function BookingPassPage({ params, searchParams }: Args) {
             {line(t.email.lHotel, branch?.name)}
             {line(t.email.lRoom, room?.name)}
             {line(t.email.lName, booking.guestName)}
-            {line(t.email.lPhone, booking.guestPhone)}
+            {line(t.email.lPhone, booking.guestPhone, true)}
             {line(
               t.email.lGuests,
               booking.guests ? formatNumber(Number(booking.guests), locale) : null,

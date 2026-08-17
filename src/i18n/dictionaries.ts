@@ -210,6 +210,7 @@ export type Dictionary = {
     past: string
   }
   booking: {
+    savePdf: string
     title: string
     lead: string
     nights: string
@@ -628,6 +629,7 @@ const en: Dictionary = {
     past: 'Past stays',
   },
   booking: {
+    savePdf: 'Save as PDF',
     title: 'Rooms free for your dates',
     lead: 'Choose a room. Nothing is charged now — you pay at the hotel.',
     nights: 'nights',
@@ -1094,6 +1096,7 @@ const ku: Dictionary = {
     past: 'مانەوەی پێشوو',
   },
   booking: {
+    savePdf: 'وەک PDF پاشەکەوتی بکە',
     title: 'ژوورە بەردەستەکان بۆ ڕۆژەکانت',
     lead: 'ژوورێک هەڵبژێرە. ئێستا هیچ پارەیەک وەرناگیرێت — لە هۆتێلەکە دەدەیت.',
     nights: 'شەو',
@@ -1137,7 +1140,7 @@ const ku: Dictionary = {
     title: 'پرسیارە باوەکانی میوانان',
     checkInQ: 'لە {hotel} لە چ کاتێک دەتوانم بچمە ژوورەوە؟',
     checkInAnyA:
-      'هەر کاتێک. پێشوازی لە {hotel} ٢٤ کاتژمێر کارا دەبێت، بۆیە بە فڕۆکەی شەوانە یان پاسی بەیانی زوو بگەیت، ژوورەکەت ئامادەیە.',
+      'هەر کاتێک. پێشوازی لە {hotel} 24 کاتژمێر کارا دەبێت، بۆیە بە فڕۆکەی شەوانە یان پاسی بەیانی زوو بگەیت، ژوورەکەت ئامادەیە.',
     checkInAtA: 'چوونەژوورەوە لە {hotel} لە {time}ـەوە دەستپێدەکات.',
     checkOutQ: 'کاتی چوونەدەرەوە کەیە؟',
     checkOutA:
@@ -1266,7 +1269,7 @@ const ku: Dictionary = {
     footerContact: '{hotel}<br>{address}<br>{phone}',
     footerWhy: 'ئەم نامەیەت پێگەیشت چونکە ئەم ناونیشانە لە کاتی حیجزکردندا دراوە.',
     payAtHotel: 'لە هۆتێلەکەدا دەدرێت',
-    checkInAny: 'پێشوازی ٢٤ کاتژمێر کراوەیە',
+    checkInAny: 'پێشوازی 24 کاتژمێر کراوەیە',
     cancelSelf: '— و خۆت دەتوانیت لە دوگمەی خوارەوە بیکەیت.',
   },
   errors: {
@@ -1556,6 +1559,7 @@ const ar: Dictionary = {
     past: 'الإقامات السابقة',
   },
   booking: {
+    savePdf: 'حفظ بصيغة PDF',
     title: 'الغرف المتاحة في تواريخك',
     lead: 'اختر غرفة. لا يُدفع شيء الآن — الدفع في الفندق.',
     nights: 'ليالٍ',
@@ -1597,7 +1601,7 @@ const ar: Dictionary = {
     title: 'أسئلة يسألها الضيوف',
     checkInQ: 'متى يمكنني تسجيل الوصول في {hotel}؟',
     checkInAnyA:
-      'في أي وقت. الاستقبال في {hotel} يعمل ٢٤ ساعة، فسواء وصلت برحلة ليلية أو بحافلة مبكرة ستجد غرفتك جاهزة.',
+      'في أي وقت. الاستقبال في {hotel} يعمل 24 ساعة، فسواء وصلت برحلة ليلية أو بحافلة مبكرة ستجد غرفتك جاهزة.',
     checkInAtA: 'تسجيل الوصول في {hotel} من {time}.',
     checkOutQ: 'متى موعد المغادرة؟',
     checkOutA:
@@ -1725,7 +1729,7 @@ const ar: Dictionary = {
     footerContact: '{hotel}<br>{address}<br>{phone}',
     footerWhy: 'وصلتك هذه الرسالة لأن هذا العنوان أُدخل عند إجراء الحجز.',
     payAtHotel: 'تُدفع في الفندق',
-    checkInAny: 'الاستقبال مفتوح ٢٤ ساعة',
+    checkInAny: 'الاستقبال مفتوح 24 ساعة',
     cancelSelf: '— ويمكنك ذلك بنفسك من الزر أدناه.',
   },
   errors: {
