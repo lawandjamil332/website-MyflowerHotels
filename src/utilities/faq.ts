@@ -151,7 +151,10 @@ export const buildGroupFaq = (
           : b.neighbourhood || b.address?.split('\n')[0]
       return note ? `${b.name} (${note})` : b.name
     })
-    .join(', ')
+    // Arabic and Kurdish separate a list with ، not , — a Latin comma in
+    // right-to-left prose is the same kind of small wrongness as a Latin
+    // hotel name, and this sentence is now otherwise entirely in-language.
+    .join(locale === 'en' ? ', ' : '، ')
 
   entries.push({
     q: t.faq.countQ.replace('{count}', formatNumber(branches.length, locale)),
