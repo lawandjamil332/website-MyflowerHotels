@@ -112,6 +112,7 @@ export type Dictionary = {
     lead: string
     glanceTitle: string
     glanceLead: string
+    gridTitle: string
     colHotel: string
     colWhere: string
     colPhone: string
@@ -529,6 +530,7 @@ const en: Dictionary = {
     lead: 'Every My Flower hotel, what each one is near, and what a room costs.',
     glanceTitle: 'The hotels at a glance',
     glanceLead: 'The same table a guest would ask us for on the phone.',
+    gridTitle: 'Choose your hotel',
     colHotel: 'Hotel',
     colWhere: 'Where it is',
     colPhone: 'Telephone',
@@ -997,6 +999,7 @@ const ku: Dictionary = {
     lead: 'هەموو هۆتێلەکانی ماي فلاوەر، هەریەکەیان لە نزیک چییەوەیە، و نرخی ژوورەکان.',
     glanceTitle: 'هۆتێلەکان بە کورتی',
     glanceLead: 'هەمان ئەو زانیارییەی میوان بە تەلەفۆن داوای دەکات.',
+    gridTitle: 'هۆتێلەکەت هەڵبژێرە',
     colHotel: 'هۆتێل',
     colWhere: 'شوێنەکەی',
     colPhone: 'تەلەفۆن',
@@ -1461,6 +1464,7 @@ const ar: Dictionary = {
     lead: 'كل فنادق ماي فلاور، وما يقع بالقرب من كل واحد منها، وأسعار الغرف.',
     glanceTitle: 'الفنادق في لمحة',
     glanceLead: 'المعلومات نفسها التي يطلبها الضيف منّا على الهاتف.',
+    gridTitle: 'اختر فندقك',
     colHotel: 'الفندق',
     colWhere: 'الموقع',
     colPhone: 'الهاتف',

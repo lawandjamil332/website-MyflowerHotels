@@ -26,6 +26,7 @@ export function SectionHeading({
   align = 'center',
   action,
   className,
+  immediate = false,
   as: Tag = 'h2',
 }: {
   title: string
@@ -35,12 +36,15 @@ export function SectionHeading({
   /** The pill that follows the lead, the way every band on the reference ends. */
   action?: { href: string; label: string; external?: boolean }
   className?: string
+  /** Paint at once rather than fading in — for headings above the fold. */
+  immediate?: boolean
   as?: 'h1' | 'h2'
 }) {
   const centred = align === 'center'
 
   return (
     <Reveal
+      immediate={immediate}
       className={cn(
         centred ? 'mx-auto max-w-3xl text-center' : 'max-w-3xl',
         className,

@@ -119,8 +119,15 @@ export default async function BranchesPage({ params }: Args) {
       </section>
 
       {/* The hotels as photographs. A grid rather than the homepage rail: this
-          page is the destination, so nothing here should need swiping past. */}
+          page is the destination, so nothing here should need swiping past.
+
+          The heading is not decoration. Each card titles itself with an h3,
+          and without an h2 over them this page ran h1 straight to h3 and then
+          back up to h2 at the table below — so the one page whose whole job is
+          to be read as "here are the four hotels" had an outline that said
+          nothing of the kind, to a screen reader or to anything parsing it. */}
       <section className={cn(shell, sectionY)}>
+        <SectionHeading title={t.branchesPage.gridTitle} className="mb-10 lg:mb-14" />
         <div className="grid gap-6 sm:grid-cols-2 lg:gap-8">
           {branches.map((branch, i) => (
             <BranchCard

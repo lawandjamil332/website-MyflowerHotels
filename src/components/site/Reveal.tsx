@@ -17,16 +17,32 @@ export function Reveal({
   className,
   as: Tag = 'div',
   delay = 0,
+  immediate = false,
 }: {
   children: React.ReactNode
   className?: string
   as?: 'div' | 'section' | 'li' | 'article' | 'header'
   delay?: number
+  /**
+   * Skip the fade and paint immediately, for anything above the fold.
+   *
+   * The hidden state is real CSS — opacity 0 until an observer says otherwise
+   * — so content wrapped in this does not exist, visually, until the page has
+   * loaded its JavaScript, hydrated, run an effect and finished a 1.1s
+   * transition. Below the fold that is a nice piece of motion nobody waits
+   * for. At the top of the page it is the largest thing on screen arriving a
+   * second and a half late: measured on the booking page, the heading that
+   * defines Largest Contentful Paint painted at 1488ms on a page that had
+   * finished loading at 238ms. Google measures that number, and so does a
+   * guest deciding whether this site works.
+   */
+  immediate?: boolean
 }) {
   const ref = useRef<HTMLElement>(null)
-  const [shown, setShown] = useState(false)
+  const [shown, setShown] = useState(immediate)
 
   useEffect(() => {
+    if (immediate) return
     const node = ref.current
     if (!node) return
 
@@ -51,7 +67,7 @@ export function Reveal({
 
     observer.observe(node)
     return () => observer.disconnect()
-  }, [])
+  }, [immediate])
 
   return (
     <Tag

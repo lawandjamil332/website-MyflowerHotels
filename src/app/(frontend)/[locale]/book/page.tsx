@@ -140,7 +140,12 @@ export default async function BookPage({ params, searchParams }: Args) {
           // question rather than sending them back to the homepage to be asked
           // it there.
           <div className="mx-auto max-w-4xl">
-            <SectionHeading title={t.search.title} lead={t.booking.lead} className="mb-10" />
+            <SectionHeading
+              title={t.search.title}
+              lead={t.booking.lead}
+              className="mb-10"
+              immediate
+            />
             <StayFinder
               hotels={branches.map((b) => ({
                 slug: b.slug,
