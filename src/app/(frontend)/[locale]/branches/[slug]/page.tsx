@@ -10,9 +10,10 @@ import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { branchLocative } from '@/utilities/teasers'
-import { formatDateLong, formatNumber } from '@/utilities/format'
+import { comma, formatDateLong, formatNumber } from '@/utilities/format'
 import { shippedPhoto } from '@/utilities/shippedPhoto'
 import { shareImage } from '@/utilities/shareImage'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { cn } from '@/utilities/ui'
 import { AmenityList } from '@/components/site/AmenityList'
 import { BranchCard } from '@/components/site/BranchCard'
@@ -511,7 +512,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const description =
     branch.tagline ||
     [
-      `${branch.name}, ${t.seo.hotelIn} ${t.seo.locality}`,
+      `${branch.name}${comma(locale)} ${t.seo.hotelIn} ${t.seo.locality}`,
       branch.neighbourhood || branch.address,
       t.seo.bookDirect,
     ]
@@ -521,14 +522,17 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   return {
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      images: shareImage(
-        mediaUrl(branch.heroImage, 'og'),
-        branch.name,
-        branchLocative(branch) || undefined,
-      ),
-    },
+    openGraph: mergeOpenGraph(
+      {
+        title,
+        description,
+        images: shareImage(
+          mediaUrl(branch.heroImage, 'og'),
+          branch.name,
+          branchLocative(branch) || undefined,
+        ),
+      },
+      locale,
+    ),
   }
 }

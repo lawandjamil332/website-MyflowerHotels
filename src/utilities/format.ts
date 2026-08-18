@@ -101,6 +101,16 @@ const WEEKDAYS: Record<Locale, string[]> = {
 const COMMA: Record<Locale, string> = { en: ',', ar: '،', ku: '،' }
 
 /**
+ * The comma this language writes, for anywhere else that joins two things.
+ *
+ * Page titles and share descriptions were building "ماي فلاور 3, فندق في
+ * أربيل" with a Latin comma — the sentence Google prints under an Arabic
+ * result and the one WhatsApp shows under a shared hotel link, punctuated in
+ * the wrong alphabet.
+ */
+export const comma = (locale: Locale = 'en'): string => COMMA[locale] ?? ','
+
+/**
  * "Saturday, 05 September 2026" — a date written out for somebody to read.
  *
  * Confirmation emails used "2026-08-01", which is unambiguous to a machine and

@@ -6,11 +6,12 @@ import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { getRoomBySlug, getRoomsForBranch } from '@/utilities/branches'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
-import { formatNumber, formatPrice } from '@/utilities/format'
+import { comma, formatNumber, formatPrice } from '@/utilities/format'
 import { layoutLine } from '@/utilities/layout'
 import { Price } from '@/components/site/Currency'
 import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { shareImage } from '@/utilities/shareImage'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { cn } from '@/utilities/ui'
 import { AmenityList } from '@/components/site/AmenityList'
 import { CardRail, RailCard } from '@/components/site/CardRail'
@@ -317,9 +318,9 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   // Flower 1, Erbil". Only what is missing gets added.
   const named = branchName && room.name.includes(branchName)
   const title = named
-    ? `${room.name}, ${t.seo.locality}`
+    ? `${room.name}${comma(locale)} ${t.seo.locality}`
     : branchName
-      ? `${room.name} — ${branchName}, ${t.seo.locality}`
+      ? `${room.name} — ${branchName}${comma(locale)} ${t.seo.locality}`
       : room.name
 
   // Assembled from what the room actually is, so no room page ships without a
@@ -327,8 +328,8 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   // one nobody clicks, and that is what an empty description produces.
   const description = [
     named
-      ? `${room.name}, ${t.seo.locality}`
-      : `${room.name}${branchName ? ` — ${branchName}, ${t.seo.locality}` : ''}`,
+      ? `${room.name}${comma(locale)} ${t.seo.locality}`
+      : `${room.name}${branchName ? ` — ${branchName}${comma(locale)} ${t.seo.locality}` : ''}`,
     room.maxGuests ? `${t.room.guests} ${room.maxGuests}` : null,
     layoutLine(room, t, locale) || null,
     t.seo.bookDirect,
@@ -339,10 +340,13 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   return {
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      images: shareImage(mediaUrl(room.images?.[0], 'og'), room.name, branchName),
-    },
+    openGraph: mergeOpenGraph(
+      {
+        title,
+        description,
+        images: shareImage(mediaUrl(room.images?.[0], 'og'), room.name, branchName),
+      },
+      locale,
+    ),
   }
 }

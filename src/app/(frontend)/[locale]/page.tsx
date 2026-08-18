@@ -14,6 +14,8 @@ import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { shippedPhoto } from '@/utilities/shippedPhoto'
 import { shareImage } from '@/utilities/shareImage'
+import { comma } from '@/utilities/format'
+import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { cn } from '@/utilities/ui'
 import { BranchCard } from '@/components/site/BranchCard'
@@ -390,14 +392,23 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
 
   // The homepage competes for the city, not for the brand — somebody typing
   // the brand will find it regardless.
-  const title = `${siteName} — ${t.seo.hotelsIn} ${t.seo.locality}, ${t.seo.region}`
+  const title = `${siteName} — ${t.seo.hotelsIn} ${t.seo.locality}${comma(locale)} ${t.seo.region}`
+
+  // Written once and used for both. Without it the share card fell through to
+  // the English site description, so a homepage link sent in Arabic arrived
+  // with an Arabic headline and an English sentence under it.
+  const description = `${count(t.home.heroLead)} ${t.home.chooseBranchLead}`
 
   return {
     title,
-    description: `${count(t.home.heroLead)} ${t.home.chooseBranchLead}`,
-    openGraph: {
-      title,
-      images: shareImage(mediaUrl(branches[0]?.heroImage, 'og'), siteName, t.home.heroEyebrow),
-    },
+    description,
+    openGraph: mergeOpenGraph(
+      {
+        title,
+        description,
+        images: shareImage(mediaUrl(branches[0]?.heroImage, 'og'), siteName, t.home.heroEyebrow),
+      },
+      locale,
+    ),
   }
 }
