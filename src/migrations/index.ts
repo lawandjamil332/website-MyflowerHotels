@@ -30,6 +30,7 @@ import * as migration_20260815_150000_pin_and_link_hotels from './20260815_15000
 import * as migration_20260815_160000_booking_reputation from './20260815_160000_booking_reputation'
 import * as migration_20260815_170000_branch_names_ku_ar from './20260815_170000_branch_names_ku_ar'
 import * as migration_20260815_180000_branch_address_ku_ar from './20260815_180000_branch_address_ku_ar'
+import * as migration_20260815_190000_room_names_ku_ar from './20260815_190000_room_names_ku_ar'
 
 export const migrations = [
   {
@@ -193,5 +194,10 @@ export const migrations = [
     up: migration_20260815_180000_branch_address_ku_ar.up,
     down: migration_20260815_180000_branch_address_ku_ar.down,
     name: '20260815_180000_branch_address_ku_ar',
+  },
+  {
+    up: migration_20260815_190000_room_names_ku_ar.up,
+    down: migration_20260815_190000_room_names_ku_ar.down,
+    name: '20260815_190000_room_names_ku_ar',
   },
 ]
