@@ -142,7 +142,21 @@ export function StayFinder({
   // which is why it read as a form bolted to a hotel site rather than the
   // control the site is built around.
   const label = 'block text-[0.8rem] font-semibold leading-none text-ink'
-  const cell = 'flex flex-1 min-w-0 items-center gap-3.5 px-5 py-3.5 border-line lg:px-6'
+  // The focus ring lives on the cell, not on the control inside it.
+  //
+  // A date input here is not an ordinary field: its calendar picker is
+  // stretched invisibly over the whole cell so that tapping anywhere opens it,
+  // and an outline drawn around the input alone landed in the wrong place. The
+  // previous answer was to switch the outline off and put nothing back, which
+  // meant a guest moving through the booking form with a keyboard had no way
+  // of telling which field they were in — on the one form this site exists to
+  // get filled in.
+  //
+  // has-[:focus-visible] rather than focus-within, so the ring answers a Tab
+  // and not a mouse click, matching every other control on the site.
+  const cell =
+    'flex flex-1 min-w-0 items-center gap-3.5 px-5 py-3.5 border-line lg:px-6 ' +
+    'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-inset has-[:focus-visible]:ring-brand'
 
   // A date input draws its own calendar button, so beside the icon in the cell
   // every date field showed two calendars — and in Arabic, where the field
