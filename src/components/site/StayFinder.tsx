@@ -135,8 +135,16 @@ export function StayFinder({
     router.push(`/${locale}/book?${params.toString()}`)
   }
 
+  // 16px, not 15.2, and that is the whole reason this is not text-[0.95rem].
+  //
+  // Safari on iOS zooms the page in whenever a guest focuses a form control
+  // set below 16px, and does not zoom back out afterwards. On the search
+  // widget that meant tapping "Arriving" threw the whole homepage into a
+  // magnified view the guest then had to pinch out of — on the first thing
+  // they touch, and the one control this site is built around. The difference
+  // on screen is under a pixel.
   const field =
-    'w-full cursor-pointer border-0 bg-transparent px-0 py-0.5 text-[0.95rem] text-ink focus:outline-none focus:ring-0'
+    'w-full cursor-pointer border-0 bg-transparent px-0 py-0.5 text-base text-ink focus:outline-none focus:ring-0'
   // Sentence case at a readable size, not 9px letterspaced capitals. The rest
   // of the site dropped those as a magazine tell and this widget kept them,
   // which is why it read as a form bolted to a hotel site rather than the

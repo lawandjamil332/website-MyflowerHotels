@@ -75,7 +75,15 @@ export function ReserveBar({
       aria-hidden={!shown}
       inert={!shown ? true : undefined}
     >
-      <div className={cn(shell, 'flex items-center justify-between gap-4 py-3.5')}>
+      {/* Padded clear of the home indicator. Fixed to bottom-0 on an iPhone
+          puts this bar underneath the bar the phone draws over it, so the
+          reserve button — the point of the whole component — sat behind a
+          system control on every handset since the X. The contact dock in the
+          opposite corner already did this; this one did not. */}
+      <div
+        className={cn(shell, 'flex items-center justify-between gap-4 py-3.5')}
+        style={{ paddingBottom: 'calc(0.875rem + env(safe-area-inset-bottom))' }}
+      >
         <div className="min-w-0">
           <p className="font-display truncate text-lg leading-tight text-ink">{title}</p>
           {meta && <p className="truncate text-sm text-muted-ink">{meta}</p>}

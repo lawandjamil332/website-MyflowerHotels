@@ -246,9 +246,29 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground min-h-[100vh] flex flex-col;
+    @apply bg-background text-foreground flex flex-col;
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
+
+    /* 100vh on iOS is the viewport with the toolbars hidden, which is taller
+       than what is actually on screen — so a page with nothing below the fold
+       still scrolled a little, and the footer sat under the address bar. svh
+       is the small viewport: the height that is really visible. The vh line
+       stays underneath for anything too old to know svh. */
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+
+  /* Safari paints a grey box over anything tappable for a moment after it is
+     touched, which on a site made of photographic cards reads as a rendering
+     fault rather than as feedback. Every control here already has its own
+     pressed and focused state. */
+  a,
+  button,
+  [role='button'],
+  summary,
+  label {
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Cormorant is drawn with high stroke contrast and sits optically small, so
