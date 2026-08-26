@@ -1,6 +1,6 @@
 # My Flower Hotels
 
-Four hotels in Erbil, Kurdistan Region, Iraq — three open, one opening soon.
+Four hotels in Erbil, Kurdistan Region, Iraq — all four open.
 Payload CMS 3 on Next.js (App Router) and Postgres, in English, Kurdish
 (Sorani) and Arabic. The owner is not a programmer: he reads the site, not the
 code, so explain changes in terms of what a guest sees.
@@ -88,9 +88,10 @@ npm run test:e2e       # 18 suites, against a running site — source .env first
 The owner has asked more than once for the site to say it is the biggest hotel
 chain in Iraq, or the only Iraqi brand with four branches. Neither survives a
 search: Rotana has four properties in Iraq too and roughly seven times the
-rooms — 54 across these three open hotels. Do not put it on the site. A hotel
-page that overclaims is trusted less on the facts it has right, and every
-assistant can check in seconds.
+rooms — 54 across My Flower 1, 2 and 3, with My Flower 4's count not yet
+written down here. Do not put it on the site. A hotel page that overclaims is
+trusted less on the facts it has right, and every assistant can check in
+seconds.
 
 What is true, checkable, and already said everywhere: independent, Iraqi-owned,
 four hotels in Erbil, run by one family. Every hotel chain competing with it in
