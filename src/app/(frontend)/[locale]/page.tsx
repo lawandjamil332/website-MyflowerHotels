@@ -68,6 +68,14 @@ export default async function HomePage({ params }: Args) {
   const n = branches.length
   const count = (template: string) => fillCount(template, n, locale)
 
+  // Four hotels is true and provable. Four hotels *open* is not, while one of
+  // them is still being finished, and a guest who reads "Four — Hotels in
+  // Erbil" and then finds My Flower 4 marked "opening soon" two sections later
+  // has caught the page overstating itself on the one number it leads with.
+  // The number stays; what is added is the part that makes it honest.
+  const openCount = branches.filter((b) => b.status !== 'openingSoon').length
+  const soonCount = n - openCount
+
   const payload = await getPayload({ config: configPromise })
   const rate = await pointsRate(payload)
   const faq = buildGroupFaq(branches, t, locale, {
@@ -202,7 +210,20 @@ export default async function HomePage({ params }: Args) {
               {[
                 // Dropped rather than shown as zero when the branch query comes
                 // back empty: "0 hotels in Erbil" is worse than saying nothing.
-                n > 0 ? { value: countWord(n, locale), label: t.home.creditHotels } : null,
+                n > 0
+                  ? {
+                      value: countWord(n, locale),
+                      label: t.home.creditHotels,
+                      // Only while one is unopened. Once the fourth opens this
+                      // disappears on its own, with nobody editing anything.
+                      note:
+                        soonCount > 0
+                          ? t.home.creditHotelsNote
+                              .replace('{open}', countWord(openCount, locale))
+                              .replace('{soon}', countWord(soonCount, locale))
+                          : undefined,
+                    }
+                  : null,
                 settings.establishedYear
                   ? { value: String(settings.establishedYear), label: t.home.creditSince }
                   : null,
@@ -210,7 +231,9 @@ export default async function HomePage({ params }: Args) {
                 { value: settings.stars ?? '4', label: t.home.creditStars },
                 { value: t.branch.anyTime, label: t.home.creditReception },
               ]
-                .filter((c): c is { value: string; label: string } => c !== null)
+                .filter(
+                  (c): c is { value: string; label: string; note?: string } => c !== null,
+                )
                 .map((credit, i) => (
                   <Reveal key={credit.label} delay={i * 90} className="text-center">
                     {/* Sized down from the four-item version: "2 million" is
@@ -220,6 +243,11 @@ export default async function HomePage({ params }: Args) {
                       {credit.value}
                     </p>
                     <p className="mt-2.5 text-[0.9rem] text-muted-ink">{credit.label}</p>
+                    {credit.note && (
+                      <p className="mt-1 text-[0.78rem] leading-snug text-balance text-muted-ink/80">
+                        {credit.note}
+                      </p>
+                    )}
                   </Reveal>
                 ))}
             </ul>
@@ -392,7 +420,24 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
 
   // The homepage competes for the city, not for the brand — somebody typing
   // the brand will find it regardless.
-  const title = `${siteName} — ${t.seo.hotelsIn} ${t.seo.locality}${comma(locale)} ${t.seo.region}`
+  //
+  // The number goes in it. "Hotels in Erbil" is what every hotel in Erbil
+  // says; "Four Hotels in Erbil" is the one thing about this group that no
+  // competitor in the city can copy, and a title is the single line a search
+  // result, a shared link and a browser tab all read from. The region came
+  // out to make room — it is already in the description, in the address on
+  // every page, and in the structured data — because a title Google truncates
+  // at sixty-odd characters spends its last words on nothing.
+  //
+  // Both halves are checkable: four hotels, and the year the owner entered in
+  // settings. Nothing here claims a size, a rank or a first.
+  const owned = settings.establishedYear
+    ? ` | ${t.seo.ownedSince.replace('{year}', String(settings.establishedYear))}`
+    : ''
+  const title =
+    branches.length > 0
+      ? `${siteName} — ${countWord(branches.length, locale)} ${t.seo.hotelsIn} ${t.seo.locality}${owned}`
+      : `${siteName} — ${t.seo.hotelsIn} ${t.seo.locality}${comma(locale)} ${t.seo.region}`
 
   // Written once and used for both. Without it the share card fell through to
   // the English site description, so a homepage link sent in Arabic arrived

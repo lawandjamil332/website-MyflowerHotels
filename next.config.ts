@@ -72,6 +72,24 @@ const nextConfig: NextConfig = {
         pathname: '/hotels/**',
       },
     ],
+    /**
+     * No request for a width that does not exist.
+     *
+     * next/image's default ladder tops out at 3840, and every full-width
+     * picture on this site asks for `100vw`, so a laptop was fetching
+     * `/_next/image?...&w=3840`. Nothing here is 3840 wide: the largest size
+     * Payload generates is `xlarge` at 1920, and the photographs actually
+     * uploaded are 1100. Next does not upscale, so the bytes were never wrong
+     * — what was wrong is everything around them. Each fictional width is its
+     * own cache entry, so the same hero was stored and re-optimised under
+     * several names; and the URL itself tells anyone reading the HTML that
+     * this site ships 4K photographs, which is the sort of thing a page-speed
+     * report repeats back.
+     *
+     * Capped at 1920, which is the widest image that exists, with the rungs
+     * below it kept close together so a phone is not handed a tablet's file.
+     */
+    deviceSizes: [640, 750, 828, 1080, 1200, 1440, 1920],
     // 82, not 100. Quality 100 WebP is around 40% heavier than 82 for a
     // difference nobody can see, and it is spent on photographs cropped from a
     // printed flyer — so the extra bytes were preserving the print's own

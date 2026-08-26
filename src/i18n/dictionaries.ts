@@ -24,6 +24,8 @@ export type Dictionary = {
     creditGuestsValue: string
     creditGuests: string
     creditHotels: string
+    /** Shown under the hotel count while one of them has not opened yet. */
+    creditHotelsNote: string
     creditSince: string
     creditStars: string
     creditReception: string
@@ -376,6 +378,8 @@ export type Dictionary = {
     /** The country, named in this language. */
     country: string
     bookDirect: string
+    /** Carries `{year}`. Goes in the homepage title after the city. */
+    ownedSince: string
   }
   reviews: {
     title: string
@@ -424,6 +428,7 @@ const en: Dictionary = {
     creditGuestsValue: '2 million',
     creditGuests: 'Guests welcomed',
     creditHotels: 'Hotels in Erbil',
+    creditHotelsNote: '{open} open, {soon} opening soon',
     creditSince: 'Welcoming guests since',
     creditStars: 'Star rating',
     creditReception: 'Reception',
@@ -822,6 +827,7 @@ const en: Dictionary = {
     region: 'Kurdistan Region, Iraq',
     country: 'Iraq',
     bookDirect: 'Book direct and pay at the hotel',
+    ownedSince: 'Iraqi-owned since {year}',
   },
   reviews: {
     title: 'What guests said',
@@ -891,6 +897,7 @@ const ku: Dictionary = {
     creditGuestsValue: '2 ملیۆن',
     creditGuests: 'میوان پێشوازیمان لێکردوون',
     creditHotels: 'هۆتێل لە هەولێر',
+    creditHotelsNote: '{open} کراوەن، {soon} بەم زووانە دەکرێتەوە',
     creditSince: 'پێشوازی لە میوان لە',
     creditStars: 'پلەی ئەستێرە',
     creditReception: 'پێشوازی',
@@ -1290,6 +1297,7 @@ const ku: Dictionary = {
     region: 'هەرێمی کوردستان، عێراق',
     country: 'عێراق',
     bookDirect: 'ڕاستەوخۆ حیجز بکە و لە هۆتێلەکە پارە بدە',
+    ownedSince: 'خاوەندارێتی عێراقی لە {year}ەوە',
   },
   reviews: {
     title: 'میوانەکان چییان وت',
@@ -1359,6 +1367,7 @@ const ar: Dictionary = {
     creditGuestsValue: '2 مليون',
     creditGuests: 'ضيف استقبلناهم',
     creditHotels: 'فنادق في أربيل',
+    creditHotelsNote: '{open} مفتوحة، {soon} يفتتح قريباً',
     creditSince: 'نستقبل الضيوف منذ',
     creditStars: 'تصنيف النجوم',
     creditReception: 'الاستقبال',
@@ -1751,6 +1760,7 @@ const ar: Dictionary = {
     region: 'إقليم كردستان، العراق',
     country: 'العراق',
     bookDirect: 'احجز مباشرة وادفع في الفندق',
+    ownedSince: 'ملكية عراقية منذ {year}',
   },
   reviews: {
     title: 'ماذا قال الضيوف',
