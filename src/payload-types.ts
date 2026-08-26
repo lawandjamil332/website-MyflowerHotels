@@ -365,6 +365,10 @@ export interface Branch {
    */
   bookingComUrl?: string | null;
   /**
+   * Optional, and nothing appears on the page. It tells search engines that the TripAdvisor listing and this hotel are the same building.
+   */
+  tripadvisorUrl?: string | null;
+  /**
    * Out of 10.
    */
   bookingComScore?: number | null;
@@ -1632,6 +1636,7 @@ export interface BranchesSelect<T extends boolean = true> {
   checkInTime?: T;
   checkOutTime?: T;
   bookingComUrl?: T;
+  tripadvisorUrl?: T;
   bookingComScore?: T;
   bookingComReviews?: T;
   bookingComChecked?: T;

@@ -47,6 +47,11 @@ export const nameVariants = (name?: string | null): string[] => {
     `${brandSquashed} Hotel`,
     `${canonical} Hotel`,
     `Hotel ${canonical}`,
+    // "Hotel MyFlower 3" — the squashed brand with "Hotel" in front, which is
+    // how the third hotel is written in more than one place online. Every
+    // other combination of the space and the word was already covered; this
+    // one was the gap, and it is the spelling somebody types into Google.
+    `Hotel ${brandSquashed}`,
   ]
 
   // Deduplicated, and never repeating the name it is an alias for.

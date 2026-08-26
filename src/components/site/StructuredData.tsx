@@ -158,12 +158,25 @@ export function HotelSchema({
             value: true,
           }))
         : undefined,
-      // The Booking.com listing belongs here rather than nowhere: it is the
-      // same building, carrying reviews and an address this page cannot claim,
-      // and sameAs is how a search engine is told two records are one place.
-      sameAs: [branch.facebook, branch.instagram, branch.bookingComUrl].filter(
-        Boolean,
-      ) as string[],
+      // Every other record of this same building, named in the one field whose
+      // job is to say they are the same building.
+      //
+      // The Booking.com listing carries reviews and an address this page
+      // cannot claim; the Google Maps pin is the entity a local search result
+      // is actually assembled from, and it appeared only under `hasMap`, which
+      // says "here is a map of this place" and not "this place and that place
+      // are one". TripAdvisor is here for the same reason and is usually the
+      // last of the four to be linked from anywhere.
+      //
+      // This is the whole fix for a group that reads as four unrelated hotels:
+      // four pages, each naming its own listings, all pointing at one parent.
+      sameAs: [
+        branch.facebook,
+        branch.instagram,
+        branch.bookingComUrl,
+        branch.tripadvisorUrl,
+        branch.googleMapsUrl,
+      ].filter(Boolean) as string[],
     }),
   )
 }

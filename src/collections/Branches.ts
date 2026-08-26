@@ -272,6 +272,25 @@ export const Branches: CollectionConfig = {
           },
         },
         {
+          // Nothing on the page changes when this is filled in, which is the
+          // whole point of it.
+          //
+          // A search engine has no way to know that this hotel, its Booking
+          // listing, its Google Maps pin and its TripAdvisor page are one
+          // building — the names are spelled four different ways and none of
+          // the four links to the others. Every listing that gets named here
+          // is one more rope tying them together, and TripAdvisor is the one
+          // this site could not name because there was nowhere to put it.
+          name: 'tripadvisorUrl',
+          type: 'text',
+          label: 'TripAdvisor URL',
+          admin: {
+            description:
+              'Optional, and nothing appears on the page. It tells search engines that the ' +
+              'TripAdvisor listing and this hotel are the same building.',
+          },
+        },
+        {
           // Typed in, not fetched. A score read live from another site is a
           // dependency that can fail or change shape on a page that has to
           // render; three numbers checked now and then are enough, and the
