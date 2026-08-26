@@ -76,6 +76,15 @@ export default async function HomePage({ params }: Args) {
   const openCount = branches.filter((b) => b.status !== 'openingSoon').length
   const soonCount = n - openCount
 
+  // Lower-cased because it lands mid-sentence, the same way groupIdentity
+  // handles it. Kurdish and Arabic have no case, so this changes nothing in
+  // either. Counted from the hotels that are open rather than the four that
+  // exist: the guests in that figure were welcomed by three hotels, and a
+  // number given the wrong scope is the fault this whole band is fixing.
+  const openWord = countWord(openCount, locale).toLocaleLowerCase(
+    locale === 'en' ? 'en' : undefined,
+  )
+
   const payload = await getPayload({ config: configPromise })
   const rate = await pointsRate(payload)
   const faq = buildGroupFaq(branches, t, locale, {
@@ -227,7 +236,14 @@ export default async function HomePage({ params }: Args) {
                 settings.establishedYear
                   ? { value: String(settings.establishedYear), label: t.home.creditSince }
                   : null,
-                { value: t.home.creditGuestsValue, label: t.home.creditGuests },
+                {
+                  value: t.home.creditGuestsValue,
+                  // "2 million" on its own is a number with no scope, which is
+                  // the kind of figure a reader discounts entirely. Saying
+                  // which hotels it covers costs four words and makes it a
+                  // claim somebody could check.
+                  label: t.home.creditGuests.replace('{count}', openWord),
+                },
                 { value: settings.stars ?? '4', label: t.home.creditStars },
                 { value: t.branch.anyTime, label: t.home.creditReception },
               ]
@@ -242,7 +258,12 @@ export default async function HomePage({ params }: Args) {
                     <p className="font-display text-3xl leading-tight text-balance text-ink sm:text-4xl">
                       {credit.value}
                     </p>
-                    <p className="mt-2.5 text-[0.9rem] text-muted-ink">{credit.label}</p>
+                    {/* text-balance because these labels are no longer all
+                        two words — the guest one now names its scope, and left
+                        alone it broke with a single word on the last line. */}
+                    <p className="mt-2.5 text-[0.9rem] text-balance text-muted-ink">
+                      {credit.label}
+                    </p>
                     {credit.note && (
                       <p className="mt-1 text-[0.78rem] leading-snug text-balance text-muted-ink/80">
                         {credit.note}

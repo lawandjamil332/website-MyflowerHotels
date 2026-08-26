@@ -22,6 +22,7 @@ export type Dictionary = {
     chooseBranch: string
     interlude: string
     creditGuestsValue: string
+    /** Carries `{count}` — the hotels actually open, not the four that exist. */
     creditGuests: string
     creditHotels: string
     /** Shown under the hotel count while one of them has not opened yet. */
@@ -426,7 +427,7 @@ const en: Dictionary = {
     chooseBranchLead: 'Choose the one that suits your stay.',
     interlude: '{count} addresses in one city.',
     creditGuestsValue: '2 million',
-    creditGuests: 'Guests welcomed',
+    creditGuests: 'Guests welcomed across our {count} hotels',
     creditHotels: 'Hotels in Erbil',
     creditHotelsNote: '{open} open, {soon} opening soon',
     creditSince: 'Welcoming guests since',
@@ -895,7 +896,7 @@ const ku: Dictionary = {
     chooseBranchLead: 'ئەوەی گونجاوە بۆ مانەوەت هەڵبژێرە.',
     interlude: '{count} ناونیشان لە یەک شاردا.',
     creditGuestsValue: '2 ملیۆن',
-    creditGuests: 'میوان پێشوازیمان لێکردوون',
+    creditGuests: 'میوان لە {count} هۆتێلماندا پێشوازیمان لێکردوون',
     creditHotels: 'هۆتێل لە هەولێر',
     creditHotelsNote: '{open} کراوەن، {soon} بەم زووانە دەکرێتەوە',
     creditSince: 'پێشوازی لە میوان لە',
@@ -1365,7 +1366,7 @@ const ar: Dictionary = {
     chooseBranchLead: 'اختر ما يناسب إقامتك.',
     interlude: '{count} عناوين في مدينة واحدة.',
     creditGuestsValue: '2 مليون',
-    creditGuests: 'ضيف استقبلناهم',
+    creditGuests: 'ضيف استقبلناهم في فنادقنا ال{count}',
     creditHotels: 'فنادق في أربيل',
     creditHotelsNote: '{open} مفتوحة، {soon} يفتتح قريباً',
     creditSince: 'نستقبل الضيوف منذ',
