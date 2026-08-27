@@ -277,11 +277,16 @@ export function RoomSchema({
   /**
    * The date the owner has said these rates hold until, from Site settings.
    *
-   * Google withholds the price from a result whose offer does not carry one,
-   * so without this the rate printed on the page could never appear beside it
-   * in search. It is passed in rather than computed because it is not a
-   * computable fact — only the hotel knows when it next intends to reprice,
-   * and a date generated here would be a promise the hotel never made.
+   * Not the thing that puts a price into a Google result — that is Google
+   * Hotels, fed from Hotel Center, and no amount of markup on a hotel page
+   * substitutes for it. What schema.org pricing on a hotel page is actually
+   * read for is checking such a feed against the site, so this is a
+   * prerequisite rather than a lever: it makes the offer complete and correct
+   * for the day the group connects one.
+   *
+   * Passed in rather than computed because it is not a computable fact. Only
+   * the hotel knows when it next intends to reprice, and a date generated here
+   * would be a promise the hotel never made.
    */
   ratesValidUntil?: string | null
 }) {
@@ -292,12 +297,12 @@ export function RoomSchema({
   /**
    * The date, but only while it is still in the future.
    *
-   * A `priceValidUntil` in the past is worse than none at all: Google reads it
-   * as an offer that has expired and drops the price anyway, so a date the
-   * owner set last year and forgot would quietly undo the whole reason this
-   * field exists — while looking, in the admin panel, exactly like it was
-   * working. Checked on every request, because that is the only place the
-   * passage of time can be noticed.
+   * A `priceValidUntil` in the past is worse than none at all: it states that
+   * this rate expired, which is a false claim about a live price rather than
+   * merely an incomplete one — and a date set last year and forgotten looks,
+   * in the admin panel, exactly like a date that is working. Checked on every
+   * request, because the passage of time is not something a stored value can
+   * notice about itself.
    */
   const priceValidUntil = (() => {
     if (!ratesValidUntil) return undefined

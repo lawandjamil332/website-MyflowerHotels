@@ -28,15 +28,18 @@ export const Settings: GlobalConfig = {
       /**
        * How long the published rates hold.
        *
-       * Google asks every price in structured data to say when it stops being
-       * valid, and withholds the price from a result that does not — so the
-       * rooms on this site had rates on the page that no search result was
-       * allowed to show. It is not a field anything can be computed into: only
-       * the owner knows when he next intends to reprice, and a date invented
-       * in code would be a promise the hotel never made.
+       * Worth being exact about what this does, because it was first written
+       * here claiming more. A price on a hotel page does not reach an ordinary
+       * Google result through this markup at all: hotel prices in Google come
+       * from Google Hotels, fed by Hotel Center through a connectivity
+       * partner, and what schema.org pricing on a hotel page is used for is
+       * checking that feed against the site — Google's own term is price
+       * accuracy validation. So this field does not switch prices on in
+       * search. It makes the room markup complete and correct, and it is one
+       * of the things being checked on the day the group does connect.
        *
-       * Left empty, nothing is claimed and the site behaves exactly as it did.
-       * The only cost of that is the one above.
+       * Kept because it costs nothing, is true when set, and is a prerequisite
+       * rather than a lever. Left empty, nothing is claimed at all.
        */
       name: 'ratesValidUntil',
       type: 'date',
@@ -45,8 +48,9 @@ export const Settings: GlobalConfig = {
         date: { pickerAppearance: 'dayOnly', displayFormat: 'd MMM yyyy' },
         description:
           'The date the prices on this site are good until — usually the end of the season ' +
-          'or the year. Google will not show a price in search results unless it is told ' +
-          'this. Leave empty and prices stay off search results. Update it when you reprice.',
+          'or the year. It does not by itself put prices into Google: that comes from Google ' +
+          'Hotels. It makes the rooms\u2019 data complete for when it does. Safe to leave empty; ' +
+          'update it whenever you reprice.',
       },
     },
     {

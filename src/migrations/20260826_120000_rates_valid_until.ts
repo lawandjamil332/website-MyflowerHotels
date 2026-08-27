@@ -3,11 +3,12 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
 /**
  * Somewhere to say how long the published room rates hold.
  *
- * Google will not print a price in a search result unless the structured data
- * says when that price stops being valid — so every room on this site carried
- * a rate on the page that no result was permitted to show. There was no field
- * to answer it with, and the answer is not computable: only the owner knows
- * when he next intends to reprice.
+ * A hotel's prices reach Google through Google Hotels, not through the markup
+ * on its own pages; what schema.org pricing on a hotel page is read for is
+ * checking such a feed against the site. So this is a prerequisite rather than
+ * a lever — it completes the room markup for the day the group connects one.
+ * The answer is not computable either way: only the owner knows when he next
+ * intends to reprice.
  *
  * Nothing is seeded. Empty means nothing is claimed, and the site behaves
  * exactly as it did before this ran.
