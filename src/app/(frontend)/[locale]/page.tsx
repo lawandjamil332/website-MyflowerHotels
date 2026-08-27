@@ -27,7 +27,7 @@ import { Reveal } from '@/components/site/Reveal'
 import { RoomCard } from '@/components/site/RoomCard'
 import { SectionHeading } from '@/components/site/SectionHeading'
 import { StayFinder } from '@/components/site/StayFinder'
-import { FaqSchema, GroupSchema } from '@/components/site/StructuredData'
+import { FaqSchema, GroupSchema, WebSiteSchema } from '@/components/site/StructuredData'
 import { Faq } from '@/components/site/Faq'
 import { buildGroupFaq } from '@/utilities/faq'
 import { pointsRate } from '@/utilities/points'
@@ -112,6 +112,13 @@ export default async function HomePage({ params }: Args) {
         ]}
       />
       <FaqSchema entries={faq} />
+      {/* The site itself — its name, the three languages it is published in,
+          and the one page here that answers a typed query. */}
+      <WebSiteSchema
+        siteName={siteName}
+        locale={locale}
+        description={groupIdentity(branches, t, locale, settings.establishedYear)}
+      />
       {/* The search box sits at the top of the picture, above the name, which
           is where the reference puts it and is the right way round: the one
           control a guest came to use should not be something they scroll to.

@@ -1,5 +1,5 @@
 import type { Branch, Room } from '@/payload-types'
-import type { Locale } from '@/i18n/config'
+import { locales, type Locale } from '@/i18n/config'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mediaUrl } from '@/utilities/media'
 import { nameVariants } from '@/utilities/nameVariants'
@@ -50,6 +50,7 @@ export function HotelSchema({
   stars,
   rating,
   rooms = [],
+  reviews = [],
   amenityLabel,
 }: {
   branch: Branch
@@ -59,6 +60,13 @@ export function HotelSchema({
   rating?: { average: number; count: number }
   /** Published rooms, for the price band and the room count. */
   rooms?: Room[]
+  /**
+   * The approved reviews this page prints, in the same order it prints them.
+   * Google requires that every review in the markup be visible on the page
+   * carrying it, so this must come from the same array the page renders and
+   * never from a wider query.
+   */
+  reviews?: { guestName: string; rating: number; comment: string | null; createdAt: string }[]
   /** Turns "wifi" into "Wi-Fi" — see amenityFeature below. */
   amenityLabel?: (key: string) => string
 }) {
@@ -136,8 +144,60 @@ export function HotelSchema({
               worstRating: 1,
             }
           : undefined,
+      // The individual reviews behind the average above.
+      //
+      // `aggregateRating` on its own tells Google there is a 4.6 without ever
+      // showing it the reviews that make one — and Google's stated position is
+      // that a rating it cannot see the basis for is a rating it need not
+      // print. These are the same rows the page renders, in the same order,
+      // which is both the requirement and the only version of this that is
+      // honest. A review with nothing written in it is left out: a star with
+      // no sentence is not a review anybody can read.
+      review: reviews
+        .filter((r) => r.comment && r.comment.trim())
+        .slice(0, 10)
+        .map((r) =>
+          clean({
+            '@type': 'Review',
+            author: { '@type': 'Person', name: r.guestName },
+            reviewRating: {
+              '@type': 'Rating',
+              ratingValue: r.rating,
+              bestRating: 5,
+              worstRating: 1,
+            },
+            reviewBody: r.comment ?? undefined,
+            // Date only. The timestamp carries the hour a guest happened to
+            // press send, which is nobody's business and not what the field
+            // is asking for.
+            datePublished: r.createdAt ? r.createdAt.slice(0, 10) : undefined,
+          }),
+        ),
       checkinTime: branch.checkInAnyTime ? '00:00' : (branch.checkInTime ?? undefined),
       checkoutTime: branch.checkOutTime ?? undefined,
+      // Reception around the clock, stated where a machine reads it.
+      //
+      // "24-hour reception" is written on the page in three languages and was
+      // nowhere in the markup, so the one operational fact that decides a late
+      // arrival — and that a guest landing at Erbil airport at 2am is
+      // explicitly searching for — could not be matched against the question.
+      // Emitted only for hotels that actually say it about themselves.
+      openingHoursSpecification: branch.checkInAnyTime
+        ? {
+            '@type': 'OpeningHoursSpecification',
+            dayOfWeek: [
+              'Monday',
+              'Tuesday',
+              'Wednesday',
+              'Thursday',
+              'Friday',
+              'Saturday',
+              'Sunday',
+            ],
+            opens: '00:00',
+            closes: '23:59',
+          }
+        : undefined,
       priceRange,
       numberOfRooms: roomCount > 0 ? roomCount : undefined,
       // True of every hotel here and the reason a guest picks this site over a
@@ -337,6 +397,55 @@ export function GroupSchema({
           }),
         }),
       ),
+    }),
+  )
+}
+
+/**
+ * The site itself, as a thing with a name and a language.
+ *
+ * Every other block here describes the company or a hotel. None of them said
+ * anything about the website, which is what a search engine is actually
+ * looking at — so there was no statement anywhere that this site is published
+ * in three languages, and no way for it to offer the search box that appears
+ * under a well-understood site's result.
+ *
+ * `SearchAction` points at the rooms browser, because that is the only page
+ * here that takes a query and answers it. Pointing it at a page that ignores
+ * the parameter is worse than omitting it: Google tests the URL.
+ */
+export function WebSiteSchema({
+  siteName,
+  locale,
+  description,
+}: {
+  siteName: string
+  locale: Locale
+  description?: string
+}) {
+  const base = getServerSideURL()
+
+  return json(
+    clean({
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      '@id': `${base}/#website`,
+      name: siteName,
+      url: `${base}/${locale}`,
+      description,
+      // Stated rather than guessed from the URL. Three languages is a fact
+      // about this site and one of the few things that distinguishes it from
+      // every English-only listing page competing for the same searches.
+      inLanguage: locales.map((l) => l),
+      publisher: { '@id': `${base}/#organization` },
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${base}/${locale}/rooms?q={search_term_string}`,
+        },
+        'query-input': 'required name=search_term_string',
+      },
     }),
   )
 }

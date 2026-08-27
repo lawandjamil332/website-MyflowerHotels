@@ -6,7 +6,7 @@ import { getPayload } from 'payload'
 
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
-import { fillCount } from '@/i18n/count'
+import { countWord, fillCount } from '@/i18n/count'
 import { getSettings } from '@/utilities/getSettings'
 import { getBranches } from '@/utilities/branches'
 import { groupIdentity } from '@/utilities/group'
@@ -168,8 +168,35 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   // "{count} hotels in Erbil" — visible to every searcher, invisible on the
   // page itself, which is why it survived this long.
   const branches = await getBranches(locale)
-  return {
-    title: `${t.nav.about} — ${t.seo.hotelsIn} ${t.seo.locality}`,
-    description: fillCount(t.about.lead, branches.length, locale),
-  }
+  const settings = await getSettings(locale)
+  const siteName = settings.siteName || 'My Flower Hotels'
+  const count = countWord(branches.length, locale)
+
+  /**
+   * This page's title used to lead with the word "About".
+   *
+   * Nobody searches for "about". This is the page that answers "is there an
+   * Iraqi hotel group in Erbil", "family-owned hotels Erbil", "hotel chain in
+   * Erbil" — the searches where the whole point of this company is the answer
+   * — and it was introducing itself with the one word on it that no query
+   * contains. The name still leads, because a title has to say whose page it
+   * is; what follows is now what the page is actually for.
+   */
+  const title =
+    branches.length > 0
+      ? `${siteName} — ${t.seo.hotelGroupIn} ${t.seo.locality}`
+      : `${t.nav.about} — ${t.seo.hotelsIn} ${t.seo.locality}`
+
+  // Written for this page rather than borrowed from the hero. The lead is one
+  // clause; a search summary has about two lines to earn a click, and the
+  // things worth spending them on are the count, the ownership and the fact
+  // that booking here takes no card.
+  const description =
+    branches.length > 0
+      ? t.seo.groupDescription
+          .replace('{count}', count.toLocaleLowerCase(locale === 'en' ? 'en' : undefined))
+          .replace('{city}', t.seo.locality)
+      : fillCount(t.about.lead, branches.length, locale)
+
+  return { title, description }
 }

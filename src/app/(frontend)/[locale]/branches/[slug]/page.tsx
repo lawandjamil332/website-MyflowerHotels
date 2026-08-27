@@ -100,6 +100,7 @@ export default async function BranchPage({ params }: Args) {
         locale={locale}
         stars={settings.stars}
         rating={rating}
+        reviews={reviews}
         rooms={rooms}
         amenityLabel={(key) => t.amenity[key]}
       />

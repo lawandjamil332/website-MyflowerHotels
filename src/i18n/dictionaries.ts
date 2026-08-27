@@ -144,6 +144,9 @@ export type Dictionary = {
     filterHotel: string
     filterGuests: string
     filterBed: string
+    /** Label and placeholder for the free-text room search. */
+    search: string
+    searchPlaceholder: string
     any: string
     apply: string
     clear: string
@@ -381,6 +384,10 @@ export type Dictionary = {
     bookDirect: string
     /** Carries `{year}`. Goes in the homepage title after the city. */
     ownedSince: string
+    /** "Hotel group in" — what the About page is actually competing for. */
+    hotelGroupIn: string
+    /** Carries `{count}` and `{city}`. The About page's search summary. */
+    groupDescription: string
   }
   reviews: {
     title: string
@@ -566,6 +573,8 @@ const en: Dictionary = {
     filterHotel: 'Hotel',
     filterGuests: 'Guests',
     filterBed: 'Bed',
+    search: 'Search',
+    searchPlaceholder: 'Room, hotel or what is in it',
     any: 'Any',
     apply: 'Show rooms',
     clear: 'Clear',
@@ -829,6 +838,11 @@ const en: Dictionary = {
     country: 'Iraq',
     bookDirect: 'Book direct and pay at the hotel',
     ownedSince: 'Iraqi-owned since {year}',
+    hotelGroupIn: 'Iraqi-owned hotel group in',
+    groupDescription:
+      'An independent, family-run hotel group with {count} hotels in {city} — Iraqi-owned, ' +
+      'not a foreign brand. Addresses, rooms and rates for every hotel, and booking direct ' +
+      'with no card and no fee.',
   },
   reviews: {
     title: 'What guests said',
@@ -1037,6 +1051,8 @@ const ku: Dictionary = {
     filterHotel: 'هۆتێل',
     filterGuests: 'میوان',
     filterBed: 'جێگا',
+    search: 'گەڕان',
+    searchPlaceholder: 'ژوور، هۆتێل، یان ئەوەی تێیدایە',
     any: 'هەموو',
     apply: 'ژوورەکان پیشان بدە',
     clear: 'سڕینەوە',
@@ -1299,6 +1315,11 @@ const ku: Dictionary = {
     country: 'عێراق',
     bookDirect: 'ڕاستەوخۆ حیجز بکە و لە هۆتێلەکە پارە بدە',
     ownedSince: 'خاوەندارێتی عێراقی لە {year}ەوە',
+    hotelGroupIn: 'گرووپی هۆتێلی عێراقی لە',
+    groupDescription:
+      'گرووپێکی هۆتێلی سەربەخۆی خێزانی بە {count} هۆتێل لە {city} — خاوەندارێتی عێراقی، ' +
+      'نەک براندێکی بیانی. ناونیشان، ژوور و نرخی هەموو هۆتێلەکان، و حیجزی ڕاستەوخۆ ' +
+      'بەبێ کارت و بەبێ کرێ.',
   },
   reviews: {
     title: 'میوانەکان چییان وت',
@@ -1504,6 +1525,8 @@ const ar: Dictionary = {
     filterHotel: 'الفندق',
     filterGuests: 'عدد الضيوف',
     filterBed: 'السرير',
+    search: 'بحث',
+    searchPlaceholder: 'الغرفة أو الفندق أو ما فيها',
     any: 'الكل',
     apply: 'اعرض الغرف',
     clear: 'مسح',
@@ -1762,6 +1785,10 @@ const ar: Dictionary = {
     country: 'العراق',
     bookDirect: 'احجز مباشرة وادفع في الفندق',
     ownedSince: 'ملكية عراقية منذ {year}',
+    hotelGroupIn: 'مجموعة فنادق عراقية في',
+    groupDescription:
+      'مجموعة فنادق عائلية مستقلة تضم {count} فنادق في {city} — ملكية عراقية، وليست ' +
+      'علامة أجنبية. عناوين وغرف وأسعار كل فندق، وحجز مباشر بلا بطاقة وبلا رسوم.',
   },
   reviews: {
     title: 'ماذا قال الضيوف',

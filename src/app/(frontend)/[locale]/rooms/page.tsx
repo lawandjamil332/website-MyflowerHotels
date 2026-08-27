@@ -12,7 +12,7 @@ import { Reveal } from '@/components/site/Reveal'
 import { RoomCard } from '@/components/site/RoomCard'
 import { BreadcrumbSchema, RoomListSchema } from '@/components/site/StructuredData'
 import { shell } from '@/components/site/ui'
-import type { Branch } from '@/payload-types'
+import type { Branch, Room } from '@/payload-types'
 
 type Args = {
   params: Promise<{ locale: string }>
@@ -45,12 +45,42 @@ export default async function RoomsPage({ params, searchParams }: Args) {
   const hotel = one(sp.hotel)
   const guests = Number(one(sp.guests)) || 0
   const bed = one(sp.bed)
+  // Free text. Trimmed, folded to lower case and capped, so a pasted essay
+  // cannot become a page title or a thousand-character filter chip.
+  const q = (one(sp.q) ?? '').trim().slice(0, 80)
+  const needle = q.toLocaleLowerCase(locale === 'en' ? 'en' : undefined)
+
+  /**
+   * Everything about a room that a person might type.
+   *
+   * Its name, its hotel, its bed, its neighbourhood and what is in it — all
+   * in the language being read, because a guest reading Arabic searches in
+   * Arabic and matching only the English would answer nothing.
+   */
+  const haystack = (room: Room, branch: Branch | null): string =>
+    [
+      room.name,
+      branch?.name,
+      branch?.neighbourhood,
+      room.bedType ? t.bed[room.bedType as keyof typeof t.bed] : null,
+      ...(room.amenities ?? []).map((a) => t.amenity[a] ?? a),
+    ]
+      .filter(Boolean)
+      .join(' ')
+      .toLocaleLowerCase(locale === 'en' ? 'en' : undefined)
 
   const filtered = rooms.filter((room) => {
     const branch = typeof room.branch === 'object' ? (room.branch as Branch) : null
     if (hotel && branch?.slug !== hotel) return false
     if (guests && (room.maxGuests ?? 0) < guests) return false
     if (bed && room.bedType !== bed) return false
+    // Every word has to appear somewhere, in any order — "double citadel"
+    // finds a double room at the hotel near the Citadel, which is how people
+    // actually type. Matching the whole phrase would find nothing.
+    if (needle) {
+      const hay = haystack(room, branch)
+      if (!needle.split(/\s+/).every((word) => hay.includes(word))) return false
+    }
     return true
   })
 
@@ -61,10 +91,11 @@ export default async function RoomsPage({ params, searchParams }: Args) {
     if (hotel) next.set('hotel', hotel)
     if (guests) next.set('guests', String(guests))
     if (bed) next.set('bed', bed)
+    if (q) next.set('q', q)
     if (next.get(key) === value) next.delete(key)
     else next.set(key, value)
-    const q = next.toString()
-    return `/${locale}/rooms${q ? `?${q}` : ''}`
+    const query = next.toString()
+    return `/${locale}/rooms${query ? `?${query}` : ''}`
   }
 
   const chip = (active: boolean) =>
@@ -90,7 +121,7 @@ export default async function RoomsPage({ params, searchParams }: Args) {
 
   const heroSource = branches[0]?.heroImage
   const beds: Array<keyof typeof t.bed> = ['single', 'double', 'twin', 'king', 'suite']
-  const anyFilter = Boolean(hotel || guests || bed)
+  const anyFilter = Boolean(hotel || guests || bed || q)
 
   return (
     <>
@@ -107,6 +138,43 @@ export default async function RoomsPage({ params, searchParams }: Args) {
       <section className={cn(shell, 'py-14 sm:py-20')}>
         <div className="border-y border-line py-7">
           <div className="flex flex-col gap-6">
+            {/* A plain form, submitted by the browser. No JavaScript, no state,
+                and the result is a shareable URL like every other filter here
+                — which is also what lets the site truthfully declare a search
+                action to Google. The hidden inputs carry whatever else is
+                already chosen, so searching inside a filtered view keeps the
+                filter instead of silently dropping it. */}
+            <form
+              action={`/${locale}/rooms`}
+              method="get"
+              className="flex flex-wrap items-center gap-3"
+              role="search"
+            >
+              {hotel && <input type="hidden" name="hotel" value={hotel} />}
+              {guests > 0 && <input type="hidden" name="guests" value={String(guests)} />}
+              {bed && <input type="hidden" name="bed" value={bed} />}
+              <label
+                htmlFor="room-search"
+                className="me-2 text-[0.58rem] tracking-[0.2em] text-muted-ink uppercase rtl:tracking-normal"
+              >
+                {t.roomsPage.search}
+              </label>
+              {/* 16px minimum, or iOS zooms the page on focus and does not
+                  zoom back out. */}
+              <input
+                id="room-search"
+                type="search"
+                name="q"
+                defaultValue={q}
+                maxLength={80}
+                placeholder={t.roomsPage.searchPlaceholder}
+                className="min-w-0 flex-1 border border-line bg-transparent px-4 py-2 text-base text-ink placeholder:text-muted-ink/70 focus:border-ink focus:outline-none sm:max-w-xs"
+              />
+              <button type="submit" className={chip(false)}>
+                {t.roomsPage.apply}
+              </button>
+            </form>
+
             {branches.length > 0 && (
               <div className="flex flex-wrap items-center gap-3">
                 <span className="me-2 text-[0.58rem] tracking-[0.2em] text-muted-ink uppercase rtl:tracking-normal">
