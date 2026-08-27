@@ -32,6 +32,7 @@ export const Branches: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'city', 'order'],
+    group: 'Hotels',
     description: 'Each hotel in the group. The homepage lists these in the order set below.',
   },
   defaultSort: 'order',

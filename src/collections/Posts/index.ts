@@ -48,6 +48,10 @@ export const Posts: CollectionConfig<'posts'> = {
     },
   },
   admin: {
+    // Hidden for the same reason as Pages: there is no /posts route on this
+    // site, so a post written here would be saved and never rendered. Still
+    // registered — the search and SEO plugins reference it. See Pages.
+    hidden: true,
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
       url: ({ data, req }) =>

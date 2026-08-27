@@ -173,20 +173,36 @@ export default buildConfig({
     defaultLocale: 'en',
     fallback: true,
   },
+  /**
+   * The order here is the order of the admin sidebar, and the groups appear in
+   * the order their first collection does — so this list is the panel's
+   * layout, not just a registry.
+   *
+   * Arranged by how often the owner opens a thing, not by how the template
+   * shipped: what came in overnight first, then who the guests are, then the
+   * hotels themselves, then the settings nobody touches twice a year. Pages,
+   * Posts and Categories are last because they are hidden from the sidebar
+   * entirely — this site has no route that renders any of them.
+   */
   collections: [
+    // Every day.
     Bookings,
+    Enquiries,
+    // Read often, written rarely.
     Guests,
-    PointEntries,
     Reviews,
+    PointEntries,
+    // The site itself.
     Branches,
     Rooms,
     Offers,
-    Enquiries,
+    Media,
+    // Twice a year.
+    Users,
+    // Registered for the plugins that reference them, hidden from the panel.
     Pages,
     Posts,
-    Media,
     Categories,
-    Users,
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Settings, Header, Footer],

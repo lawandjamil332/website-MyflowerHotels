@@ -37,6 +37,22 @@ export const Pages: CollectionConfig<'pages'> = {
     slug: true,
   },
   admin: {
+    /**
+     * Hidden from the sidebar, not deleted.
+     *
+     * This site has no route that renders a Page. It came with the Payload
+     * website template, and every hotel page, room page and the homepage are
+     * written in code — so a Page created here is saved, given a URL, and
+     * appears nowhere. That is the worst kind of admin item: it looks like
+     * work and produces nothing, and the owner has no way to tell from the
+     * panel that it will not show.
+     *
+     * The collection stays registered because the SEO, redirect and search
+     * plugins are configured against it and removing it would need a
+     * migration. `hidden` only takes it out of the navigation, so nothing
+     * breaks and one line brings it back the day the site gains a page route.
+     */
+    hidden: true,
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
       url: ({ data, req }) =>

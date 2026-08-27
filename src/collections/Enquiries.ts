@@ -25,6 +25,7 @@ export const Enquiries: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'branch', 'checkIn', 'guests', 'status', 'createdAt'],
     description: 'Enquiries sent from the website. Newest first.',
+    group: 'Reservations',
   },
   defaultSort: '-createdAt',
   hooks: {

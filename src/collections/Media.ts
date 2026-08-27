@@ -17,6 +17,11 @@ const dirname = path.dirname(filename)
 export const Media: CollectionConfig = {
   slug: 'media',
   folders: true,
+  admin: {
+    // With the hotels, because that is what every photograph in here is of.
+    group: 'Hotels',
+    description: 'Every photograph on the site. Upload here or from a hotel or a room.',
+  },
   access: {
     create: authenticated,
     delete: authenticated,

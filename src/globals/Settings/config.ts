@@ -15,6 +15,7 @@ export const Settings: GlobalConfig = {
     update: authenticated,
   },
   admin: {
+    group: 'Settings',
     description: 'Logo, group name and the contact details shown site-wide.',
   },
   fields: [

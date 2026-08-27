@@ -14,6 +14,8 @@ export const Users: CollectionConfig = {
   admin: {
     defaultColumns: ['name', 'email'],
     useAsTitle: 'name',
+    group: 'Settings',
+    description: 'Who can sign in to this admin panel.',
   },
   auth: true,
   fields: [

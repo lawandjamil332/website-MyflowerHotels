@@ -75,6 +75,20 @@ export const plugins: Plugin[] = [
   redirectsPlugin({
     collections: ['pages', 'posts'],
     overrides: {
+      admin: {
+        /**
+         * Hidden from the sidebar with the rest of the template's furniture.
+         *
+         * This redirects Pages and Posts, and this site renders neither — the
+         * redirect is applied by a component that only those two routes mount,
+         * so a redirect entered here would be stored and never followed. Real
+         * URL changes on this site are handled in redirects.ts, which Next
+         * applies at the edge.
+         *
+         * The plugin stays registered so its table and any rows in it survive.
+         */
+        hidden: true,
+      },
       // @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
@@ -106,7 +120,13 @@ export const plugins: Plugin[] = [
     fields: {
       payment: false,
     },
+    // Every form on this site — booking, enquiry, review, account — is written
+    // in code and posts to a server action, landing in Bookings, Enquiries,
+    // Reviews or Guests. A form built here would render on a Page, and there
+    // are no Pages. Both collections hidden; neither is removed.
+    formSubmissionOverrides: { admin: { hidden: true } },
     formOverrides: {
+      admin: { hidden: true },
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
           if ('name' in field && field.name === 'confirmationMessage') {
@@ -132,6 +152,10 @@ export const plugins: Plugin[] = [
     collections: ['posts'],
     beforeSync: beforeSyncWithSearch,
     searchOverrides: {
+      // Indexes Posts, which this site does not publish, for a search page it
+      // does not have. The guest-facing search is the rooms browser, which
+      // filters the database directly. Hidden, not removed.
+      admin: { hidden: true },
       fields: ({ defaultFields }) => {
         return [...defaultFields, ...searchFields]
       },

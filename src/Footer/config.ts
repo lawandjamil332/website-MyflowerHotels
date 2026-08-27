@@ -5,6 +5,11 @@ import { revalidateFooter } from './hooks/revalidateFooter'
 
 export const Footer: GlobalConfig = {
   slug: 'footer',
+  admin: {
+    // Same as Header: the site renders SiteFooter from Site settings, and
+    // nothing reads this. See the note there.
+    hidden: true,
+  },
   access: {
     read: () => true,
   },

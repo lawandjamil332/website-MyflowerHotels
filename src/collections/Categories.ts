@@ -13,6 +13,10 @@ export const Categories: CollectionConfig = {
     update: authenticated,
   },
   admin: {
+    // Categories exist only to file Posts, and Posts do not appear on this
+    // site. Hidden with them rather than left as a menu item that sorts
+    // nothing the owner can see.
+    hidden: true,
     useAsTitle: 'title',
   },
   fields: [
