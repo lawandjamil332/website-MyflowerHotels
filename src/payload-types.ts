@@ -2308,6 +2308,10 @@ export interface Setting {
    */
   ratesValidUntil?: string | null;
   /**
+   * Set this and the About page adds: no Kurdish or Iraqi-owned group in Erbil that we know of runs more hotels than we do — with this date beside it. Leave empty and the line does not appear. Re-check it once a year; an out-of-date claim is worse than none.
+   */
+  localClaimCheckedOn?: string | null;
+  /**
    * Shown as "Since 2012" in the footer. Leave empty to hide it.
    */
   establishedYear?: number | null;
@@ -2419,6 +2423,7 @@ export interface Footer {
 export interface SettingsSelect<T extends boolean = true> {
   siteName?: T;
   ratesValidUntil?: T;
+  localClaimCheckedOn?: T;
   establishedYear?: T;
   stars?: T;
   iqdPerUsd?: T;

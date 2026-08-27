@@ -106,6 +106,12 @@ export type Dictionary = {
     body2: string
     identityLead: string
     identityOpened: string
+    /**
+     * The owner's claim, worded as what the group knows rather than as a fact
+     * about the world, and stamped with the date it was checked.
+     * Carries {count}, {city} and {date}.
+     */
+    localLead: string
     identityOneCity: string
     identityManyCities: string
   }
@@ -539,6 +545,8 @@ const en: Dictionary = {
       'We are not a chain. The same people who own these hotels are the ones you will meet at the desk. If something is not right during your stay, tell us and it is put right that day.',
     identityLead: 'My Flower Hotels is an independent, Iraqi-owned group, run by one family.',
     identityOpened: 'We opened our first hotel in {city} in {year}.',
+    localLead:
+      '{count} hotels, one Iraqi family, no foreign operator. Among Kurdish and Iraqi-owned groups in {city}, we know of none running more. Checked {date}.',
     identityOneCity:
       'Today we run {count}, all of them in {city}, {country} — the same owners, the same standard, {count} addresses.',
     identityManyCities: 'Today we run {count} across {country}, in {cities}.',
@@ -1023,6 +1031,8 @@ const ku: Dictionary = {
     identityLead:
       'هۆتێلەکانی ماي فلاوەر گرووپێکی سەربەخۆی عێراقییە، لەلایەن یەک خێزانەوە بەڕێوە دەبرێت.',
     identityOpened: 'یەکەم هۆتێلمان لە ساڵی {year} لە {city} کردەوە.',
+    localLead:
+      '{count} هۆتێل، یەک خێزانی عێراقی، بەبێ بەڕێوەبەری بیانی. لە نێو گرووپە کوردی و عێراقییەکانی {city}، ئێمە هیچ گرووپێک ناناسین کە لەمە زیاتری بەڕێوە ببات. پشکنراوە لە {date}.',
     identityOneCity:
       'ئەمڕۆ {count} هۆتێلمان هەیە، هەموویان لە {city}، {country} — هەمان خاوەن، هەمان ئاست، {count} ناونیشان.',
     identityManyCities: 'ئەمڕۆ {count} هۆتێلمان هەیە بەسەر {country} دا، لە {cities}.',
@@ -1503,6 +1513,8 @@ const ar: Dictionary = {
       'نحن لسنا سلسلة فنادق. أصحاب هذه الفنادق هم أنفسهم من ستقابلهم عند الاستقبال. وإذا لم يكن شيء على ما يرام أثناء إقامتك، أخبرنا ويُعالَج في اليوم نفسه.',
     identityLead: 'فنادق ماي فلاور مجموعة عراقية مستقلة تديرها عائلة واحدة.',
     identityOpened: 'افتتحنا أول فنادقنا في {city} عام {year}.',
+    localLead:
+      '{count} فنادق، بيت عراقي واحد، دون مشغّل أجنبي. وبين المجموعات الكردية والعراقية في {city}، لا نعلم بمجموعة تدير أكثر من ذلك. جرى التحقق في {date}.',
     identityOneCity:
       'ونُدير اليوم {count} فنادق، جميعها في {city}، {country} — المُلّاك أنفسهم، والمستوى نفسه، و{count} عناوين.',
     identityManyCities: 'ونُدير اليوم {count} فنادق في أنحاء {country}، في {cities}.',

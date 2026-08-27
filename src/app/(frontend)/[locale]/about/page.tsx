@@ -9,7 +9,7 @@ import { getDictionary } from '@/i18n/dictionaries'
 import { countWord, fillCount } from '@/i18n/count'
 import { getSettings } from '@/utilities/getSettings'
 import { getBranches } from '@/utilities/branches'
-import { groupIdentity } from '@/utilities/group'
+import { groupIdentity, localClaim } from '@/utilities/group'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { cn } from '@/utilities/ui'
 import { BranchCard } from '@/components/site/BranchCard'
@@ -42,6 +42,11 @@ export default async function AboutPage({ params }: Args) {
   // Counted from the hotels rather than written down, so "all in Erbil"
   // becomes "across Iraq" on its own the day one opens elsewhere.
   const identity = groupIdentity(branches, t, locale, settings.establishedYear)
+
+  // Only ever present once the owner has set a date in Site settings. Kept
+  // out of `identity`, which is the site's description everywhere — a dated
+  // claim has no business in a meta description or in structured data.
+  const claim = localClaim(branches, t, locale, settings.localClaimCheckedOn)
 
   const payload = await getPayload({ config: configPromise })
   const rate = await pointsRate(payload)
@@ -107,6 +112,16 @@ export default async function AboutPage({ params }: Args) {
             <p className="border-t border-line pt-8 text-center text-[1.02rem] leading-[1.8] text-ink">
               {identity}
             </p>
+            {/* Set in smaller, quieter type than the sentence above it. The
+                claim above is a fact about who owns this company; this one is
+                a comparison the group believes and has dated, and reading as
+                slightly more careful than the line before it is exactly
+                right. */}
+            {claim && (
+              <p className="mt-5 text-center text-[0.92rem] leading-[1.7] text-muted-ink">
+                {claim}
+              </p>
+            )}
           </Reveal>
         </div>
       </section>

@@ -97,6 +97,24 @@ What is true, checkable, and already said everywhere: independent, Iraqi-owned,
 four hotels in Erbil, run by one family. Every hotel chain competing with it in
 that city is a foreign brand, which is the genuinely unusual thing here.
 
+**One narrower claim did survive, and is handled rather than refused.** "Most
+branches of any *locally owned* group" is not the same statement as "biggest
+chain in Iraq": Rotana is Emirati, so its four properties refute the second and
+say nothing about the first. Searching turns up Nasri Group (Erbil
+International, Khanzad) and Golden Mountains (two Best Westerns) at two
+properties each — nothing contradicting the owner, and nothing proving him,
+because there is no register of Kurdish-owned hotel groups and the ones with an
+English web presence are not all of them.
+
+So it is treated like the Booking.com scores: worded as what the group knows
+rather than as a fact about the world, and stamped with the date it was
+checked. `localClaim()` in `src/utilities/group.ts` renders it, and only while
+"Ownership claim last checked" is set in Site settings — empty by default, so
+the site's resting state stays the part that needs no checking. It is kept out
+of `groupIdentity()` deliberately: that sentence is the site's meta description
+and its structured-data description, and a dated comparison does not belong in
+either.
+
 Same rule for ratings: the 1,620 Booking.com reviews are shown as an attributed
 sentence with a link and a date, never fed into `aggregateRating` markup —
 Google requires the reviews behind a rating to be on the page carrying it.

@@ -2,6 +2,7 @@ import type { Branch } from '@/payload-types'
 import type { Dictionary } from '@/i18n/dictionaries'
 import type { Locale } from '@/i18n/config'
 import { countWord } from '@/i18n/count'
+import { formatDateLong } from './format'
 
 /**
  * Who this company is, in one sentence, written from where its hotels are.
@@ -69,4 +70,44 @@ export const groupIdentity = (
     : ''
 
   return [t.about.identityLead, opened, spread].filter(Boolean).join(' ')
+}
+
+
+/**
+ * The claim the owner has asked for, in the only form that survives checking.
+ *
+ * He has asked more than once for the site to say the group is the biggest of
+ * its kind. The version that failed was "the biggest hotel chain in Iraq":
+ * Rotana runs four properties there too and several times the rooms, and that
+ * is settled in CLAUDE.md.
+ *
+ * This is a different sentence. Rotana is Emirati, so it says nothing about
+ * which *locally owned* group runs the most, and the Kurdish-owned groups that
+ * surface at all appear to run two apiece. Nothing found contradicts him.
+ *
+ * Nothing proves him either. There is no register of Kurdish-owned hotel
+ * groups and the ones with an English web presence are not all of them, so
+ * this is worded as what the group knows rather than as a fact about the
+ * world, and it carries the date it was last checked — the same treatment the
+ * Booking.com scores get, for the same reason. An old date reads as old. An
+ * undated superlative just reads as false the day somebody opens a fifth
+ * hotel.
+ *
+ * Returns nothing at all until a date is set, so the default state of this
+ * site remains the part that needs no checking.
+ */
+export const localClaim = (
+  branches: Branch[],
+  t: Dictionary,
+  locale: Locale,
+  checkedOn?: string | null,
+): string | null => {
+  if (!checkedOn || branches.length === 0) return null
+  const date = new Date(checkedOn)
+  if (Number.isNaN(date.getTime())) return null
+
+  return t.about.localLead
+    .replace('{count}', countWord(branches.length, locale))
+    .replace('{city}', t.seo.locality)
+    .replace('{date}', formatDateLong(date, locale))
 }

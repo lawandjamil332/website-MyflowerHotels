@@ -55,6 +55,36 @@ export const Settings: GlobalConfig = {
       },
     },
     {
+      /**
+       * The date the "no local group runs more" line was last checked.
+       *
+       * The claim is the owner's, and it is the kind that cannot be proved
+       * from a desk: there is no register of Kurdish-owned hotel groups, and
+       * the ones with a web presence in English are not all of them. What can
+       * be done is the thing this site already does with the Booking.com
+       * scores — attribute it, date it, and word it as what the group knows
+       * rather than as a fact about the world.
+       *
+       * So the sentence appears only while this date is set, and it prints the
+       * date beside itself. An old date reads as old rather than as wrong,
+       * which is the difference between a claim that ages and one that
+       * quietly becomes false. Empty, the line does not appear at all and the
+       * site says only the part that needs no checking: four hotels, one
+       * family, no foreign operator.
+       */
+      name: 'localClaimCheckedOn',
+      type: 'date',
+      label: 'Ownership claim last checked',
+      admin: {
+        position: 'sidebar',
+        date: { pickerAppearance: 'dayOnly', displayFormat: 'd MMM yyyy' },
+        description:
+          'Set this and the About page adds: no Kurdish or Iraqi-owned group in Erbil that we ' +
+          'know of runs more hotels than we do — with this date beside it. Leave empty and the ' +
+          'line does not appear. Re-check it once a year; an out-of-date claim is worse than none.',
+      },
+    },
+    {
       type: 'row',
       fields: [
         {
