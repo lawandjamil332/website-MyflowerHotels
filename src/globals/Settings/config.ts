@@ -25,6 +25,31 @@ export const Settings: GlobalConfig = {
       defaultValue: 'My Flower Hotels',
     },
     {
+      /**
+       * How long the published rates hold.
+       *
+       * Google asks every price in structured data to say when it stops being
+       * valid, and withholds the price from a result that does not — so the
+       * rooms on this site had rates on the page that no search result was
+       * allowed to show. It is not a field anything can be computed into: only
+       * the owner knows when he next intends to reprice, and a date invented
+       * in code would be a promise the hotel never made.
+       *
+       * Left empty, nothing is claimed and the site behaves exactly as it did.
+       * The only cost of that is the one above.
+       */
+      name: 'ratesValidUntil',
+      type: 'date',
+      admin: {
+        position: 'sidebar',
+        date: { pickerAppearance: 'dayOnly', displayFormat: 'd MMM yyyy' },
+        description:
+          'The date the prices on this site are good until — usually the end of the season ' +
+          'or the year. Google will not show a price in search results unless it is told ' +
+          'this. Leave empty and prices stay off search results. Update it when you reprice.',
+      },
+    },
+    {
       type: 'row',
       fields: [
         {

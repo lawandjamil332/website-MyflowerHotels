@@ -2295,6 +2295,10 @@ export interface Setting {
   id: number;
   siteName?: string | null;
   /**
+   * The date the prices on this site are good until — usually the end of the season or the year. Google will not show a price in search results unless it is told this. Leave empty and prices stay off search results. Update it when you reprice.
+   */
+  ratesValidUntil?: string | null;
+  /**
    * Shown as "Since 2012" in the footer. Leave empty to hide it.
    */
   establishedYear?: number | null;
@@ -2405,6 +2409,7 @@ export interface Footer {
  */
 export interface SettingsSelect<T extends boolean = true> {
   siteName?: T;
+  ratesValidUntil?: T;
   establishedYear?: T;
   stars?: T;
   iqdPerUsd?: T;

@@ -269,14 +269,44 @@ export function RoomSchema({
   room,
   branch,
   locale,
+  ratesValidUntil,
 }: {
   room: Room
   branch: Branch | null
   locale: Locale
+  /**
+   * The date the owner has said these rates hold until, from Site settings.
+   *
+   * Google withholds the price from a result whose offer does not carry one,
+   * so without this the rate printed on the page could never appear beside it
+   * in search. It is passed in rather than computed because it is not a
+   * computable fact — only the hotel knows when it next intends to reprice,
+   * and a date generated here would be a promise the hotel never made.
+   */
+  ratesValidUntil?: string | null
 }) {
   const base = getServerSideURL()
   const url = `${base}/${locale}/rooms/${room.slug}`
   const image = absolute(mediaUrl(room.images?.[0], 'og') || mediaUrl(room.images?.[0]), base)
+
+  /**
+   * The date, but only while it is still in the future.
+   *
+   * A `priceValidUntil` in the past is worse than none at all: Google reads it
+   * as an offer that has expired and drops the price anyway, so a date the
+   * owner set last year and forgot would quietly undo the whole reason this
+   * field exists — while looking, in the admin panel, exactly like it was
+   * working. Checked on every request, because that is the only place the
+   * passage of time can be noticed.
+   */
+  const priceValidUntil = (() => {
+    if (!ratesValidUntil) return undefined
+    const until = new Date(ratesValidUntil)
+    if (Number.isNaN(until.getTime()) || until.getTime() < Date.now()) return undefined
+    // Date only. The hour a date-picker happened to store is not part of the
+    // statement being made.
+    return until.toISOString().slice(0, 10)
+  })()
 
   return json(
     clean({
@@ -321,6 +351,7 @@ export function RoomSchema({
                 room.isAvailable === false
                   ? 'https://schema.org/SoldOut'
                   : 'https://schema.org/InStock',
+              priceValidUntil,
               url,
             }
           : undefined,

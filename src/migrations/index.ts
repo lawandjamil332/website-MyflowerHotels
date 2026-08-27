@@ -33,6 +33,7 @@ import * as migration_20260815_180000_branch_address_ku_ar from './20260815_1800
 import * as migration_20260815_190000_room_names_ku_ar from './20260815_190000_room_names_ku_ar'
 import * as migration_20260826_100000_branch_tripadvisor from './20260826_100000_branch_tripadvisor'
 import * as migration_20260826_110000_fourth_hotel_open from './20260826_110000_fourth_hotel_open'
+import * as migration_20260826_120000_rates_valid_until from './20260826_120000_rates_valid_until'
 
 export const migrations = [
   {
@@ -211,5 +212,10 @@ export const migrations = [
     up: migration_20260826_110000_fourth_hotel_open.up,
     down: migration_20260826_110000_fourth_hotel_open.down,
     name: '20260826_110000_fourth_hotel_open',
+  },
+  {
+    up: migration_20260826_120000_rates_valid_until.up,
+    down: migration_20260826_120000_rates_valid_until.down,
+    name: '20260826_120000_rates_valid_until',
   },
 ]

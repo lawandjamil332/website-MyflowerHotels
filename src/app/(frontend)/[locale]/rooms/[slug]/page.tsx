@@ -27,6 +27,7 @@ import { buildRoomFaq, roomSummary } from '@/utilities/faq'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
 import RichText from '@/components/RichText'
 import { btnOutline, btnSmall, btnWhatsApp, sectionY, shell } from '@/components/site/ui'
+import { getSettings } from '@/utilities/getSettings'
 import type { Branch } from '@/payload-types'
 
 type Args = { params: Promise<{ locale: string; slug: string }> }
@@ -37,7 +38,7 @@ export default async function RoomPage({ params }: Args) {
   const locale = raw as Locale
 
   const t = getDictionary(locale)
-  const room = await getRoomBySlug(slug, locale)
+  const [room, settings] = await Promise.all([getRoomBySlug(slug, locale), getSettings(locale)])
   if (!room) notFound()
 
   const branch = (typeof room.branch === 'object' ? room.branch : null) as Branch | null
@@ -88,7 +89,12 @@ export default async function RoomPage({ params }: Args) {
 
   return (
     <>
-      <RoomSchema room={room} branch={branch} locale={locale} />
+      <RoomSchema
+        room={room}
+        branch={branch}
+        locale={locale}
+        ratesValidUntil={settings.ratesValidUntil}
+      />
       <FaqSchema entries={faq} />
       <BreadcrumbSchema
         locale={locale}
