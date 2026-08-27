@@ -9,13 +9,40 @@
     }
   }
 
-  &__instructions {
-    list-style: decimal;
-    margin-bottom: base(0.5);
+  &__lead {
+    margin: base(0.5) 0 base(0.75);
+    opacity: 0.75;
+  }
 
-    & li {
-      width: 100%;
+  &__checks {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: base(0.5);
+  }
+
+  &__check {
+    // A left edge rather than a coloured block: this is a list to work
+    // through, not a wall of alarms, and four red panels at login every
+    // morning is how a checklist stops being read.
+    border-inline-start: 2px solid var(--theme-elevation-150);
+    padding-inline-start: base(0.5);
+    display: grid;
+    gap: 2px;
+
+    &[data-weight='high'] {
+      border-inline-start-color: var(--theme-error-500);
     }
+  }
+
+  &__why {
+    opacity: 0.75;
+  }
+
+  &__detail {
+    font-size: 0.85em;
+    opacity: 0.55;
   }
 
   & a:hover {

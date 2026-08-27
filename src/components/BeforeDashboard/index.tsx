@@ -1,42 +1,71 @@
 import { Banner } from '@payloadcms/ui/elements/Banner'
 import React from 'react'
 
+import { runChecks } from './checks'
 import './index.scss'
 
 const baseClass = 'before-dashboard'
 
 /**
- * The first thing the owner sees after logging in. Written for someone who
- * runs hotels rather than websites, so it names the actual next steps instead
- * of linking to framework documentation.
+ * The first thing the owner sees after logging in.
+ *
+ * It used to be a fixed welcome explaining how to set the site up for the
+ * first time — advice that stopped being true the day it was followed, and
+ * then sat there for months describing work already done.
+ *
+ * What replaces it is the one thing a fixed message cannot be: current. Every
+ * line is counted from the database when the page opens, so a gap disappears
+ * off the list the moment it is filled, and a hotel added next year arrives on
+ * it without anybody remembering to update this file.
+ *
+ * Only things a person has to supply — addresses, landmarks, photographs,
+ * reviews, IDs. None of it can be written by code, which is exactly why it
+ * needs somewhere to be seen. When there is nothing left, it says so.
  */
-const BeforeDashboard: React.FC = () => {
+const BeforeDashboard: React.FC = async () => {
+  const checks = await runChecks()
+
+  // Null means the check itself could not run — no database, most likely.
+  // Better to show nothing than to tell the owner his site is empty.
+  if (checks === null) return null
+
+  if (checks.length === 0) {
+    return (
+      <div className={baseClass}>
+        <Banner className={`${baseClass}__banner`} type="success">
+          <h4>Everything is filled in</h4>
+        </Banner>
+        Every hotel has its address, landmarks, reviews and listings. Nothing is waiting on you.
+      </div>
+    )
+  }
+
+  const high = checks.filter((c) => c.weight === 'high').length
+
   return (
     <div className={baseClass}>
-      <Banner className={`${baseClass}__banner`} type="success">
-        <h4>Welcome</h4>
+      <Banner className={`${baseClass}__banner`} type={high > 0 ? 'error' : 'default'}>
+        <h4>
+          {checks.length} thing{checks.length > 1 ? 's' : ''} worth filling in
+        </h4>
       </Banner>
 
-      Here is the order that works best:
-      <ul className={`${baseClass}__instructions`}>
-        <li>
-          Open <strong>Site settings</strong> and add the group name, logo, and the WhatsApp number
-          the floating button should use.
-        </li>
-        <li>
-          Add each hotel under <strong>Branches</strong>. Every one needs a hero photo, and the{' '}
-          <em>street or landmark</em> field is what guests use to tell them apart. The homepage
-          lists them by the <em>order</em> number in the sidebar.
-        </li>
-        <li>
-          Add <strong>Rooms</strong> and attach each one to its branch. Three photos minimum.
-        </li>
-        <li>
-          Use the language selector at the top right to fill in Kurdish and Arabic. Anything left
-          empty falls back to English rather than showing blank.
-        </li>
+      <p className={`${baseClass}__lead`}>
+        Counted from the site just now. None of these can be written for you — they are facts only
+        the hotels know. Each one closes itself off this list once it is filled in.
+      </p>
+
+      <ul className={`${baseClass}__checks`}>
+        {checks.map((check) => (
+          <li key={check.title} className={`${baseClass}__check`} data-weight={check.weight}>
+            <strong>
+              {check.href ? <a href={check.href}>{check.title}</a> : check.title}
+            </strong>
+            <span className={`${baseClass}__why`}>{check.why}</span>
+            {check.detail && <span className={`${baseClass}__detail`}>{check.detail}</span>}
+          </li>
+        ))}
       </ul>
-      Reservation messages sent from the website arrive under <strong>Enquiries</strong>.
     </div>
   )
 }
