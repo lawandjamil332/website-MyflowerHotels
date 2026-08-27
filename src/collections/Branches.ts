@@ -61,272 +61,300 @@ export const Branches: CollectionConfig = {
     ],
   },
   fields: [
+    /**
+     * Tabs, not one long scroll.
+     *
+     * A hotel had nine sections stacked down the page — six loose fields
+     * and three collapsibles — so finding the check-out time meant
+     * scrolling past the gallery and the map every time. The same fields
+     * across four tabs fit on one screen and are reached in one click.
+     *
+     * These are unnamed tabs, which are purely a way of arranging the
+     * screen: they add nothing to the stored shape of a hotel, so this is
+     * a change to the panel alone. No column moves, no migration, and
+     * every field keeps the exact name the site already reads.
+     */
     {
-      name: 'name',
-      type: 'text',
-      required: true,
-      localized: true,
-    },
-    slugField({ useAsSlug: 'name' }),
-    {
-      name: 'tagline',
-      type: 'text',
-      localized: true,
-      admin: {
-        description: 'One line, shown under the name on the branch card.',
-      },
-    },
-    {
-      name: 'description',
-      type: 'richText',
-      localized: true,
-    },
-    {
-      name: 'heroImage',
-      type: 'upload',
-      relationTo: 'media',
-      admin: {
-        description: 'The full-width photo at the top of the branch page. Landscape works best.',
-      },
-    },
-    {
-      name: 'gallery',
-      type: 'upload',
-      relationTo: 'media',
-      hasMany: true,
-      admin: {
-        description:
-          'Exterior, lobby, restaurant, views. Select or drag in several at once, and drag to reorder.',
-      },
-    },
-    {
-      type: 'collapsible',
-      label: 'Location',
-      fields: [
+      type: 'tabs',
+      tabs: [
         {
-          name: 'address',
-          type: 'textarea',
-          localized: true,
-        },
-        {
-          name: 'city',
-          type: 'text',
-          localized: true,
-          defaultValue: 'Erbil',
-        },
-        {
-          name: 'neighbourhood',
-          type: 'text',
-          localized: true,
-          admin: {
-            description:
-              'The street or landmark, e.g. "100m Street — beside Today Restaurant". Shown under the hotel name, and it is what guests actually choose between when the hotels are numbered.',
-          },
-        },
-        {
-          name: 'nearby',
-          type: 'textarea',
-          localized: true,
-          admin: {
-            description:
-              'What this hotel is near, in a sentence or two — "Ten minutes from the Citadel and the bazaar, five from Family Mall, twenty from the airport." Guests search for a hotel near a place far more often than by name, and this is the only thing on the page that can answer them. Write it the way you would say it on the phone.',
-          },
-        },
-        {
-          // Two plain numbers rather than Payload's `point` type: `point`
-          // compiles to a PostGIS `geometry` column, and Railway's Postgres
-          // does not ship PostGIS. A map pin only needs these two values.
-          type: 'row',
+          label: 'The hotel',
+          description: 'Its name, how it introduces itself, and its photographs.',
           fields: [
             {
-              name: 'latitude',
-              type: 'number',
+              name: 'name',
+              type: 'text',
+              required: true,
+              localized: true,
+            },
+            slugField({ useAsSlug: 'name' }),
+            {
+              name: 'tagline',
+              type: 'text',
+              localized: true,
               admin: {
-                width: '50%',
-                placeholder: '36.191',
+                description: 'One line, shown under the name on the branch card.',
+              },
+            },
+            {
+              name: 'description',
+              type: 'richText',
+              localized: true,
+            },
+            {
+              name: 'heroImage',
+              type: 'upload',
+              relationTo: 'media',
+              admin: {
                 description:
-                  'Filled in automatically from the Google Maps link above. Only type these in by hand if the map does not appear.',
+                  'The full-width photo at the top of the branch page. Landscape works best.',
               },
             },
             {
-              name: 'longitude',
-              type: 'number',
-              admin: { width: '50%', placeholder: '44.009' },
+              name: 'gallery',
+              type: 'upload',
+              relationTo: 'media',
+              hasMany: true,
+              admin: {
+                description:
+                  'Exterior, lobby, restaurant, views. Select or drag in several at once, and drag to reorder.',
+              },
             },
           ],
         },
         {
-          name: 'googleMapsUrl',
-          type: 'text',
-          label: 'Google Maps URL',
-          admin: {
-            description:
-              "Paste the Share link from Google Maps. The map on the hotel's page appears by itself — the coordinates below fill in from this link when you save.",
-          },
+          label: 'Location',
+          description: 'Where it is, and the map pin every page draws from.',
+          fields: [
+            {
+              name: 'address',
+              type: 'textarea',
+              localized: true,
+            },
+            {
+              name: 'city',
+              type: 'text',
+              localized: true,
+              defaultValue: 'Erbil',
+            },
+            {
+              name: 'neighbourhood',
+              type: 'text',
+              localized: true,
+              admin: {
+                description:
+                  'The street or landmark, e.g. "100m Street — beside Today Restaurant". Shown under the hotel name, and it is what guests actually choose between when the hotels are numbered.',
+              },
+            },
+            {
+              name: 'nearby',
+              type: 'textarea',
+              localized: true,
+              admin: {
+                description:
+                  'What this hotel is near, in a sentence or two — "Ten minutes from the Citadel and the bazaar, five from Family Mall, twenty from the airport." Guests search for a hotel near a place far more often than by name, and this is the only thing on the page that can answer them. Write it the way you would say it on the phone.',
+              },
+            },
+            {
+              // Two plain numbers rather than Payload's `point` type: `point`
+              // compiles to a PostGIS `geometry` column, and Railway's Postgres
+              // does not ship PostGIS. A map pin only needs these two values.
+              type: 'row',
+              fields: [
+                {
+                  name: 'latitude',
+                  type: 'number',
+                  admin: {
+                    width: '50%',
+                    placeholder: '36.191',
+                    description:
+                      'Filled in automatically from the Google Maps link above. Only type these in by hand if the map does not appear.',
+                  },
+                },
+                {
+                  name: 'longitude',
+                  type: 'number',
+                  admin: { width: '50%', placeholder: '44.009' },
+                },
+              ],
+            },
+            {
+              name: 'googleMapsUrl',
+              type: 'text',
+              label: 'Google Maps URL',
+              admin: {
+                description:
+                  "Paste the Share link from Google Maps. The map on the hotel's page appears by itself — the coordinates below fill in from this link when you save.",
+              },
+            },
+          ],
+        },
+        {
+          label: 'Contact',
+          description: 'The numbers and accounts published on this hotel’s page.',
+          fields: [
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'phone',
+                  type: 'text',
+                  admin: { width: '50%', placeholder: '+964 772 541 9898' },
+                },
+                {
+                  // Every hotel in the group advertises two lines; one field
+                  // forced staff to drop a number the guest may be dialling.
+                  name: 'phoneAlt',
+                  type: 'text',
+                  label: 'Second phone',
+                  admin: { width: '50%', placeholder: '+964 750 668 9090' },
+                },
+              ],
+            },
+            {
+              name: 'whatsapp',
+              type: 'text',
+              label: 'WhatsApp',
+              admin: {
+                description: 'Full international format, e.g. +9647501234567.',
+              },
+            },
+            {
+              name: 'email',
+              type: 'email',
+            },
+            {
+              type: 'row',
+              fields: [
+                {
+                  // Each hotel runs its own Facebook page, so these cannot live
+                  // only on the group-wide settings.
+                  name: 'facebook',
+                  type: 'text',
+                  admin: { width: '50%', description: "This hotel's own page." },
+                },
+                {
+                  name: 'instagram',
+                  type: 'text',
+                  admin: { width: '50%' },
+                },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'Stay details',
+          description: 'What the hotel offers, and where it is listed elsewhere.',
+          fields: [
+            {
+              name: 'amenities',
+              type: 'select',
+              hasMany: true,
+              options: branchAmenityOptions,
+            },
+            {
+              // Reception here is staffed around the clock, which is worth saying
+              // plainly. It cannot be a time typed into a text box: the field is
+              // not localized, so "24 hours" would appear in English on the
+              // Kurdish and Arabic pages. A checkbox lets the site say it in
+              // whichever language the guest is reading.
+              name: 'checkInAnyTime',
+              type: 'checkbox',
+              label: 'Check-in at any hour (24-hour reception)',
+              defaultValue: true,
+            },
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'checkInTime',
+                  type: 'text',
+                  admin: {
+                    width: '50%',
+                    placeholder: '14:00',
+                    condition: (data) => !data?.checkInAnyTime,
+                    description: 'Only needed when check-in is not available around the clock.',
+                  },
+                },
+                {
+                  name: 'checkOutTime',
+                  type: 'text',
+                  admin: {
+                    width: '50%',
+                    placeholder: '12:00',
+                    description: 'On a 24-hour clock, so midday is 12:00 and midnight is 00:00.',
+                  },
+                },
+              ],
+            },
+            {
+              name: 'bookingComUrl',
+              type: 'text',
+              label: 'Booking.com URL',
+              admin: {
+                description: 'Optional. Shows an "instant reservation" button when filled in.',
+              },
+            },
+            {
+              // Nothing on the page changes when this is filled in, which is the
+              // whole point of it.
+              //
+              // A search engine has no way to know that this hotel, its Booking
+              // listing, its Google Maps pin and its TripAdvisor page are one
+              // building — the names are spelled four different ways and none of
+              // the four links to the others. Every listing that gets named here
+              // is one more rope tying them together, and TripAdvisor is the one
+              // this site could not name because there was nowhere to put it.
+              name: 'tripadvisorUrl',
+              type: 'text',
+              label: 'TripAdvisor URL',
+              admin: {
+                description:
+                  'Optional, and nothing appears on the page. It tells search engines that the ' +
+                  'TripAdvisor listing and this hotel are the same building.',
+              },
+            },
+            {
+              // Typed in, not fetched. A score read live from another site is a
+              // dependency that can fail or change shape on a page that has to
+              // render; three numbers checked now and then are enough, and the
+              // date is what keeps them honest.
+              type: 'row',
+              fields: [
+                {
+                  name: 'bookingComScore',
+                  type: 'number',
+                  label: 'Booking.com score',
+                  min: 0,
+                  max: 10,
+                  admin: { width: '33%', placeholder: '7.3', description: 'Out of 10.' },
+                },
+                {
+                  name: 'bookingComReviews',
+                  type: 'number',
+                  label: 'Booking.com reviews',
+                  min: 0,
+                  admin: { width: '33%', placeholder: '1558' },
+                },
+                {
+                  name: 'bookingComChecked',
+                  type: 'date',
+                  label: 'Checked on',
+                  admin: {
+                    width: '33%',
+                    date: { pickerAppearance: 'dayOnly' },
+                    description:
+                      'The page says this date, so an old score reads as old rather than wrong.',
+                  },
+                },
+              ],
+            },
+          ],
         },
       ],
     },
-    {
-      type: 'collapsible',
-      label: 'Contact',
-      fields: [
-        {
-          type: 'row',
-          fields: [
-            {
-              name: 'phone',
-              type: 'text',
-              admin: { width: '50%', placeholder: '+964 772 541 9898' },
-            },
-            {
-              // Every hotel in the group advertises two lines; one field
-              // forced staff to drop a number the guest may be dialling.
-              name: 'phoneAlt',
-              type: 'text',
-              label: 'Second phone',
-              admin: { width: '50%', placeholder: '+964 750 668 9090' },
-            },
-          ],
-        },
-        {
-          name: 'whatsapp',
-          type: 'text',
-          label: 'WhatsApp',
-          admin: {
-            description: 'Full international format, e.g. +9647501234567.',
-          },
-        },
-        {
-          name: 'email',
-          type: 'email',
-        },
-        {
-          type: 'row',
-          fields: [
-            {
-              // Each hotel runs its own Facebook page, so these cannot live
-              // only on the group-wide settings.
-              name: 'facebook',
-              type: 'text',
-              admin: { width: '50%', description: "This hotel's own page." },
-            },
-            {
-              name: 'instagram',
-              type: 'text',
-              admin: { width: '50%' },
-            },
-          ],
-        },
-      ],
-    },
-    {
-      type: 'collapsible',
-      label: 'Stay details',
-      fields: [
-        {
-          name: 'amenities',
-          type: 'select',
-          hasMany: true,
-          options: branchAmenityOptions,
-        },
-        {
-          // Reception here is staffed around the clock, which is worth saying
-          // plainly. It cannot be a time typed into a text box: the field is
-          // not localized, so "24 hours" would appear in English on the
-          // Kurdish and Arabic pages. A checkbox lets the site say it in
-          // whichever language the guest is reading.
-          name: 'checkInAnyTime',
-          type: 'checkbox',
-          label: 'Check-in at any hour (24-hour reception)',
-          defaultValue: true,
-        },
-        {
-          type: 'row',
-          fields: [
-            {
-              name: 'checkInTime',
-              type: 'text',
-              admin: {
-                width: '50%',
-                placeholder: '14:00',
-                condition: (data) => !data?.checkInAnyTime,
-                description: 'Only needed when check-in is not available around the clock.',
-              },
-            },
-            {
-              name: 'checkOutTime',
-              type: 'text',
-              admin: {
-                width: '50%',
-                placeholder: '12:00',
-                description: 'On a 24-hour clock, so midday is 12:00 and midnight is 00:00.',
-              },
-            },
-          ],
-        },
-        {
-          name: 'bookingComUrl',
-          type: 'text',
-          label: 'Booking.com URL',
-          admin: {
-            description: 'Optional. Shows an "instant reservation" button when filled in.',
-          },
-        },
-        {
-          // Nothing on the page changes when this is filled in, which is the
-          // whole point of it.
-          //
-          // A search engine has no way to know that this hotel, its Booking
-          // listing, its Google Maps pin and its TripAdvisor page are one
-          // building — the names are spelled four different ways and none of
-          // the four links to the others. Every listing that gets named here
-          // is one more rope tying them together, and TripAdvisor is the one
-          // this site could not name because there was nowhere to put it.
-          name: 'tripadvisorUrl',
-          type: 'text',
-          label: 'TripAdvisor URL',
-          admin: {
-            description:
-              'Optional, and nothing appears on the page. It tells search engines that the ' +
-              'TripAdvisor listing and this hotel are the same building.',
-          },
-        },
-        {
-          // Typed in, not fetched. A score read live from another site is a
-          // dependency that can fail or change shape on a page that has to
-          // render; three numbers checked now and then are enough, and the
-          // date is what keeps them honest.
-          type: 'row',
-          fields: [
-            {
-              name: 'bookingComScore',
-              type: 'number',
-              label: 'Booking.com score',
-              min: 0,
-              max: 10,
-              admin: { width: '33%', placeholder: '7.3', description: 'Out of 10.' },
-            },
-            {
-              name: 'bookingComReviews',
-              type: 'number',
-              label: 'Booking.com reviews',
-              min: 0,
-              admin: { width: '33%', placeholder: '1558' },
-            },
-            {
-              name: 'bookingComChecked',
-              type: 'date',
-              label: 'Checked on',
-              admin: {
-                width: '33%',
-                date: { pickerAppearance: 'dayOnly' },
-                description: 'The page says this date, so an old score reads as old rather than wrong.',
-              },
-            },
-          ],
-        },
-      ],
-    },
+    // Left out of the tabs on purpose: these sit in the right-hand column
+    // and have to stay at the top level for Payload to put them there.
     {
       // A hotel that is announced but not yet taking guests still belongs on
       // the site — it is the strongest thing a growing group can show. It

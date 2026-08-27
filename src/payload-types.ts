@@ -69,18 +69,18 @@ export interface Config {
   blocks: {};
   collections: {
     bookings: Booking;
+    enquiries: Enquiry;
     guests: Guest;
-    'point-entries': PointEntry;
     reviews: Review;
+    'point-entries': PointEntry;
     branches: Branch;
     rooms: Room;
     offers: Offer;
-    enquiries: Enquiry;
+    media: Media;
+    users: User;
     pages: Page;
     posts: Post;
-    media: Media;
     categories: Category;
-    users: User;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -99,18 +99,18 @@ export interface Config {
   };
   collectionsSelect: {
     bookings: BookingsSelect<false> | BookingsSelect<true>;
+    enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
     guests: GuestsSelect<false> | GuestsSelect<true>;
-    'point-entries': PointEntriesSelect<false> | PointEntriesSelect<true>;
     reviews: ReviewsSelect<false> | ReviewsSelect<true>;
+    'point-entries': PointEntriesSelect<false> | PointEntriesSelect<true>;
     branches: BranchesSelect<false> | BranchesSelect<true>;
     rooms: RoomsSelect<false> | RoomsSelect<true>;
     offers: OffersSelect<false> | OffersSelect<true>;
-    enquiries: EnquiriesSelect<false> | EnquiriesSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    users: UsersSelect<false> | UsersSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
-    users: UsersSelect<false> | UsersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -393,6 +393,8 @@ export interface Branch {
   createdAt: string;
 }
 /**
+ * Every photograph on the site. Upload here or from a hotel or a room.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
@@ -591,23 +593,29 @@ export interface Room {
   createdAt: string;
 }
 /**
- * Every points movement. A guest’s balance is the sum of their rows.
+ * Enquiries sent from the website. Newest first.
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "point-entries".
+ * via the `definition` "enquiries".
  */
-export interface PointEntry {
+export interface Enquiry {
   id: number;
-  guest: number | Guest;
+  name: string;
+  phone: string;
+  email?: string | null;
   /**
-   * Negative to deduct — a redemption, or a correction.
+   * Which hotel the guest is asking about.
    */
-  points: number;
-  reason: string;
+  branch?: (number | null) | Branch;
   /**
-   * The stay that earned them, where there is one.
+   * Set automatically when the enquiry comes from a room page.
    */
-  booking?: (number | null) | Booking;
+  room?: (number | null) | Room;
+  checkIn?: string | null;
+  checkOut?: string | null;
+  guests?: number | null;
+  message?: string | null;
+  status?: ('new' | 'contacted' | 'closed') | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -638,6 +646,27 @@ export interface Review {
    */
   verified?: boolean | null;
   stayedOn?: string | null;
+  booking?: (number | null) | Booking;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Every points movement. A guest’s balance is the sum of their rows.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "point-entries".
+ */
+export interface PointEntry {
+  id: number;
+  guest: number | Guest;
+  /**
+   * Negative to deduct — a redemption, or a correction.
+   */
+  points: number;
+  reason: string;
+  /**
+   * The stay that earned them, where there is one.
+   */
   booking?: (number | null) | Booking;
   updatedAt: string;
   createdAt: string;
@@ -687,31 +716,32 @@ export interface Offer {
   createdAt: string;
 }
 /**
- * Enquiries sent from the website. Newest first.
+ * Who can sign in to this admin panel.
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "enquiries".
+ * via the `definition` "users".
  */
-export interface Enquiry {
+export interface User {
   id: number;
-  name: string;
-  phone: string;
-  email?: string | null;
-  /**
-   * Which hotel the guest is asking about.
-   */
-  branch?: (number | null) | Branch;
-  /**
-   * Set automatically when the enquiry comes from a room page.
-   */
-  room?: (number | null) | Room;
-  checkIn?: string | null;
-  checkOut?: string | null;
-  guests?: number | null;
-  message?: string | null;
-  status?: ('new' | 'contacted' | 'closed') | null;
+  name?: string | null;
   updatedAt: string;
   createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -855,32 +885,6 @@ export interface Category {
     | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: number;
-  name?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1410,16 +1414,20 @@ export interface PayloadLockedDocument {
         value: number | Booking;
       } | null)
     | ({
+        relationTo: 'enquiries';
+        value: number | Enquiry;
+      } | null)
+    | ({
         relationTo: 'guests';
         value: number | Guest;
       } | null)
     | ({
-        relationTo: 'point-entries';
-        value: number | PointEntry;
-      } | null)
-    | ({
         relationTo: 'reviews';
         value: number | Review;
+      } | null)
+    | ({
+        relationTo: 'point-entries';
+        value: number | PointEntry;
       } | null)
     | ({
         relationTo: 'branches';
@@ -1434,8 +1442,12 @@ export interface PayloadLockedDocument {
         value: number | Offer;
       } | null)
     | ({
-        relationTo: 'enquiries';
-        value: number | Enquiry;
+        relationTo: 'media';
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'users';
+        value: number | User;
       } | null)
     | ({
         relationTo: 'pages';
@@ -1446,16 +1458,8 @@ export interface PayloadLockedDocument {
         value: number | Post;
       } | null)
     | ({
-        relationTo: 'media';
-        value: number | Media;
-      } | null)
-    | ({
         relationTo: 'categories';
         value: number | Category;
-      } | null)
-    | ({
-        relationTo: 'users';
-        value: number | User;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1556,6 +1560,24 @@ export interface BookingsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "enquiries_select".
+ */
+export interface EnquiriesSelect<T extends boolean = true> {
+  name?: T;
+  phone?: T;
+  email?: T;
+  branch?: T;
+  room?: T;
+  checkIn?: T;
+  checkOut?: T;
+  guests?: T;
+  message?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "guests_select".
  */
 export interface GuestsSelect<T extends boolean = true> {
@@ -1580,18 +1602,6 @@ export interface GuestsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "point-entries_select".
- */
-export interface PointEntriesSelect<T extends boolean = true> {
-  guest?: T;
-  points?: T;
-  reason?: T;
-  booking?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "reviews_select".
  */
 export interface ReviewsSelect<T extends boolean = true> {
@@ -1602,6 +1612,18 @@ export interface ReviewsSelect<T extends boolean = true> {
   approved?: T;
   verified?: T;
   stayedOn?: T;
+  booking?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "point-entries_select".
+ */
+export interface PointEntriesSelect<T extends boolean = true> {
+  guest?: T;
+  points?: T;
+  reason?: T;
   booking?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -1691,21 +1713,120 @@ export interface OffersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "enquiries_select".
+ * via the `definition` "media_select".
  */
-export interface EnquiriesSelect<T extends boolean = true> {
-  name?: T;
-  phone?: T;
-  email?: T;
-  branch?: T;
-  room?: T;
-  checkIn?: T;
-  checkOut?: T;
-  guests?: T;
-  message?: T;
-  status?: T;
+export interface MediaSelect<T extends boolean = true> {
+  alt?: T;
+  caption?: T;
+  folder?: T;
   updatedAt?: T;
   createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        thumbnail?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        square?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        small?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        medium?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        large?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        xlarge?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        og?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users_select".
+ */
+export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  email?: T;
+  resetPasswordToken?: T;
+  resetPasswordExpiration?: T;
+  salt?: T;
+  hash?: T;
+  loginAttempts?: T;
+  lockUntil?: T;
+  sessions?:
+    | T
+    | {
+        id?: T;
+        createdAt?: T;
+        expiresAt?: T;
+      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1875,100 +1996,6 @@ export interface PostsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "media_select".
- */
-export interface MediaSelect<T extends boolean = true> {
-  alt?: T;
-  caption?: T;
-  folder?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
-  sizes?:
-    | T
-    | {
-        thumbnail?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        square?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        small?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        medium?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        large?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        xlarge?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-        og?:
-          | T
-          | {
-              url?: T;
-              width?: T;
-              height?: T;
-              mimeType?: T;
-              filesize?: T;
-              filename?: T;
-            };
-      };
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
@@ -1986,29 +2013,6 @@ export interface CategoriesSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users_select".
- */
-export interface UsersSelect<T extends boolean = true> {
-  name?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  email?: T;
-  resetPasswordToken?: T;
-  resetPasswordExpiration?: T;
-  salt?: T;
-  hash?: T;
-  loginAttempts?: T;
-  lockUntil?: T;
-  sessions?:
-    | T
-    | {
-        id?: T;
-        createdAt?: T;
-        expiresAt?: T;
-      };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2295,7 +2299,7 @@ export interface Setting {
   id: number;
   siteName?: string | null;
   /**
-   * The date the prices on this site are good until — usually the end of the season or the year. Google will not show a price in search results unless it is told this. Leave empty and prices stay off search results. Update it when you reprice.
+   * The date the prices on this site are good until — usually the end of the season or the year. It does not by itself put prices into Google: that comes from Google Hotels. It makes the rooms’ data complete for when it does. Safe to leave empty; update it whenever you reprice.
    */
   ratesValidUntil?: string | null;
   /**
