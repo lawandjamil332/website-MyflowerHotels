@@ -134,20 +134,38 @@ export const runChecks = async (): Promise<Check[] | null> => {
     if (noTripadvisor.length) {
       checks.push({
         title: `${noTripadvisor.length} hotel${noTripadvisor.length > 1 ? 's have' : ' has'} no TripAdvisor link`,
-        why: 'One more listing tied back to this hotel, so the four read as one company.',
+        why: 'If the hotel is on TripAdvisor, linking it ties another listing back here. If it is not, ignore this.',
         detail: names(noTripadvisor),
         weight: 'medium',
         href: '/admin/collections/branches',
       })
     }
 
+    /**
+     * Only asked of hotels that are actually on Booking.com.
+     *
+     * This first flagged every hotel without a score, which was wrong the
+     * moment the owner said My Flower 2 and 4 have listings he has
+     * deliberately closed. A checklist that nags about a decision somebody
+     * made on purpose is worse than one that stays quiet: it is wrong, it
+     * cannot be cleared, and after a week of ignoring one line a person stops
+     * reading the others too.
+     *
+     * So the listing URL is the signal of intent. A hotel with one is being
+     * sold there and should carry its score; a hotel without one is either not
+     * listed or listed on purpose without being advertised here, and either
+     * way this has nothing to say about it.
+     */
     const noScore = hotels.filter(
-      (h) => h.status !== 'openingSoon' && typeof h.bookingComScore !== 'number',
+      (h) =>
+        h.status !== 'openingSoon' &&
+        h.bookingComUrl &&
+        typeof h.bookingComScore !== 'number',
     )
     if (noScore.length) {
       checks.push({
-        title: `${noScore.length} hotel${noScore.length > 1 ? 's show' : ' shows'} no Booking.com score`,
-        why: 'Those pages carry no proof at all. Copy the score and review count across.',
+        title: `${noScore.length} hotel${noScore.length > 1 ? 's are' : ' is'} on Booking.com with no score shown`,
+        why: 'The listing is linked but the score is not copied across, so the page shows no proof.',
         detail: names(noScore),
         weight: 'medium',
         href: '/admin/collections/branches',
