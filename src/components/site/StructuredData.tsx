@@ -71,7 +71,31 @@ export function HotelSchema({
   amenityLabel?: (key: string) => string
 }) {
   const base = getServerSideURL()
-  const image = absolute(mediaUrl(branch.heroImage, 'og') || mediaUrl(branch.heroImage), base)
+
+  /**
+   * Several photographs, not one.
+   *
+   * Google asks for more than one image per place and prefers a choice of
+   * shapes, because a result on a phone, a result in Maps and an image pack
+   * all crop differently — handed a single picture it either crops badly or
+   * shows nothing. This hotel already has a gallery of its own exterior,
+   * lobby and rooms sitting one section down the page and none of it was
+   * offered. The hero leads, because it is the one the owner chose.
+   */
+  const images = [
+    branch.heroImage,
+    ...(branch.gallery ?? []),
+  ]
+    .flatMap((m) => {
+      const url = mediaUrl(m, 'xlarge') || mediaUrl(m, 'large') || mediaUrl(m)
+      const abs = absolute(url, base)
+      return abs ? [abs] : []
+    })
+    // The same photograph used as both hero and first gallery entry is a
+    // common way to fill a gallery, and repeating a URL here is the kind of
+    // thing a validator flags.
+    .filter((url, i, all) => all.indexOf(url) === i)
+    .slice(0, 12)
 
   // The band a hotel result carries beside its stars. Written from the rooms
   // actually published, so it cannot drift from the prices on the page, and
@@ -110,7 +134,7 @@ export function HotelSchema({
       alternateName: nameVariants(branch.name),
       description: branch.tagline ?? undefined,
       url: `${base}/${locale}/branches/${branch.slug}`,
-      image: image || undefined,
+      image: images.length > 0 ? images : undefined,
       telephone: branch.phone ?? undefined,
       email: branch.email ?? undefined,
       address: clean({

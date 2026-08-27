@@ -33,11 +33,26 @@ export async function GET(): Promise<Response> {
   const locale = defaultLocale as Locale
   const t = getDictionary(locale)
 
-  const [branches, rooms, settings] = await Promise.all([
+  const [branches, rooms, settings, branchesKu, branchesAr] = await Promise.all([
     getBranches(locale),
     getAllRooms(locale),
     getSettings(locale),
+    // The same hotels read in the other two languages, for their names only.
+    //
+    // Every hotel here has a Kurdish and an Arabic name stored, and this file
+    // was printing the English one and stopping — so an assistant asked
+    // "هۆتێلی باش لە هەولێر" had nothing here to match against, on a site that
+    // is fully translated. Naming all three costs one line per hotel and is
+    // the whole difference between being findable in a language and not.
+    getBranches('ku' as Locale),
+    getBranches('ar' as Locale),
   ])
+
+  /** The same hotel's name in the other two languages, when it differs. */
+  const otherNames = (slug: string, english: string): string[] =>
+    [branchesKu, branchesAr]
+      .map((list) => list.find((b) => b.slug === slug)?.name)
+      .filter((n): n is string => Boolean(n) && n !== english)
 
   const name = settings.siteName || 'My Flower Hotels'
   const open = branches.filter((b) => b.status !== 'openingSoon')
@@ -68,6 +83,10 @@ export async function GET(): Promise<Response> {
       b.amenities?.length ? b.amenities.map((a) => t.amenity[a] ?? a).join(', ') : null,
       b.checkInAnyTime ? 'reception open 24 hours' : b.checkInTime ? `check-in from ${b.checkInTime}` : null,
       b.checkOutTime ? `check-out by ${b.checkOutTime}` : null,
+      (() => {
+        const others = otherNames(b.slug, b.name)
+        return others.length > 0 ? `also written as ${others.join(', ')}` : null
+      })(),
     ].filter(Boolean)
     return `### ${b.name}\n${facts.map((f) => `- ${f}`).join('\n')}\n- Page: ${base}/${locale}/branches/${b.slug}`
   }
@@ -84,6 +103,8 @@ export async function GET(): Promise<Response> {
 - Location: ${[...new Set(branches.map((b) => b.city).filter(Boolean))].join(', ') || 'Erbil'}, Kurdistan Region, Iraq
 - Room types published: ${rooms.length}${roomCount > 0 ? `\n- Rooms in total: ${roomCount} across the open hotels` : ''}${from ? `\n- Rooms from: ${from} per night` : ''}
 - Also written as: MyFlower, MyFlower Hotels, My Flower Hotel
+- Reception: open 24 hours at every hotel that says so below
+- Languages: the site, and this file's hotels, are published in English, Kurdish (Sorani) and Arabic
 
 ## Booking
 
