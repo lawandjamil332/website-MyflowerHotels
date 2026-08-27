@@ -543,10 +543,10 @@ const en: Dictionary = {
       'We opened our first hotel in Erbil to look after the travellers who come here for work, for family, and for the city itself. Others followed, each in a different part of town, each run the same way.',
     body2:
       'We are not a chain. The same people who own these hotels are the ones you will meet at the desk. If something is not right during your stay, tell us and it is put right that day.',
-    identityLead: 'My Flower Hotels is an independent, Iraqi-owned group, run by one family.',
+    identityLead: 'My Flower Hotels is an independent, Kurdish-owned group, run by one family.',
     identityOpened: 'We opened our first hotel in {city} in {year}.',
     localLead:
-      '{count} hotels, one Iraqi family, no foreign operator. Among Kurdish and Iraqi-owned groups in {city}, we know of none running more. Checked {date}.',
+      '{count} hotels, one Kurdish family, no foreign operator. Of every hotel brand in {city}, we know of none with more branches. Checked {date}.',
     identityOneCity:
       'Today we run {count}, all of them in {city}, {country} — the same owners, the same standard, {count} addresses.',
     identityManyCities: 'Today we run {count} across {country}, in {cities}.',
@@ -568,7 +568,7 @@ const en: Dictionary = {
     perNight: 'per night',
     view: 'View hotel',
     metaDescription:
-      '{count} My Flower hotels in Erbil, Iraq — addresses, telephone numbers, room prices and what each one is near. Independent and Iraqi-owned.',
+      '{count} My Flower hotels in Erbil — addresses, telephone numbers, room prices and what each one is near. Independent and Kurdish-owned.',
   },
   search: {
     title: 'Plan your stay',
@@ -761,16 +761,16 @@ const en: Dictionary = {
       'They are in different parts of {city}, so the one to choose is usually whichever is nearest to where you need to be. Each hotel has its own page listing its rooms, its prices and its exact location on the map.',
     ownedQ: 'Who owns My Flower Hotels?',
     ownedA:
-      'It is independent and Iraqi-owned, run by one family rather than operated under a foreign brand. Most hotel names in this country with more than one property are international operators managing a building for its owners; this is not one of those.',
+      'It is independent and Kurdish-owned, run by one family rather than operated under a foreign brand. Most hotel names here with more than one property are international operators managing a building for its owners; this is not one of those.',
     erbilQ: 'Where should I stay in {city}?',
     erbilA:
       'That depends on what you are near. We run {count} hotels in {city} — {list} — so the useful question is which part of the city you need to be in. Each hotel page lists its street, its rooms and its exact position on the map.',
     iraqQ: 'Where in Iraq are your hotels?',
     iraqA:
       'All {count} are in {city}, in the Kurdistan Region in the north of {country}. We do not have hotels anywhere else in {country} — if you need Baghdad or Basra, this is not the right group, and we would rather say so than waste your time.',
-    iraqiGroupQ: 'Are there Iraqi-owned hotel groups, or are they all foreign brands?',
+    iraqiGroupQ: 'Are there Kurdish-owned hotel groups, or are they all foreign brands?',
     iraqiGroupA:
-      'There are, and this is one of them: {count} hotels in {city}, owned and run by one Iraqi family, with no foreign operator. Most hotel names in {country} with several properties are international brands managing a building for its owners. We can only speak for ourselves — but that is what we are.',
+      'There are, and this is one of them: {count} hotels in {city}, owned and run by one Kurdish family, with no foreign operator. Most hotel names here with several properties are international brands managing a building for its owners. We can only speak for ourselves — but that is what we are.',
     groupContactQ: 'How do I reach you?',
     groupContactA:
       'WhatsApp or call {phone}. It reaches us directly, day or night, and it is the fastest way to ask about any of the hotels.',
@@ -857,10 +857,10 @@ const en: Dictionary = {
     region: 'Kurdistan Region, Iraq',
     country: 'Iraq',
     bookDirect: 'Book direct and pay at the hotel',
-    ownedSince: 'Iraqi-owned since {year}',
-    hotelGroupIn: 'Iraqi-owned hotel group in',
+    ownedSince: 'Kurdish-owned since {year}',
+    hotelGroupIn: 'Kurdish-owned hotel group in',
     groupDescription:
-      'An independent, family-run hotel group with {count} hotels in {city} — Iraqi-owned, ' +
+      'An independent, family-run hotel group with {count} hotels in {city} — Kurdish-owned, ' +
       'not a foreign brand. Addresses, rooms and rates for every hotel, and booking direct ' +
       'with no card and no fee.',
   },
@@ -1029,10 +1029,10 @@ const ku: Dictionary = {
     body2:
       'ئێمە زنجیرەیەک نین. هەمان ئەو کەسانەی خاوەنی ئەم هۆتێلانەن، ئەوانەن کە لە پێشوازی دەیانبینیت. ئەگەر شتێک لە کاتی مانەوەکەتدا ڕێک نەبوو، پێمان بڵێ و هەر ئەو ڕۆژە چاک دەکرێتەوە.',
     identityLead:
-      'هۆتێلەکانی ماي فلاوەر گرووپێکی سەربەخۆی عێراقییە، لەلایەن یەک خێزانەوە بەڕێوە دەبرێت.',
+      'هۆتێلەکانی ماي فلاوەر گرووپێکی سەربەخۆی کوردییە، لەلایەن یەک خێزانەوە بەڕێوە دەبرێت.',
     identityOpened: 'یەکەم هۆتێلمان لە ساڵی {year} لە {city} کردەوە.',
     localLead:
-      '{count} هۆتێل، یەک خێزانی عێراقی، بەبێ بەڕێوەبەری بیانی. لە نێو گرووپە کوردی و عێراقییەکانی {city}، ئێمە هیچ گرووپێک ناناسین کە لەمە زیاتری بەڕێوە ببات. پشکنراوە لە {date}.',
+      '{count} هۆتێل، یەک خێزانی کورد، بەبێ بەڕێوەبەری بیانی. لە نێو هەموو براندە هۆتێلییەکانی {city}، ئێمە هیچیان ناناسین کە لق زیاتری هەبێت. پشکنراوە لە {date}.',
     identityOneCity:
       'ئەمڕۆ {count} هۆتێلمان هەیە، هەموویان لە {city}، {country} — هەمان خاوەن، هەمان ئاست، {count} ناونیشان.',
     identityManyCities: 'ئەمڕۆ {count} هۆتێلمان هەیە بەسەر {country} دا، لە {cities}.',
@@ -1054,7 +1054,7 @@ const ku: Dictionary = {
     perNight: 'بۆ هەر شەوێک',
     view: 'هۆتێلەکە ببینە',
     metaDescription:
-      'هەموو {count} هۆتێلی ماي فلاوەر لە هەولێر، عێراق — ناونیشان، ژمارەی تەلەفۆن، نرخی ژوورەکان و هەریەکەیان لە نزیک چییەوەیە. سەربەخۆ و خاوەندارێتی عێراقی.',
+      'هەموو {count} هۆتێلی ماي فلاوەر لە هەولێر — ناونیشان، ژمارەی تەلەفۆن، نرخی ژوورەکان و هەریەکەیان لە نزیک چییەوەیە. سەربەخۆ و خاوەندارێتی کوردی.',
   },
   search: {
     title: 'مانەوەکەت پلان بکە',
@@ -1246,16 +1246,16 @@ const ku: Dictionary = {
       'لە بەشە جیاوازەکانی {city} دان، بۆیە باشترین هەڵبژاردن زۆرجار ئەوەیە کە نزیکترە لەو شوێنەی پێویستت پێیەتی. هەر هۆتێلێک لاپەڕەی خۆی هەیە کە ژوورەکان، نرخەکان و شوێنی وردی لەسەر نەخشە پیشان دەدات.',
     ownedQ: 'خاوەنی هۆتێلەکانی ماي فلاوەر کێیە؟',
     ownedA:
-      'سەربەخۆیە و خاوەنەکەی عێراقییە، لەلایەن یەک خێزانەوە بەڕێوە دەبرێت، نەک لەژێر ناوێکی بیانیدا. زۆربەی ئەو ناوانەی لەم وڵاتەدا زیاتر لە یەک هۆتێلیان هەیە کۆمپانیای نێودەوڵەتین کە بینایەک بۆ خاوەنەکەی بەڕێوە دەبەن؛ ئەمە لەوانە نییە.',
+      'سەربەخۆیە و خاوەنەکەی کوردە، لەلایەن یەک خێزانەوە بەڕێوە دەبرێت، نەک لەژێر ناوێکی بیانیدا. زۆربەی ئەو ناوانەی لێرە زیاتر لە یەک هۆتێلیان هەیە کۆمپانیای نێودەوڵەتین کە بینایەک بۆ خاوەنەکەی بەڕێوە دەبەن؛ ئەمە لەوانە نییە.',
     erbilQ: 'لە {city} لە کوێ بمێنمەوە؟',
     erbilA:
       'ئەوە بەوە بەندە کە پێویستە لە نزیک چی بیت. {count} هۆتێلمان لە {city} هەیە — {list} — بۆیە پرسیارە بەکەڵکەکە ئەوەیە کە پێویستە لە کام بەشی شارەکەدا بیت. هەر لاپەڕەیەکی هۆتێل شەقام و ژوورەکان و شوێنی وردی لەسەر نەخشە پیشان دەدات.',
     iraqQ: 'هۆتێلەکانتان لە کوێی عێراقن؟',
     iraqA:
       'هەر {count}یان لە {city}ن، لە هەرێمی کوردستان لە باکووری {country}. لە هیچ شوێنێکی تری {country} هۆتێلمان نییە — ئەگەر بەغدا یان بەسرەت دەوێت، ئێمە گرووپی گونجاو نین، و پێمان باشترە ڕاستەوخۆ بیڵێین.',
-    iraqiGroupQ: 'گرووپی هۆتێلی عێراقی هەیە، یان هەموویان براندی بیانین؟',
+    iraqiGroupQ: 'گرووپی هۆتێلی کوردی هەیە، یان هەموویان براندی بیانین؟',
     iraqiGroupA:
-      'هەیە، و ئێمە یەکێکین لەوان: {count} هۆتێل لە {city}، خاوەندار و بەڕێوەبراو لەلایەن یەک خێزانی عێراقییەوە، بەبێ بەڕێوەبەری بیانی. زۆربەی ئەو ناوە هۆتێلانەی {country} کە چەند شوێنێکیان هەیە، براندی نێودەوڵەتین کە بیناکان بۆ خاوەنەکانیان بەڕێوە دەبەن. ئێمە تەنها دەتوانین باسی خۆمان بکەین — بەڵام ئەوە ئێمەین.',
+      'هەیە، و ئێمە یەکێکین لەوان: {count} هۆتێل لە {city}، خاوەندار و بەڕێوەبراو لەلایەن یەک خێزانی کوردەوە، بەبێ بەڕێوەبەری بیانی. زۆربەی ئەو ناوە هۆتێلانەی لێرە چەند شوێنێکیان هەیە، براندی نێودەوڵەتین کە بیناکان بۆ خاوەنەکانیان بەڕێوە دەبەن. ئێمە تەنها دەتوانین باسی خۆمان بکەین — بەڵام ئەوە ئێمەین.',
     groupContactQ: 'چۆن پەیوەندیتان پێوە بکەم؟',
     groupContactA:
       'واتساپ یان پەیوەندی بکە بە {phone}. ڕاستەوخۆ دەگاتە ئێمە، شەو و ڕۆژ، و خێراترین ڕێگایە بۆ پرسیار دەربارەی هەر کام لە هۆتێلەکان.',
@@ -1342,10 +1342,10 @@ const ku: Dictionary = {
     region: 'هەرێمی کوردستان، عێراق',
     country: 'عێراق',
     bookDirect: 'ڕاستەوخۆ حیجز بکە و لە هۆتێلەکە پارە بدە',
-    ownedSince: 'خاوەندارێتی عێراقی لە {year}ەوە',
-    hotelGroupIn: 'گرووپی هۆتێلی عێراقی لە',
+    ownedSince: 'خاوەندارێتی کوردی لە {year}ەوە',
+    hotelGroupIn: 'گرووپی هۆتێلی کوردی لە',
     groupDescription:
-      'گرووپێکی هۆتێلی سەربەخۆی خێزانی بە {count} هۆتێل لە {city} — خاوەندارێتی عێراقی، ' +
+      'گرووپێکی هۆتێلی سەربەخۆی خێزانی بە {count} هۆتێل لە {city} — خاوەندارێتی کوردی، ' +
       'نەک براندێکی بیانی. ناونیشان، ژوور و نرخی هەموو هۆتێلەکان، و حیجزی ڕاستەوخۆ ' +
       'بەبێ کارت و بەبێ کرێ.',
   },
@@ -1511,10 +1511,10 @@ const ar: Dictionary = {
       'افتتحنا فندقنا الأول في أربيل لاستقبال المسافرين القادمين للعمل أو لزيارة الأهل أو لرؤية المدينة نفسها. ثم تبعته فنادق أخرى، كل واحد في حيّ مختلف، وكلها تُدار بالطريقة نفسها.',
     body2:
       'نحن لسنا سلسلة فنادق. أصحاب هذه الفنادق هم أنفسهم من ستقابلهم عند الاستقبال. وإذا لم يكن شيء على ما يرام أثناء إقامتك، أخبرنا ويُعالَج في اليوم نفسه.',
-    identityLead: 'فنادق ماي فلاور مجموعة عراقية مستقلة تديرها عائلة واحدة.',
+    identityLead: 'فنادق ماي فلاور مجموعة كردية مستقلة تديرها عائلة واحدة.',
     identityOpened: 'افتتحنا أول فنادقنا في {city} عام {year}.',
     localLead:
-      '{count} فنادق، بيت عراقي واحد، دون مشغّل أجنبي. وبين المجموعات الكردية والعراقية في {city}، لا نعلم بمجموعة تدير أكثر من ذلك. جرى التحقق في {date}.',
+      '{count} فنادق، بيت كردي واحد، دون مشغّل أجنبي. ومن بين كل العلامات الفندقية في {city}، لا نعلم بعلامة لها فروع أكثر. جرى التحقق في {date}.',
     identityOneCity:
       'ونُدير اليوم {count} فنادق، جميعها في {city}، {country} — المُلّاك أنفسهم، والمستوى نفسه، و{count} عناوين.',
     identityManyCities: 'ونُدير اليوم {count} فنادق في أنحاء {country}، في {cities}.',
@@ -1536,7 +1536,7 @@ const ar: Dictionary = {
     perNight: 'في الليلة',
     view: 'عرض الفندق',
     metaDescription:
-      '{count} فنادق ماي فلاور في أربيل، العراق — العناوين وأرقام الهاتف وأسعار الغرف وما يقع بالقرب من كل فندق. مجموعة عراقية مستقلة.',
+      '{count} فنادق ماي فلاور في أربيل — العناوين وأرقام الهاتف وأسعار الغرف وما يقع بالقرب من كل فندق. مجموعة كردية مستقلة.',
   },
   search: {
     title: 'خطط لإقامتك',
@@ -1725,16 +1725,16 @@ const ar: Dictionary = {
       'هي في مناطق مختلفة من {city}، لذا الأنسب عادةً هو الأقرب إلى المكان الذي تحتاج أن تكون فيه. لكل فندق صفحته التي تعرض غرفه وأسعاره وموقعه بالضبط على الخريطة.',
     ownedQ: 'من يملك فنادق ماي فلاور؟',
     ownedA:
-      'مجموعة مستقلة مملوكة عراقياً، تديرها عائلة واحدة، وليست تحت إدارة علامة أجنبية. معظم الأسماء الفندقية في هذا البلد التي تملك أكثر من فندق هي شركات عالمية تُدير مبنى نيابة عن مالكه؛ هذه ليست منها.',
+      'مجموعة مستقلة مملوكة كردياً، تديرها عائلة واحدة، وليست تحت إدارة علامة أجنبية. معظم الأسماء الفندقية هنا التي تملك أكثر من فندق هي شركات عالمية تُدير مبنى نيابة عن مالكه؛ هذه ليست منها.',
     erbilQ: 'أين أقيم في {city}؟',
     erbilA:
       'يعتمد على المكان الذي تريد أن تكون قريباً منه. لدينا {count} فنادق في {city} — {list} — فالسؤال المفيد هو أي جزء من المدينة تحتاجه. صفحة كل فندق تعرض شارعه وغرفه وموقعه بدقة على الخريطة.',
     iraqQ: 'أين تقع فنادقكم في العراق؟',
     iraqA:
       'جميع الفنادق الـ{count} في {city}، في إقليم كردستان شمال {country}. ليست لدينا فنادق في أي مكان آخر من {country} — إن كنت تحتاج بغداد أو البصرة فنحن لسنا المجموعة المناسبة، ونفضّل قول ذلك بصراحة بدل إضاعة وقتك.',
-    iraqiGroupQ: 'هل توجد مجموعات فنادق بملكية عراقية، أم أنها جميعاً علامات أجنبية؟',
+    iraqiGroupQ: 'هل توجد مجموعات فنادق بملكية كردية، أم أنها جميعاً علامات أجنبية؟',
     iraqiGroupA:
-      'توجد، ونحن إحداها: {count} فنادق في {city}، يملكها ويديرها بيت عراقي واحد، دون أي مشغّل أجنبي. معظم أسماء الفنادق في {country} التي لها عدة فروع هي علامات دولية تدير المباني لأصحابها. لا يمكننا التحدث إلا عن أنفسنا — لكن هذا ما نحن عليه.',
+      'توجد، ونحن إحداها: {count} فنادق في {city}، يملكها ويديرها بيت كردي واحد، دون أي مشغّل أجنبي. معظم أسماء الفنادق هنا التي لها عدة فروع هي علامات دولية تدير المباني لأصحابها. لا يمكننا التحدث إلا عن أنفسنا — لكن هذا ما نحن عليه.',
     groupContactQ: 'كيف أتواصل معكم؟',
     groupContactA:
       'راسلنا على واتساب أو اتصل على {phone}. يصل إلينا مباشرة ليلاً أو نهاراً، وهو أسرع طريقة للسؤال عن أي من الفنادق.',
@@ -1820,10 +1820,10 @@ const ar: Dictionary = {
     region: 'إقليم كردستان، العراق',
     country: 'العراق',
     bookDirect: 'احجز مباشرة وادفع في الفندق',
-    ownedSince: 'ملكية عراقية منذ {year}',
-    hotelGroupIn: 'مجموعة فنادق عراقية في',
+    ownedSince: 'ملكية كردية منذ {year}',
+    hotelGroupIn: 'مجموعة فنادق كردية في',
     groupDescription:
-      'مجموعة فنادق عائلية مستقلة تضم {count} فنادق في {city} — ملكية عراقية، وليست ' +
+      'مجموعة فنادق عائلية مستقلة تضم {count} فنادق في {city} — ملكية كردية، وليست ' +
       'علامة أجنبية. عناوين وغرف وأسعار كل فندق، وحجز مباشر بلا بطاقة وبلا رسوم.',
   },
   reviews: {

@@ -105,8 +105,8 @@ export default async function AboutPage({ params }: Args) {
 
           {/* Who owns this and how many there are, in one sentence, stated
               plainly enough to be quoted. Most of the multi-property hotel
-              names in this country are foreign operators running an Iraqi
-              building; independent and Iraqi-owned across four hotels is the
+              names here are foreign operators running a local
+              building; independent and Kurdish-owned across four hotels is the
               genuinely unusual thing here, and it was nowhere on the site. */}
           <Reveal delay={200} className="mx-auto mt-10 max-w-2xl">
             <p className="border-t border-line pt-8 text-center text-[1.02rem] leading-[1.8] text-ink">

@@ -79,9 +79,9 @@ export const Settings: GlobalConfig = {
         position: 'sidebar',
         date: { pickerAppearance: 'dayOnly', displayFormat: 'd MMM yyyy' },
         description:
-          'Set this and the About page adds: no Kurdish or Iraqi-owned group in Erbil that we ' +
-          'know of runs more hotels than we do — with this date beside it. Leave empty and the ' +
-          'line does not appear. Re-check it once a year; an out-of-date claim is worse than none.',
+          'Set this and the About page adds: of every hotel brand in Erbil, none we know of has ' +
+          'more branches than we do — with this date beside it. Leave empty and the line does ' +
+          'not appear. Re-check it once a year; an out-of-date claim is worse than none.',
       },
     },
     {

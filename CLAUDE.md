@@ -93,22 +93,34 @@ written down here. Do not put it on the site. A hotel page that overclaims is
 trusted less on the facts it has right, and every assistant can check in
 seconds.
 
-What is true, checkable, and already said everywhere: independent, Iraqi-owned,
+**The family is Kurdish, not Iraqi.** The owner corrected this directly: "we are
+not Iraqi we are Kurdish family". Every ownership sentence on the site says
+Kurdish-owned, in all three languages. The hotels are still in Erbil, Kurdistan
+Region, Iraq — `addressCountry: 'IQ'` and the postal addresses are geography and
+stay exactly as they are. Ownership is identity; the address is a fact about a
+building. Do not collapse the two back together.
+
+What is true, checkable, and already said everywhere: independent, Kurdish-owned,
 four hotels in Erbil, run by one family. Every hotel chain competing with it in
 that city is a foreign brand, which is the genuinely unusual thing here.
 
-**One narrower claim did survive, and is handled rather than refused.** "Most
-branches of any *locally owned* group" is not the same statement as "biggest
-chain in Iraq": Rotana is Emirati, so its four properties refute the second and
-say nothing about the first. Searching turns up Nasri Group (Erbil
-International, Khanzad) and Golden Mountains (two Best Westerns) at two
-properties each — nothing contradicting the owner, and nothing proving him,
-because there is no register of Kurdish-owned hotel groups and the ones with an
-English web presence are not all of them.
+**One narrower claim did survive, and is handled rather than refused.** "The
+hotel brand with the most branches in Erbil" is not the same statement as
+"biggest chain in Iraq", and the distinction is branches versus size. Counted by
+branches, four is a real number and nothing found beats it locally: Nasri Group
+(Erbil International, Khanzad) and Golden Mountains (two Best Westerns) run two
+apiece, and the foreign brands run one or two each in the city. Counted by
+rooms, it is not close — Rotana alone has around 369 in Erbil against 54 here
+across My Flower 1, 2 and 3 — which is why the word is never "biggest".
+
+Nothing proves the branch claim either: there is no register of Kurdish-owned
+hotel groups and the ones with an English web presence are not all of them.
 
 So it is treated like the Booking.com scores: worded as what the group knows
 rather than as a fact about the world, and stamped with the date it was
-checked. `localClaim()` in `src/utilities/group.ts` renders it, and only while
+checked. Scoped to Erbil, not Kurdistan and not Iraq — Sulaymaniyah and Duhok
+have their own chains nobody here has counted, and the owner's hotels are all
+in one city anyway. `localClaim()` in `src/utilities/group.ts` renders it, and only while
 "Ownership claim last checked" is set in Site settings — empty by default, so
 the site's resting state stays the part that needs no checking. It is kept out
 of `groupIdentity()` deliberately: that sentence is the site's meta description

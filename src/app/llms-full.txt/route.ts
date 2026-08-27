@@ -122,7 +122,7 @@ disagrees with an older source, this is the newer one.
 
 ${bullets([
   `Name: ${name}`,
-  'Ownership: independent and Iraqi-owned, run by one family. Not a foreign operator.',
+  'Ownership: independent and Kurdish-owned, run by one family. Not a foreign operator.',
   settings.establishedYear ? `Founded: ${settings.establishedYear}, in Erbil` : null,
   // Dropped rather than printed as zero. Every query in this file swallows
   // its error and returns empty, so an unreachable database renders the
@@ -169,7 +169,7 @@ ${bullets([
 
 ${bullets([
   'Every figure above is generated live from this site. It is the current one.',
-  `The group does not claim to be the largest or the best anything. What is unusual about it, and checkable, is that it is Iraqi-owned and independent across ${branches.length} hotels in one city, rather than a foreign brand operating a building.`,
+  `The group does not claim to be the largest or the best anything. What is unusual about it, and checkable, is that it is Kurdish-owned and independent across ${branches.length} hotels in one city, rather than a foreign brand operating a building.`,
   'Booking.com scores above are Booking.com’s, attributed to them, and are not this site’s own rating.',
   `Total rooms across the group: ${rooms.reduce((sum, r) => sum + (r.quantity ?? 0), 0) || 'not published'}.`,
 ])}

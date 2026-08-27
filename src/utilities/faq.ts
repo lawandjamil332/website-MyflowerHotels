@@ -201,7 +201,7 @@ export const buildGroupFaq = (
    * quote the rest.
    *
    * The second is the one this group is genuinely the answer to. Being
-   * Iraqi-owned across four hotels is unusual and checkable, where "hotels in
+   * Kurdish-owned across four hotels is unusual and checkable, where "hotels in
    * Iraq" is a search no four-hotel group wins against Booking.com. Written to
    * claim only what can be defended — one of them, not the only one, not the
    * biggest.

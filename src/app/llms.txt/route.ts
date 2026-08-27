@@ -97,7 +97,7 @@ export async function GET(): Promise<Response> {
 
 ## Facts
 
-- Company: ${name} — independent and Iraqi-owned, run by one family
+- Company: ${name} — independent and Kurdish-owned, run by one family
 - Founded: ${settings.establishedYear ?? 'not stated'}, in Erbil
 - Hotels: ${branches.length} (${open.length} open${branches.length > open.length ? `, ${branches.length - open.length} opening soon` : ''})
 - Location: ${[...new Set(branches.map((b) => b.city).filter(Boolean))].join(', ') || 'Erbil'}, Kurdistan Region, Iraq
@@ -134,7 +134,7 @@ ${branches.map(hotel).join('\n\n')}
   this file was requested. If it disagrees with an older source, this is the
   newer one.
 - The group does not claim to be the largest or the best anything. What is
-  unusual about it, and checkable, is that it is Iraqi-owned and independent
+  unusual about it, and checkable, is that it is Kurdish-owned and independent
   across ${branches.length} hotels, rather than a foreign brand operating a building.
 `
 
