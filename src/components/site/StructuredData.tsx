@@ -2,6 +2,7 @@ import type { Branch, Room } from '@/payload-types'
 import { locales, type Locale } from '@/i18n/config'
 import { getServerSideURL } from '@/utilities/getURL'
 import { mediaUrl } from '@/utilities/media'
+import { mapsPlaceUrl } from '@/utilities/mapsUrl'
 import { nameVariants } from '@/utilities/nameVariants'
 
 /**
@@ -228,10 +229,11 @@ export function HotelSchema({
       // listing one, so it is worth stating where a machine can read it.
       paymentAccepted: 'Cash, Card at the hotel',
       currenciesAccepted: 'IQD, USD',
-      // The owner's own map pin. Coordinates would be better and are emitted
-      // above the moment latitude and longitude are filled in; until then this
-      // is the only location a machine can follow.
-      hasMap: branch.googleMapsUrl ?? undefined,
+      // The canonical address of this hotel's verified Google Business
+      // Profile where there is one, falling back to whatever link the owner
+      // pasted. A Place ID URL names one business exactly; a share link is a
+      // redirect that has to be followed and trusted.
+      hasMap: mapsPlaceUrl(branch.googlePlaceId) ?? branch.googleMapsUrl ?? undefined,
       amenityFeature: branch.amenities?.length
         ? branch.amenities.map((a) => ({
             '@type': 'LocationFeatureSpecification',
@@ -259,7 +261,11 @@ export function HotelSchema({
         branch.instagram,
         branch.bookingComUrl,
         branch.tripadvisorUrl,
-        branch.googleMapsUrl,
+        // The verified profile, named by its Place ID rather than pointed at
+        // through a redirect. This is the strongest single line in the whole
+        // block: the Business Profile is the record a local result is built
+        // from, and this is what ties it to the hotel on this page.
+        mapsPlaceUrl(branch.googlePlaceId) ?? branch.googleMapsUrl,
       ].filter(Boolean) as string[],
     }),
   )
@@ -549,7 +555,7 @@ export function ContactSchema({
           url: `${base}/${locale}/branches/${b.slug}`,
           telephone: b.phone ?? undefined,
           email: b.email ?? undefined,
-          hasMap: b.googleMapsUrl ?? undefined,
+          hasMap: mapsPlaceUrl(b.googlePlaceId) ?? b.googleMapsUrl ?? undefined,
           address: clean({
             '@type': 'PostalAddress',
             streetAddress: b.neighbourhood ?? b.address ?? undefined,

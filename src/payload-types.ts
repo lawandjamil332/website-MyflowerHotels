@@ -323,6 +323,10 @@ export interface Branch {
   latitude?: number | null;
   longitude?: number | null;
   /**
+   * This hotel’s Google Business Profile ID. Find it at developers.google.com/maps/documentation/places/web-service/place-id — search the hotel and copy what it shows. Pasting the whole link works too. It tells Google the hotel on this page and that verified profile are one place.
+   */
+  googlePlaceId?: string | null;
+  /**
    * Paste the Share link from Google Maps. The map on the hotel's page appears by itself — the coordinates below fill in from this link when you save.
    */
   googleMapsUrl?: string | null;
@@ -1646,6 +1650,7 @@ export interface BranchesSelect<T extends boolean = true> {
   nearby?: T;
   latitude?: T;
   longitude?: T;
+  googlePlaceId?: T;
   googleMapsUrl?: T;
   phone?: T;
   phoneAlt?: T;

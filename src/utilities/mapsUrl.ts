@@ -109,3 +109,46 @@ export const resolveShortMapsLink = async (
     return null
   }
 }
+
+/**
+ * The Place ID of a hotel's Google Business Profile.
+ *
+ * A `maps.app.goo.gl/XNo4tf3` link is a share link: it works in a browser, and
+ * to anything reading the page it is an opaque redirect that could point
+ * anywhere. A Place ID is the opposite — it names one verified business on
+ * Google, exactly, and never moves. That distinction is the whole game for a
+ * group whose four hotels read as four unrelated businesses: the strongest
+ * statement this site can make is "the hotel on this page and the verified
+ * profile with this ID are the same place", and it cannot make it with a
+ * redirect.
+ *
+ * Accepts whatever Google handed over. The owner may paste the bare ID from
+ * the Place ID finder, or a whole URL with it buried in a query parameter —
+ * both are the same fact, and asking him to know which is which is asking him
+ * to care about a distinction that is our problem, not his.
+ */
+export const placeIdFrom = (input?: string | null): string | null => {
+  const raw = (input ?? '').trim()
+  if (!raw) return null
+
+  // Inside a URL, under either of the two names Google uses.
+  const inUrl = raw.match(/(?:place_id[:=]|query_place_id=)([A-Za-z0-9_-]+)/)
+  if (inUrl) return inUrl[1]
+
+  // A bare ID. Google's are opaque and have grown longer over the years, so
+  // this checks the alphabet and a plausible length rather than a prefix —
+  // matching on "ChIJ" would reject the other shapes Google issues.
+  if (/^[A-Za-z0-9_-]{15,}$/.test(raw) && !raw.includes('://')) return raw
+
+  return null
+}
+
+/**
+ * The canonical Google Maps URL for a Place ID.
+ *
+ * This is the form Google documents for linking to a specific place, and it is
+ * what belongs in `sameAs` — a stable address for one business rather than a
+ * link that happens to render a map.
+ */
+export const mapsPlaceUrl = (placeId?: string | null): string | null =>
+  placeId ? `https://www.google.com/maps/place/?q=place_id:${placeId}` : null

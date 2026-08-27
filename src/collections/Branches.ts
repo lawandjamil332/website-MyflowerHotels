@@ -8,6 +8,7 @@ import {
   ERBIL,
   coordsFromMapsUrl,
   isShortMapsLink,
+  placeIdFrom,
   resolveShortMapsLink,
 } from '../utilities/mapsUrl'
 
@@ -43,6 +44,16 @@ export const Branches: CollectionConfig = {
         // what staff have to hand is whatever Google's Share button copied.
         // Read the numbers out of the link so pasting it is enough, and never
         // overwrite coordinates somebody has entered deliberately.
+        // Whatever was pasted into the Place ID box, reduced to the ID
+        // itself. The owner may paste the bare ID or a whole URL with it
+        // buried in a parameter; both are the same fact, and which one he
+        // happened to copy is our problem rather than his. Anything
+        // unrecognisable is cleared rather than stored, so a half-pasted link
+        // cannot end up in the markup claiming to identify a business.
+        if (typeof data?.googlePlaceId === 'string') {
+          data.googlePlaceId = placeIdFrom(data.googlePlaceId) ?? null
+        }
+
         if (!data?.googleMapsUrl) return data
         if (typeof data.latitude === 'number' && typeof data.longitude === 'number') return data
 
@@ -177,6 +188,34 @@ export const Branches: CollectionConfig = {
                   admin: { width: '50%', placeholder: '44.009' },
                 },
               ],
+            },
+            {
+              /**
+               * The hotel's verified Google Business Profile, named exactly.
+               *
+               * All four hotels have a verified profile, and the site was
+               * pointing at them only through share links — which to anything
+               * reading the page are opaque redirects that could lead
+               * anywhere. A Place ID names one verified business and never
+               * moves, so this is the difference between the site hinting at
+               * a Maps pin and stating that the hotel on this page and that
+               * profile are the same business. For a group whose four hotels
+               * read as four unrelated companies, that statement is the fix.
+               *
+               * The map on the page still comes from the coordinates. This is
+               * for the machines.
+               */
+              name: 'googlePlaceId',
+              type: 'text',
+              label: 'Google Place ID',
+              admin: {
+                placeholder: 'ChIJ…',
+                description:
+                  'This hotel’s Google Business Profile ID. Find it at ' +
+                  'developers.google.com/maps/documentation/places/web-service/place-id — ' +
+                  'search the hotel and copy what it shows. Pasting the whole link works too. ' +
+                  'It tells Google the hotel on this page and that verified profile are one place.',
+              },
             },
             {
               name: 'googleMapsUrl',
