@@ -36,6 +36,7 @@ import * as migration_20260826_110000_fourth_hotel_open from './20260826_110000_
 import * as migration_20260826_120000_rates_valid_until from './20260826_120000_rates_valid_until'
 import * as migration_20260826_130000_branch_google_place_id from './20260826_130000_branch_google_place_id'
 import * as migration_20260826_140000_local_claim_checked from './20260826_140000_local_claim_checked'
+import * as migration_20260826_150000_branch_postal_code from './20260826_150000_branch_postal_code'
 
 export const migrations = [
   {
@@ -229,5 +230,10 @@ export const migrations = [
     up: migration_20260826_140000_local_claim_checked.up,
     down: migration_20260826_140000_local_claim_checked.down,
     name: '20260826_140000_local_claim_checked',
+  },
+  {
+    up: migration_20260826_150000_branch_postal_code.up,
+    down: migration_20260826_150000_branch_postal_code.down,
+    name: '20260826_150000_branch_postal_code',
   },
 ]

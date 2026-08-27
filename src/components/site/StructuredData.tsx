@@ -83,10 +83,7 @@ export function HotelSchema({
    * lobby and rooms sitting one section down the page and none of it was
    * offered. The hero leads, because it is the one the owner chose.
    */
-  const images = [
-    branch.heroImage,
-    ...(branch.gallery ?? []),
-  ]
+  const images = [branch.heroImage, ...(branch.gallery ?? [])]
     .flatMap((m) => {
       const url = mediaUrl(m, 'xlarge') || mediaUrl(m, 'large') || mediaUrl(m)
       const abs = absolute(url, base)
@@ -142,6 +139,7 @@ export function HotelSchema({
         '@type': 'PostalAddress',
         streetAddress: branch.neighbourhood ?? branch.address ?? undefined,
         addressLocality: branch.city ?? 'Erbil',
+        postalCode: branch.postalCode ?? undefined,
         addressRegion: 'Kurdistan Region',
         addressCountry: 'IQ',
       }),
@@ -344,6 +342,7 @@ export function RoomSchema({
               '@type': 'PostalAddress',
               streetAddress: branch.neighbourhood ?? branch.address ?? undefined,
               addressLocality: branch.city ?? 'Erbil',
+              postalCode: branch.postalCode ?? undefined,
               addressRegion: 'Kurdistan Region',
               addressCountry: 'IQ',
             }),
@@ -458,6 +457,7 @@ export function GroupSchema({
             '@type': 'PostalAddress',
             streetAddress: b.neighbourhood ?? b.address ?? undefined,
             addressLocality: b.city ?? 'Erbil',
+            postalCode: b.postalCode ?? undefined,
             addressRegion: 'Kurdistan Region',
             addressCountry: 'IQ',
           }),
@@ -560,6 +560,7 @@ export function ContactSchema({
             '@type': 'PostalAddress',
             streetAddress: b.neighbourhood ?? b.address ?? undefined,
             addressLocality: b.city ?? 'Erbil',
+            postalCode: b.postalCode ?? undefined,
             addressRegion: 'Kurdistan Region',
             addressCountry: 'IQ',
           }),
@@ -646,6 +647,7 @@ export function HotelListSchema({
           '@type': 'PostalAddress',
           streetAddress: branch.neighbourhood ?? branch.address ?? undefined,
           addressLocality: branch.city ?? 'Erbil',
+          postalCode: branch.postalCode ?? undefined,
           addressRegion: 'Kurdistan Region',
           addressCountry: 'IQ',
         }),

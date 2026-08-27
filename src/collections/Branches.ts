@@ -191,6 +191,28 @@ export const Branches: CollectionConfig = {
             },
             {
               /**
+               * The postcode, which Booking.com has been publishing for these
+               * hotels all along and this site has not.
+               *
+               * A PostalAddress without one is an address a machine can only
+               * partly match. It is one of the fields Google uses to decide
+               * that the hotel on this page and a business it already knows
+               * about are the same place — the same job as the Place ID, from
+               * the other direction — and every address block on this site was
+               * emitting locality, region and country and stopping there.
+               */
+              name: 'postalCode',
+              type: 'text',
+              label: 'Postcode',
+              admin: {
+                placeholder: '44001',
+                description:
+                  'Erbil is 44001. It never appears on the page — it goes to search engines, ' +
+                  'to help them match this hotel to the business they already know.',
+              },
+            },
+            {
+              /**
                * The hotel's verified Google Business Profile, named exactly.
                *
                * All four hotels have a verified profile, and the site was

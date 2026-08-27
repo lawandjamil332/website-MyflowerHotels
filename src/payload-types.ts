@@ -323,6 +323,10 @@ export interface Branch {
   latitude?: number | null;
   longitude?: number | null;
   /**
+   * Erbil is 44001. It never appears on the page — it goes to search engines, to help them match this hotel to the business they already know.
+   */
+  postalCode?: string | null;
+  /**
    * This hotel’s Google Business Profile ID. Find it at developers.google.com/maps/documentation/places/web-service/place-id — search the hotel and copy what it shows. Pasting the whole link works too. It tells Google the hotel on this page and that verified profile are one place.
    */
   googlePlaceId?: string | null;
@@ -1650,6 +1654,7 @@ export interface BranchesSelect<T extends boolean = true> {
   nearby?: T;
   latitude?: T;
   longitude?: T;
+  postalCode?: T;
   googlePlaceId?: T;
   googleMapsUrl?: T;
   phone?: T;
@@ -2308,7 +2313,7 @@ export interface Setting {
    */
   ratesValidUntil?: string | null;
   /**
-   * Set this and the About page adds: no Kurdish or Iraqi-owned group in Erbil that we know of runs more hotels than we do — with this date beside it. Leave empty and the line does not appear. Re-check it once a year; an out-of-date claim is worse than none.
+   * Set this and the About page adds: of every hotel brand in Erbil, none we know of has more branches than we do — with this date beside it. Leave empty and the line does not appear. Re-check it once a year; an out-of-date claim is worse than none.
    */
   localClaimCheckedOn?: string | null;
   /**
