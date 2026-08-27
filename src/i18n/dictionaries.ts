@@ -302,6 +302,12 @@ export type Dictionary = {
     ownedA: string
     erbilQ: string
     erbilA: string
+    /** Asked at country level: where in Iraq these hotels actually are. */
+    iraqQ: string
+    iraqA: string
+    /** The category question this group is genuinely an answer to. */
+    iraqiGroupQ: string
+    iraqiGroupA: string
   }
   email: {
     confirmEyebrow: string
@@ -751,6 +757,12 @@ const en: Dictionary = {
     erbilQ: 'Where should I stay in {city}?',
     erbilA:
       'That depends on what you are near. We run {count} hotels in {city} — {list} — so the useful question is which part of the city you need to be in. Each hotel page lists its street, its rooms and its exact position on the map.',
+    iraqQ: 'Where in Iraq are your hotels?',
+    iraqA:
+      'All {count} are in {city}, in the Kurdistan Region in the north of {country}. We do not have hotels anywhere else in {country} — if you need Baghdad or Basra, this is not the right group, and we would rather say so than waste your time.',
+    iraqiGroupQ: 'Are there Iraqi-owned hotel groups, or are they all foreign brands?',
+    iraqiGroupA:
+      'There are, and this is one of them: {count} hotels in {city}, owned and run by one Iraqi family, with no foreign operator. Most hotel names in {country} with several properties are international brands managing a building for its owners. We can only speak for ourselves — but that is what we are.',
     groupContactQ: 'How do I reach you?',
     groupContactA:
       'WhatsApp or call {phone}. It reaches us directly, day or night, and it is the fastest way to ask about any of the hotels.',
@@ -1228,6 +1240,12 @@ const ku: Dictionary = {
     erbilQ: 'لە {city} لە کوێ بمێنمەوە؟',
     erbilA:
       'ئەوە بەوە بەندە کە پێویستە لە نزیک چی بیت. {count} هۆتێلمان لە {city} هەیە — {list} — بۆیە پرسیارە بەکەڵکەکە ئەوەیە کە پێویستە لە کام بەشی شارەکەدا بیت. هەر لاپەڕەیەکی هۆتێل شەقام و ژوورەکان و شوێنی وردی لەسەر نەخشە پیشان دەدات.',
+    iraqQ: 'هۆتێلەکانتان لە کوێی عێراقن؟',
+    iraqA:
+      'هەر {count}یان لە {city}ن، لە هەرێمی کوردستان لە باکووری {country}. لە هیچ شوێنێکی تری {country} هۆتێلمان نییە — ئەگەر بەغدا یان بەسرەت دەوێت، ئێمە گرووپی گونجاو نین، و پێمان باشترە ڕاستەوخۆ بیڵێین.',
+    iraqiGroupQ: 'گرووپی هۆتێلی عێراقی هەیە، یان هەموویان براندی بیانین؟',
+    iraqiGroupA:
+      'هەیە، و ئێمە یەکێکین لەوان: {count} هۆتێل لە {city}، خاوەندار و بەڕێوەبراو لەلایەن یەک خێزانی عێراقییەوە، بەبێ بەڕێوەبەری بیانی. زۆربەی ئەو ناوە هۆتێلانەی {country} کە چەند شوێنێکیان هەیە، براندی نێودەوڵەتین کە بیناکان بۆ خاوەنەکانیان بەڕێوە دەبەن. ئێمە تەنها دەتوانین باسی خۆمان بکەین — بەڵام ئەوە ئێمەین.',
     groupContactQ: 'چۆن پەیوەندیتان پێوە بکەم؟',
     groupContactA:
       'واتساپ یان پەیوەندی بکە بە {phone}. ڕاستەوخۆ دەگاتە ئێمە، شەو و ڕۆژ، و خێراترین ڕێگایە بۆ پرسیار دەربارەی هەر کام لە هۆتێلەکان.',
@@ -1699,6 +1717,12 @@ const ar: Dictionary = {
     erbilQ: 'أين أقيم في {city}؟',
     erbilA:
       'يعتمد على المكان الذي تريد أن تكون قريباً منه. لدينا {count} فنادق في {city} — {list} — فالسؤال المفيد هو أي جزء من المدينة تحتاجه. صفحة كل فندق تعرض شارعه وغرفه وموقعه بدقة على الخريطة.',
+    iraqQ: 'أين تقع فنادقكم في العراق؟',
+    iraqA:
+      'جميع الفنادق الـ{count} في {city}، في إقليم كردستان شمال {country}. ليست لدينا فنادق في أي مكان آخر من {country} — إن كنت تحتاج بغداد أو البصرة فنحن لسنا المجموعة المناسبة، ونفضّل قول ذلك بصراحة بدل إضاعة وقتك.',
+    iraqiGroupQ: 'هل توجد مجموعات فنادق بملكية عراقية، أم أنها جميعاً علامات أجنبية؟',
+    iraqiGroupA:
+      'توجد، ونحن إحداها: {count} فنادق في {city}، يملكها ويديرها بيت عراقي واحد، دون أي مشغّل أجنبي. معظم أسماء الفنادق في {country} التي لها عدة فروع هي علامات دولية تدير المباني لأصحابها. لا يمكننا التحدث إلا عن أنفسنا — لكن هذا ما نحن عليه.',
     groupContactQ: 'كيف أتواصل معكم؟',
     groupContactA:
       'راسلنا على واتساب أو اتصل على {phone}. يصل إلينا مباشرة ليلاً أو نهاراً، وهو أسرع طريقة للسؤال عن أي من الفنادق.',

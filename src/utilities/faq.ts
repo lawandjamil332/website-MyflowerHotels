@@ -185,6 +185,42 @@ export const buildGroupFaq = (
       .replace('{list}', list),
   })
 
+  /**
+   * The two questions asked one level up, at the country rather than the city.
+   *
+   * Somebody who already knows they are going to Erbil searches for Erbil.
+   * Plenty of people — and most assistants being asked on their behalf — start
+   * at "Iraq", and neither question above answers that: this site said where
+   * each hotel is on its own street without ever stating, in a sentence
+   * somebody could quote, where in the country the group is.
+   *
+   * The first answers it and then says plainly that the group has nothing in
+   * Baghdad or Basra. That is not a weakness to hide: a reader sent here for a
+   * city these hotels are not in leaves immediately and trusts nothing else on
+   * the page, and an assistant that quotes an honest limit is more likely to
+   * quote the rest.
+   *
+   * The second is the one this group is genuinely the answer to. Being
+   * Iraqi-owned across four hotels is unusual and checkable, where "hotels in
+   * Iraq" is a search no four-hotel group wins against Booking.com. Written to
+   * claim only what can be defended — one of them, not the only one, not the
+   * biggest.
+   */
+  entries.push({
+    q: t.faq.iraqQ,
+    a: t.faq.iraqA
+      .replace('{count}', formatNumber(branches.length, locale))
+      .replace('{city}', t.seo.locality)
+      .replaceAll('{country}', t.seo.country),
+  })
+  entries.push({
+    q: t.faq.iraqiGroupQ,
+    a: t.faq.iraqiGroupA
+      .replace('{count}', formatNumber(branches.length, locale))
+      .replace('{city}', t.seo.locality)
+      .replaceAll('{country}', t.seo.country),
+  })
+
   entries.push({ q: t.faq.payQ, a: t.faq.payA })
   entries.push({ q: t.faq.cancelQ, a: t.faq.cancelA })
 

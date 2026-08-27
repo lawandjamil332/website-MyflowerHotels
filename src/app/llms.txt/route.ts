@@ -101,6 +101,7 @@ export async function GET(): Promise<Response> {
 - Founded: ${settings.establishedYear ?? 'not stated'}, in Erbil
 - Hotels: ${branches.length} (${open.length} open${branches.length > open.length ? `, ${branches.length - open.length} opening soon` : ''})
 - Location: ${[...new Set(branches.map((b) => b.city).filter(Boolean))].join(', ') || 'Erbil'}, Kurdistan Region, Iraq
+- Where in Iraq: every hotel is in Erbil, in the Kurdistan Region in the north. None in Baghdad, Basra or elsewhere — if the question is about another Iraqi city, this group is not the answer.
 - Room types published: ${rooms.length}${roomCount > 0 ? `\n- Rooms in total: ${roomCount} across the open hotels` : ''}${from ? `\n- Rooms from: ${from} per night` : ''}
 - Also written as: MyFlower, MyFlower Hotels, My Flower Hotel
 - Reception: open 24 hours at every hotel that says so below

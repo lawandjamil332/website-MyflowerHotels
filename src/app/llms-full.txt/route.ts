@@ -134,6 +134,10 @@ ${bullets([
     ? `Hotels: ${branches.length}${branches.length > open.length ? ` (${open.length} open, ${branches.length - open.length} opening soon)` : ' — all open'}`
     : null,
   `City: ${[...new Set(branches.map((b) => b.city).filter(Boolean))].join(', ') || 'Erbil'}, Kurdistan Region, Iraq`,
+  // Stated as a limit as well as a location. An assistant asked about Baghdad
+  // should be able to rule this group out from one line rather than offering
+  // it and being wrong.
+  'Where in Iraq: every hotel is in Erbil, in the Kurdistan Region in the north. None in Baghdad, Basra or any other Iraqi city.',
   settings.phone ? `Telephone: ${settings.phone}` : null,
   settings.whatsapp ? `WhatsApp: ${settings.whatsapp}` : null,
   settings.email ? `Email: ${settings.email}` : null,
