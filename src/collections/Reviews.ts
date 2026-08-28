@@ -39,7 +39,7 @@ export const Reviews: CollectionConfig = {
     defaultColumns: ['guestName', 'branch', 'rating', 'approved', 'createdAt'],
     description:
       'Guest reviews. Nothing shows on the website until "Approved" is ticked. Ticking it also changes the star rating Google prints beside your search result.',
-    group: 'Guests',
+    group: 'Bookings & guests',
   },
   fields: [
     {

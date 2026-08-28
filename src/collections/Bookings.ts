@@ -35,7 +35,7 @@ export const Bookings: CollectionConfig = {
   admin: {
     useAsTitle: 'reference',
     defaultColumns: ['reference', 'guestName', 'branch', 'checkIn', 'checkOut', 'status'],
-    group: 'Reservations',
+    group: 'Bookings & guests',
     description: 'Reservations made on the website. Newest first.',
   },
   defaultSort: '-createdAt',

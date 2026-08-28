@@ -21,8 +21,8 @@ import {
 export const Branches: CollectionConfig = {
   slug: 'branches',
   labels: {
-    singular: 'Branch',
-    plural: 'Branches',
+    singular: 'Hotel',
+    plural: 'Hotels',
   },
   access: {
     create: authenticated,
@@ -73,24 +73,29 @@ export const Branches: CollectionConfig = {
   },
   fields: [
     /**
-     * Tabs, not one long scroll.
+     * Three screens, and no right-hand column.
      *
-     * A hotel had nine sections stacked down the page — six loose fields
-     * and three collapsibles — so finding the check-out time meant
-     * scrolling past the gallery and the map every time. The same fields
-     * across four tabs fit on one screen and are reached in one click.
+     * It was five tabs with a sidebar beside them, which is a filing
+     * system rather than a way of working. Somebody opening a hotel wants
+     * three things: the building, its rooms, and how to be reached — so
+     * that is what there is. Location folded into the building it
+     * describes; contact and facilities into one, because both answer
+     * "what does this place offer a guest".
      *
-     * These are unnamed tabs, which are purely a way of arranging the
-     * screen: they add nothing to the stored shape of a hotel, so this is
-     * a change to the panel alone. No column moves, no migration, and
-     * every field keeps the exact name the site already reads.
+     * Status, the opening note and the running order came out of the
+     * sidebar and sit with the hotel now. That was the last thing in the
+     * right-hand column, so the column is gone and the form has the whole
+     * width. Three fields hidden in a second column is exactly the kind of
+     * thing somebody never finds.
+     *
+     * Unnamed tabs, so none of this changes how a hotel is stored.
      */
     {
       type: 'tabs',
       tabs: [
         {
           label: 'The hotel',
-          description: 'Its name, how it introduces itself, and its photographs.',
+          description: 'Its name, its photographs, and where it is.',
           fields: [
             {
               name: 'name',
@@ -131,66 +136,6 @@ export const Branches: CollectionConfig = {
                   'Exterior, lobby, restaurant, views. Select or drag in several at once, and drag to reorder.',
               },
             },
-          ],
-        },
-        {
-          /**
-           * This hotel's rooms, on this hotel's page.
-           *
-           * Rooms are their own collection, which is right — they have prices,
-           * stock and photographs of their own, and the booking engine counts
-           * them. But it meant the owner could not do the one thing he
-           * actually does: open a hotel and work through its rooms. He had to
-           * leave, find Rooms in the sidebar, and pick out the four belonging
-           * to the hotel he had just been looking at from a list of every room
-           * in the group.
-           *
-           * A join field is Payload's answer to exactly this. It stores
-           * nothing — the relationship already exists on the room, and this
-           * reads it from the other end — so there is no new column and no
-           * migration. What it adds is the list, the "Add new" button that
-           * arrives with this hotel already filled in, and a way back.
-           */
-          label: 'Rooms',
-          description:
-            'Every room in this hotel. Open one to change its photographs, price or how many ' +
-            'there are — you come back here when you close it.',
-          fields: [
-            {
-              name: 'rooms',
-              type: 'join',
-              collection: 'rooms',
-              on: 'branch',
-              /**
-               * No defaultSort here, and that is not an oversight.
-               *
-               * Sorting a join on `name` reads naturally and breaks the whole
-               * Branches list: room names are translated, so Payload builds a
-               * join to rooms_locales, aliases the rooms table, and then still
-               * refers to it by its real name in the join condition. Postgres
-               * rejects the query outright — "invalid reference to FROM-clause
-               * entry for table rooms" — and the list view renders nothing at
-               * all, so no hotel can be opened.
-               *
-               * It compiles, it builds, and it fails only when the page is
-               * actually loaded. Sorting is left to Payload's own default,
-               * which does not touch the translated table.
-               */
-              admin: {
-                allowCreate: true,
-                // Photographs beside the name, because "which rooms have no
-                // pictures" is the question this screen is opened to answer,
-                // and it could not be answered without opening every room one
-                // at a time.
-                defaultColumns: ['name', 'images', 'priceFrom', 'quantity', 'isAvailable'],
-              },
-            },
-          ],
-        },
-        {
-          label: 'Location',
-          description: 'Where it is, and the map pin every page draws from.',
-          fields: [
             {
               name: 'address',
               type: 'textarea',
@@ -302,11 +247,91 @@ export const Branches: CollectionConfig = {
                   "Paste the Share link from Google Maps. The map on the hotel's page appears by itself — the coordinates below fill in from this link when you save.",
               },
             },
+            {
+              // A hotel that is announced but not yet taking guests still belongs on
+              // the site — it is the strongest thing a growing group can show. It
+              // just must not offer a phone number nobody is answering.
+              name: 'status',
+              type: 'select',
+              defaultValue: 'open',
+              options: [
+                { label: 'Open', value: 'open' },
+                { label: 'Opening soon', value: 'openingSoon' },
+              ],
+              admin: {
+                description:
+                  'Set to "Opening soon" and the hotel is shown with its photo and a notice instead of phone numbers and rooms.',
+              },
+            },
+            {
+              name: 'openingNote',
+              type: 'text',
+              localized: true,
+              admin: {
+                placeholder: 'Opening spring 2026',
+                condition: (data) => data?.status === 'openingSoon',
+                description: 'Optional. Replaces the default "Opening soon" wording.',
+              },
+            },
+            {
+              name: 'order',
+              type: 'number',
+              defaultValue: 0,
+              admin: {
+                description: 'Lower numbers appear first on the homepage.',
+              },
+            },
           ],
         },
         {
-          label: 'Contact',
-          description: 'The numbers and accounts published on this hotel’s page.',
+          label: 'Rooms',
+          description:
+            'Every room here. Open one to change its photographs, price or how many there are.',
+          fields: [
+            {
+              name: 'rooms',
+              type: 'join',
+              collection: 'rooms',
+              on: 'branch',
+              /**
+               * No defaultSort here, and that is not an oversight.
+               *
+               * Sorting a join on `name` reads naturally and breaks the whole
+               * Branches list: room names are translated, so Payload builds a
+               * join to rooms_locales, aliases the rooms table, and then still
+               * refers to it by its real name in the join condition. Postgres
+               * rejects the query outright — "invalid reference to FROM-clause
+               * entry for table rooms" — and the list view renders nothing at
+               * all, so no hotel can be opened.
+               *
+               * It compiles, it builds, and it fails only when the page is
+               * actually loaded. Sorting is left to Payload's own default,
+               * which does not touch the translated table.
+               */
+              admin: {
+                allowCreate: true,
+                /**
+                 * One line per room.
+                 *
+                 * The photographs were a column here for a while, on the
+                 * reasoning that "which rooms have no pictures" is worth
+                 * seeing. It is — but each room stacked three thumbnails and
+                 * three filenames, so four rooms filled the screen and the
+                 * table stopped being something you could take in. The
+                 * pictures are one click away inside the room, and the
+                 * dashboard already says when any are missing or too small.
+                 *
+                 * Name, price, how many, and whether it is on sale. That is
+                 * what a room list is for.
+                 */
+                defaultColumns: ['name', 'priceFrom', 'quantity', 'isAvailable'],
+              },
+            },
+          ],
+        },
+        {
+          label: 'Contact & facilities',
+          description: 'How guests reach you, what the hotel offers, and where else it is listed.',
           fields: [
             {
               type: 'row',
@@ -355,12 +380,6 @@ export const Branches: CollectionConfig = {
                 },
               ],
             },
-          ],
-        },
-        {
-          label: 'Stay details',
-          description: 'What the hotel offers, and where it is listed elsewhere.',
-          fields: [
             {
               name: 'amenities',
               type: 'select',
@@ -467,45 +486,6 @@ export const Branches: CollectionConfig = {
           ],
         },
       ],
-    },
-    // Left out of the tabs on purpose: these sit in the right-hand column
-    // and have to stay at the top level for Payload to put them there.
-    {
-      // A hotel that is announced but not yet taking guests still belongs on
-      // the site — it is the strongest thing a growing group can show. It
-      // just must not offer a phone number nobody is answering.
-      name: 'status',
-      type: 'select',
-      defaultValue: 'open',
-      options: [
-        { label: 'Open', value: 'open' },
-        { label: 'Opening soon', value: 'openingSoon' },
-      ],
-      admin: {
-        position: 'sidebar',
-        description:
-          'Set to "Opening soon" and the hotel is shown with its photo and a notice instead of phone numbers and rooms.',
-      },
-    },
-    {
-      name: 'openingNote',
-      type: 'text',
-      localized: true,
-      admin: {
-        position: 'sidebar',
-        placeholder: 'Opening spring 2026',
-        condition: (data) => data?.status === 'openingSoon',
-        description: 'Optional. Replaces the default "Opening soon" wording.',
-      },
-    },
-    {
-      name: 'order',
-      type: 'number',
-      defaultValue: 0,
-      admin: {
-        position: 'sidebar',
-        description: 'Lower numbers appear first on the homepage.',
-      },
     },
   ],
 }

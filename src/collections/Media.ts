@@ -17,6 +17,7 @@ const dirname = path.dirname(filename)
 export const Media: CollectionConfig = {
   slug: 'media',
   folders: true,
+  labels: { singular: 'Photo', plural: 'Photos' },
   admin: {
     // With the hotels, because that is what every photograph in here is of.
     group: 'Hotels',
