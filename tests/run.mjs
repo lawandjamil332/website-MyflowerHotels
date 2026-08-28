@@ -54,6 +54,26 @@ if (missing.length > 0) {
   process.exit(1)
 }
 
+/**
+ * Rooms first.
+ *
+ * Twelve of these suites need a bookable room and none of them makes one, so
+ * on any database that has not had rooms typed into it by hand the whole run
+ * died at the first `room.id`. Running the fixture here rather than inside
+ * each suite keeps that fact in one place, and it does nothing unless the
+ * rooms table is completely empty — see tests/fixture.mjs for why that guard
+ * is drawn the way it is.
+ */
+try {
+  execFileSync(tsx, [join(here, 'fixture.mjs')], {
+    stdio: 'inherit',
+    env: { ...process.env, NODE_ENV: 'production' },
+  })
+} catch {
+  console.error('\nCould not prepare rooms for the suites.')
+  console.error('The booking suites will fail without them.\n')
+}
+
 const results = []
 for (const file of suites) {
   const name = file.replace(/\.mjs$/, '')

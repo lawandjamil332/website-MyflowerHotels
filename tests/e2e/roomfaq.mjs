@@ -91,7 +91,18 @@ const base = 'http://localhost:3000'
   ok('the group questions are asked', /Questions about the group/i.test(main))
   ok('it counts the hotels correctly', /There are 4, all in Erbil/i.test(main), main.match(/There are \d+, all in Erbil[^.]*\./i)?.[0])
   ok('and names where each one is', /My Flower 1 \(100m Street/i.test(main))
-  ok('a hotel not open yet is marked, not given an address', /My Flower 4 \(opening soon\)/i.test(main))
+  /**
+   * This asserted the exact string "My Flower 4 (opening soon)", which was
+   * true until My Flower 4 opened and then failed on a site that was right.
+   * What the sentence actually promises is that every hotel is named and that
+   * an unopened one is labelled rather than given an address it does not have,
+   * so that is what is checked.
+   */
+  ok('every hotel is named in the answer', /My Flower 4/i.test(main))
+  ok(
+    'and an unopened one is labelled rather than given an address',
+    !/opening soon/i.test(main) || /My Flower \d \(opening soon\)/i.test(main),
+  )
   ok('it says which to choose', /Which one should I stay at/i.test(main))
   ok('and how to reach them', /How do I reach you/i.test(main))
   ok('Google gets the answers too', /"@type":"FAQPage"/.test(ld))

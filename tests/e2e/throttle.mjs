@@ -39,7 +39,29 @@ const ATTEMPTS = LIMIT + 4
 let accepted = 0
 let firstRefusalAt = 0
 
-const page = await b.newPage({ viewport: { width: 390, height: 844 } })
+/**
+ * Its own address, so its own allowance.
+ *
+ * The limit is counted per caller, and by the time this suite runs the other
+ * seventeen have already spent most of one run's worth of bookings from this
+ * machine. So it opened with the bucket nearly empty, every attempt was
+ * refused, and it reported "0 accepted" — the guard working perfectly, read as
+ * the site being broken. The project's own notes tell you to restart the
+ * server between runs because of this; that is a workaround for a suite that
+ * cannot be run twice, not a property worth keeping.
+ *
+ * The throttle keys on x-forwarded-for, so declaring one puts this suite in a
+ * bucket nothing else touches. A fresh address each time also means the suite
+ * no longer poisons its own next run. 203.0.113.x is TEST-NET-3, reserved for
+ * documentation and never routable.
+ */
+const context = await b.newContext({
+  viewport: { width: 390, height: 844 },
+  extraHTTPHeaders: {
+    'x-forwarded-for': `203.0.113.${Math.floor(Math.random() * 200) + 20}`,
+  },
+})
+const page = await context.newPage()
 for (let i = 1; i <= ATTEMPTS; i++) {
   await page.goto(`${base}/en/book?hotel=my-flower-1&checkIn=2027-03-0${(i % 7) + 1}&checkOut=2027-03-0${(i % 7) + 2}`, {
     waitUntil: 'load',

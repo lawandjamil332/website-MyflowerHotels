@@ -77,12 +77,33 @@ let published = 0
   ok('with a column for where each one is', /Where it is/i.test(table))
   ok('and a telephone number', /\+964/.test(table))
   ok('and a nightly rate', /IQD|\$/.test(table))
-  // A hotel that is not open yet must say so rather than show a price.
-  ok('a hotel not open yet is marked as such', /Opening soon/i.test(table))
+  /**
+   * A hotel that is not open yet must say so rather than show a price.
+   *
+   * This asserted flatly that the word appears somewhere, which was true for
+   * as long as My Flower 4 was unopened and became false the moment it
+   * opened — so a correct site started failing its own test. The rule being
+   * checked is conditional, so the check is too: it fires only when a hotel
+   * is actually marked "opening soon" in the data, and says plainly when
+   * there is nothing to check rather than passing silently.
+   */
+  const rowText = await p.locator('table tbody tr').allInnerTexts()
+  const everyRowSaysSomething = rowText.every(
+    (row) => /IQD|\$/.test(row) || /Opening soon/i.test(row),
+  )
+  const noRowDoesBoth = rowText.every((row) => !(/IQD|\$/.test(row) && /Opening soon/i.test(row)))
+  ok(
+    'every hotel shows a rate or says it is not open yet',
+    everyRowSaysSomething && noRowDoesBoth,
+    `${rowText.filter((r) => /Opening soon/i.test(r)).length} not open`,
+  )
 
   const main = (await p.locator('main').innerText()).replace(/\s+/g, ' ')
   ok('the count in the copy is spelled from the data', new RegExp(`${['', 'One', 'Two', 'Three', 'Four', 'Five'][published] ?? published} hotels in Erbil`, 'i').test(main), main.slice(0, 60))
-  ok('it says who owns the group', /independent, Iraqi-owned/i.test(main))
+  // Kurdish-owned, not Iraqi-owned. The owner corrected this directly and the
+  // whole site was changed with it; this assertion was the last thing still
+  // holding the old wording.
+  ok('it says who owns the group', /independent, Kurdish-owned/i.test(main))
   ok('the group questions are asked here too', /Questions about the group/i.test(main))
   ok('including who owns it', /Who owns My Flower Hotels/i.test(main))
   ok('and where to stay in the city', /Where should I stay in Erbil/i.test(main))

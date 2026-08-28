@@ -1,7 +1,14 @@
 import { chromium } from 'playwright-core'
 import { execSync } from 'node:child_process'
 
-const DB = 'postgresql://postgres:postgres@127.0.0.1:5432/myflower'
+// The database the site is using, not a guessed one.
+//
+// This was hardcoded to postgres on 127.0.0.1:5432, which is true on exactly
+// one machine. Anywhere else — a different port, a socket, a container, CI —
+// these suites failed with "connection refused" and reported it as the site
+// being broken. The runner already insists on DATABASE_URI being set, so use
+// the same value the site itself is reading.
+const DB = process.env.DATABASE_URI
 const q = (sql) =>
   execSync(`psql "${DB}" -t -A -c ${JSON.stringify(sql.replace(/\s+/g, ' '))}`)
     .toString()
