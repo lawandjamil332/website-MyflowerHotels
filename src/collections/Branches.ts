@@ -103,7 +103,6 @@ export const Branches: CollectionConfig = {
               required: true,
               localized: true,
             },
-            slugField({ useAsSlug: 'name' }),
             {
               name: 'tagline',
               type: 'text',
@@ -166,79 +165,6 @@ export const Branches: CollectionConfig = {
               },
             },
             {
-              // Two plain numbers rather than Payload's `point` type: `point`
-              // compiles to a PostGIS `geometry` column, and Railway's Postgres
-              // does not ship PostGIS. A map pin only needs these two values.
-              type: 'row',
-              fields: [
-                {
-                  name: 'latitude',
-                  type: 'number',
-                  admin: {
-                    width: '50%',
-                    placeholder: '36.191',
-                    description:
-                      'Filled in automatically from the Google Maps link above. Only type these in by hand if the map does not appear.',
-                  },
-                },
-                {
-                  name: 'longitude',
-                  type: 'number',
-                  admin: { width: '50%', placeholder: '44.009' },
-                },
-              ],
-            },
-            {
-              /**
-               * The postcode, which Booking.com has been publishing for these
-               * hotels all along and this site has not.
-               *
-               * A PostalAddress without one is an address a machine can only
-               * partly match. It is one of the fields Google uses to decide
-               * that the hotel on this page and a business it already knows
-               * about are the same place — the same job as the Place ID, from
-               * the other direction — and every address block on this site was
-               * emitting locality, region and country and stopping there.
-               */
-              name: 'postalCode',
-              type: 'text',
-              label: 'Postcode',
-              admin: {
-                placeholder: '44001',
-                description:
-                  'Erbil is 44001. It never appears on the page — it goes to search engines, ' +
-                  'to help them match this hotel to the business they already know.',
-              },
-            },
-            {
-              /**
-               * The hotel's verified Google Business Profile, named exactly.
-               *
-               * All four hotels have a verified profile, and the site was
-               * pointing at them only through share links — which to anything
-               * reading the page are opaque redirects that could lead
-               * anywhere. A Place ID names one verified business and never
-               * moves, so this is the difference between the site hinting at
-               * a Maps pin and stating that the hotel on this page and that
-               * profile are the same business. For a group whose four hotels
-               * read as four unrelated companies, that statement is the fix.
-               *
-               * The map on the page still comes from the coordinates. This is
-               * for the machines.
-               */
-              name: 'googlePlaceId',
-              type: 'text',
-              label: 'Google Place ID',
-              admin: {
-                placeholder: 'ChIJ…',
-                description:
-                  'This hotel’s Google Business Profile ID. Find it at ' +
-                  'developers.google.com/maps/documentation/places/web-service/place-id — ' +
-                  'search the hotel and copy what it shows. Pasting the whole link works too. ' +
-                  'It tells Google the hotel on this page and that verified profile are one place.',
-              },
-            },
-            {
               name: 'googleMapsUrl',
               type: 'text',
               label: 'Google Maps URL',
@@ -274,12 +200,114 @@ export const Branches: CollectionConfig = {
               },
             },
             {
-              name: 'order',
-              type: 'number',
-              defaultValue: 0,
+              /**
+               * The plumbing, folded shut.
+               *
+               * Six of the seventeen fields on this screen were things a hotel
+               * manager never touches: the web address built from the name, two
+               * coordinates the site reads out of the map link by itself, a
+               * postcode that is 44001 for every hotel in this city, an ID
+               * pasted once when a Google profile is linked, and a running
+               * order set the day a hotel opens. None is wrong to have. All of
+               * them sat between the photographs and the address, which is
+               * where the work actually happens.
+               *
+               * Folded rather than hidden: hiding them would mean nobody could
+               * correct a bad map pin or paste a Place ID without a developer.
+               * Shut by default, one click to open.
+               */
+              type: 'collapsible',
+              label: 'Technical — normally left alone',
               admin: {
-                description: 'Lower numbers appear first on the homepage.',
+                initCollapsed: true,
+                description:
+                  'The site fills these in by itself. Open it only to correct a map pin or to ' +
+                  'paste a Google Place ID.',
               },
+              fields: [
+                slugField({ useAsSlug: 'name' }),
+                {
+                  // Two plain numbers rather than Payload's `point` type: `point`
+                  // compiles to a PostGIS `geometry` column, and Railway's Postgres
+                  // does not ship PostGIS. A map pin only needs these two values.
+                  type: 'row',
+                  fields: [
+                    {
+                      name: 'latitude',
+                      type: 'number',
+                      admin: {
+                        width: '50%',
+                        placeholder: '36.191',
+                        description:
+                          'Filled in automatically from the Google Maps link above. Only type these in by hand if the map does not appear.',
+                      },
+                    },
+                    {
+                      name: 'longitude',
+                      type: 'number',
+                      admin: { width: '50%', placeholder: '44.009' },
+                    },
+                  ],
+                },
+                {
+                  /**
+                   * The postcode, which Booking.com has been publishing for these
+                   * hotels all along and this site has not.
+                   *
+                   * A PostalAddress without one is an address a machine can only
+                   * partly match. It is one of the fields Google uses to decide
+                   * that the hotel on this page and a business it already knows
+                   * about are the same place — the same job as the Place ID, from
+                   * the other direction — and every address block on this site was
+                   * emitting locality, region and country and stopping there.
+                   */
+                  name: 'postalCode',
+                  type: 'text',
+                  label: 'Postcode',
+                  admin: {
+                    placeholder: '44001',
+                    description:
+                      'Erbil is 44001. It never appears on the page — it goes to search engines, ' +
+                      'to help them match this hotel to the business they already know.',
+                  },
+                },
+                {
+                  /**
+                   * The hotel's verified Google Business Profile, named exactly.
+                   *
+                   * All four hotels have a verified profile, and the site was
+                   * pointing at them only through share links — which to anything
+                   * reading the page are opaque redirects that could lead
+                   * anywhere. A Place ID names one verified business and never
+                   * moves, so this is the difference between the site hinting at
+                   * a Maps pin and stating that the hotel on this page and that
+                   * profile are the same business. For a group whose four hotels
+                   * read as four unrelated companies, that statement is the fix.
+                   *
+                   * The map on the page still comes from the coordinates. This is
+                   * for the machines.
+                   */
+                  name: 'googlePlaceId',
+                  type: 'text',
+                  label: 'Google Place ID',
+                  admin: {
+                    placeholder: 'ChIJ…',
+                    description:
+                      'This hotel’s Google Business Profile ID. Find it at ' +
+                      'developers.google.com/maps/documentation/places/web-service/place-id — ' +
+                      'search the hotel and copy what it shows. Pasting the whole link works too. ' +
+                      'It tells Google the hotel on this page and that verified profile are one place.',
+                  },
+                },
+                {
+                  name: 'order',
+                  type: 'number',
+                  defaultValue: 0,
+                  admin: {
+                    description: 'Lower numbers appear first on the homepage.',
+                  },
+                },
+              ],
             },
           ],
         },
