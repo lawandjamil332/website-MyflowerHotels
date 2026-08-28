@@ -134,6 +134,60 @@ export const Branches: CollectionConfig = {
           ],
         },
         {
+          /**
+           * This hotel's rooms, on this hotel's page.
+           *
+           * Rooms are their own collection, which is right — they have prices,
+           * stock and photographs of their own, and the booking engine counts
+           * them. But it meant the owner could not do the one thing he
+           * actually does: open a hotel and work through its rooms. He had to
+           * leave, find Rooms in the sidebar, and pick out the four belonging
+           * to the hotel he had just been looking at from a list of every room
+           * in the group.
+           *
+           * A join field is Payload's answer to exactly this. It stores
+           * nothing — the relationship already exists on the room, and this
+           * reads it from the other end — so there is no new column and no
+           * migration. What it adds is the list, the "Add new" button that
+           * arrives with this hotel already filled in, and a way back.
+           */
+          label: 'Rooms',
+          description:
+            'Every room in this hotel. Open one to change its photographs, price or how many ' +
+            'there are — you come back here when you close it.',
+          fields: [
+            {
+              name: 'rooms',
+              type: 'join',
+              collection: 'rooms',
+              on: 'branch',
+              /**
+               * No defaultSort here, and that is not an oversight.
+               *
+               * Sorting a join on `name` reads naturally and breaks the whole
+               * Branches list: room names are translated, so Payload builds a
+               * join to rooms_locales, aliases the rooms table, and then still
+               * refers to it by its real name in the join condition. Postgres
+               * rejects the query outright — "invalid reference to FROM-clause
+               * entry for table rooms" — and the list view renders nothing at
+               * all, so no hotel can be opened.
+               *
+               * It compiles, it builds, and it fails only when the page is
+               * actually loaded. Sorting is left to Payload's own default,
+               * which does not touch the translated table.
+               */
+              admin: {
+                allowCreate: true,
+                // Photographs beside the name, because "which rooms have no
+                // pictures" is the question this screen is opened to answer,
+                // and it could not be answered without opening every room one
+                // at a time.
+                defaultColumns: ['name', 'images', 'priceFrom', 'quantity', 'isAvailable'],
+              },
+            },
+          ],
+        },
+        {
           label: 'Location',
           description: 'Where it is, and the map pin every page draws from.',
           fields: [

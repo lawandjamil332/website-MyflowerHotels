@@ -93,6 +93,9 @@ export interface Config {
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {
+    branches: {
+      rooms: 'rooms';
+    };
     'payload-folders': {
       documentsAndFolders: 'payload-folders' | 'media';
     };
@@ -307,6 +310,11 @@ export interface Branch {
    * Exterior, lobby, restaurant, views. Select or drag in several at once, and drag to reorder.
    */
   gallery?: (number | Media)[] | null;
+  rooms?: {
+    docs?: (number | Room)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   address?: string | null;
   city?: string | null;
   /**
@@ -1648,6 +1656,7 @@ export interface BranchesSelect<T extends boolean = true> {
   description?: T;
   heroImage?: T;
   gallery?: T;
+  rooms?: T;
   address?: T;
   city?: T;
   neighbourhood?: T;
