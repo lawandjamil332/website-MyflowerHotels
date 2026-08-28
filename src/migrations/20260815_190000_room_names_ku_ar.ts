@@ -21,11 +21,29 @@ import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-postgres'
  *
  * All editable in the admin panel. If a room is called something else on the
  * door, the door wins.
+ *
+ * Guarded on the rooms existing, which they do not always.
+ *
+ * No migration in this project creates a room — the eighteen were typed into
+ * the admin panel by hand — so these ids are real on the live database and on
+ * nothing else. Written as a plain INSERT, this migration therefore died with
+ * a foreign key violation on any fresh database, taking every migration after
+ * it down with it: a new environment could not be built, a rebuild from
+ * backup could not be replayed, and nothing later in the chain had ever been
+ * run. It only worked on the one machine that already had the data.
+ *
+ * Selecting through an EXISTS makes it name whichever of those rooms are
+ * actually there. On the live database that is all eighteen and the result is
+ * identical; on an empty one it inserts nothing and the chain carries on.
  */
 export async function up({ db }: MigrateUpArgs): Promise<void> {
   await db.execute(sql`
     INSERT INTO "rooms_locales" ("_locale", "_parent_id", "name")
-    VALUES
+    -- _locale is an enum. A bare VALUES list in an INSERT gets coerced to it
+    -- for free; routed through a SELECT it arrives as text and is rejected,
+    -- so the cast is explicit.
+    SELECT v.locale::_locales, v.parent_id, v.name
+      FROM (VALUES
       ('ar', 1, 'غرفة ديلوكس مزدوجة — ماي فلاور 1'),
       ('ar', 2, 'غرفة كينج تنفيذية — ماي فلاور 1'),
       ('ar', 3, 'غرفة بسريرين — ماي فلاور 1'),
@@ -62,6 +80,8 @@ export async function up({ db }: MigrateUpArgs): Promise<void> {
       ('ku', 16, 'سوێتی باخچە — ماي فلاوەر 3'),
       ('ku', 17, 'ژووری خێزانی — ماي فلاوەر 3'),
       ('ku', 18, 'ژووری سوپیریۆری دووکەسی — ماي فلاوەر 3')
+      ) AS v(locale, parent_id, name)
+     WHERE EXISTS (SELECT 1 FROM "rooms" r WHERE r.id = v.parent_id)
     ON CONFLICT ("_locale", "_parent_id") DO NOTHING;
   `)
 }
