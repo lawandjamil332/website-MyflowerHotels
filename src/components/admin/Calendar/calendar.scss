@@ -1,0 +1,281 @@
+/**
+ * The availability grid.
+ *
+ * The first column is sticky, because a room's name is the only thing that
+ * tells you which row you are reading and the fortnight is wider than any
+ * laptop. Everything else scrolls under it.
+ */
+.mf-calendar {
+  display: block;
+  padding: clamp(14px, 3vw, 28px) clamp(12px, 3vw, 32px) 40px;
+  background: var(--theme-bg);
+  min-height: 60vh;
+
+  &__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    & h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.2;
+    }
+
+    & p {
+      margin: 4px 0 0;
+      max-width: 60ch;
+      color: var(--theme-elevation-600);
+    }
+  }
+
+  &__moves {
+    display: flex;
+    gap: 6px;
+
+    & a {
+      padding: 7px 12px;
+      border: 1px solid var(--theme-elevation-150);
+      border-radius: 6px;
+      background: var(--theme-elevation-0);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--mf-blue);
+      text-decoration: none;
+      white-space: nowrap;
+
+      &:hover {
+        border-color: var(--mf-blue);
+      }
+    }
+  }
+
+  &__empty {
+    padding: 24px;
+    border: 1px dashed var(--theme-elevation-200);
+    border-radius: 8px;
+    color: var(--theme-elevation-600);
+  }
+
+  &__scroll {
+    overflow-x: auto;
+    border: 1px solid var(--theme-elevation-100);
+    border-radius: 8px;
+    background: var(--theme-elevation-0);
+  }
+
+  &__grid {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__corner,
+  &__room {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 2;
+    min-width: 190px;
+    max-width: 240px;
+    text-align: start;
+    background: var(--theme-elevation-0);
+    border-inline-end: 1px solid var(--theme-elevation-150);
+  }
+
+  &__corner {
+    z-index: 3;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--theme-elevation-500);
+  }
+
+  &__room {
+    padding: 8px 12px;
+    font-weight: 600;
+    border-block-end: 1px solid var(--theme-elevation-50);
+
+    & a {
+      color: var(--mf-blue);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__room-note {
+    display: block;
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--theme-elevation-500);
+  }
+
+  &__day {
+    min-width: 52px;
+    padding: 6px 4px;
+    text-align: center;
+    line-height: 1.15;
+    border-block-end: 1px solid var(--theme-elevation-150);
+    color: var(--theme-elevation-600);
+
+    // Friday and Saturday: the weekend here, and the nights that fill first.
+    &[data-weekend='true'] {
+      background: var(--theme-elevation-50);
+    }
+
+    &[data-today='true'] {
+      background: color-mix(in srgb, var(--mf-blue) 14%, var(--theme-elevation-0));
+      color: var(--mf-blue);
+      box-shadow: inset 0 -3px 0 var(--mf-blue);
+    }
+  }
+
+  &__day-name {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__day-number {
+    display: block;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--theme-elevation-1000);
+  }
+
+  &__day-month {
+    display: block;
+    font-size: 10px;
+  }
+
+  &__hotel-row th {
+    position: sticky;
+    inset-inline-start: 0;
+  }
+
+  &__hotel {
+    padding: 6px 12px;
+    text-align: start;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--theme-elevation-600);
+    background: var(--theme-elevation-50);
+    border-block: 1px solid var(--theme-elevation-100);
+  }
+
+  /**
+   * One night of one room type. Colour is the message and the number is the
+   * detail — a manager scanning for trouble is looking for red, and only then
+   * reading how many.
+   */
+  &__cell {
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    border-block-end: 1px solid var(--theme-elevation-50);
+    border-inline-end: 1px solid var(--theme-elevation-50);
+
+    &[data-state='open'] {
+      color: var(--theme-elevation-800);
+      background: color-mix(in srgb, var(--mf-green) 8%, var(--theme-elevation-0));
+    }
+
+    &[data-state='low'] {
+      color: var(--mf-amber);
+      background: color-mix(in srgb, var(--mf-amber) 20%, var(--theme-elevation-0));
+    }
+
+    &[data-state='full'],
+    &[data-state='none'] {
+      color: var(--mf-red);
+      background: color-mix(in srgb, var(--mf-red) 18%, var(--theme-elevation-0));
+    }
+
+    &[data-state='off'] {
+      color: var(--theme-elevation-350);
+      background: repeating-linear-gradient(
+        135deg,
+        var(--theme-elevation-50) 0 6px,
+        var(--theme-elevation-0) 6px 12px
+      );
+    }
+  }
+
+  &__total {
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 13px;
+    background: var(--theme-elevation-50);
+    border-block-start: 1px solid var(--theme-elevation-150);
+
+    & strong {
+      font-weight: 700;
+    }
+
+    & span {
+      color: var(--theme-elevation-500);
+    }
+  }
+
+  &__grid tfoot th {
+    background: var(--theme-elevation-50);
+    border-block-start: 1px solid var(--theme-elevation-150);
+  }
+
+  &__key {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin: 14px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 12px;
+    color: var(--theme-elevation-600);
+
+    & li {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    & li::before {
+      content: '';
+      width: 14px;
+      height: 14px;
+      border-radius: 3px;
+      border: 1px solid var(--theme-elevation-150);
+    }
+
+    & li[data-state='open']::before {
+      background: color-mix(in srgb, var(--mf-green) 8%, var(--theme-elevation-0));
+    }
+
+    & li[data-state='low']::before {
+      background: color-mix(in srgb, var(--mf-amber) 20%, var(--theme-elevation-0));
+    }
+
+    & li[data-state='full']::before {
+      background: color-mix(in srgb, var(--mf-red) 18%, var(--theme-elevation-0));
+    }
+
+    & li[data-state='off']::before {
+      background: repeating-linear-gradient(
+        135deg,
+        var(--theme-elevation-50) 0 4px,
+        var(--theme-elevation-0) 4px 8px
+      );
+    }
+  }
+}

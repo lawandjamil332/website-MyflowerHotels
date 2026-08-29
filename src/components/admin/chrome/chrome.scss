@@ -1,0 +1,251 @@
+/**
+ * The extranet's three bars.
+ *
+ * Colours are Booking.com's own — the navy #003b95 of the bar and the #0071c2
+ * of an action — because the point is that the owner should not have to learn
+ * a second visual language for his own hotels. Everything else is drawn from
+ * Payload's theme variables so the panel still has a working dark mode.
+ *
+ * `z-index: 25` is deliberate and sits between Payload's `--z-nav` (20) and
+ * `--z-modal` (30): the bars stay above the page as it scrolls, and go under
+ * any drawer or dialog that opens over them. A sticky header that covers a
+ * modal is worse than one that scrolls away.
+ */
+
+.mf-chrome {
+  position: sticky;
+  top: 0;
+  z-index: 25;
+
+  --mf-bar: #003b95;
+  --mf-bar-text: #ffffff;
+
+  // ---- The blue bar -------------------------------------------------------
+
+  &__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 56px;
+    padding: 8px clamp(12px, 3vw, 32px);
+    background: var(--mf-bar);
+    color: var(--mf-bar-text);
+  }
+
+  &__brand {
+    display: flex;
+    flex: 0 1 auto;
+    align-items: center;
+    gap: 10px;
+    color: inherit;
+    text-decoration: none;
+    min-width: 0;
+  }
+
+  &__mark {
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.14);
+  }
+
+  &__names {
+    display: grid;
+    line-height: 1.25;
+    min-width: 0;
+
+    & strong {
+      font-size: 15px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    & span {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.75);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__alerts {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    // A flex item will not shrink below its content unless told to, so
+    // without this the counters simply ran over the hotel group's name on a
+    // phone instead of scrolling.
+    min-width: 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  /**
+   * A counter is a link. The extranet puts a red dot on the icon that needs
+   * you; this says the number and what it is, because "2" on its own is a
+   * puzzle and the bar has room for three words.
+   */
+  &__alert {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    flex-shrink: 0;
+    padding: 5px 10px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--mf-bar-text);
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    // Something is waiting for a person. Amber rather than red: an unanswered
+    // enquiry is a job, not an emergency, and a bar that cries wolf every
+    // morning stops being looked at.
+    &[data-urgent='true'] {
+      background: #febb02;
+      color: #1a1a1a;
+
+      &:hover {
+        background: #ffd54a;
+      }
+    }
+  }
+
+  &__alert-count {
+    font-size: 16px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__alert-label {
+    font-size: 12px;
+    opacity: 0.9;
+  }
+
+  // ---- The six tabs -------------------------------------------------------
+
+  &__tabs {
+    display: flex;
+    gap: 2px;
+    padding: 0 clamp(6px, 3vw, 26px);
+    background: var(--theme-elevation-0);
+    border-bottom: 1px solid var(--theme-elevation-100);
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__tab {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+    padding: 12px 14px;
+    border-bottom: 3px solid transparent;
+    // 16px: the panel is used on a phone at the desk, and iOS zooms into
+    // anything smaller when it is tapped and does not zoom back out.
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+    color: var(--theme-elevation-700);
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--theme-elevation-1000);
+      background: var(--theme-elevation-50);
+    }
+
+    &[data-active='true'] {
+      color: var(--mf-blue);
+      border-bottom-color: var(--mf-blue);
+    }
+  }
+
+  &__tab-icon {
+    display: grid;
+    place-items: center;
+    opacity: 0.85;
+  }
+
+  // ---- The pages of the current tab --------------------------------------
+
+  &__sub {
+    display: flex;
+    gap: 4px;
+    padding: 8px clamp(10px, 3vw, 30px);
+    background: var(--theme-elevation-50);
+    border-bottom: 1px solid var(--theme-elevation-100);
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__sub-link {
+    flex-shrink: 0;
+    padding: 5px 12px;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--theme-elevation-700);
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--theme-elevation-100);
+      color: var(--theme-elevation-1000);
+    }
+
+    &[data-active='true'] {
+      background: var(--mf-blue);
+      color: #fff;
+      font-weight: 600;
+    }
+  }
+}
+
+@media (min-width: 769px) {
+  .mf-chrome__tab {
+    font-size: 14px;
+  }
+
+  .mf-chrome__sub-link {
+    font-size: 13px;
+  }
+}
+
+/**
+ * On a phone there is not room for the group's name and three counters on one
+ * line, so the counters take a line of their own and scroll along it. The bar
+ * stays two short rows rather than becoming a wall.
+ */
+@media (max-width: 720px) {
+  .mf-chrome__bar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .mf-chrome__alerts {
+    flex: 1 0 100%;
+    justify-content: flex-start;
+  }
+}

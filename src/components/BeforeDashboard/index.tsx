@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { StatusPill } from '@/components/admin/StatusPill'
+import { shortRoomName } from '@/components/admin/roomName'
 import { BOOKING_STATUS, look } from '@/components/admin/statuses'
 import { formatDateLong, formatDateShort, formatPrice } from '@/utilities/format'
 
@@ -79,7 +80,7 @@ const StayRow: React.FC<{ stay: Stay; kind: 'arrival' | 'departure' }> = ({ stay
       </a>
 
       <span className={`${baseClass}__stay-where`}>
-        {[stay.hotel, stay.room].filter(Boolean).join(' · ') || '—'}
+        {[stay.hotel, shortRoomName(stay.room, stay.hotel)].filter(Boolean).join(' · ') || '—'}
       </span>
 
       <span className={`${baseClass}__stay-when`}>{when}</span>

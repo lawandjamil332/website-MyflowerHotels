@@ -119,13 +119,42 @@ export default buildConfig({
   ...(email ? { email } : {}),
   admin: {
     components: {
-      // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below.
+      /**
+       * The extranet's chrome, above every screen: the blue bar with the
+       * group's name and today's counts in it, the six tabs, and the pages of
+       * whichever tab you are on.
+       *
+       * `header` is the only slot Payload renders above its whole layout, and
+       * `Nav` renders nothing, because the navigation is up there now. A
+       * sidebar is what a content-management system has; a booking system has
+       * a bar across the top, and it is not a style choice — the work happens
+       * in wide tables and the sidebar was eating 275px of every one of them.
+       */
+      header: ['@/components/admin/chrome/Chrome'],
+      Nav: '@/components/admin/chrome/NoNav',
+      // What the owner sees while logging in.
       beforeLogin: ['@/components/BeforeLogin'],
-      // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below.
+      // Today's arrivals, departures and occupancy, above the dashboard.
       beforeDashboard: ['@/components/BeforeDashboard'],
+      /**
+       * Rates & availability. Payload has no calendar of its own, and this is
+       * the screen the extranet is built around — the fortnight ahead, room by
+       * room, with what is left to sell in every cell.
+       */
+      views: {
+        calendar: {
+          Component: '@/components/admin/Calendar#default',
+          path: '/calendar',
+        },
+      },
     },
+    /**
+     * Payload's default avatar is a Gravatar, which means every load of the
+     * panel posts a hash of the staff member's email address to a third party
+     * — and, on a connection that cannot reach it, leaves a broken image in
+     * the corner. Initials, drawn locally.
+     */
+    avatar: 'default',
     importMap: {
       baseDir: path.resolve(dirname),
     },
