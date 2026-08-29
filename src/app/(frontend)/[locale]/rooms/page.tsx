@@ -6,6 +6,7 @@ import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { getBranches, getAllRooms } from '@/utilities/branches'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
+import { heroFor, photoPool } from '@/utilities/heroPhoto'
 import { cn } from '@/utilities/ui'
 import { PageHero } from '@/components/site/PageHero'
 import { Reveal } from '@/components/site/Reveal'
@@ -119,7 +120,10 @@ export default async function RoomsPage({ params, searchParams }: Args) {
     }))
     .filter((group) => group.rooms.length > 0)
 
-  const heroSource = branches[0]?.heroImage
+  // A room, not the building. This page is about rooms, and it was opening on
+  // the same photograph of the same facade as the homepage — offset 1 so it
+  // never lands on whatever the homepage took.
+  const heroSource = heroFor(photoPool(branches, rooms), 1)
   const beds: Array<keyof typeof t.bed> = ['single', 'double', 'twin', 'king', 'suite']
   const anyFilter = Boolean(hotel || guests || bed || q)
 
@@ -135,9 +139,21 @@ export default async function RoomsPage({ params, searchParams }: Args) {
         imageAlt={mediaAlt(heroSource)}
       />
 
-      <section className={cn(shell, 'py-14 sm:py-20')}>
-        <div className="border-y border-line py-7">
-          <div className="flex flex-col gap-6">
+      {/* Tightened deliberately.
+          
+          This page opened on a wall of grey chips: four rows of filters and a
+          count, about four hundred pixels of controls, before a single room
+          was visible. On a laptop the first photograph sat below the fold, so
+          the page that exists to show rooms showed none of them. Filters are
+          for narrowing something you can already see.
+          
+          Nothing is removed — every filter still works and still produces a
+          shareable URL. The band is simply half the height: less air above it,
+          the rows closer together, and the search and the count sharing a line
+          instead of taking one each. */}
+      <section className={cn(shell, 'pt-8 pb-12 sm:pt-10 sm:pb-16')}>
+        <div className="border-y border-line py-4">
+          <div className="flex flex-col gap-3">
             {/* A plain form, submitted by the browser. No JavaScript, no state,
                 and the result is a shareable URL like every other filter here
                 — which is also what lets the site truthfully declare a search
@@ -212,7 +228,7 @@ export default async function RoomsPage({ params, searchParams }: Args) {
             </div>
           </div>
 
-          <div className="mt-7 flex items-center justify-between border-t border-line pt-5">
+          <div className="mt-4 flex items-center justify-between border-t border-line pt-4">
             <p className="text-sm text-muted-ink">
               <span className="font-display text-xl text-ink">{filtered.length}</span>{' '}
               {t.roomsPage.results}
@@ -235,7 +251,7 @@ export default async function RoomsPage({ params, searchParams }: Args) {
             other on the site. The hotel name doubles as the way through to
             the hotel. */}
         {grouped.length > 0 ? (
-          <div className="mt-14 space-y-20">
+          <div className="mt-10 space-y-16">
             {grouped.map(({ branch, rooms: group }, gi) => (
               <div key={branch.id}>
                 <h2 className="font-display border-b border-line pb-4 text-2xl text-ink">

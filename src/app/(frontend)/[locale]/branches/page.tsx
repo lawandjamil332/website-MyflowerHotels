@@ -13,6 +13,7 @@ import { groupIdentity } from '@/utilities/group'
 import { formatPrice } from '@/utilities/format'
 import { branchLocative } from '@/utilities/teasers'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
+import { heroFor, photoPool } from '@/utilities/heroPhoto'
 import { cn } from '@/utilities/ui'
 import { BranchCard } from '@/components/site/BranchCard'
 import { PageHero } from '@/components/site/PageHero'
@@ -64,7 +65,9 @@ export default async function BranchesPage({ params }: Args) {
   // telling every crawler this company has no hotels.
   if (branches.length === 0) notFound()
 
-  const heroSource = branches[0]?.heroImage ?? settings.socialShareImage
+  // Offset 2, so the page listing every hotel does not open on the same
+  // photograph as the homepage or the rooms browser.
+  const heroSource = heroFor(photoPool(branches), 2) ?? settings.socialShareImage
 
   // Counted rather than claimed, exactly as on the About page — one sentence
   // that is true whether this group has four hotels or seven.

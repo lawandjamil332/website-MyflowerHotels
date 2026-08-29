@@ -7,6 +7,7 @@ import { getDictionary } from '@/i18n/dictionaries'
 import { getBranches } from '@/utilities/branches'
 import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
+import { heroFor, photoPool } from '@/utilities/heroPhoto'
 import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
 import { branchLocative } from '@/utilities/teasers'
 import { cn } from '@/utilities/ui'
@@ -29,7 +30,9 @@ export default async function ContactPage({ params }: Args) {
 
   const t = getDictionary(locale)
   const [branches, settings] = await Promise.all([getBranches(locale), getSettings(locale)])
-  const heroSource = branches[2]?.heroImage ?? branches[0]?.heroImage
+  // Offset 3. Picking branches[2] by hand was already an attempt at this, and
+  // it broke the moment a hotel was added or reordered.
+  const heroSource = heroFor(photoPool(branches), 3)
 
   return (
     <>
