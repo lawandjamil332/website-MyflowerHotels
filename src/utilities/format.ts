@@ -133,3 +133,26 @@ export const formatDateLong = (value?: string | Date | null, locale: Locale = 'e
 
   return `${weekday}${COMMA[locale] ?? ','} ${day} ${month} ${date.getUTCFullYear()}`
 }
+
+/**
+ * "Sat 5 Sep" — the same date, short enough for a table cell.
+ *
+ * The admin panel lists arrivals and departures a row at a time, where the
+ * long form pushes every other column off a laptop screen. Built from the same
+ * two tables as `formatDateLong` for the same reason: no browser has Central
+ * Kurdish month names, and the panel is read on whatever browser is to hand.
+ */
+export const formatDateShort = (value?: string | Date | null, locale: Locale = 'en'): string => {
+  if (!value) return ''
+  const date = value instanceof Date ? value : new Date(value)
+  if (Number.isNaN(date.getTime())) return ''
+
+  const weekday = (WEEKDAYS[locale] ?? WEEKDAYS.en)[date.getUTCDay()]
+  const month = (MONTHS[locale] ?? MONTHS.en)[date.getUTCMonth()]
+
+  // English abbreviates; Kurdish and Arabic month names do not shorten to
+  // three letters in any way a reader would recognise, so they stay whole.
+  const short = (word: string) => (locale === 'en' ? word.slice(0, 3) : word)
+
+  return `${short(weekday)} ${date.getUTCDate()} ${short(month)}`
+}

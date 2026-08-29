@@ -21,7 +21,7 @@ export const Rooms: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'branch', 'priceFrom', 'isAvailable'],
     description: 'Room types. Each one belongs to a branch.',
-    group: 'Hotels',
+    group: 'Property',
   },
   fields: [
     {

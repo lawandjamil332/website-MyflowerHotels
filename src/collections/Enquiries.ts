@@ -25,7 +25,10 @@ export const Enquiries: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'branch', 'checkIn', 'guests', 'status', 'createdAt'],
     description: 'Enquiries sent from the website. Newest first.',
-    group: 'Bookings & guests',
+    group: 'Reservations',
+    components: {
+      beforeListTable: ['@/components/admin/ListTabs#EnquiryTabs'],
+    },
   },
   defaultSort: '-createdAt',
   hooks: {
@@ -110,12 +113,20 @@ export const Enquiries: CollectionConfig = {
         {
           name: 'checkIn',
           type: 'date',
-          admin: { width: '33%', date: { pickerAppearance: 'dayOnly' } },
+          admin: {
+            width: '33%',
+            date: { pickerAppearance: 'dayOnly' },
+            components: { Cell: '@/components/admin/cells#StayDateCell' },
+          },
         },
         {
           name: 'checkOut',
           type: 'date',
-          admin: { width: '33%', date: { pickerAppearance: 'dayOnly' } },
+          admin: {
+            width: '33%',
+            date: { pickerAppearance: 'dayOnly' },
+            components: { Cell: '@/components/admin/cells#StayDateCell' },
+          },
         },
         { name: 'guests', type: 'number', min: 1, admin: { width: '33%' } },
       ],
@@ -135,6 +146,9 @@ export const Enquiries: CollectionConfig = {
       ],
       admin: {
         position: 'sidebar',
+        components: {
+          Cell: '@/components/admin/cells#EnquiryStatusCell',
+        },
       },
     },
   ],

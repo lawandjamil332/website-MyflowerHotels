@@ -180,24 +180,31 @@ export default buildConfig({
    *
    * Arranged by how often the owner opens a thing, not by how the template
    * shipped: what came in overnight first, then who the guests are, then the
-   * hotels themselves, then the settings nobody touches twice a year. Pages,
-   * Posts and Categories are last because they are hidden from the sidebar
-   * entirely — this site has no route that renders any of them.
+   * hotels themselves, then the settings nobody touches twice a year.
+   *
+   * The four section names are Booking.com's rather than this database's.
+   * Reservations, Guests, Property, Settings is the filing the owner already
+   * has in his head from the extranet he works in every day; "Bookings &
+   * guests" and "Hotels" were a filing invented here, and every minute spent
+   * learning it is a minute the panel cost him.
+   *
+   * Pages, Posts and Categories are last because they are hidden from the
+   * sidebar entirely — this site has no route that renders any of them.
    */
   collections: [
-    // Every day.
+    // Reservations — every day.
     Bookings,
     Enquiries,
-    // Read often, written rarely.
+    // Guests — read often, written rarely.
     Guests,
     Reviews,
     PointEntries,
-    // The site itself.
+    // Property — the hotels themselves.
     Branches,
     Rooms,
     Offers,
     Media,
-    // Twice a year.
+    // Settings — twice a year.
     Users,
     // Registered for the plugins that reference them, hidden from the panel.
     Pages,

@@ -279,11 +279,6 @@ export interface Branch {
   id: number;
   name: string;
   /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
-  /**
    * One line, shown under the name on the branch card.
    */
   tagline?: string | null;
@@ -310,11 +305,6 @@ export interface Branch {
    * Exterior, lobby, restaurant, views. Select or drag in several at once, and drag to reorder.
    */
   gallery?: (number | Media)[] | null;
-  rooms?: {
-    docs?: (number | Room)[];
-    hasNextPage?: boolean;
-    totalDocs?: number;
-  };
   address?: string | null;
   city?: string | null;
   /**
@@ -325,6 +315,23 @@ export interface Branch {
    * What this hotel is near, in a sentence or two — "Ten minutes from the Citadel and the bazaar, five from Family Mall, twenty from the airport." Guests search for a hotel near a place far more often than by name, and this is the only thing on the page that can answer them. Write it the way you would say it on the phone.
    */
   nearby?: string | null;
+  /**
+   * Paste the Share link from Google Maps. The map on the hotel's page appears by itself — the coordinates below fill in from this link when you save.
+   */
+  googleMapsUrl?: string | null;
+  /**
+   * Set to "Opening soon" and the hotel is shown with its photo and a notice instead of phone numbers and rooms.
+   */
+  status?: ('open' | 'openingSoon') | null;
+  /**
+   * Optional. Replaces the default "Opening soon" wording.
+   */
+  openingNote?: string | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
   /**
    * Filled in automatically from the Google Maps link above. Only type these in by hand if the map does not appear.
    */
@@ -339,9 +346,14 @@ export interface Branch {
    */
   googlePlaceId?: string | null;
   /**
-   * Paste the Share link from Google Maps. The map on the hotel's page appears by itself — the coordinates below fill in from this link when you save.
+   * Lower numbers appear first on the homepage.
    */
-  googleMapsUrl?: string | null;
+  order?: number | null;
+  rooms?: {
+    docs?: (number | Room)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
   phone?: string | null;
   phoneAlt?: string | null;
   /**
@@ -393,18 +405,6 @@ export interface Branch {
    * The page says this date, so an old score reads as old rather than wrong.
    */
   bookingComChecked?: string | null;
-  /**
-   * Set to "Opening soon" and the hotel is shown with its photo and a notice instead of phone numbers and rooms.
-   */
-  status?: ('open' | 'openingSoon') | null;
-  /**
-   * Optional. Replaces the default "Opening soon" wording.
-   */
-  openingNote?: string | null;
-  /**
-   * Lower numbers appear first on the homepage.
-   */
-  order?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1650,22 +1650,25 @@ export interface PointEntriesSelect<T extends boolean = true> {
  */
 export interface BranchesSelect<T extends boolean = true> {
   name?: T;
-  generateSlug?: T;
-  slug?: T;
   tagline?: T;
   description?: T;
   heroImage?: T;
   gallery?: T;
-  rooms?: T;
   address?: T;
   city?: T;
   neighbourhood?: T;
   nearby?: T;
+  googleMapsUrl?: T;
+  status?: T;
+  openingNote?: T;
+  generateSlug?: T;
+  slug?: T;
   latitude?: T;
   longitude?: T;
   postalCode?: T;
   googlePlaceId?: T;
-  googleMapsUrl?: T;
+  order?: T;
+  rooms?: T;
   phone?: T;
   phoneAlt?: T;
   whatsapp?: T;
@@ -1681,9 +1684,6 @@ export interface BranchesSelect<T extends boolean = true> {
   bookingComScore?: T;
   bookingComReviews?: T;
   bookingComChecked?: T;
-  status?: T;
-  openingNote?: T;
-  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }

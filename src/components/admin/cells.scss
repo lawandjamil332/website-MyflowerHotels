@@ -1,0 +1,29 @@
+.mf-cell {
+  &__empty {
+    opacity: 0.35;
+  }
+
+  &__date {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 6px;
+    white-space: nowrap;
+  }
+
+  &__relative {
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--mf-blue);
+    background: color-mix(in srgb, var(--mf-blue) 14%, var(--theme-bg));
+  }
+
+  &__money {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+}

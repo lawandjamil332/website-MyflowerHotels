@@ -1,0 +1,56 @@
+/**
+ * Tabs across the top of a list, drawn the way a booking system draws them:
+ * a row of words with the current one underlined in the action colour.
+ *
+ * They scroll sideways rather than wrapping, because six tabs on a phone
+ * wrapped into three rows push the list itself off the screen.
+ */
+.mf-tabs {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--theme-elevation-100);
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &__tab {
+    flex-shrink: 0;
+    appearance: none;
+    background: transparent;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    padding: 8px 12px;
+    // 16px so a tap on iOS does not zoom the page in and leave it there.
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 20px;
+    color: var(--theme-elevation-600);
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:hover {
+      color: var(--theme-elevation-1000);
+    }
+
+    &[data-active='true'] {
+      color: var(--mf-blue);
+      border-bottom-color: var(--mf-blue);
+    }
+
+    &:focus-visible {
+      outline: var(--accessibility-outline);
+      outline-offset: -2px;
+    }
+  }
+}
+
+@media (min-width: 769px) {
+  .mf-tabs__tab {
+    font-size: 14px;
+  }
+}

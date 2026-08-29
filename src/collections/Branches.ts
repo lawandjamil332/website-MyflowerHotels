@@ -33,7 +33,7 @@ export const Branches: CollectionConfig = {
   admin: {
     useAsTitle: 'name',
     defaultColumns: ['name', 'city', 'order'],
-    group: 'Hotels',
+    group: 'Property',
     description: 'Each hotel in the group. The homepage lists these in the order set below.',
   },
   defaultSort: 'order',
@@ -187,6 +187,7 @@ export const Branches: CollectionConfig = {
               admin: {
                 description:
                   'Set to "Opening soon" and the hotel is shown with its photo and a notice instead of phone numbers and rooms.',
+                components: { Cell: '@/components/admin/cells#BranchStatusCell' },
               },
             },
             {

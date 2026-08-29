@@ -34,9 +34,21 @@ export const Bookings: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'reference',
-    defaultColumns: ['reference', 'guestName', 'branch', 'checkIn', 'checkOut', 'status'],
-    group: 'Bookings & guests',
-    description: 'Reservations made on the website. Newest first.',
+    /**
+     * The columns an extranet shows, in the order it shows them: who, where,
+     * when, and how it stands. The reference came first here and is now found
+     * through the search box instead — it is what a guest quotes at the desk,
+     * not what staff scan a list by.
+     *
+     * Payload remembers each person's chosen columns, so this order is what a
+     * new account sees rather than what an old one gets back.
+     */
+    defaultColumns: ['guestName', 'branch', 'room', 'checkIn', 'checkOut', 'status', 'totalAmount'],
+    group: 'Reservations',
+    description: 'Every stay booked on the website.',
+    components: {
+      beforeListTable: ['@/components/admin/ListTabs#BookingTabs'],
+    },
   },
   defaultSort: '-createdAt',
   hooks: {
@@ -122,13 +134,21 @@ export const Bookings: CollectionConfig = {
           name: 'checkIn',
           type: 'date',
           required: true,
-          admin: { width: '33%', date: { pickerAppearance: 'dayOnly' } },
+          admin: {
+            width: '33%',
+            date: { pickerAppearance: 'dayOnly' },
+            components: { Cell: '@/components/admin/cells#StayDateCell' },
+          },
         },
         {
           name: 'checkOut',
           type: 'date',
           required: true,
-          admin: { width: '33%', date: { pickerAppearance: 'dayOnly' } },
+          admin: {
+            width: '33%',
+            date: { pickerAppearance: 'dayOnly' },
+            components: { Cell: '@/components/admin/cells#StayDateCell' },
+          },
         },
         { name: 'guests', type: 'number', min: 1, admin: { width: '33%' } },
       ],
@@ -148,6 +168,7 @@ export const Bookings: CollectionConfig = {
           admin: {
             width: '33%',
             description: 'What the guest was quoted, at the time of booking.',
+            components: { Cell: '@/components/admin/cells#MoneyCell' },
           },
         },
         {
@@ -178,6 +199,9 @@ export const Bookings: CollectionConfig = {
         position: 'sidebar',
         description:
           'Held and Confirmed take a room out of stock. Cancelled and No-show give it back.',
+        components: {
+          Cell: '@/components/admin/cells#BookingStatusCell',
+        },
       },
     },
     {

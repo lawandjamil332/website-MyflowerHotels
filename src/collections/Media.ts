@@ -20,7 +20,7 @@ export const Media: CollectionConfig = {
   labels: { singular: 'Photo', plural: 'Photos' },
   admin: {
     // With the hotels, because that is what every photograph in here is of.
-    group: 'Hotels',
+    group: 'Property',
     description: 'Every photograph on the site. Upload here or from a hotel or a room.',
   },
   access: {

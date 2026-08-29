@@ -35,7 +35,7 @@ export const Guests: CollectionConfig = {
     useAsTitle: 'email',
     defaultColumns: ['name', 'email', 'phone', 'createdAt'],
     description: 'Guests who opened an account on the website.',
-    group: 'Bookings & guests',
+    group: 'Guests',
   },
   fields: [
     { name: 'name', type: 'text', required: true },

@@ -28,7 +28,7 @@ export const PointEntries: CollectionConfig = {
     useAsTitle: 'reason',
     defaultColumns: ['guest', 'points', 'reason', 'booking', 'createdAt'],
     description: 'Every points movement. A guest’s balance is the sum of their rows.',
-    group: 'Bookings & guests',
+    group: 'Guests',
   },
   defaultSort: '-createdAt',
   fields: [

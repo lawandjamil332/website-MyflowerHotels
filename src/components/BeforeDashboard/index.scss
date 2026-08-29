@@ -1,17 +1,300 @@
 @import '@payloadcms/ui/scss';
 
+/**
+ * The extranet home screen: a row of numbers about today, the four hotels
+ * side by side, then the two lists that turn the numbers into work.
+ *
+ * Surfaces are Payload's own theme variables so the dark theme keeps working
+ * without a second set of rules. Only the accents are ours.
+ */
 .dashboard .before-dashboard {
   margin-bottom: base(1.5);
 
-  &__banner {
-    & h4 {
+  &__today {
+    display: flex;
+    align-items: baseline;
+    gap: base(0.5);
+    flex-wrap: wrap;
+    margin-bottom: base(0.75);
+
+    & h2 {
       margin: 0;
+      font-size: 1.25rem;
+    }
+
+    & p {
+      margin: 0;
+      color: var(--theme-elevation-600);
     }
   }
 
+  // ---- The numbers ----
+
+  &__tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: base(0.5);
+    margin-bottom: base(1);
+  }
+
+  &__tile {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: base(0.6) base(0.75);
+    border-radius: 6px;
+    border: 1px solid var(--theme-elevation-100);
+    background: var(--theme-elevation-0);
+    text-decoration: none;
+    color: inherit;
+    // Tiles are read as a row of numbers; a tile that grew on hover would
+    // move the four beside it.
+    transition: border-color 120ms ease;
+
+    &[data-tone='attention'] {
+      border-color: color-mix(in srgb, var(--mf-blue) 45%, var(--theme-elevation-100));
+      background: color-mix(in srgb, var(--mf-blue) 6%, var(--theme-elevation-0));
+    }
+
+    &:hover {
+      border-color: var(--mf-blue);
+    }
+  }
+
+  &__tile-value {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--mf-blue);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__tile-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--theme-elevation-800);
+  }
+
+  &__tile-note {
+    font-size: 12px;
+    color: var(--theme-elevation-500);
+  }
+
+  // Two currencies stack rather than sitting side by side: they are separate
+  // totals, not one sum, and a line between them says so.
+  &__money {
+    display: flex;
+    flex-direction: column;
+    font-size: 18px;
+    line-height: 1.25;
+  }
+
+  // ---- Panels ----
+
+  &__panel {
+    border: 1px solid var(--theme-elevation-100);
+    border-radius: 6px;
+    background: var(--theme-elevation-0);
+    padding: base(0.75);
+    margin-bottom: base(0.75);
+  }
+
+  &__panel-title {
+    display: flex;
+    align-items: center;
+    gap: base(0.35);
+    margin: 0 0 base(0.5);
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  &__panel-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--theme-elevation-0);
+    background: var(--mf-blue);
+  }
+
+  &__panel-empty {
+    margin: 0;
+    color: var(--theme-elevation-500);
+  }
+
+  // ---- Hotel by hotel ----
+
+  &__hotels {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+
+    & th,
+    & td {
+      text-align: start;
+      padding: base(0.3) base(0.4);
+      border-bottom: 1px solid var(--theme-elevation-50);
+      white-space: nowrap;
+    }
+
+    & thead th {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--theme-elevation-500);
+      border-bottom-color: var(--theme-elevation-100);
+    }
+
+    & tbody th {
+      font-weight: 600;
+      white-space: normal;
+    }
+
+    & tbody tr:last-child th,
+    & tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    & a {
+      color: var(--mf-blue);
+      text-decoration: none;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    &-bar-head {
+      width: 40%;
+    }
+  }
+
+  &__of {
+    color: var(--theme-elevation-500);
+  }
+
+  &__zero {
+    color: var(--theme-elevation-350);
+  }
+
+  &__bar {
+    display: inline-block;
+    vertical-align: middle;
+    width: calc(100% - 48px);
+    min-width: 60px;
+    height: 8px;
+    margin-inline-end: 8px;
+    border-radius: 4px;
+    background: var(--theme-elevation-100);
+    overflow: hidden;
+  }
+
+  &__bar-fill {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+    background: var(--mf-blue);
+  }
+
+  &__bar-value {
+    font-size: 12px;
+    color: var(--theme-elevation-600);
+  }
+
+  // ---- Arrivals and departures ----
+
+  &__columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: base(0.75);
+
+    // Panels inside the grid carry their own margin from the rule above;
+    // the gap is doing that job here.
+    & > * {
+      margin-bottom: 0;
+    }
+  }
+
+  &__stays {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__stay {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto;
+    grid-template-areas:
+      'name where status'
+      'when when phone';
+    gap: 2px base(0.4);
+    align-items: baseline;
+    padding: base(0.4) 0;
+    border-bottom: 1px solid var(--theme-elevation-50);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__stay-name {
+    grid-area: name;
+    font-weight: 600;
+    color: var(--mf-blue);
+    text-decoration: none;
+    overflow-wrap: anywhere;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__stay-where {
+    grid-area: where;
+    font-size: 13px;
+    color: var(--theme-elevation-600);
+    overflow-wrap: anywhere;
+  }
+
+  &__stay-when {
+    grid-area: when;
+    font-size: 12px;
+    color: var(--theme-elevation-500);
+  }
+
+  &__stay-phone {
+    grid-area: phone;
+    justify-self: end;
+    font-size: 13px;
+    // A phone number is the reason this row is on the screen, so it is a link
+    // that dials on a phone and copies on a laptop.
+    color: var(--mf-blue);
+    text-decoration: none;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+    direction: ltr;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__stay-status {
+    grid-area: status;
+    justify-self: end;
+  }
+
+  // ---- The checklist, where a twice-a-year job belongs ----
+
   &__lead {
-    margin: base(0.5) 0 base(0.75);
-    opacity: 0.75;
+    margin: 0 0 base(0.5);
+    color: var(--theme-elevation-600);
   }
 
   &__checks {
@@ -32,20 +315,24 @@
     gap: 2px;
 
     &[data-weight='high'] {
-      border-inline-start-color: var(--theme-error-500);
+      border-inline-start-color: var(--mf-red);
     }
   }
 
   &__why {
-    opacity: 0.75;
+    color: var(--theme-elevation-600);
   }
 
   &__detail {
     font-size: 0.85em;
-    opacity: 0.55;
+    color: var(--theme-elevation-500);
+  }
+
+  &__all-clear {
+    color: var(--theme-elevation-600);
   }
 
   & a:hover {
-    opacity: 0.85;
+    opacity: 0.9;
   }
 }

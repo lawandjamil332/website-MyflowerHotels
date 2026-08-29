@@ -21,7 +21,7 @@ export const Offers: CollectionConfig = {
     defaultColumns: ['title', 'branch', 'isActive', 'endsOn'],
     description:
       'Deals and packages shown on the homepage — long-stay rates, weekday prices, anything worth putting in front of a guest. Leave this empty and the section does not appear.',
-    group: 'Hotels',
+    group: 'Property',
   },
   fields: [
     {
