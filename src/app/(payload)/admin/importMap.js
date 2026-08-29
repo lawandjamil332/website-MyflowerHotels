@@ -1,7 +1,7 @@
 import { StayDateCell as StayDateCell_e05f6ac9ede25467f55f09817b54f69f } from '@/components/admin/cells'
 import { MoneyCell as MoneyCell_e05f6ac9ede25467f55f09817b54f69f } from '@/components/admin/cells'
 import { BookingStatusCell as BookingStatusCell_e05f6ac9ede25467f55f09817b54f69f } from '@/components/admin/cells'
-import { BookingTabs as BookingTabs_80d089bacae7aef41c172f095585e92e } from '@/components/admin/ListTabs'
+import { ReservationSearch as ReservationSearch_6baa6536c43cb53ffd70a34e07a5876e } from '@/components/admin/ReservationSearch'
 import { EnquiryStatusCell as EnquiryStatusCell_e05f6ac9ede25467f55f09817b54f69f } from '@/components/admin/cells'
 import { EnquiryTabs as EnquiryTabs_80d089bacae7aef41c172f095585e92e } from '@/components/admin/ListTabs'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -43,7 +43,7 @@ export const importMap = {
   "@/components/admin/cells#StayDateCell": StayDateCell_e05f6ac9ede25467f55f09817b54f69f,
   "@/components/admin/cells#MoneyCell": MoneyCell_e05f6ac9ede25467f55f09817b54f69f,
   "@/components/admin/cells#BookingStatusCell": BookingStatusCell_e05f6ac9ede25467f55f09817b54f69f,
-  "@/components/admin/ListTabs#BookingTabs": BookingTabs_80d089bacae7aef41c172f095585e92e,
+  "@/components/admin/ReservationSearch#ReservationSearch": ReservationSearch_6baa6536c43cb53ffd70a34e07a5876e,
   "@/components/admin/cells#EnquiryStatusCell": EnquiryStatusCell_e05f6ac9ede25467f55f09817b54f69f,
   "@/components/admin/ListTabs#EnquiryTabs": EnquiryTabs_80d089bacae7aef41c172f095585e92e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,

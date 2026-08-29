@@ -47,7 +47,7 @@ export const Bookings: CollectionConfig = {
     group: 'Reservations',
     description: 'Every stay booked on the website.',
     components: {
-      beforeListTable: ['@/components/admin/ListTabs#BookingTabs'],
+      beforeListTable: ['@/components/admin/ReservationSearch#ReservationSearch'],
     },
   },
   defaultSort: '-createdAt',

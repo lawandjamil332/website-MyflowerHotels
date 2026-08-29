@@ -120,7 +120,7 @@ export const enquiryTabs = (): Tab[] => [
   { key: 'all', label: 'Every enquiry', sort: '-createdAt' },
 ]
 
-const Tabs: React.FC<{ tabs: Tab[] }> = ({ tabs }) => {
+export const Tabs: React.FC<{ tabs: Tab[] }> = ({ tabs }) => {
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
@@ -152,7 +152,5 @@ const Tabs: React.FC<{ tabs: Tab[] }> = ({ tabs }) => {
     </nav>
   )
 }
-
-export const BookingTabs: React.FC = () => <Tabs tabs={bookingTabs()} />
 
 export const EnquiryTabs: React.FC = () => <Tabs tabs={enquiryTabs()} />

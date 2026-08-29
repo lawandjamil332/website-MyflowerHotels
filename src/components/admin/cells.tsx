@@ -85,3 +85,19 @@ export const MoneyCell: React.FC<DefaultCellComponentProps> = ({ cellData, rowDa
   const currency = (rowData?.currency as string) || 'IQD'
   return <span className="mf-cell__money">{formatPrice(cellData, currency)}</span>
 }
+
+/*
+ * There is no RoomCell, and the reason is worth writing down.
+ *
+ * The rooms in this group are named per hotel — "Executive King — My Flower 3"
+ * — so beside a Hotel column the name says it twice, and a cell that trimmed
+ * the repetition looked like an easy win. It is not possible: Payload gives a
+ * relationship cell only the row's foreign key, and resolves the titles itself
+ * afterwards, in one batched request for the whole page. A custom cell sees
+ * `11`, not a room. Reading the name back would mean a query per row to save a
+ * few words in one column.
+ *
+ * So the trimming happens where this file is not involved and the name is
+ * already in hand — the dashboard's arrival lists and the calendar's left
+ * column, through `shortRoomName`.
+ */

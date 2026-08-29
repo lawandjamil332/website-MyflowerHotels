@@ -211,3 +211,361 @@ html[data-theme='light'] {
 .step-nav__home + span {
   display: none;
 }
+
+/* ---- Edit screens ------------------------------------------------------ */
+
+/**
+ * A property page in the extranet is a white card on grey with room to
+ * breathe, headings you can find, and inputs big enough to type a paragraph
+ * into. Payload's form is correct and dense: 13px labels the same weight as
+ * the help text under them, inputs the height of a line, and the whole thing
+ * bleeding to both edges of the window with nothing to say where it begins.
+ *
+ * None of this changes a field, a validation rule or a value. It is the same
+ * form, laid out like something a hotel would be given.
+ */
+
+.document-fields {
+  padding-block: 4px 28px;
+}
+
+html[data-theme='light'] .document-fields__edit,
+html[data-theme='light'] .document-fields__sidebar-wrap {
+  background: var(--theme-elevation-0);
+}
+
+/* The form column stops at a readable measure. A description box 1600px wide
+   invites a paragraph nobody can proof-read. */
+.document-fields__edit > .render-fields,
+.document-fields__edit > form > .render-fields {
+  max-width: 1100px;
+}
+
+/* ---- Field labels and help text ---- */
+
+.document-fields .field-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.005em;
+  color: var(--theme-elevation-800);
+}
+
+.document-fields .field-description {
+  margin-top: 6px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--theme-elevation-500);
+}
+
+/* Payload marks a required field with a red star tight against the word. */
+.document-fields .field-label .required {
+  margin-inline-start: 3px;
+  color: var(--mf-red);
+}
+
+/* ---- Inputs ---- */
+
+.document-fields {
+  input[type='text'],
+  input[type='number'],
+  input[type='email'],
+  input[type='password'],
+  input[type='date'],
+  input[type='search'],
+  textarea,
+  .rs__control {
+    border-radius: 6px;
+    border-color: var(--theme-elevation-200);
+    // 16px, so iOS does not zoom the page when a field is tapped at the desk
+    // and then leave it zoomed.
+    font-size: 16px;
+  }
+
+  input[type='text'],
+  input[type='number'],
+  input[type='email'],
+  input[type='password'],
+  input[type='date'],
+  input[type='search'] {
+    height: 42px;
+  }
+
+  textarea {
+    min-height: 96px;
+    line-height: 1.5;
+  }
+
+  input:focus,
+  textarea:focus,
+  .rs__control--is-focused {
+    border-color: var(--mf-blue);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mf-blue) 20%, transparent);
+    outline: none;
+  }
+}
+
+@media (min-width: 769px) {
+  .document-fields {
+    input[type='text'],
+    input[type='number'],
+    input[type='email'],
+    input[type='password'],
+    input[type='date'],
+    input[type='search'],
+    textarea,
+    .rs__control {
+      font-size: 15px;
+    }
+  }
+}
+
+/* ---- The tabs inside a document ---- */
+
+/**
+ * "The hotel · Rooms · Contact & facilities" were three words of body text
+ * with a hairline under the current one. Given the same underline as the tabs
+ * at the top of the window, they read as the same kind of control — which is
+ * what they are.
+ */
+.tabs-field__tabs {
+  gap: 4px;
+  border-bottom: 1px solid var(--theme-elevation-150);
+}
+
+.tabs-field__tab-button {
+  padding: 10px 14px;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -1px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--theme-elevation-600);
+
+  &:hover {
+    color: var(--theme-elevation-1000);
+  }
+}
+
+.tabs-field__tab-button--active {
+  color: var(--mf-blue);
+  border-bottom-color: var(--mf-blue);
+}
+
+/* ---- Photographs ------------------------------------------------------- */
+
+/**
+ * A hotel's photographs are the single thing on this site that sells a room,
+ * and Payload listed them the way an email lists attachments: a stack of rows,
+ * a 40px thumbnail, a filename. You could not tell the lobby from the car park
+ * without opening each one, and the order they are in — which is the order a
+ * guest sees them — was invisible.
+ *
+ * So: a grid of proper thumbnails, numbered in the order they will appear,
+ * with the drag handle and the edit and remove buttons over the picture. It is
+ * the extranet's photo manager, and it is the same field underneath.
+ */
+
+.upload--has-many__draggable-rows {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 14px;
+  counter-reset: mf-photo;
+}
+
+.upload--has-many__dragItem {
+  counter-increment: mf-photo;
+  margin: 0;
+}
+
+.upload--has-many__draggable-rows .upload-field-card {
+  position: relative;
+  padding: 0;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--theme-elevation-0);
+
+  &:hover {
+    border-color: var(--mf-blue);
+  }
+}
+
+/* Where this photograph comes in the order — which is what dragging changes,
+   and was the one thing the old list could not show. */
+.upload--has-many__draggable-rows .upload-field-card::before {
+  content: counter(mf-photo);
+  position: absolute;
+  z-index: 3;
+  top: 8px;
+  inset-inline-start: 34px;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  border-radius: 10px;
+  background: rgb(0 0 0 / 62%);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 20px;
+  text-align: center;
+}
+
+.upload--has-many__draggable-rows {
+  .upload-relationship-details,
+  .upload-relationship-details__imageAndDetails {
+    display: block;
+  }
+
+  .thumbnail {
+    width: 100%;
+    height: 132px;
+    border-radius: 0;
+    background: var(--theme-elevation-100);
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .upload-relationship-details__details {
+    padding: 8px 10px 9px;
+  }
+
+  .upload-relationship-details__filename {
+    margin: 0;
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    a {
+      color: var(--theme-elevation-700);
+      text-decoration: none;
+    }
+  }
+
+  .upload-relationship-details__meta {
+    margin: 2px 0 0;
+    font-size: 11px;
+    color: var(--theme-elevation-500);
+  }
+
+  /* Handle top-left, edit and remove top-right, all over the picture. */
+  .upload--has-many__drag,
+  .upload-relationship-details__actions {
+    position: absolute;
+    z-index: 3;
+    top: 8px;
+    border-radius: 6px;
+    background: rgb(0 0 0 / 55%);
+  }
+
+  .upload--has-many__drag {
+    inset-inline-start: 8px;
+    padding: 2px;
+  }
+
+  .upload-relationship-details__actions {
+    inset-inline-end: 8px;
+    display: flex;
+    gap: 2px;
+    padding: 2px;
+  }
+
+  .upload--has-many__drag svg .fill,
+  .upload-relationship-details__actions svg .fill {
+    fill: #fff;
+  }
+
+  .upload--has-many__drag svg .stroke,
+  .upload-relationship-details__actions svg .stroke {
+    stroke: #fff;
+  }
+}
+
+/* The single hero image keeps its row, but as a card with a picture worth
+   looking at rather than a 40px stamp. */
+.upload--has-one .thumbnail {
+  width: 116px;
+  height: 84px;
+  border-radius: 6px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.upload__dropzoneAndUpload {
+  margin-top: 4px;
+}
+
+/**
+ * Payload's own search box, on a list that has the reservations panel under it.
+ *
+ * That box searches one field — the booking reference — and the panel below it
+ * searches four, with dates and statuses. Two search boxes on one screen is a
+ * question about which one works, asked every time somebody opens the page.
+ * The Columns and Filters buttons beside it stay; they do things the panel
+ * does not.
+ *
+ * Scoped with `:has` to the list that actually has a panel, so every other
+ * collection keeps the search it needs.
+ */
+.list-controls:has(+ .mf-search) .search-bar > .icon,
+.list-controls:has(+ .mf-search) .search-filter {
+  display: none;
+}
+
+.list-controls:has(+ .mf-search) .search-bar {
+  justify-content: flex-end;
+}
+
+/**
+ * Where photographs are added. Payload draws two buttons and a line of text on
+ * a plain background, which does not look like anywhere you could drop a file
+ * — and dropping a file is what it is for.
+ */
+.upload__dropzoneAndUpload .dropzone,
+.upload--has-many .dropzone {
+  border: 1px dashed var(--theme-elevation-200);
+  border-radius: 10px;
+  background: var(--theme-elevation-25, var(--theme-elevation-50));
+  padding: 14px 16px;
+  transition: border-color 120ms ease, background 120ms ease;
+
+  &:hover {
+    border-color: var(--mf-blue);
+    background: color-mix(in srgb, var(--mf-blue) 5%, var(--theme-elevation-0));
+  }
+}
+
+/**
+ * A hotel's description.
+ *
+ * Payload's rich-text editor is a bare area of page with a grey prompt in it,
+ * so the field that writes the paragraph a guest reads about the building
+ * looked like a caption that had failed to load. It is the most important text
+ * on the hotel's page and it should look like somewhere you write.
+ */
+.document-fields .rich-text-lexical__wrap {
+  border: 1px solid var(--theme-elevation-200);
+  border-radius: 6px;
+  background: var(--theme-input-bg, var(--theme-elevation-0));
+  padding: 4px 2px;
+
+  &:focus-within {
+    border-color: var(--mf-blue);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mf-blue) 20%, transparent);
+  }
+
+  .editor {
+    min-height: 120px;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+}

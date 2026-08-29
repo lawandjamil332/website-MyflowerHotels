@@ -9,7 +9,8 @@ import { formatDateLong, formatPrice } from '@/utilities/format'
 
 import type { RoomRow } from './availability'
 
-import { NIGHTS, runAvailability, windowStart } from './availability'
+import { ScrollToToday } from './ScrollToToday'
+import { monthKey, monthStart, runAvailability, shiftMonth } from './availability'
 import './calendar.scss'
 
 const baseClass = 'mf-calendar'
@@ -17,11 +18,17 @@ const baseClass = 'mf-calendar'
 /**
  * Rates & availability — the extranet's calendar.
  *
- * Room types down the side, the next fortnight across the top, and in every
- * cell the number of that room still free that night. Sold out is red, nearly
- * gone is amber, plenty is quiet. It is the one screen a hotel manager opens
- * without being asked to, and the panel did not have it: the only way to find
- * out whether the 14th was full was to go to the website and try to book it.
+ * Room types down the side, a calendar month across the top, and two lines for
+ * every room: how many are still free that night, and how many are booked.
+ * Sold out is red, nearly gone is amber, the weekend is shaded and today has a
+ * ring round it. It is the one screen a hotel manager opens without being
+ * asked to, and the panel did not have it: the only way to find out whether
+ * the 14th was full was to go to the website and try to book it.
+ *
+ * A month rather than a rolling fortnight, because a month is the unit hotels
+ * think in — "how is September looking" — and because a grid whose first
+ * column is a different date every time you open it cannot be compared with
+ * the one you looked at yesterday.
  *
  * Payload draws a custom view like this one without its own template, so the
  * page renders the chrome itself. That is the price of the route, and it buys
@@ -29,13 +36,17 @@ const baseClass = 'mf-calendar'
  * every pixel of it.
  */
 
-const WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 const MONTHS = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
 ]
 
-const iso = (date: Date) => date.toISOString().slice(0, 10)
+const dayKey = (date: Date) => date.toISOString().slice(0, 10)
+
+/** Friday and Saturday are the weekend here, and the nights that fill first. */
+const isWeekend = (day: Date) => day.getUTCDay() === 5 || day.getUTCDay() === 6
 
 /**
  * How full a room is that night, as a word the stylesheet colours.
@@ -52,39 +63,65 @@ const state = (free: number, quantity: number, onSale: boolean): string => {
   return 'open'
 }
 
-const HotelRows: React.FC<{ hotel: string; rooms: RoomRow[] }> = ({ hotel, rooms }) => (
-  <>
-    <tr className={`${baseClass}__hotel-row`}>
-      <th className={`${baseClass}__hotel`} colSpan={NIGHTS + 1} scope="colgroup">
-        {hotel}
-      </th>
-    </tr>
-    {rooms.map((room) => (
-      <tr key={room.id}>
-        <th className={`${baseClass}__room`} scope="row">
-          <a href={`/admin/collections/rooms/${room.id}`}>
-            {shortRoomName(room.name, room.hotel)}
-          </a>
+/**
+ * The two lines a room type gets: what is left, and what is taken.
+ *
+ * The name spans both, the way the extranet's does, so the eye reads one room
+ * as one block rather than as two unrelated rows that happen to be adjacent.
+ */
+const RoomRows: React.FC<{ room: RoomRow; todayKey: string }> = ({ room, todayKey }) => {
+  const name = shortRoomName(room.name, room.hotel)
+
+  return (
+    <>
+      <tr className={`${baseClass}__row`}>
+        <th className={`${baseClass}__room`} rowSpan={2} scope="rowgroup">
+          <Link href={`/admin/collections/rooms/${room.id}`}>{name}</Link>
           <span className={`${baseClass}__room-note`}>
             {room.quantity} room{room.quantity === 1 ? '' : 's'}
             {room.price !== null && ` · from ${formatPrice(room.price, room.currency)}`}
-            {!room.onSale && ' · not on sale'}
           </span>
+          {!room.onSale && <span className={`${baseClass}__off-chip`}>Not on sale</span>}
         </th>
+
+        <th className={`${baseClass}__metric`} scope="row">
+          Rooms left
+        </th>
+
         {room.nights.map((night) => (
           <td
             className={`${baseClass}__cell`}
             data-state={state(night.free, room.quantity, room.onSale)}
+            data-today={night.date.slice(0, 10) === todayKey ? 'true' : undefined}
+            data-weekend={isWeekend(new Date(night.date)) ? 'true' : undefined}
             key={night.date}
-            title={`${room.name} · ${formatDateLong(night.date)} · ${night.sold} sold of ${room.quantity}`}
+            title={`${name} · ${formatDateLong(night.date)} · ${night.sold} of ${room.quantity} sold`}
           >
             {room.onSale ? night.free : '—'}
           </td>
         ))}
       </tr>
-    ))}
-  </>
-)
+
+      <tr className={`${baseClass}__row ${baseClass}__row--sold`}>
+        <th className={`${baseClass}__metric`} scope="row">
+          Booked
+        </th>
+
+        {room.nights.map((night) => (
+          <td
+            className={`${baseClass}__sold`}
+            data-today={night.date.slice(0, 10) === todayKey ? 'true' : undefined}
+            data-weekend={isWeekend(new Date(night.date)) ? 'true' : undefined}
+            data-zero={night.sold === 0 ? 'true' : undefined}
+            key={night.date}
+          >
+            {night.sold}
+          </td>
+        ))}
+      </tr>
+    </>
+  )
+}
 
 const CalendarView: React.FC<AdminViewServerProps> = async ({ initPageResult, searchParams }) => {
   // Payload renders a custom view without its own permission gate, and this
@@ -95,13 +132,14 @@ const CalendarView: React.FC<AdminViewServerProps> = async ({ initPageResult, se
     redirect('/admin/login')
   }
 
-  const from = typeof searchParams?.from === 'string' ? searchParams.from : undefined
-  const availability = await runAvailability(from)
+  const month = typeof searchParams?.month === 'string' ? searchParams.month : undefined
+  const availability = await runAvailability(month)
 
-  const start = windowStart(from)
-  const back = iso(new Date(start.getTime() - NIGHTS * 86_400_000))
-  const forward = iso(new Date(start.getTime() + NIGHTS * 86_400_000))
-  const todayIso = iso(new Date())
+  const start = monthStart(month)
+  const previous = monthKey(shiftMonth(start, -1))
+  const next = monthKey(shiftMonth(start, 1))
+  const thisMonth = monthKey(new Date())
+  const todayKey = dayKey(new Date())
 
   const byHotel: { hotel: string; rooms: RoomRow[] }[] = []
   for (const room of availability?.rooms ?? []) {
@@ -110,24 +148,44 @@ const CalendarView: React.FC<AdminViewServerProps> = async ({ initPageResult, se
     else byHotel.push({ hotel: room.hotel, rooms: [room] })
   }
 
+  const columns = availability?.dates.length ?? 0
+  const busiest = Math.max(1, ...(availability?.totals ?? []).map((total) => total.stock))
+
   return (
     <>
       <Chrome />
 
       <main className={baseClass}>
         <header className={`${baseClass}__head`}>
-          <div>
+          <div className={`${baseClass}__title`}>
             <h1>Rates &amp; availability</h1>
             <p>
-              How many of each room are still free, night by night. Click a room to change its
-              price or how many there are.
+              How many of each room are still free, and how many are booked, night by night. Open a
+              room to change its price or how many there are.
             </p>
           </div>
 
-          <nav className={`${baseClass}__moves`} aria-label="Change the fortnight shown">
-            <Link href={`/admin/calendar?from=${back}`}>← Earlier</Link>
-            <Link href="/admin/calendar">Today</Link>
-            <Link href={`/admin/calendar?from=${forward}`}>Later →</Link>
+          <nav className={`${baseClass}__months`} aria-label="Change the month shown">
+            <Link
+              aria-label="Previous month"
+              className={`${baseClass}__arrow`}
+              href={`/admin/calendar?month=${previous}`}
+            >
+              ‹
+            </Link>
+            <span className={`${baseClass}__month-name`}>
+              {MONTHS[start.getUTCMonth()]} {start.getUTCFullYear()}
+            </span>
+            <Link
+              aria-label="Next month"
+              className={`${baseClass}__arrow`}
+              href={`/admin/calendar?month=${next}`}
+            >
+              ›
+            </Link>
+            <Link className={`${baseClass}__today-btn`} href={`/admin/calendar?month=${thisMonth}`}>
+              This month
+            </Link>
           </nav>
         </header>
 
@@ -138,56 +196,78 @@ const CalendarView: React.FC<AdminViewServerProps> = async ({ initPageResult, se
           </p>
         ) : (
           <div className={`${baseClass}__scroll`}>
+            <ScrollToToday />
             <table className={`${baseClass}__grid`}>
               <thead>
                 <tr>
-                  <th className={`${baseClass}__corner`} scope="col">
-                    Room
+                  <th className={`${baseClass}__corner`} colSpan={2} scope="col">
+                    Room type
                   </th>
                   {availability.dates.map((date) => {
                     const day = new Date(date)
-                    // Friday and Saturday are the weekend in Iraq, and they are
-                    // the nights that fill first — worth being able to see.
-                    const weekend = day.getUTCDay() === 5 || day.getUTCDay() === 6
                     return (
                       <th
                         className={`${baseClass}__day`}
-                        data-today={date.slice(0, 10) === todayIso ? 'true' : undefined}
-                        data-weekend={weekend ? 'true' : undefined}
+                        data-today={date.slice(0, 10) === todayKey ? 'true' : undefined}
+                        data-weekend={isWeekend(day) ? 'true' : undefined}
                         key={date}
                         scope="col"
                       >
                         <span className={`${baseClass}__day-name`}>
                           {WEEKDAYS[day.getUTCDay()]}
+                          <span className="mf-sr">{WEEKDAY_NAMES[day.getUTCDay()]}</span>
                         </span>
                         <span className={`${baseClass}__day-number`}>{day.getUTCDate()}</span>
-                        <span className={`${baseClass}__day-month`}>
-                          {MONTHS[day.getUTCMonth()]}
-                        </span>
                       </th>
                     )
                   })}
                 </tr>
               </thead>
 
-              <tbody>
-                {byHotel.map((group) => (
-                  <HotelRows hotel={group.hotel} key={group.hotel} rooms={group.rooms} />
-                ))}
-              </tbody>
+              {byHotel.map((group) => (
+                <tbody key={group.hotel}>
+                  <tr className={`${baseClass}__hotel-row`}>
+                    <th className={`${baseClass}__hotel`} colSpan={columns + 2} scope="colgroup">
+                      {/* The cell spans the whole month, so sticking the cell
+                          itself pins a box whose text is already off to the
+                          left. Sticking the label inside it is what keeps the
+                          hotel's name on screen however far the grid scrolls. */}
+                      <span className={`${baseClass}__hotel-label`}>{group.hotel}</span>
+                    </th>
+                  </tr>
+                  {group.rooms.map((room) => (
+                    <RoomRows key={room.id} room={room} todayKey={todayKey} />
+                  ))}
+                </tbody>
+              ))}
 
               <tfoot>
                 <tr>
-                  <th className={`${baseClass}__room`} scope="row">
+                  <th className={`${baseClass}__corner`} colSpan={2} scope="row">
                     All four hotels
                     <span className={`${baseClass}__room-note`}>rooms sold of rooms on sale</span>
                   </th>
-                  {availability.totals.map((total) => (
-                    <td className={`${baseClass}__total`} key={total.date}>
-                      <strong>{total.sold}</strong>
-                      <span>/{total.stock}</span>
-                    </td>
-                  ))}
+                  {availability.totals.map((total) => {
+                    const percent =
+                      total.stock > 0 ? Math.round((total.sold / total.stock) * 100) : 0
+                    return (
+                      <td
+                        className={`${baseClass}__total`}
+                        data-today={total.date.slice(0, 10) === todayKey ? 'true' : undefined}
+                        data-weekend={isWeekend(new Date(total.date)) ? 'true' : undefined}
+                        key={total.date}
+                        title={`${formatDateLong(total.date)} · ${total.sold} of ${total.stock} rooms sold`}
+                      >
+                        <span aria-hidden="true" className={`${baseClass}__total-bar`}>
+                          <span
+                            className={`${baseClass}__total-fill`}
+                            style={{ height: `${Math.round((total.sold / busiest) * 100)}%` }}
+                          />
+                        </span>
+                        <span className={`${baseClass}__total-value`}>{percent}%</span>
+                      </td>
+                    )
+                  })}
                 </tr>
               </tfoot>
             </table>
@@ -199,6 +279,7 @@ const CalendarView: React.FC<AdminViewServerProps> = async ({ initPageResult, se
           <li data-state="low">Nearly gone</li>
           <li data-state="full">Sold out</li>
           <li data-state="off">Not on sale</li>
+          <li data-state="weekend">Friday &amp; Saturday</li>
         </ul>
       </main>
     </>

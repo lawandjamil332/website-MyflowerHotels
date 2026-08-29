@@ -1,76 +1,120 @@
 /**
  * The availability grid.
  *
- * The first column is sticky, because a room's name is the only thing that
- * tells you which row you are reading and the fortnight is wider than any
- * laptop. Everything else scrolls under it.
+ * Two columns are frozen — the room's name and which of its two lines you are
+ * reading — because a month is wider than any laptop and a number in the
+ * middle of it means nothing without both. Everything else scrolls under them.
+ *
+ * The widths are fixed in pixels rather than left to the table, because the
+ * second frozen column has to be offset by exactly the width of the first and
+ * a percentage cannot say that.
  */
+
 .mf-calendar {
+  --room-col: 200px;
+  --metric-col: 92px;
+  --day-col: 46px;
+
   display: block;
-  padding: clamp(14px, 3vw, 28px) clamp(12px, 3vw, 32px) 40px;
+  padding: clamp(16px, 3vw, 30px) clamp(12px, 3vw, 32px) 48px;
   background: var(--theme-bg);
   min-height: 60vh;
+
+  // ---- Heading and month arrows ------------------------------------------
 
   &__head {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
     justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 16px;
+    margin-bottom: 18px;
+  }
 
+  &__title {
     & h1 {
       margin: 0;
-      font-size: 22px;
-      line-height: 1.2;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
     }
 
     & p {
-      margin: 4px 0 0;
-      max-width: 60ch;
+      margin: 6px 0 0;
+      max-width: 62ch;
       color: var(--theme-elevation-600);
     }
   }
 
-  &__moves {
+  &__months {
     display: flex;
+    align-items: center;
     gap: 6px;
+  }
 
-    & a {
-      padding: 7px 12px;
-      border: 1px solid var(--theme-elevation-150);
-      border-radius: 6px;
-      background: var(--theme-elevation-0);
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--mf-blue);
-      text-decoration: none;
-      white-space: nowrap;
+  &__arrow {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: 8px;
+    background: var(--theme-elevation-0);
+    font-size: 22px;
+    line-height: 1;
+    color: var(--mf-blue);
+    text-decoration: none;
 
-      &:hover {
-        border-color: var(--mf-blue);
-      }
+    &:hover {
+      border-color: var(--mf-blue);
+      background: color-mix(in srgb, var(--mf-blue) 8%, var(--theme-elevation-0));
+    }
+  }
+
+  &__month-name {
+    min-width: 11ch;
+    text-align: center;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  &__today-btn {
+    margin-inline-start: 6px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: var(--mf-blue);
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+
+    &:hover {
+      background: var(--mf-navy);
     }
   }
 
   &__empty {
-    padding: 24px;
+    padding: 28px;
     border: 1px dashed var(--theme-elevation-200);
-    border-radius: 8px;
+    border-radius: 10px;
+    background: var(--theme-elevation-0);
     color: var(--theme-elevation-600);
   }
+
+  // ---- The grid -----------------------------------------------------------
 
   &__scroll {
     overflow-x: auto;
     border: 1px solid var(--theme-elevation-100);
-    border-radius: 8px;
+    border-radius: 10px;
     background: var(--theme-elevation-0);
+    box-shadow: 0 1px 2px rgb(0 0 0 / 6%);
   }
 
   &__grid {
     border-collapse: separate;
     border-spacing: 0;
-    width: 100%;
     font-variant-numeric: tabular-nums;
   }
 
@@ -79,27 +123,30 @@
     position: sticky;
     inset-inline-start: 0;
     z-index: 2;
-    min-width: 190px;
-    max-width: 240px;
+    width: var(--room-col);
+    min-width: var(--room-col);
+    max-width: var(--room-col);
     text-align: start;
     background: var(--theme-elevation-0);
-    border-inline-end: 1px solid var(--theme-elevation-150);
   }
 
   &__corner {
-    z-index: 3;
-    padding: 8px 12px;
+    z-index: 4;
+    padding: 10px 12px;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.04em;
+    letter-spacing: 0.05em;
     color: var(--theme-elevation-500);
+    border-inline-end: 1px solid var(--theme-elevation-150);
+    border-block-end: 1px solid var(--theme-elevation-150);
   }
 
   &__room {
-    padding: 8px 12px;
+    padding: 10px 12px;
     font-weight: 600;
-    border-block-end: 1px solid var(--theme-elevation-50);
+    vertical-align: top;
+    border-block-end: 1px solid var(--theme-elevation-100);
 
     & a {
       color: var(--mf-blue);
@@ -113,26 +160,67 @@
 
   &__room-note {
     display: block;
+    margin-top: 2px;
     font-size: 11px;
     font-weight: 400;
     color: var(--theme-elevation-500);
   }
 
-  &__day {
-    min-width: 52px;
-    padding: 6px 4px;
-    text-align: center;
-    line-height: 1.15;
-    border-block-end: 1px solid var(--theme-elevation-150);
+  &__off-chip {
+    display: inline-block;
+    margin-top: 4px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
     color: var(--theme-elevation-600);
+    background: var(--theme-elevation-100);
+  }
 
-    // Friday and Saturday: the weekend here, and the nights that fill first.
+  /** The second frozen column: which of the room's two lines this is. */
+  &__metric {
+    position: sticky;
+    inset-inline-start: var(--room-col);
+    z-index: 2;
+    width: var(--metric-col);
+    min-width: var(--metric-col);
+    padding: 6px 10px;
+    text-align: start;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--theme-elevation-500);
+    background: var(--theme-elevation-0);
+    border-inline-end: 1px solid var(--theme-elevation-150);
+    border-block-end: 1px solid var(--theme-elevation-50);
+    white-space: nowrap;
+  }
+
+  &__row--sold &__metric,
+  &__row--sold {
+    border-block-end: 1px solid var(--theme-elevation-100);
+  }
+
+  &__day {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    width: var(--day-col);
+    min-width: var(--day-col);
+    padding: 6px 2px;
+    text-align: center;
+    line-height: 1.1;
+    background: var(--theme-elevation-0);
+    border-block-end: 1px solid var(--theme-elevation-150);
+    color: var(--theme-elevation-500);
+
     &[data-weekend='true'] {
       background: var(--theme-elevation-50);
     }
 
     &[data-today='true'] {
-      background: color-mix(in srgb, var(--mf-blue) 14%, var(--theme-elevation-0));
+      background: color-mix(in srgb, var(--mf-blue) 16%, var(--theme-elevation-0));
       color: var(--mf-blue);
       box-shadow: inset 0 -3px 0 var(--mf-blue);
     }
@@ -147,31 +235,29 @@
 
   &__day-number {
     display: block;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     color: var(--theme-elevation-1000);
   }
 
-  &__day-month {
-    display: block;
-    font-size: 10px;
-  }
-
-  &__hotel-row th {
-    position: sticky;
-    inset-inline-start: 0;
-  }
-
   &__hotel {
-    padding: 6px 12px;
+    padding: 0;
     text-align: start;
     font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--theme-elevation-600);
+    letter-spacing: 0.07em;
+    color: var(--theme-elevation-700);
     background: var(--theme-elevation-50);
     border-block: 1px solid var(--theme-elevation-100);
+  }
+
+  &__hotel-label {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 2;
+    display: inline-block;
+    padding: 7px 12px;
   }
 
   /**
@@ -180,27 +266,26 @@
    * reading how many.
    */
   &__cell {
-    padding: 8px 4px;
+    padding: 7px 2px;
     text-align: center;
     font-size: 14px;
-    font-weight: 600;
-    border-block-end: 1px solid var(--theme-elevation-50);
+    font-weight: 700;
     border-inline-end: 1px solid var(--theme-elevation-50);
 
     &[data-state='open'] {
       color: var(--theme-elevation-800);
-      background: color-mix(in srgb, var(--mf-green) 8%, var(--theme-elevation-0));
+      background: color-mix(in srgb, var(--mf-green) 9%, var(--theme-elevation-0));
     }
 
     &[data-state='low'] {
       color: var(--mf-amber);
-      background: color-mix(in srgb, var(--mf-amber) 20%, var(--theme-elevation-0));
+      background: color-mix(in srgb, var(--mf-amber) 22%, var(--theme-elevation-0));
     }
 
     &[data-state='full'],
     &[data-state='none'] {
       color: var(--mf-red);
-      background: color-mix(in srgb, var(--mf-red) 18%, var(--theme-elevation-0));
+      background: color-mix(in srgb, var(--mf-red) 20%, var(--theme-elevation-0));
     }
 
     &[data-state='off'] {
@@ -211,34 +296,95 @@
         var(--theme-elevation-0) 6px 12px
       );
     }
+
+    &[data-today='true'] {
+      box-shadow: inset 2px 0 0 var(--mf-blue), inset -2px 0 0 var(--mf-blue);
+    }
   }
 
-  &__total {
-    padding: 8px 4px;
+  /** The second line: what is taken. Quiet, because it is the reference. */
+  &__sold {
+    padding: 5px 2px;
     text-align: center;
+    font-size: 12px;
+    color: var(--theme-elevation-700);
+    background: var(--theme-elevation-0);
+    border-inline-end: 1px solid var(--theme-elevation-50);
+
+    &[data-weekend='true'] {
+      background: var(--theme-elevation-50);
+    }
+
+    &[data-zero='true'] {
+      color: var(--theme-elevation-300);
+    }
+
+    &[data-today='true'] {
+      box-shadow: inset 2px 0 0 var(--mf-blue), inset -2px 0 0 var(--mf-blue);
+    }
+  }
+
+  /**
+   * The bottom line: how full the whole group is that night, drawn as a column
+   * of a bar chart so a busy fortnight is a shape rather than thirty numbers.
+   */
+  &__total {
+    height: 54px;
+    padding: 4px 2px 3px;
+    text-align: center;
+    vertical-align: bottom;
+    background: var(--theme-elevation-50);
+    border-block-start: 1px solid var(--theme-elevation-150);
+    border-inline-end: 1px solid var(--theme-elevation-100);
+
+    &[data-weekend='true'] {
+      background: var(--theme-elevation-100);
+    }
+  }
+
+  &__total-bar {
+    // The fill grows from the bottom, so the row reads as a chart rather than
+    // as a set of blocks hanging from the line above it.
+    display: flex;
+    align-items: flex-end;
+    height: 26px;
+    width: 14px;
+    margin: 0 auto 3px;
+    border-radius: 2px;
+    background: var(--theme-elevation-150);
+    overflow: hidden;
+  }
+
+  &__total-fill {
+    display: block;
+    width: 100%;
+    border-radius: 2px;
+    background: var(--mf-blue);
+  }
+
+  &__total-value {
+    display: block;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--theme-elevation-600);
+  }
+
+  &__grid tfoot &__corner {
+    border-block-start: 1px solid var(--theme-elevation-150);
+    border-block-end: none;
+    background: var(--theme-elevation-50);
+    text-transform: none;
     font-size: 13px;
-    background: var(--theme-elevation-50);
-    border-block-start: 1px solid var(--theme-elevation-150);
-
-    & strong {
-      font-weight: 700;
-    }
-
-    & span {
-      color: var(--theme-elevation-500);
-    }
+    color: var(--theme-elevation-800);
   }
 
-  &__grid tfoot th {
-    background: var(--theme-elevation-50);
-    border-block-start: 1px solid var(--theme-elevation-150);
-  }
+  // ---- Legend -------------------------------------------------------------
 
   &__key {
     display: flex;
     flex-wrap: wrap;
-    gap: 14px;
-    margin: 14px 0 0;
+    gap: 16px;
+    margin: 16px 0 0;
     padding: 0;
     list-style: none;
     font-size: 12px;
@@ -259,15 +405,19 @@
     }
 
     & li[data-state='open']::before {
-      background: color-mix(in srgb, var(--mf-green) 8%, var(--theme-elevation-0));
+      background: color-mix(in srgb, var(--mf-green) 9%, var(--theme-elevation-0));
     }
 
     & li[data-state='low']::before {
-      background: color-mix(in srgb, var(--mf-amber) 20%, var(--theme-elevation-0));
+      background: color-mix(in srgb, var(--mf-amber) 22%, var(--theme-elevation-0));
     }
 
     & li[data-state='full']::before {
-      background: color-mix(in srgb, var(--mf-red) 18%, var(--theme-elevation-0));
+      background: color-mix(in srgb, var(--mf-red) 20%, var(--theme-elevation-0));
+    }
+
+    & li[data-state='weekend']::before {
+      background: var(--theme-elevation-50);
     }
 
     & li[data-state='off']::before {
@@ -278,4 +428,17 @@
       );
     }
   }
+}
+
+/** Said to a screen reader, drawn for nobody: the weekday behind its letter. */
+.mf-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
