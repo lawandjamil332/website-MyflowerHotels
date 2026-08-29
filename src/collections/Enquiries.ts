@@ -93,6 +93,7 @@ export const Enquiries: CollectionConfig = {
     },
     {
       name: 'branch',
+      label: 'Hotel',
       type: 'relationship',
       relationTo: 'branches',
       admin: {

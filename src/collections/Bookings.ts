@@ -113,6 +113,7 @@ export const Bookings: CollectionConfig = {
       fields: [
         {
           name: 'branch',
+          label: 'Hotel',
           type: 'relationship',
           relationTo: 'branches',
           required: true,
@@ -163,6 +164,7 @@ export const Bookings: CollectionConfig = {
         },
         {
           name: 'totalAmount',
+          label: 'Total',
           type: 'number',
           min: 0,
           admin: {

@@ -32,7 +32,7 @@ export const Branches: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'name',
-    defaultColumns: ['name', 'city', 'order'],
+    defaultColumns: ['name', 'city', 'status', 'order'],
     group: 'Property',
     description: 'Each hotel in the group. The homepage lists these in the order set below.',
   },

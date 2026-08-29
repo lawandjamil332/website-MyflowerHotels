@@ -61,8 +61,16 @@ const Tile: React.FC<{
 }
 
 /** One arrival or departure, with everything needed to act on it in the row. */
-const StayRow: React.FC<{ stay: Stay; show: 'checkOut' | 'checkIn' }> = ({ stay, show }) => {
+const StayRow: React.FC<{ stay: Stay; kind: 'arrival' | 'departure' }> = ({ stay, kind }) => {
   const status = look(BOOKING_STATUS, stay.status)
+  const nights = stay.nights === null ? '' : `${stay.nights} night${stay.nights === 1 ? '' : 's'}`
+
+  // An arrival is read forwards — how long are they here, when do I get the
+  // room back. A departure is read backwards: when did they get here.
+  const when =
+    kind === 'arrival'
+      ? [nights, `leaves ${formatDateShort(stay.checkOut)}`].filter(Boolean).join(' · ')
+      : [`arrived ${formatDateShort(stay.checkIn)}`, nights].filter(Boolean).join(' · ')
 
   return (
     <li className={`${baseClass}__stay`}>
@@ -74,11 +82,7 @@ const StayRow: React.FC<{ stay: Stay; show: 'checkOut' | 'checkIn' }> = ({ stay,
         {[stay.hotel, stay.room].filter(Boolean).join(' · ') || '—'}
       </span>
 
-      <span className={`${baseClass}__stay-when`}>
-        {show === 'checkOut'
-          ? `${stay.nights ?? '?'} night${stay.nights === 1 ? '' : 's'}, out ${formatDateShort(stay.checkOut)}`
-          : `in ${formatDateShort(stay.checkIn)}`}
-      </span>
+      <span className={`${baseClass}__stay-when`}>{when}</span>
 
       {stay.guestPhone ? (
         <a className={`${baseClass}__stay-phone`} href={`tel:${stay.guestPhone}`}>
@@ -99,8 +103,8 @@ const StayList: React.FC<{
   title: string
   empty: string
   stays: Stay[]
-  show: 'checkOut' | 'checkIn'
-}> = ({ title, empty, stays, show }) => (
+  kind: 'arrival' | 'departure'
+}> = ({ title, empty, stays, kind }) => (
   <section className={`${baseClass}__panel`}>
     <h3 className={`${baseClass}__panel-title`}>
       {title}
@@ -111,7 +115,7 @@ const StayList: React.FC<{
     ) : (
       <ul className={`${baseClass}__stays`}>
         {stays.map((stay) => (
-          <StayRow key={stay.id} stay={stay} show={show} />
+          <StayRow key={stay.id} stay={stay} kind={kind} />
         ))}
       </ul>
     )}
@@ -229,13 +233,13 @@ const BeforeDashboard: React.FC = async () => {
               title="Arrivals today"
               empty="Nobody is checking in today."
               stays={figures.arrivalList}
-              show="checkOut"
+              kind="arrival"
             />
             <StayList
               title="Departures today"
               empty="Nobody is checking out today."
               stays={figures.departureList}
-              show="checkIn"
+              kind="departure"
             />
           </div>
         </>

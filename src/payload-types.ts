@@ -192,7 +192,7 @@ export interface UserAuthOperations {
   };
 }
 /**
- * Reservations made on the website. Newest first.
+ * Every stay booked on the website.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "bookings".

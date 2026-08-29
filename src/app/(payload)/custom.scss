@@ -83,6 +83,14 @@ html[data-theme='light'] {
       stroke: rgba(255, 255, 255, 0.6);
     }
 
+    /* Payload's folder browser sits at the top of the rail and draws its own
+       dark text and pale border, which on navy is a button you cannot read. */
+    .browse-by-folder-button {
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
     svg .fill {
       fill: rgba(255, 255, 255, 0.8);
     }
@@ -235,19 +243,23 @@ html[data-theme='light'] .nav .nav__link:has(.nav__link-indicator) {
 /* ---- Buttons ----------------------------------------------------------- */
 
 /**
- * "Create new" is the only button on a list screen that does anything, and it
- * was the same grey as "Delete". The extranet's action blue instead.
+ * The one button on a list screen that does anything was drawn as a grey pill
+ * the same weight as the column menu beside it. Blue, and solid, so "add a
+ * booking" looks like the action it is.
  */
 html[data-theme='light'] {
-  .btn--style-primary .btn__content,
-  .btn--style-primary {
+  .list-create-new-doc__create-new-button,
+  .btn--style-primary .btn__content {
     background-color: var(--mf-blue);
     border-color: var(--mf-blue);
+    color: #fff;
   }
 
-  .btn--style-primary:hover {
+  .list-create-new-doc__create-new-button:hover,
+  .btn--style-primary:hover .btn__content {
     background-color: var(--mf-navy);
     border-color: var(--mf-navy);
+    color: #fff;
   }
 }
 
