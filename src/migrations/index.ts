@@ -40,6 +40,7 @@ import * as migration_20260826_150000_branch_postal_code from './20260826_150000
 import * as migration_20260830_090000_room_rates from './20260830_090000_room_rates'
 import * as migration_20260830_100000_room_rates_min_stay from './20260830_100000_room_rates_min_stay'
 import * as migration_20260830_110000_google_feed from './20260830_110000_google_feed'
+import * as migration_20260830_120000_pin_hotels_2_and_4 from './20260830_120000_pin_hotels_2_and_4'
 
 export const migrations = [
   {
@@ -253,5 +254,10 @@ export const migrations = [
     up: migration_20260830_110000_google_feed.up,
     down: migration_20260830_110000_google_feed.down,
     name: '20260830_110000_google_feed',
+  },
+  {
+    up: migration_20260830_120000_pin_hotels_2_and_4.up,
+    down: migration_20260830_120000_pin_hotels_2_and_4.down,
+    name: '20260830_120000_pin_hotels_2_and_4',
   },
 ]

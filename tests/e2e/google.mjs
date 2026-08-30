@@ -29,7 +29,34 @@ const ok = (label, condition, detail = '') => {
 const base = process.env.BASE_URL || 'http://localhost:3000'
 const day = (n) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10)
 
-const room = q(`SELECT id FROM rooms WHERE branch_id = 1 ORDER BY id LIMIT 1`)
+const NIGHT = day(40)
+
+/**
+ * A room that can actually be sold on the night this suite tests.
+ *
+ * It used to take the first room of the first hotel, which worked exactly
+ * once. The booking and throttle suites leave their reservations behind, and
+ * on the second run against the same database that room is sold out — so the
+ * feed correctly answered NoVacancy and the price checks failed, saying the
+ * feed had the wrong price when what it had was no price, rightly. A test that
+ * fails on its second run is a test nobody trusts on its first.
+ */
+const room = q(`
+  SELECT r.id FROM rooms r
+    JOIN branches b ON b.id = r.branch_id
+   WHERE b.status IS DISTINCT FROM 'openingSoon'
+     AND r.quantity > 0
+     AND r.price_from IS NOT NULL
+     AND (SELECT COUNT(*) FROM bookings bk
+           WHERE bk.room_id = r.id AND bk.status <> 'cancelled'
+             AND bk.check_in <= '${NIGHT}' AND bk.check_out > '${NIGHT}') < r.quantity
+   ORDER BY r.id LIMIT 1`)
+
+if (!room) {
+  console.error('No room is sellable on ' + NIGHT + '. Clear the test bookings and retry.')
+  process.exit(1)
+}
+
 const branch = q(`SELECT branch_id FROM rooms WHERE id = ${room}`)
 const basePrice = Number(q(`SELECT COALESCE(price_from, 0) FROM rooms WHERE id = ${room}`))
 const was = q(`SELECT COALESCE(google_feed, false) FROM settings LIMIT 1`)
@@ -37,8 +64,6 @@ const was = q(`SELECT COALESCE(google_feed, false) FROM settings LIMIT 1`)
 const clean = () => q(`DELETE FROM room_rates WHERE room_id = ${room}`)
 const feed = () => q(`UPDATE settings SET google_feed = ${'true'}`)
 const restore = () => q(`UPDATE settings SET google_feed = ${was === 't' ? 'true' : 'false'}`)
-
-const NIGHT = day(40)
 
 // ---- Off by default -------------------------------------------------------
 {

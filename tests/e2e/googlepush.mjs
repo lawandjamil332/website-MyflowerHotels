@@ -53,7 +53,19 @@ const { pushNights } = await import('@/utilities/googlePush')
 
 const payload = await getPayload({ config: configPromise })
 
-const room = Number(q(`SELECT id FROM rooms WHERE branch_id = 1 ORDER BY id LIMIT 1`))
+// Sellable on the night below, for the reason written out in google.mjs: a
+// room the booking suites have filled answers NoVacancy, not a price.
+const room = Number(q(`
+  SELECT r.id FROM rooms r
+    JOIN branches b ON b.id = r.branch_id
+   WHERE b.status IS DISTINCT FROM 'openingSoon'
+     AND r.quantity > 0
+     AND r.price_from IS NOT NULL
+     AND (SELECT COUNT(*) FROM bookings bk
+           WHERE bk.room_id = r.id AND bk.status <> 'cancelled'
+             AND bk.check_in <= '${new Date(Date.now() + 45 * 86_400_000).toISOString().slice(0, 10)}'
+             AND bk.check_out > '${new Date(Date.now() + 45 * 86_400_000).toISOString().slice(0, 10)}') < r.quantity
+   ORDER BY r.id LIMIT 1`))
 const basePrice = Number(q(`SELECT COALESCE(price_from, 0) FROM rooms WHERE id = ${room}`))
 const was = q(`SELECT COALESCE(google_feed, false) FROM settings LIMIT 1`)
 
