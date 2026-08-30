@@ -521,6 +521,22 @@ html[data-theme='light'] .document-fields__sidebar-wrap {
   display: none;
 }
 
+/* With the box gone the bar is two buttons, so it stops being a card: an
+   empty panel above a full one reads as something that failed to load.
+   Written under the same `html[data-theme]` as the rule that made it a card,
+   because `:has()` takes the specificity of its argument and a bare
+   `.list-controls:has(...)` loses to `html[data-theme='light'] .list-controls`
+   — which is why the first attempt at this changed nothing at all. */
+html[data-theme='light'] .list-controls:has(+ .mf-search) {
+  border: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.list-controls:has(+ .mf-search) {
+  margin-bottom: 6px;
+}
+
 .list-controls:has(+ .mf-search) .search-bar {
   justify-content: flex-end;
 }
