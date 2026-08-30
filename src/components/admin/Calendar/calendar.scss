@@ -102,6 +102,94 @@
     color: var(--theme-elevation-600);
   }
 
+  // ---- Which hotel, and which month ---------------------------------------
+
+  /**
+   * The property switcher. Every extranet is built for one hotel; this group
+   * has four, and 57 rooms on one grid is a lot to read when the question is
+   * about one building.
+   */
+  &__properties {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  &__property {
+    padding: 7px 14px;
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: 18px;
+    background: var(--theme-elevation-0);
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--theme-elevation-700);
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      border-color: var(--mf-blue);
+      color: var(--mf-blue);
+    }
+
+    &[data-active='true'] {
+      background: var(--mf-blue);
+      border-color: var(--mf-blue);
+      color: #fff;
+    }
+  }
+
+  /**
+   * A year of months, so November is one tap. Through arrows alone it is
+   * three, and you cannot see where you are going on the way.
+   */
+  &__strip {
+    display: flex;
+    gap: 2px;
+    margin-bottom: 14px;
+    padding-bottom: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  &__strip-month {
+    display: grid;
+    justify-items: center;
+    gap: 1px;
+    flex-shrink: 0;
+    min-width: 58px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--theme-elevation-600);
+
+    & span {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    & em {
+      font-size: 10px;
+      font-style: normal;
+      opacity: 0.7;
+    }
+
+    &:hover {
+      background: var(--theme-elevation-100);
+      color: var(--theme-elevation-1000);
+    }
+
+    &[data-active='true'] {
+      background: color-mix(in srgb, var(--mf-blue) 14%, var(--theme-elevation-0));
+      color: var(--mf-blue);
+      box-shadow: inset 0 0 0 1px var(--mf-blue);
+    }
+  }
+
   // ---- The grid -----------------------------------------------------------
 
   &__scroll {
@@ -226,6 +314,14 @@
     }
   }
 
+  /* Small enough that the number is what is read, present enough that the
+     number is not mistaken for a count of rooms. */
+  &__pc {
+    font-size: 8px;
+    font-weight: 600;
+    opacity: 0.7;
+  }
+
   &__day-name {
     display: block;
     font-size: 10px;
@@ -241,6 +337,9 @@
   }
 
   &__hotel {
+    position: sticky;
+    inset-inline-start: 0;
+    z-index: 2;
     padding: 0;
     text-align: start;
     font-size: 11px;
@@ -249,15 +348,50 @@
     letter-spacing: 0.07em;
     color: var(--theme-elevation-700);
     background: var(--theme-elevation-50);
-    border-block: 1px solid var(--theme-elevation-100);
+    border-block: 1px solid var(--theme-elevation-150);
+    border-inline-end: 1px solid var(--theme-elevation-150);
   }
 
   &__hotel-label {
-    position: sticky;
-    inset-inline-start: 0;
-    z-index: 2;
     display: inline-block;
     padding: 7px 12px;
+  }
+
+  /**
+   * How full this hotel is that night, as a percentage.
+   *
+   * The band used to be an empty grey strip with a name in it, which is a lot
+   * of screen for a label — and it sits exactly where the eye already is,
+   * between one hotel's rooms and the next.
+   */
+  &__hotel-cell {
+    padding: 6px 2px;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--theme-elevation-600);
+    background: var(--theme-elevation-50);
+    border-block: 1px solid var(--theme-elevation-150);
+    border-inline-end: 1px solid var(--theme-elevation-100);
+
+    &[data-band='mid'] {
+      color: var(--theme-elevation-800);
+      background: color-mix(in srgb, var(--mf-blue) 12%, var(--theme-elevation-50));
+    }
+
+    &[data-band='high'] {
+      color: #fff;
+      background: color-mix(in srgb, var(--mf-blue) 72%, var(--theme-elevation-50));
+    }
+
+    &[data-band='full'] {
+      color: #fff;
+      background: var(--mf-red);
+    }
+
+    &[data-today='true'] {
+      box-shadow: inset 2px 0 0 var(--mf-blue), inset -2px 0 0 var(--mf-blue);
+    }
   }
 
   /**
@@ -272,9 +406,13 @@
     font-weight: 700;
     border-inline-end: 1px solid var(--theme-elevation-50);
 
+    // Plenty of rooms is the ordinary case and gets no colour at all. An
+    // earlier version tinted it green, so a quiet month was a wall of pale
+    // green with nothing standing out — which is the opposite of what a
+    // colour is for.
     &[data-state='open'] {
       color: var(--theme-elevation-800);
-      background: color-mix(in srgb, var(--mf-green) 9%, var(--theme-elevation-0));
+      background: var(--theme-elevation-0);
     }
 
     &[data-state='low'] {
@@ -295,6 +433,10 @@
         var(--theme-elevation-50) 0 6px,
         var(--theme-elevation-0) 6px 12px
       );
+    }
+
+    &[data-weekend='true'][data-state='open'] {
+      background: var(--theme-elevation-50);
     }
 
     &[data-today='true'] {
@@ -405,7 +547,7 @@
     }
 
     & li[data-state='open']::before {
-      background: color-mix(in srgb, var(--mf-green) 9%, var(--theme-elevation-0));
+      background: var(--theme-elevation-0);
     }
 
     & li[data-state='low']::before {
@@ -418,6 +560,15 @@
 
     & li[data-state='weekend']::before {
       background: var(--theme-elevation-50);
+    }
+
+    & li[data-state='band']::before {
+      background: linear-gradient(
+        90deg,
+        var(--theme-elevation-50) 0 33%,
+        color-mix(in srgb, var(--mf-blue) 55%, var(--theme-elevation-50)) 33% 66%,
+        var(--mf-red) 66%
+      );
     }
 
     & li[data-state='off']::before {

@@ -19,21 +19,29 @@ const baseClass = 'mf-calendar'
  * Rates & availability — the extranet's calendar.
  *
  * Room types down the side, a calendar month across the top, and two lines for
- * every room: how many are still free that night, and how many are booked.
- * Sold out is red, nearly gone is amber, the weekend is shaded and today has a
- * ring round it. It is the one screen a hotel manager opens without being
- * asked to, and the panel did not have it: the only way to find out whether
- * the 14th was full was to go to the website and try to book it.
+ * every room: how many are still free that night, and how many are booked. It
+ * is the one screen a hotel manager opens without being asked to, and the
+ * panel did not have it: the only way to find out whether the 14th was full
+ * was to go to the website and try to book it.
  *
- * A month rather than a rolling fortnight, because a month is the unit hotels
- * think in — "how is September looking" — and because a grid whose first
- * column is a different date every time you open it cannot be compared with
- * the one you looked at yesterday.
+ * Three things make it read like the extranet rather than like a report.
  *
- * Payload draws a custom view like this one without its own template, so the
- * page renders the chrome itself. That is the price of the route, and it buys
- * something worth having — the whole width of the window for a grid that needs
- * every pixel of it.
+ * A property switcher, because this is a group of four and every extranet is
+ * built for one: 57 rooms on a single grid is a lot to read when the question
+ * is about one building.
+ *
+ * A row of months, not just two arrows. Clicking November is one tap; getting
+ * to November through arrows is three, and you cannot see where you are going.
+ *
+ * And each hotel's band carries that hotel's own occupancy, night by night,
+ * instead of being an empty grey strip with a name in it. A band between two
+ * blocks of rooms is where the eye already is.
+ *
+ * The colour is disciplined on purpose. An earlier version tinted every cell
+ * with rooms free, so a quiet month was a wall of pale green and nothing stood
+ * out — which is the opposite of what a colour is for. Plenty is plain now;
+ * only nearly-gone, sold out and off-sale are coloured, because those are the
+ * three a manager does something about.
  */
 
 const WEEKDAYS = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
@@ -41,6 +49,9 @@ const WEEKDAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', '
 const MONTHS = [
   'January', 'February', 'March', 'April', 'May', 'June',
   'July', 'August', 'September', 'October', 'November', 'December',
+]
+const MONTHS_SHORT = [
+  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
 ]
 
 const dayKey = (date: Date) => date.toISOString().slice(0, 10)
@@ -52,8 +63,7 @@ const isWeekend = (day: Date) => day.getUTCDay() === 5 || day.getUTCDay() === 6
  * How full a room is that night, as a word the stylesheet colours.
  *
  * Thresholds rather than a gradient: a manager needs to know which nights to
- * do something about, and "63% sold" is not an instruction. Sold out, nearly
- * gone, and fine are the three states worth acting on differently.
+ * do something about, and "63% sold" is not an instruction.
  */
 const state = (free: number, quantity: number, onSale: boolean): string => {
   if (!onSale) return 'off'
@@ -63,12 +73,15 @@ const state = (free: number, quantity: number, onSale: boolean): string => {
   return 'open'
 }
 
-/**
- * The two lines a room type gets: what is left, and what is taken.
- *
- * The name spans both, the way the extranet's does, so the eye reads one room
- * as one block rather than as two unrelated rows that happen to be adjacent.
- */
+/** Four bands, so a hotel's night reads as a colour before it reads as a number. */
+const band = (percent: number): string => {
+  if (percent >= 100) return 'full'
+  if (percent >= 80) return 'high'
+  if (percent >= 40) return 'mid'
+  return 'low'
+}
+
+/** The two lines a room type gets: what is left, and what is taken. */
 const RoomRows: React.FC<{ room: RoomRow; todayKey: string }> = ({ room, todayKey }) => {
   const name = shortRoomName(room.name, room.hotel)
 
@@ -133,13 +146,23 @@ const CalendarView: React.FC<AdminViewServerProps> = async ({ initPageResult, se
   }
 
   const month = typeof searchParams?.month === 'string' ? searchParams.month : undefined
-  const availability = await runAvailability(month)
+  const hotel = typeof searchParams?.hotel === 'string' ? searchParams.hotel : undefined
+  const availability = await runAvailability(month, hotel)
 
   const start = monthStart(month)
-  const previous = monthKey(shiftMonth(start, -1))
-  const next = monthKey(shiftMonth(start, 1))
-  const thisMonth = monthKey(new Date())
-  const todayKey = dayKey(new Date())
+  const now = new Date()
+  const realMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1))
+  const todayKey = dayKey(now)
+  const shown = monthKey(start)
+
+  /** Every link on this screen keeps whichever hotel is being looked at. */
+  const href = (nextMonth: string, nextHotel = hotel) =>
+    `/admin/calendar?month=${nextMonth}${nextHotel ? `&hotel=${nextHotel}` : ''}`
+
+  // Twelve months, starting from whichever of this month and the month on
+  // screen comes first — so paging back never leaves the strip behind.
+  const stripStart = start < realMonth ? start : realMonth
+  const strip = Array.from({ length: 12 }, (_, i) => shiftMonth(stripStart, i))
 
   const byHotel: { hotel: string; rooms: RoomRow[] }[] = []
   for (const room of availability?.rooms ?? []) {
@@ -148,7 +171,6 @@ const CalendarView: React.FC<AdminViewServerProps> = async ({ initPageResult, se
     else byHotel.push({ hotel: room.hotel, rooms: [room] })
   }
 
-  const columns = availability?.dates.length ?? 0
   const busiest = Math.max(1, ...(availability?.totals ?? []).map((total) => total.stock))
 
   return (
@@ -169,7 +191,7 @@ const CalendarView: React.FC<AdminViewServerProps> = async ({ initPageResult, se
             <Link
               aria-label="Previous month"
               className={`${baseClass}__arrow`}
-              href={`/admin/calendar?month=${previous}`}
+              href={href(monthKey(shiftMonth(start, -1)))}
             >
               ‹
             </Link>
@@ -179,20 +201,59 @@ const CalendarView: React.FC<AdminViewServerProps> = async ({ initPageResult, se
             <Link
               aria-label="Next month"
               className={`${baseClass}__arrow`}
-              href={`/admin/calendar?month=${next}`}
+              href={href(monthKey(shiftMonth(start, 1)))}
             >
               ›
             </Link>
-            <Link className={`${baseClass}__today-btn`} href={`/admin/calendar?month=${thisMonth}`}>
+            <Link className={`${baseClass}__today-btn`} href={href(monthKey(realMonth))}>
               This month
             </Link>
           </nav>
         </header>
 
+        {availability && availability.hotels.length > 1 && (
+          <nav className={`${baseClass}__properties`} aria-label="Which hotel">
+            <Link
+              className={`${baseClass}__property`}
+              data-active={hotel ? undefined : 'true'}
+              href={`/admin/calendar?month=${shown}`}
+            >
+              All four hotels
+            </Link>
+            {availability.hotels.map((option) => (
+              <Link
+                className={`${baseClass}__property`}
+                data-active={hotel === String(option.id) ? 'true' : undefined}
+                href={href(shown, String(option.id))}
+                key={option.id}
+              >
+                {option.name}
+              </Link>
+            ))}
+          </nav>
+        )}
+
+        <nav className={`${baseClass}__strip`} aria-label="Jump to a month">
+          {strip.map((entry) => {
+            const key = monthKey(entry)
+            return (
+              <Link
+                className={`${baseClass}__strip-month`}
+                data-active={key === shown ? 'true' : undefined}
+                href={href(key)}
+                key={key}
+              >
+                <span>{MONTHS_SHORT[entry.getUTCMonth()]}</span>
+                <em>{entry.getUTCFullYear()}</em>
+              </Link>
+            )
+          })}
+        </nav>
+
         {!availability || availability.rooms.length === 0 ? (
           <p className={`${baseClass}__empty`}>
-            No rooms are set up yet. Add them under Rates &amp; availability → Rooms, and they will
-            appear here with everything booked against them.
+            No rooms are set up here yet. Add them under Rates &amp; availability → Rooms, and they
+            will appear with everything booked against them.
           </p>
         ) : (
           <div className={`${baseClass}__scroll`}>
@@ -224,27 +285,48 @@ const CalendarView: React.FC<AdminViewServerProps> = async ({ initPageResult, se
                 </tr>
               </thead>
 
-              {byHotel.map((group) => (
-                <tbody key={group.hotel}>
-                  <tr className={`${baseClass}__hotel-row`}>
-                    <th className={`${baseClass}__hotel`} colSpan={columns + 2} scope="colgroup">
-                      {/* The cell spans the whole month, so sticking the cell
-                          itself pins a box whose text is already off to the
-                          left. Sticking the label inside it is what keeps the
-                          hotel's name on screen however far the grid scrolls. */}
-                      <span className={`${baseClass}__hotel-label`}>{group.hotel}</span>
-                    </th>
-                  </tr>
-                  {group.rooms.map((room) => (
-                    <RoomRows key={room.id} room={room} todayKey={todayKey} />
-                  ))}
-                </tbody>
-              ))}
+              {byHotel.map((group) => {
+                // The band above a hotel's rooms carries that hotel's own
+                // occupancy rather than only its name.
+                const nights = availability.dates.map((date, i) => {
+                  const sold = group.rooms.reduce((sum, room) => sum + room.nights[i].sold, 0)
+                  const stock = group.rooms.reduce(
+                    (sum, room) => sum + (room.onSale ? room.quantity : 0),
+                    0,
+                  )
+                  return { date, sold, stock, percent: stock ? Math.round((sold / stock) * 100) : 0 }
+                })
+
+                return (
+                  <tbody key={group.hotel}>
+                    <tr className={`${baseClass}__hotel-row`}>
+                      <th className={`${baseClass}__hotel`} colSpan={2} scope="rowgroup">
+                        <span className={`${baseClass}__hotel-label`}>{group.hotel}</span>
+                      </th>
+                      {nights.map((night) => (
+                        <td
+                          className={`${baseClass}__hotel-cell`}
+                          data-band={band(night.percent)}
+                          data-today={night.date.slice(0, 10) === todayKey ? 'true' : undefined}
+                          key={night.date}
+                          title={`${group.hotel} · ${formatDateLong(night.date)} · ${night.sold} of ${night.stock} rooms sold`}
+                        >
+                          {night.percent}
+                          <span className={`${baseClass}__pc`}>%</span>
+                        </td>
+                      ))}
+                    </tr>
+                    {group.rooms.map((room) => (
+                      <RoomRows key={room.id} room={room} todayKey={todayKey} />
+                    ))}
+                  </tbody>
+                )
+              })}
 
               <tfoot>
                 <tr>
                   <th className={`${baseClass}__corner`} colSpan={2} scope="row">
-                    All four hotels
+                    {hotel ? 'This hotel' : 'All four hotels'}
                     <span className={`${baseClass}__room-note`}>rooms sold of rooms on sale</span>
                   </th>
                   {availability.totals.map((total) => {
@@ -280,6 +362,7 @@ const CalendarView: React.FC<AdminViewServerProps> = async ({ initPageResult, se
           <li data-state="full">Sold out</li>
           <li data-state="off">Not on sale</li>
           <li data-state="weekend">Friday &amp; Saturday</li>
+          <li data-state="band">The band above each hotel is how full it is that night</li>
         </ul>
       </main>
     </>

@@ -60,8 +60,13 @@ export type Availability = {
   /** Every night of that month. */
   dates: string[]
   rooms: RoomRow[]
-  /** Rooms sold across the whole group, per night, against the group's stock. */
+  /** Rooms sold across whatever is shown, per night, against its stock. */
   totals: { date: string; sold: number; stock: number }[]
+  /**
+   * Every hotel in the group, whichever one is being shown. The switcher at
+   * the top needs the whole list to offer it, so it is not filtered.
+   */
+  hotels: { id: number; name: string }[]
 }
 
 const startOfUtcDay = (value: Date): Date =>
@@ -90,7 +95,11 @@ export const monthKey = (date: Date): string =>
 export const shiftMonth = (date: Date, by: number): Date =>
   new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + by, 1))
 
-export const runAvailability = async (month?: string): Promise<Availability | null> => {
+export const runAvailability = async (
+  month?: string,
+  /** A branch id, or undefined for all four hotels at once. */
+  hotel?: string,
+): Promise<Availability | null> => {
   try {
     const payload = await getPayload({ config: configPromise })
     const pool = dbPool(payload)
@@ -102,7 +111,12 @@ export const runAvailability = async (month?: string): Promise<Availability | nu
       new Date(start.getTime() + i * 86_400_000).toISOString(),
     )
 
-    const [rooms, stays] = await Promise.all([
+    // A property switcher is the one thing every extranet has that a group of
+    // four hotels needs more than a single property does: 57 rooms on one grid
+    // is a lot to read when the question is about one building.
+    const onlyHotel = hotel && /^\d+$/.test(hotel) ? Number(hotel) : null
+
+    const [rooms, stays, hotels] = await Promise.all([
       pool.query<{
         id: number
         name: string
@@ -119,7 +133,9 @@ export const runAvailability = async (month?: string): Promise<Availability | nu
            LEFT JOIN rooms_locales    rl ON rl._parent_id = r.id        AND rl._locale = 'en'
            LEFT JOIN branches         b  ON b.id          = r.branch_id
            LEFT JOIN branches_locales bl ON bl._parent_id = b.id        AND bl._locale = 'en'
+          WHERE $1::int IS NULL OR r.branch_id = $1::int
           ORDER BY b."order" NULLS LAST, b.id, r.id`,
+        [onlyHotel],
       ),
 
       // Every stay that overlaps the month at all: starts before it ends, ends
@@ -128,8 +144,16 @@ export const runAvailability = async (month?: string): Promise<Availability | nu
       pool.query<{ room_id: number | null; check_in: Date; check_out: Date }>(
         `SELECT room_id, check_in, check_out
            FROM bookings
-          WHERE status = ANY($3) AND check_in < $2 AND check_out > $1`,
-        [start, end, OCCUPYING],
+          WHERE status = ANY($3) AND check_in < $2 AND check_out > $1
+            AND ($4::int IS NULL OR branch_id = $4::int)`,
+        [start, end, OCCUPYING, onlyHotel],
+      ),
+
+      pool.query<{ id: number; name: string | null }>(
+        `SELECT b.id, bl.name
+           FROM branches b
+           LEFT JOIN branches_locales bl ON bl._parent_id = b.id AND bl._locale = 'en'
+          ORDER BY b."order" NULLS LAST, b.id`,
       ),
     ])
 
@@ -175,7 +199,13 @@ export const runAvailability = async (month?: string): Promise<Availability | nu
       stock: rows.reduce((sum, room) => sum + (room.onSale ? room.quantity : 0), 0),
     }))
 
-    return { from: start.toISOString(), dates, rooms: rows, totals }
+    return {
+      from: start.toISOString(),
+      dates,
+      rooms: rows,
+      totals,
+      hotels: hotels.rows.map((row) => ({ id: row.id, name: row.name || `Hotel ${row.id}` })),
+    }
   } catch {
     return null
   }
