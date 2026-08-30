@@ -84,21 +84,22 @@ const band = (percent: number): string => {
 }
 
 /**
- * The four lines a room type gets.
+ * The five lines a room type gets.
  *
- * Price and Rooms to sell are typed into; Booked and Rooms left are counted
- * and cannot be. That is the extranet's own order — what you control first,
- * what it produced underneath — and it is why the grid is worth opening rather
- * than only reading: the two numbers a hotel changes are the two at the top.
+ * Price, Rooms to sell and Min stay are typed into; Booked and Rooms left are
+ * counted and cannot be. That is the extranet's own order — what you control
+ * first, what it produced underneath — and it is why the grid is worth opening
+ * rather than only reading: the numbers a hotel changes are the ones at the
+ * top.
  *
- * The name spans all four, so a room reads as one block rather than as four
+ * The name spans all five, so a room reads as one block rather than as five
  * rows that happen to be adjacent.
  */
 const RoomRows: React.FC<{ room: RoomRow; todayKey: string }> = ({ room, todayKey }) => {
   const name = shortRoomName(room.name, room.hotel)
 
   const nameCell = (
-    <th className={`${baseClass}__room`} rowSpan={4} scope="rowgroup">
+    <th className={`${baseClass}__room`} rowSpan={5} scope="rowgroup">
       <Link href={`/admin/collections/rooms/${room.id}`}>{name}</Link>
       <span className={`${baseClass}__room-note`}>
         {room.quantity} room{room.quantity === 1 ? '' : 's'}
@@ -134,6 +135,20 @@ const RoomRows: React.FC<{ room: RoomRow; todayKey: string }> = ({ room, todayKe
           date: night.date,
           set: night.set,
           value: night.roomsToSell,
+        }))}
+        roomId={room.id}
+        todayKey={todayKey}
+      />
+
+      <EditableRow
+        field="minStay"
+        kind="nights"
+        label="Min stay"
+        nights={room.nights.map((night) => ({
+          closed: night.closed,
+          date: night.date,
+          set: night.minStay !== null,
+          value: night.minStay,
         }))}
         roomId={room.id}
         todayKey={todayKey}

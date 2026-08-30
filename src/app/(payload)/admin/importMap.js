@@ -1,3 +1,4 @@
+import { default as default_4e344c45923c3ab3b4c71dfd909304d6 } from '@/components/admin/Reservation/Card'
 import { StayDateCell as StayDateCell_e05f6ac9ede25467f55f09817b54f69f } from '@/components/admin/cells'
 import { MoneyCell as MoneyCell_e05f6ac9ede25467f55f09817b54f69f } from '@/components/admin/cells'
 import { BookingStatusCell as BookingStatusCell_e05f6ac9ede25467f55f09817b54f69f } from '@/components/admin/cells'
@@ -40,6 +41,7 @@ import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } f
 
 /** @type import('payload').ImportMap */
 export const importMap = {
+  "@/components/admin/Reservation/Card#default": default_4e344c45923c3ab3b4c71dfd909304d6,
   "@/components/admin/cells#StayDateCell": StayDateCell_e05f6ac9ede25467f55f09817b54f69f,
   "@/components/admin/cells#MoneyCell": MoneyCell_e05f6ac9ede25467f55f09817b54f69f,
   "@/components/admin/cells#BookingStatusCell": BookingStatusCell_e05f6ac9ede25467f55f09817b54f69f,

@@ -126,6 +126,16 @@ export const ReservationSearch: React.FC = () => {
 
   const isSearch = searchParams.get('view') === 'search'
 
+  /**
+   * The spreadsheet of whatever is on the screen.
+   *
+   * The list's own query string is handed straight to the export, so a search
+   * for cancelled stays in September downloads cancelled stays in September.
+   * An export that ignored the filter would be four thousand rows and a second
+   * job, which is how these end up unused.
+   */
+  const exportHref = `/api/bookings/export?${searchParams.toString()}`
+
   return (
     <div className="mf-search">
       <Tabs tabs={bookingTabs()} />
@@ -204,6 +214,9 @@ export const ReservationSearch: React.FC = () => {
                 Clear
               </button>
             )}
+            <a className="mf-search__export" href={exportHref}>
+              Export
+            </a>
             <button className="mf-search__go" type="submit">
               Search
             </button>

@@ -132,6 +132,20 @@ const SELLABLE = (room: string, from: string, to: string) => `
     ), ${room}.quantity)::int
   )`
 
+/**
+ * Is this stay long enough for the night it starts on?
+ *
+ * Read from the arrival night only, which is the convention every booking site
+ * uses and the only one that makes sense: a three-night minimum on Friday
+ * should stop a Friday one-nighter, not stop somebody who arrived on Wednesday
+ * from staying through it. No row, or a row with no minimum, means no minimum.
+ */
+const MEETS_MIN_STAY = (room: string, from: string, nights: string) => `
+  COALESCE((
+    SELECT rr.min_stay FROM room_rates rr
+     WHERE rr.room_id = ${room}.id AND rr.date = ${from}
+  ), 0) <= ${nights}`
+
 const STAY_TOTAL = (room: string, from: string, to: string, nights: string) => `
   CASE WHEN ${room}.price_from IS NULL THEN NULL ELSE
     ${room}.price_from * ${nights} + COALESCE((
@@ -270,10 +284,22 @@ export const createBooking = async (
     const calendar = await client.query(
       `SELECT ${SELLABLE('r', '$2', '$3')} AS sellable,
               ${STAY_TOTAL('r', '$2', '$3', '$4')}::float AS stay_total,
+              ${MEETS_MIN_STAY('r', '$2', '$4')} AS long_enough,
+              COALESCE((SELECT rr.min_stay::int FROM room_rates rr
+                         WHERE rr.room_id = r.id AND rr.date = $2), 0) AS min_stay,
               r.currency
          FROM rooms r WHERE r.id = $1`,
       [input.roomId, input.checkIn, input.checkOut, nights],
     )
+
+    // Refused before the room count is even looked at, because "there is a
+    // room but not for one night" is a different answer and deserves to say so.
+    if (calendar.rows[0]?.long_enough === false) {
+      const least = calendar.rows[0].min_stay
+      throw new NoAvailabilityError(
+        `That date needs at least ${least} night${least === 1 ? '' : 's'}`,
+      )
+    }
 
     const sellable = calendar.rows[0]?.sellable ?? locked.rows[0].quantity
     if (taken.rows[0].taken >= sellable) throw new NoAvailabilityError()
@@ -441,6 +467,7 @@ export const availableRoomsAcross = async (
       WHERE r.branch_id = ANY($1)
         AND r.is_available IS NOT FALSE
         AND ($6::int IS NULL OR r.max_guests IS NULL OR r.max_guests >= $6::int)
+        AND ${MEETS_MIN_STAY('r', '$3', '$7')}
       ORDER BY r.price_from NULLS LAST, r.id`,
     [branchIds, OCCUPYING, checkIn, checkOut, locale, guests ?? null, nightsBetween(checkIn, checkOut)],
   )

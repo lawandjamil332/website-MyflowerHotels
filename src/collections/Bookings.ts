@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
+import { exportBookings } from './bookingExport'
 import { authenticated } from '../access/authenticated'
 import { awardPointsForBooking } from '../utilities/points'
 import { sendReviewRequest } from '../utilities/reviewEmail'
@@ -51,6 +52,8 @@ export const Bookings: CollectionConfig = {
     },
   },
   defaultSort: '-createdAt',
+  /** The list, as a spreadsheet, honouring whatever filter is on the screen. */
+  endpoints: [exportBookings],
   hooks: {
     afterChange: [
       async ({ doc, req, previousDoc }) => {
@@ -78,6 +81,17 @@ export const Bookings: CollectionConfig = {
     ],
   },
   fields: [
+    /**
+     * The reservation, said once at the top, before the form that edits it.
+     * A UI field: it stores nothing and validates nothing, it only draws.
+     */
+    {
+      name: 'summary',
+      type: 'ui',
+      admin: {
+        components: { Field: '@/components/admin/Reservation/Card' },
+      },
+    },
     {
       name: 'reference',
       type: 'text',

@@ -1,0 +1,154 @@
+/**
+ * The reservation card that sits above the booking form.
+ *
+ * Deliberately unlike a form: no boxes, no labels beside inputs, nothing that
+ * looks like it wants typing. It is the answer to the four questions somebody
+ * opens a booking to ask, and the fields underneath are where the answer gets
+ * changed.
+ */
+.mf-res {
+  margin-bottom: 22px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 10px;
+  background: var(--theme-elevation-0);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 6%);
+  overflow: hidden;
+
+  &__head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px 18px;
+    border-bottom: 1px solid var(--theme-elevation-100);
+  }
+
+  &__guest {
+    margin: 0;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  &__meta {
+    margin: 4px 0 0;
+    font-size: 12px;
+    color: var(--theme-elevation-500);
+  }
+
+  /**
+   * Three across, so six facts make two full rows.
+   *
+   * `auto-fit` fitted five and left the sixth alone beside a strip of empty
+   * grey, which reads as something missing rather than as a tidy end.
+   */
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    background: var(--theme-elevation-100);
+    border-bottom: 1px solid var(--theme-elevation-100);
+  }
+
+  &__cell {
+    display: grid;
+    gap: 3px;
+    padding: 12px 18px;
+    background: var(--theme-elevation-0);
+  }
+
+  &__label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--theme-elevation-500);
+  }
+
+  &__value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--theme-elevation-1000);
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--theme-elevation-100);
+  }
+
+  /**
+   * The phone number is the reason this screen is open half the time, so it is
+   * a button that dials rather than a string to copy out by hand.
+   */
+  &__action {
+    padding: 8px 14px;
+    border: 1px solid var(--theme-elevation-200);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--mf-blue);
+    text-decoration: none;
+    white-space: nowrap;
+
+    &:hover {
+      border-color: var(--mf-blue);
+      background: color-mix(in srgb, var(--mf-blue) 7%, var(--theme-elevation-0));
+    }
+  }
+
+  &__nights {
+    padding: 0 18px 14px;
+
+    & summary {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 0 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+
+      & span {
+        font-variant-numeric: tabular-nums;
+      }
+    }
+
+    & ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      border-top: 1px solid var(--theme-elevation-100);
+    }
+
+    & li {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 6px 0;
+      font-size: 13px;
+      border-bottom: 1px solid var(--theme-elevation-50);
+      font-variant-numeric: tabular-nums;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+
+  &__note {
+    margin: 8px 0 0;
+    font-size: 12px;
+    line-height: 1.45;
+    color: var(--theme-elevation-500);
+  }
+}
+
+@media (min-width: 700px) {
+  .mf-res__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

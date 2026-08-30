@@ -127,6 +127,7 @@
   }
 
   &__go,
+  &__export,
   &__clear {
     height: 38px;
     padding: 0 20px;
@@ -145,6 +146,19 @@
     &:hover {
       background: var(--mf-navy);
       border-color: var(--mf-navy);
+    }
+  }
+
+  &__export {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid var(--theme-elevation-200);
+    background: transparent;
+    color: var(--mf-blue);
+    text-decoration: none;
+
+    &:hover {
+      border-color: var(--mf-blue);
     }
   }
 

@@ -712,6 +712,10 @@ export interface RoomRate {
    * Nothing is sold that night, whatever is free.
    */
   closed?: boolean | null;
+  /**
+   * The fewest nights somebody arriving on this date may book. Empty means no minimum.
+   */
+  minStay?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1755,6 +1759,7 @@ export interface RoomRatesSelect<T extends boolean = true> {
   price?: T;
   roomsToSell?: T;
   closed?: T;
+  minStay?: T;
   updatedAt?: T;
   createdAt?: T;
 }

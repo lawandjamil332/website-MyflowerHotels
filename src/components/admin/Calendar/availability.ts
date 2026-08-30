@@ -42,6 +42,8 @@ export type Night = {
   price: number | null
   /** How many are offered — the room's quantity unless the calendar says otherwise. */
   roomsToSell: number
+  /** The fewest nights somebody arriving this night may book. */
+  minStay: number | null
   /** Nothing is sold this night, whatever is free. */
   closed: boolean
   /** True when a person has set one of the three above for this night. */
@@ -171,9 +173,10 @@ export const runAvailability = async (
         date: Date
         price: string | null
         rooms_to_sell: string | null
+        min_stay: string | null
         closed: boolean | null
       }>(
-        `SELECT rr.room_id, rr.date, rr.price, rr.rooms_to_sell, rr.closed
+        `SELECT rr.room_id, rr.date, rr.price, rr.rooms_to_sell, rr.min_stay, rr.closed
            FROM room_rates rr
           WHERE rr.date >= $1 AND rr.date < $2
             AND ($3::int IS NULL OR rr.room_id IN (SELECT id FROM rooms WHERE branch_id = $3::int))`,
@@ -182,13 +185,17 @@ export const runAvailability = async (
     ])
 
     // room id -> night index -> what was set for it.
-    const set = new Map<string, { price: number | null; roomsToSell: number | null; closed: boolean }>()
+    const set = new Map<
+      string,
+      { price: number | null; roomsToSell: number | null; minStay: number | null; closed: boolean }
+    >()
     for (const rate of rates.rows) {
       const index = Math.round((new Date(rate.date).getTime() - start.getTime()) / 86_400_000)
       if (index < 0 || index >= nights) continue
       set.set(`${rate.room_id}:${index}`, {
         price: rate.price === null ? null : Number(rate.price),
         roomsToSell: rate.rooms_to_sell === null ? null : Number(rate.rooms_to_sell),
+        minStay: rate.min_stay === null ? null : Number(rate.min_stay),
         closed: rate.closed === true,
       })
     }
@@ -234,6 +241,7 @@ export const runAvailability = async (
             // held back has two fewer to sell.
             free: closed ? 0 : Math.max(0, roomsToSell - counts[i]),
             price: own?.price ?? (room.price_from === null ? null : Number(room.price_from)),
+            minStay: own?.minStay ?? null,
             roomsToSell,
             closed,
             set: Boolean(own),

@@ -109,6 +109,21 @@ export const RoomRates: CollectionConfig = {
         },
       ],
     },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'minStay',
+          type: 'number',
+          min: 1,
+          admin: {
+            width: '33%',
+            description:
+              'The fewest nights somebody arriving on this date may book. Empty means no minimum.',
+          },
+        },
+      ],
+    },
   ],
   timestamps: true,
 }

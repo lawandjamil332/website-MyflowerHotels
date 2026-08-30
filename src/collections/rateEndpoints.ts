@@ -50,6 +50,7 @@ const staffOnly = (req: PayloadRequest) => (req.user ? null : refuse('Not allowe
 type Edit = {
   price?: number | null
   roomsToSell?: number | null
+  minStay?: number | null
   closed?: boolean
 }
 
@@ -65,6 +66,11 @@ const readEdit = (body: Record<string, unknown>): Edit | string => {
     const rooms = positive(body.roomsToSell)
     if (rooms === undefined) return 'That number of rooms is not a number'
     edit.roomsToSell = rooms
+  }
+  if ('minStay' in body) {
+    const minStay = positive(body.minStay)
+    if (minStay === undefined) return 'That minimum stay is not a number'
+    edit.minStay = minStay === 0 ? null : minStay
   }
   if ('closed' in body) {
     if (typeof body.closed !== 'boolean') return 'Open or closed, nothing else'
@@ -92,14 +98,16 @@ const write = async (
 
   const pool = dbPool(req.payload)
   const { rowCount } = await pool.query(
-    `INSERT INTO room_rates (room_id, date, price, rooms_to_sell, closed, created_at, updated_at)
-     SELECT room.id, night.day, $3, $4, COALESCE($5::boolean, false), now(), now()
-       FROM unnest($1::int[])       AS room(id)
-      CROSS JOIN unnest($2::timestamptz[]) AS night(day)
+    `INSERT INTO room_rates
+       (room_id, date, price, rooms_to_sell, min_stay, closed, created_at, updated_at)
+     SELECT room.id, night.day, $3, $4, $5, COALESCE($6::boolean, false), now(), now()
+       FROM unnest($1::int[])               AS room(id)
+      CROSS JOIN unnest($2::timestamptz[])  AS night(day)
      ON CONFLICT (room_id, date) DO UPDATE
-        SET price         = CASE WHEN $6 THEN $3 ELSE room_rates.price END,
-            rooms_to_sell = CASE WHEN $7 THEN $4 ELSE room_rates.rooms_to_sell END,
-            closed        = CASE WHEN $8 THEN COALESCE($5::boolean, false)
+        SET price         = CASE WHEN $7  THEN $3 ELSE room_rates.price END,
+            rooms_to_sell = CASE WHEN $8  THEN $4 ELSE room_rates.rooms_to_sell END,
+            min_stay      = CASE WHEN $9  THEN $5 ELSE room_rates.min_stay END,
+            closed        = CASE WHEN $10 THEN COALESCE($6::boolean, false)
                                  ELSE room_rates.closed END,
             updated_at    = now()`,
     [
@@ -107,9 +115,11 @@ const write = async (
       dates,
       edit.price ?? null,
       edit.roomsToSell ?? null,
+      edit.minStay ?? null,
       edit.closed ?? null,
       'price' in edit,
       'roomsToSell' in edit,
+      'minStay' in edit,
       'closed' in edit,
     ],
   )
@@ -120,7 +130,8 @@ const write = async (
   await pool.query(
     `DELETE FROM room_rates
       WHERE room_id = ANY($1::int[]) AND date = ANY($2::timestamptz[])
-        AND price IS NULL AND rooms_to_sell IS NULL AND closed IS NOT TRUE`,
+        AND price IS NULL AND rooms_to_sell IS NULL AND min_stay IS NULL
+        AND closed IS NOT TRUE`,
     [roomIds, dates],
   )
 

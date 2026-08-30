@@ -141,6 +141,36 @@ clean()
   clean()
 }
 
+// ---- A minimum stay ------------------------------------------------------
+{
+  const name = q(
+    `SELECT COALESCE(name, '') FROM rooms_locales WHERE _parent_id = ${room} AND _locale = 'en'`,
+  )
+
+  // Three nights minimum on the night they would arrive: a two-night stay is
+  // refused, and the same room over three nights is not.
+  rate(IN, { min_stay: 3 })
+
+  const short = await (
+    await fetch(`${base}/en/book?branch=${branch}&checkIn=${IN}&checkOut=${OUT}`)
+  ).text()
+  ok('a minimum stay hides a stay that is too short', !short.includes(name))
+
+  const longEnough = await (
+    await fetch(`${base}/en/book?branch=${branch}&checkIn=${IN}&checkOut=${day(123)}`)
+  ).text()
+  ok('and leaves a long enough one alone', longEnough.includes(name))
+
+  // The minimum belongs to the night of arrival, not to every night passed
+  // through: arriving the day before and staying two nights is fine.
+  const through = await (
+    await fetch(`${base}/en/book?branch=${branch}&checkIn=${day(119)}&checkOut=${day(121)}`)
+  ).text()
+  ok('and applies to the night of arrival, not to every night of the stay', through.includes(name))
+
+  clean()
+}
+
 clean()
 console.log(`\n${fails} failed`)
 process.exit(fails ? 1 : 0)

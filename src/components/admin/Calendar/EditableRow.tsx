@@ -45,7 +45,7 @@ type Props = {
   leading?: React.ReactNode
   roomId: number
   label: string
-  field: 'price' | 'roomsToSell'
+  field: 'minStay' | 'price' | 'roomsToSell'
   nights: EditableNight[]
   todayKey: string
   /**
@@ -57,11 +57,13 @@ type Props = {
    * directly to Client Components". Worth knowing before reaching for a
    * `render` prop anywhere else in this panel.
    */
-  kind: 'count' | 'money'
+  kind: 'count' | 'money' | 'nights'
 }
 
-const draw = (value: number | null, kind: 'count' | 'money'): string => {
-  if (value === null) return '—'
+const draw = (value: number | null, kind: 'count' | 'money' | 'nights'): string => {
+  // A minimum of none is the ordinary case and says nothing, rather than "0",
+  // which reads as a rule rather than as the absence of one.
+  if (value === null) return kind === 'nights' ? '·' : '—'
   return kind === 'money' ? formatNumber(Math.round(value)) : String(value)
 }
 
