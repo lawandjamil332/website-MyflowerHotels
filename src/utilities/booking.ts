@@ -94,6 +94,55 @@ export const nightsBetween = (checkIn: Date, checkOut: Date): number =>
   Math.round((checkOut.getTime() - checkIn.getTime()) / 86_400_000)
 
 /**
+ * How many of a room type are actually for sale across a stay, and what the
+ * stay costs, once the calendar has had its say.
+ *
+ * A room carries one price and one quantity. `room_rates` overrides either for
+ * a single night, or closes the night entirely — which is how a hotel really
+ * sells, and what the extranet's calendar edits. These two fragments are the
+ * only place that arithmetic is written, and every path that quotes or sells a
+ * room uses them, because three copies of it would be three chances to
+ * disagree about whether the 14th is available.
+ *
+ * SELLABLE is the smallest number of rooms offered on any night of the stay.
+ * A stay needs the same room on every one of its nights, so the tightest night
+ * governs the whole booking; LEAST against the room's own quantity covers the
+ * nights with no row at all, which is almost all of them.
+ *
+ * Note what this deliberately does not change: `taken` is still counted as
+ * every booking overlapping the range rather than per night. That over-counts
+ * — a stay leaving on the 3rd and one arriving on the 9th both count against
+ * the 5th — and it is the conservative direction. Availability can only come
+ * out smaller than the truth, never larger, so the one thing this must never
+ * do, which is sell the same room twice, it still cannot do.
+ *
+ * STAY_TOTAL is the room's price for every night, plus the difference for the
+ * nights that have a price of their own. Written that way round because a
+ * night with no row has no row to sum.
+ */
+const SELLABLE = (room: string, from: string, to: string) => `
+  LEAST(
+    ${room}.quantity::int,
+    COALESCE((
+      SELECT MIN(CASE WHEN rr.closed THEN 0
+                      ELSE COALESCE(rr.rooms_to_sell, ${room}.quantity) END)
+        FROM room_rates rr
+       WHERE rr.room_id = ${room}.id
+         AND rr.date >= ${from} AND rr.date < ${to}
+    ), ${room}.quantity)::int
+  )`
+
+const STAY_TOTAL = (room: string, from: string, to: string, nights: string) => `
+  CASE WHEN ${room}.price_from IS NULL THEN NULL ELSE
+    ${room}.price_from * ${nights} + COALESCE((
+      SELECT SUM(COALESCE(rr.price, ${room}.price_from) - ${room}.price_from)
+        FROM room_rates rr
+       WHERE rr.room_id = ${room}.id
+         AND rr.date >= ${from} AND rr.date < ${to}
+    ), 0)
+  END`
+
+/**
  * How many rooms of this type are free for these dates.
  *
  * Two stays overlap when one starts before the other ends and ends after the
@@ -108,7 +157,7 @@ export const roomsLeft = async (
   if (checkOut <= checkIn) throw new InvalidDatesError()
 
   const { rows } = await pool(payload).query(
-    `SELECT r.quantity::int AS quantity,
+    `SELECT ${SELLABLE('r', '$3', '$4')} AS quantity,
             COALESCE((
               SELECT COUNT(*) FROM bookings b
               WHERE b.room_id = r.id
@@ -207,9 +256,41 @@ export const createBooking = async (
       [input.roomId, OCCUPYING, input.checkIn, input.checkOut],
     )
 
-    if (taken.rows[0].taken >= locked.rows[0].quantity) throw new NoAvailabilityError()
-
     const nights = nightsBetween(input.checkIn, input.checkOut)
+
+    /**
+     * What the calendar says about these particular nights.
+     *
+     * Read after the lock and inside the same transaction, so it is the same
+     * answer the availability check gets and nobody can close a night between
+     * the two. A separate statement rather than part of the `FOR UPDATE`
+     * above, because the lock is on the room and this reads another table —
+     * keeping them apart is what makes the lock easy to reason about.
+     */
+    const calendar = await client.query(
+      `SELECT ${SELLABLE('r', '$2', '$3')} AS sellable,
+              ${STAY_TOTAL('r', '$2', '$3', '$4')}::float AS stay_total,
+              r.currency
+         FROM rooms r WHERE r.id = $1`,
+      [input.roomId, input.checkIn, input.checkOut, nights],
+    )
+
+    const sellable = calendar.rows[0]?.sellable ?? locked.rows[0].quantity
+    if (taken.rows[0].taken >= sellable) throw new NoAvailabilityError()
+
+    /**
+     * The price is decided here, not accepted from the form.
+     *
+     * `totalAmount` arrived as a hidden input, which means it arrived from the
+     * browser, which means it was whatever the browser said. It was also
+     * priceFrom × nights, which is the brochure price and wrong for every date
+     * the calendar has touched. Both problems have the same fix: work it out
+     * from the room and its rates, at the moment of sale, and use what the
+     * form said only when the room has no price at all to work from.
+     */
+    const quoted = calendar.rows[0]?.stay_total ?? null
+    const totalAmount = quoted ?? input.totalAmount ?? null
+    const currency = quoted !== null ? calendar.rows[0]?.currency ?? 'IQD' : input.currency ?? 'IQD'
 
     // Retried on the vanishingly rare chance two references collide; the unique
     // index is what makes that detectable rather than silently duplicated.
@@ -235,8 +316,8 @@ export const createBooking = async (
             input.checkOut,
             input.guests ?? null,
             nights,
-            input.totalAmount ?? null,
-            input.currency ?? 'IQD',
+            totalAmount,
+            currency,
             input.notes ?? null,
             input.guestId ?? null,
             input.idempotencyKey ?? null,
@@ -289,6 +370,13 @@ export type AvailableRoom = {
   bathrooms: number | null
   hasKitchen: boolean | null
   left: number
+  /**
+   * What these particular nights cost, once any night with a price of its own
+   * has been counted. Null when the room has no price at all. Use this rather
+   * than multiplying `priceFrom` by the nights — that is the brochure price
+   * and it is wrong for every date the calendar has touched.
+   */
+  stayTotal: number | null
 }
 
 /**
@@ -336,7 +424,8 @@ export const availableRoomsAcross = async (
             r.living_rooms::int AS living_rooms,
             r.bathrooms::int    AS bathrooms,
             r.has_kitchen,
-            r.quantity::int     AS quantity,
+            ${SELLABLE('r', '$3', '$4')} AS quantity,
+            ${STAY_TOTAL('r', '$3', '$4', '$7')}::float AS stay_total,
             COALESCE((
               SELECT COUNT(*) FROM bookings b
                WHERE b.room_id = r.id
@@ -353,7 +442,7 @@ export const availableRoomsAcross = async (
         AND r.is_available IS NOT FALSE
         AND ($6::int IS NULL OR r.max_guests IS NULL OR r.max_guests >= $6::int)
       ORDER BY r.price_from NULLS LAST, r.id`,
-    [branchIds, OCCUPYING, checkIn, checkOut, locale, guests ?? null],
+    [branchIds, OCCUPYING, checkIn, checkOut, locale, guests ?? null, nightsBetween(checkIn, checkOut)],
   )
 
   return rows
@@ -371,6 +460,7 @@ export const availableRoomsAcross = async (
       bathrooms: (row.bathrooms as number) ?? null,
       hasKitchen: (row.has_kitchen as boolean) ?? null,
       left: Math.max(0, (row.quantity as number) - (row.taken as number)),
+      stayTotal: (row.stay_total as number) ?? null,
     }))
     .filter((room: AvailableRoom) => room.left > 0)
 }

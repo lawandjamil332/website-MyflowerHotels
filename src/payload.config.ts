@@ -16,6 +16,7 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Reviews } from './collections/Reviews'
+import { RoomRates } from './collections/RoomRates'
 import { Rooms } from './collections/Rooms'
 import { Offers } from './collections/Offers'
 import { Users } from './collections/Users'
@@ -231,6 +232,9 @@ export default buildConfig({
     // Property — the hotels themselves.
     Branches,
     Rooms,
+    // What a night costs and how many are for sale, when it is not the room's
+    // own price. Hidden from the nav: it is edited in the calendar.
+    RoomRates,
     Offers,
     Media,
     // Settings — twice a year.

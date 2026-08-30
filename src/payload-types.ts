@@ -75,6 +75,7 @@ export interface Config {
     'point-entries': PointEntry;
     branches: Branch;
     rooms: Room;
+    'room-rates': RoomRate;
     offers: Offer;
     media: Media;
     users: User;
@@ -108,6 +109,7 @@ export interface Config {
     'point-entries': PointEntriesSelect<false> | PointEntriesSelect<true>;
     branches: BranchesSelect<false> | BranchesSelect<true>;
     rooms: RoomsSelect<false> | RoomsSelect<true>;
+    'room-rates': RoomRatesSelect<false> | RoomRatesSelect<true>;
     offers: OffersSelect<false> | OffersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -684,6 +686,32 @@ export interface PointEntry {
    * The stay that earned them, where there is one.
    */
   booking?: (number | null) | Booking;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "room-rates".
+ */
+export interface RoomRate {
+  id: number;
+  room: number | Room;
+  /**
+   * The night, not the day of arrival.
+   */
+  date: string;
+  /**
+   * Leave empty to charge the room's own price that night.
+   */
+  price?: number | null;
+  /**
+   * Leave empty to sell as many as the hotel has.
+   */
+  roomsToSell?: number | null;
+  /**
+   * Nothing is sold that night, whatever is free.
+   */
+  closed?: boolean | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1454,6 +1482,10 @@ export interface PayloadLockedDocument {
         value: number | Room;
       } | null)
     | ({
+        relationTo: 'room-rates';
+        value: number | RoomRate;
+      } | null)
+    | ({
         relationTo: 'offers';
         value: number | Offer;
       } | null)
@@ -1710,6 +1742,19 @@ export interface RoomsSelect<T extends boolean = true> {
   amenities?: T;
   quantity?: T;
   isAvailable?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "room-rates_select".
+ */
+export interface RoomRatesSelect<T extends boolean = true> {
+  room?: T;
+  date?: T;
+  price?: T;
+  roomsToSell?: T;
+  closed?: T;
   updatedAt?: T;
   createdAt?: T;
 }

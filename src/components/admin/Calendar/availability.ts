@@ -38,6 +38,14 @@ export type Night = {
   free: number
   /** Rooms of this type sold. */
   sold: number
+  /** What this night costs — the room's price unless the calendar says otherwise. */
+  price: number | null
+  /** How many are offered — the room's quantity unless the calendar says otherwise. */
+  roomsToSell: number
+  /** Nothing is sold this night, whatever is free. */
+  closed: boolean
+  /** True when a person has set one of the three above for this night. */
+  set: boolean
 }
 
 export type RoomRow = {
@@ -116,7 +124,7 @@ export const runAvailability = async (
     // is a lot to read when the question is about one building.
     const onlyHotel = hotel && /^\d+$/.test(hotel) ? Number(hotel) : null
 
-    const [rooms, stays, hotels] = await Promise.all([
+    const [rooms, stays, hotels, rates] = await Promise.all([
       pool.query<{
         id: number
         name: string
@@ -155,7 +163,35 @@ export const runAvailability = async (
            LEFT JOIN branches_locales bl ON bl._parent_id = b.id AND bl._locale = 'en'
           ORDER BY b."order" NULLS LAST, b.id`,
       ),
+
+      // Only the nights somebody has actually set. Almost every night has no
+      // row, and the grid fills those in from the room itself.
+      pool.query<{
+        room_id: number
+        date: Date
+        price: string | null
+        rooms_to_sell: string | null
+        closed: boolean | null
+      }>(
+        `SELECT rr.room_id, rr.date, rr.price, rr.rooms_to_sell, rr.closed
+           FROM room_rates rr
+          WHERE rr.date >= $1 AND rr.date < $2
+            AND ($3::int IS NULL OR rr.room_id IN (SELECT id FROM rooms WHERE branch_id = $3::int))`,
+        [start, end, onlyHotel],
+      ),
     ])
+
+    // room id -> night index -> what was set for it.
+    const set = new Map<string, { price: number | null; roomsToSell: number | null; closed: boolean }>()
+    for (const rate of rates.rows) {
+      const index = Math.round((new Date(rate.date).getTime() - start.getTime()) / 86_400_000)
+      if (index < 0 || index >= nights) continue
+      set.set(`${rate.room_id}:${index}`, {
+        price: rate.price === null ? null : Number(rate.price),
+        roomsToSell: rate.rooms_to_sell === null ? null : Number(rate.rooms_to_sell),
+        closed: rate.closed === true,
+      })
+    }
 
     // room id -> how many of that room are taken on each night of the month.
     const taken = new Map<number, number[]>()
@@ -185,18 +221,35 @@ export const runAvailability = async (
         onSale: room.is_available !== false,
         price: room.price_from === null ? null : Number(room.price_from),
         currency: room.currency || 'IQD',
-        nights: dates.map((date, i) => ({
-          date,
-          sold: counts[i],
-          free: Math.max(0, quantity - counts[i]),
-        })),
+        nights: dates.map((date, i) => {
+          const own = set.get(`${room.id}:${i}`)
+          const roomsToSell = own?.roomsToSell ?? quantity
+          const closed = own?.closed ?? false
+
+          return {
+            date,
+            sold: counts[i],
+            // What is left is measured against what is actually offered that
+            // night, not against what the hotel owns. A night with two rooms
+            // held back has two fewer to sell.
+            free: closed ? 0 : Math.max(0, roomsToSell - counts[i]),
+            price: own?.price ?? (room.price_from === null ? null : Number(room.price_from)),
+            roomsToSell,
+            closed,
+            set: Boolean(own),
+          }
+        }),
       }
     })
 
     const totals = dates.map((date, i) => ({
       date,
       sold: rows.reduce((sum, room) => sum + room.nights[i].sold, 0),
-      stock: rows.reduce((sum, room) => sum + (room.onSale ? room.quantity : 0), 0),
+      stock: rows.reduce(
+        (sum, room) =>
+          sum + (room.onSale && !room.nights[i].closed ? room.nights[i].roomsToSell : 0),
+        0,
+      ),
     }))
 
     return {

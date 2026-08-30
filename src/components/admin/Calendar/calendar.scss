@@ -13,7 +13,7 @@
 .mf-calendar {
   --room-col: 200px;
   --metric-col: 92px;
-  --day-col: 46px;
+  --day-col: 62px;
 
   display: block;
   padding: clamp(16px, 3vw, 30px) clamp(12px, 3vw, 32px) 48px;
@@ -592,4 +592,296 @@
   clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
+}
+
+/* ---- Typing into the grid ---------------------------------------------- */
+
+/**
+ * A cell you can change.
+ *
+ * Drawn as a plain number until the cursor is over it, then as a field. An
+ * input in every cell would be a wall of eight hundred boxes; a number that
+ * only becomes a box when you reach for it is a calendar you can also read.
+ *
+ * A night somebody has set carries a blue underline, so "this weekend is
+ * priced" is visible without comparing it to the room's ordinary price.
+ */
+.mf-calendar {
+  &__edit {
+    padding: 0;
+    text-align: center;
+    border-inline-end: 1px solid var(--theme-elevation-50);
+    background: var(--theme-elevation-0);
+
+    &[data-weekend='true'] {
+      background: var(--theme-elevation-50);
+    }
+
+    &[data-set='true'] {
+      box-shadow: inset 0 -2px 0 var(--mf-blue);
+    }
+
+    &[data-closed='true'] {
+      background: repeating-linear-gradient(
+        135deg,
+        var(--theme-elevation-50) 0 6px,
+        var(--theme-elevation-0) 6px 12px
+      );
+      color: var(--theme-elevation-500);
+    }
+
+    &[data-saving='true'] {
+      opacity: 0.45;
+    }
+
+    &[data-failed='true'] {
+      background: color-mix(in srgb, var(--mf-red) 18%, var(--theme-elevation-0));
+    }
+
+    &[data-today='true'] {
+      box-shadow: inset 2px 0 0 var(--mf-blue), inset -2px 0 0 var(--mf-blue);
+    }
+
+    &[data-today='true'][data-set='true'] {
+      box-shadow: inset 2px 0 0 var(--mf-blue), inset -2px 0 0 var(--mf-blue),
+        inset 0 -2px 0 var(--mf-blue);
+    }
+  }
+
+  &__edit-btn {
+    display: block;
+    width: 100%;
+    padding: 6px 2px;
+    appearance: none;
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    color: inherit;
+    cursor: text;
+
+    &:hover {
+      background: color-mix(in srgb, var(--mf-blue) 10%, transparent);
+      box-shadow: inset 0 0 0 1px var(--mf-blue);
+    }
+
+    &:focus-visible {
+      outline: var(--accessibility-outline);
+      outline-offset: -2px;
+    }
+  }
+
+  &__input {
+    width: 100%;
+    height: 30px;
+    padding: 0 2px;
+    border: 0;
+    outline: 2px solid var(--mf-blue);
+    outline-offset: -2px;
+    background: var(--theme-elevation-0);
+    color: var(--theme-elevation-1000);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__row--left &__cell {
+    border-block-end: 1px solid var(--theme-elevation-100);
+  }
+}
+
+/* ---- Changing many nights at once -------------------------------------- */
+
+.mf-bulk__open,
+.mf-bulk__go,
+.mf-bulk__close {
+  appearance: none;
+  border-radius: 8px;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mf-bulk__open {
+  margin-bottom: 14px;
+  padding: 9px 16px;
+  border: 1px solid var(--theme-elevation-200);
+  background: var(--theme-elevation-0);
+  font-size: 14px;
+  color: var(--mf-blue);
+
+  &:hover {
+    border-color: var(--mf-blue);
+  }
+}
+
+.mf-bulk {
+  margin-bottom: 16px;
+  padding: 16px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: 10px;
+  background: var(--theme-elevation-0);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 6%);
+
+  &__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+
+    & h2 {
+      margin: 0;
+      font-size: 16px;
+    }
+  }
+
+  &__close {
+    padding: 5px 12px;
+    border: 1px solid var(--theme-elevation-200);
+    background: transparent;
+    font-size: 13px;
+    color: var(--theme-elevation-700);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  &__field {
+    display: grid;
+    gap: 5px;
+    min-width: 0;
+
+    &--wide {
+      grid-column: 1 / -1;
+    }
+
+    & > span {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--theme-elevation-500);
+    }
+
+    & input,
+    & select {
+      height: 38px;
+      padding: 0 10px;
+      border: 1px solid var(--theme-elevation-200);
+      border-radius: 6px;
+      background: var(--theme-input-bg, var(--theme-elevation-0));
+      color: var(--theme-elevation-1000);
+      font: inherit;
+      font-size: 15px;
+
+      &:focus {
+        outline: none;
+        border-color: var(--mf-blue);
+        box-shadow: 0 0 0 3px color-mix(in srgb, var(--mf-blue) 20%, transparent);
+      }
+    }
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 5px;
+    appearance: none;
+    padding: 6px 11px;
+    border: 1px solid var(--theme-elevation-200);
+    border-radius: 16px;
+    background: transparent;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--theme-elevation-700);
+    cursor: pointer;
+
+    & em {
+      font-style: normal;
+      font-size: 11px;
+      font-weight: 400;
+      opacity: 0.7;
+    }
+
+    &:hover {
+      border-color: var(--theme-elevation-400);
+    }
+
+    &[data-on='true'] {
+      border-color: var(--mf-blue);
+      background: color-mix(in srgb, var(--mf-blue) 14%, var(--theme-elevation-0));
+      color: var(--mf-blue);
+    }
+  }
+
+  &__rooms {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  &__rooms-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--theme-elevation-500);
+  }
+
+  &__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--theme-elevation-100);
+  }
+
+  &__summary {
+    margin: 0;
+    margin-inline-end: auto;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--theme-elevation-700);
+  }
+
+  &__said {
+    margin: 0;
+    font-size: 13px;
+    color: var(--mf-blue);
+  }
+
+  &__go {
+    padding: 10px 22px;
+    border: 1px solid var(--mf-blue);
+    background: var(--mf-blue);
+    font-size: 14px;
+    color: #fff;
+
+    &:hover:not(:disabled) {
+      background: var(--mf-navy);
+      border-color: var(--mf-navy);
+    }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
 }

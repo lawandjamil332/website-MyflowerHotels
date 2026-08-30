@@ -94,7 +94,16 @@ export default async function BookPage({ params, searchParams }: Args) {
 
   const nights = searchable ? nightsBetween(checkIn!, checkOut!) : 0
   const chosen = rooms.find((room) => room.id === chosenRoomId) ?? null
-  const total = chosen?.priceFrom ? chosen.priceFrom * nights : null
+  /**
+   * What these nights cost, not what a night costs times how many.
+   *
+   * `stayTotal` already counts any night the hotel has given a price of its
+   * own in the calendar. The multiplication is kept behind it for a room whose
+   * rates have never been touched and for the moment before this page has a
+   * room chosen — the same number in both cases, and the fallback is what
+   * stops a missing rate showing a guest nothing at all.
+   */
+  const total = chosen?.stayTotal ?? (chosen?.priceFrom ? chosen.priceFrom * nights : null)
 
   // What this stay is worth in points, worked out here so the confirm step can
   // say it before the guest commits rather than leaving them to find out.
@@ -297,7 +306,7 @@ export default async function BookPage({ params, searchParams }: Args) {
                             {room.priceFrom ? (
                               <p className="flex items-baseline gap-2">
                                 <Price
-                                  amount={room.priceFrom * nights}
+                                  amount={room.stayTotal ?? room.priceFrom * nights}
                                   currency={room.currency}
                                   locale={locale}
                                   className="font-display text-2xl text-ink"

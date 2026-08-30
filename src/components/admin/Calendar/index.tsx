@@ -9,6 +9,8 @@ import { formatDateLong, formatPrice } from '@/utilities/format'
 
 import type { RoomRow } from './availability'
 
+import { BulkEdit } from './BulkEdit'
+import { EditableRow } from './EditableRow'
 import { ScrollToToday } from './ScrollToToday'
 import { monthKey, monthStart, runAvailability, shiftMonth } from './availability'
 import './calendar.scss'
@@ -81,45 +83,66 @@ const band = (percent: number): string => {
   return 'low'
 }
 
-/** The two lines a room type gets: what is left, and what is taken. */
+/**
+ * The four lines a room type gets.
+ *
+ * Price and Rooms to sell are typed into; Booked and Rooms left are counted
+ * and cannot be. That is the extranet's own order — what you control first,
+ * what it produced underneath — and it is why the grid is worth opening rather
+ * than only reading: the two numbers a hotel changes are the two at the top.
+ *
+ * The name spans all four, so a room reads as one block rather than as four
+ * rows that happen to be adjacent.
+ */
 const RoomRows: React.FC<{ room: RoomRow; todayKey: string }> = ({ room, todayKey }) => {
   const name = shortRoomName(room.name, room.hotel)
 
+  const nameCell = (
+    <th className={`${baseClass}__room`} rowSpan={4} scope="rowgroup">
+      <Link href={`/admin/collections/rooms/${room.id}`}>{name}</Link>
+      <span className={`${baseClass}__room-note`}>
+        {room.quantity} room{room.quantity === 1 ? '' : 's'}
+        {room.price !== null && ` · usually ${formatPrice(room.price, room.currency)}`}
+      </span>
+      {!room.onSale && <span className={`${baseClass}__off-chip`}>Not on sale</span>}
+    </th>
+  )
+
   return (
     <>
-      <tr className={`${baseClass}__row`}>
-        <th className={`${baseClass}__room`} rowSpan={2} scope="rowgroup">
-          <Link href={`/admin/collections/rooms/${room.id}`}>{name}</Link>
-          <span className={`${baseClass}__room-note`}>
-            {room.quantity} room{room.quantity === 1 ? '' : 's'}
-            {room.price !== null && ` · from ${formatPrice(room.price, room.currency)}`}
-          </span>
-          {!room.onSale && <span className={`${baseClass}__off-chip`}>Not on sale</span>}
-        </th>
+      <EditableRow
+        field="price"
+        kind="money"
+        label={`Price ${room.currency}`}
+        leading={nameCell}
+        nights={room.nights.map((night) => ({
+          closed: night.closed,
+          date: night.date,
+          set: night.set,
+          value: night.price,
+        }))}
+        roomId={room.id}
+        todayKey={todayKey}
+      />
 
-        <th className={`${baseClass}__metric`} scope="row">
-          Rooms left
-        </th>
-
-        {room.nights.map((night) => (
-          <td
-            className={`${baseClass}__cell`}
-            data-state={state(night.free, room.quantity, room.onSale)}
-            data-today={night.date.slice(0, 10) === todayKey ? 'true' : undefined}
-            data-weekend={isWeekend(new Date(night.date)) ? 'true' : undefined}
-            key={night.date}
-            title={`${name} · ${formatDateLong(night.date)} · ${night.sold} of ${room.quantity} sold`}
-          >
-            {room.onSale ? night.free : '—'}
-          </td>
-        ))}
-      </tr>
+      <EditableRow
+        field="roomsToSell"
+        kind="count"
+        label="Rooms to sell"
+        nights={room.nights.map((night) => ({
+          closed: night.closed,
+          date: night.date,
+          set: night.set,
+          value: night.roomsToSell,
+        }))}
+        roomId={room.id}
+        todayKey={todayKey}
+      />
 
       <tr className={`${baseClass}__row ${baseClass}__row--sold`}>
         <th className={`${baseClass}__metric`} scope="row">
           Booked
         </th>
-
         {room.nights.map((night) => (
           <td
             className={`${baseClass}__sold`}
@@ -129,6 +152,24 @@ const RoomRows: React.FC<{ room: RoomRow; todayKey: string }> = ({ room, todayKe
             key={night.date}
           >
             {night.sold}
+          </td>
+        ))}
+      </tr>
+
+      <tr className={`${baseClass}__row ${baseClass}__row--left`}>
+        <th className={`${baseClass}__metric`} scope="row">
+          Rooms left
+        </th>
+        {room.nights.map((night) => (
+          <td
+            className={`${baseClass}__cell`}
+            data-state={state(night.free, night.roomsToSell, room.onSale && !night.closed)}
+            data-today={night.date.slice(0, 10) === todayKey ? 'true' : undefined}
+            data-weekend={isWeekend(new Date(night.date)) ? 'true' : undefined}
+            key={night.date}
+            title={`${name} · ${formatDateLong(night.date)} · ${night.sold} of ${night.roomsToSell} sold`}
+          >
+            {room.onSale && !night.closed ? night.free : '—'}
           </td>
         ))}
       </tr>
@@ -249,6 +290,18 @@ const CalendarView: React.FC<AdminViewServerProps> = async ({ initPageResult, se
             )
           })}
         </nav>
+
+        {availability && availability.rooms.length > 0 && (
+          <BulkEdit
+            from={availability.dates[0].slice(0, 10)}
+            rooms={availability.rooms.map((room) => ({
+              hotel: room.hotel,
+              id: room.id,
+              name: shortRoomName(room.name, room.hotel) ?? room.name,
+            }))}
+            to={availability.dates[availability.dates.length - 1].slice(0, 10)}
+          />
+        )}
 
         {!availability || availability.rooms.length === 0 ? (
           <p className={`${baseClass}__empty`}>
