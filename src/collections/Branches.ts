@@ -7,7 +7,9 @@ import { branchAmenityOptions } from '../fields/amenities'
 import {
   ERBIL,
   coordsFromMapsUrl,
+  coordsFromPaste,
   isShortMapsLink,
+  mapsSearchUrl,
   placeIdFrom,
   resolveShortMapsLink,
 } from '../utilities/mapsUrl'
@@ -55,6 +57,20 @@ export const Branches: CollectionConfig = {
         }
 
         if (!data?.googleMapsUrl) return data
+
+        // A coordinate pair pasted into the link box, handled before anything
+        // else and even when a pin is already stored. It is the only paste
+        // that carries no ambiguity — somebody typing two numbers into this
+        // box is correcting the pin, and that has to win over the pin already
+        // there or a wrong map could never be fixed from this screen.
+        const pasted = coordsFromPaste(data.googleMapsUrl, ERBIL)
+        if (pasted) {
+          data.latitude = pasted.latitude
+          data.longitude = pasted.longitude
+          data.googleMapsUrl = mapsSearchUrl(pasted)
+          return data
+        }
+
         if (typeof data.latitude === 'number' && typeof data.longitude === 'number') return data
 
         // Bounded to Erbil: a link that reads as somewhere else was misread,
@@ -167,10 +183,22 @@ export const Branches: CollectionConfig = {
             {
               name: 'googleMapsUrl',
               type: 'text',
-              label: 'Google Maps URL',
+              label: 'Google Maps link or coordinates',
               admin: {
                 description:
-                  "Paste the Share link from Google Maps. The map on the hotel's page appears by itself — the coordinates below fill in from this link when you save.",
+                  'Paste the Share link from Google Maps — or, better, right-click the hotel on ' +
+                  'Google Maps and click the numbers at the top of the menu to copy them, then ' +
+                  'paste those. The numbers always work; a short share link sometimes cannot be ' +
+                  "read. Either way the map on the hotel's page appears by itself when you save.",
+              },
+            },
+            {
+              // The sentence that says whether the paste above actually
+              // produced a map, so a hotel cannot sit without one unnoticed.
+              name: 'mapPin',
+              type: 'ui',
+              admin: {
+                components: { Field: '@/components/admin/MapPin' },
               },
             },
             {

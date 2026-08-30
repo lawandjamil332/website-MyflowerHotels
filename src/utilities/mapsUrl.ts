@@ -71,6 +71,41 @@ export const coordsFromMapsUrl = (url?: string | null, bounds?: Bounds): Coords 
   return null
 }
 
+/**
+ * A coordinate pair, pasted on its own.
+ *
+ * Google Maps' right-click menu opens with the coordinates of the point under
+ * the cursor, and clicking them copies "36.191100, 44.009200" to the
+ * clipboard. That is the one path to a pin that cannot fail: no redirect to
+ * follow, no network, nothing for a blocked or slow Google to break. Two of
+ * these hotels sat without a map for a month because their Share links could
+ * not be resolved, and the owner had no way of knowing and no way to fix it —
+ * so the box that says "paste the Maps link" takes the numbers too.
+ *
+ * Anchored to the whole string deliberately. Loose in the middle of a URL this
+ * would match a viewport, a bounding box, or half a place ID.
+ */
+export const coordsFromPaste = (input?: string | null, bounds?: Bounds): Coords | null => {
+  const match = (input ?? '').trim().match(/^(-?\d+(?:\.\d+)?)\s*[,;]\s*(-?\d+(?:\.\d+)?)$/)
+  if (!match) return null
+
+  const lat = Number(match[1])
+  const lng = Number(match[2])
+  return valid(lat, lng) && within(lat, lng, bounds) ? { latitude: lat, longitude: lng } : null
+}
+
+/**
+ * A plain Google Maps link to a point — what a pasted coordinate pair becomes.
+ *
+ * The pair is stored as latitude and longitude, but the field it was pasted
+ * into is read elsewhere as a web address: the "Get directions" link on the
+ * contact page, `hasMap` in the structured data, the address in llms-full.txt.
+ * Leaving two numbers sitting in it would put a broken link in all three, so
+ * the paste is turned into the address it means.
+ */
+export const mapsSearchUrl = ({ latitude, longitude }: Coords): string =>
+  `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`
+
 /** Google's Share button hands out these; the coordinates are behind a redirect. */
 export const isShortMapsLink = (url?: string | null): boolean =>
   Boolean(url && /(?:maps\.app\.goo\.gl|goo\.gl\/maps)/i.test(url))

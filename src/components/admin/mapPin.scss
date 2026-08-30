@@ -1,0 +1,38 @@
+/**
+ * The map-pin notice under the Google Maps box.
+ *
+ * Two states and no icon: a working map and a missing one read differently
+ * enough in words, and the colour is the left edge rather than the text, so
+ * the sentence stays in the panel's own ink and is legible in both themes
+ * whatever the hue does.
+ */
+.mf-pin {
+  margin: -0.75rem 0 1.25rem;
+  padding: 0.65rem 0.85rem;
+  border-radius: 4px;
+  border-left: 3px solid var(--mf-blue);
+  background: var(--theme-elevation-50);
+  max-width: 60rem;
+
+  &--ok {
+    border-left-color: var(--mf-green);
+  }
+
+  &--missing {
+    border-left-color: var(--mf-amber);
+  }
+
+  &__line {
+    margin: 0;
+    /* The owner reads this screen on a phone as often as a desk, and 16px is
+       the floor below which iOS zooms and does not zoom back. */
+    font-size: 16px;
+    line-height: 1.5;
+    color: var(--theme-elevation-800);
+  }
+
+  &__coords {
+    font-family: var(--font-mono, monospace);
+    white-space: nowrap;
+  }
+}

@@ -318,7 +318,7 @@ export interface Branch {
    */
   nearby?: string | null;
   /**
-   * Paste the Share link from Google Maps. The map on the hotel's page appears by itself — the coordinates below fill in from this link when you save.
+   * Paste the Share link from Google Maps — or, better, right-click the hotel on Google Maps and click the numbers at the top of the menu to copy them, then paste those. The numbers always work; a short share link sometimes cannot be read. Either way the map on the hotel's page appears by itself when you save.
    */
   googleMapsUrl?: string | null;
   /**
