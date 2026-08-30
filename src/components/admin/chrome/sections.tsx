@@ -82,6 +82,12 @@ const icons = {
       <circle cx="12" cy="7" r="4" />
     </>,
   ),
+  analytics: svg(
+    <>
+      <path d="M3 21h18" />
+      <path d="M6 21V12M11 21V4M16 21v-6M21 21V9" />
+    </>,
+  ),
   settings: svg(
     <>
       <circle cx="12" cy="12" r="3.2" />
@@ -139,6 +145,13 @@ export const SECTIONS: Section[] = [
       { label: 'Reviews', href: '/admin/collections/reviews' },
       { label: 'Points', href: '/admin/collections/point-entries' },
     ],
+  },
+  {
+    key: 'analytics',
+    label: 'Analytics',
+    href: '/admin/analytics',
+    icon: icons.analytics,
+    links: [],
   },
   {
     key: 'settings',

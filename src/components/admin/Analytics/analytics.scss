@@ -1,0 +1,271 @@
+/**
+ * Analytics.
+ *
+ * One hue for every chart, because every chart is one series. The two values
+ * were not chosen by eye: they are what the palette checker passes on each
+ * surface. #0057b8 clears 3:1 against white; on the near-black of the dark
+ * theme it needed lifting, and the panel's own link blue was too light — L
+ * 0.734 against a band topping out at 0.67, which is a bar that glares. So the
+ * chart carries its own token, one step darker than the text blue, and the two
+ * jobs stay separate: text is read, a bar is compared.
+ */
+
+.mf-analytics {
+  --mf-chart: #0057b8;
+
+  display: block;
+  padding: clamp(16px, 3vw, 30px) clamp(12px, 3vw, 32px) 56px;
+  background: var(--theme-bg);
+  min-height: 60vh;
+}
+
+html[data-theme='dark'] .mf-analytics {
+  --mf-chart: #5490e8;
+}
+
+.mf-analytics {
+  &__head {
+    margin-bottom: 18px;
+
+    & h1 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    & p {
+      margin: 6px 0 0;
+      max-width: 70ch;
+      color: var(--theme-elevation-600);
+    }
+  }
+
+  &__empty {
+    padding: 28px;
+    border: 1px dashed var(--theme-elevation-200);
+    border-radius: 10px;
+    background: var(--theme-elevation-0);
+    color: var(--theme-elevation-600);
+  }
+
+  // ---- The row of figures ------------------------------------------------
+
+  &__tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  &__tile {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 14px 16px;
+    border: 1px solid var(--theme-elevation-100);
+    border-radius: 10px;
+    background: var(--theme-elevation-0);
+  }
+
+  &__tile-value {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--mf-chart);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__tile-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--theme-elevation-800);
+  }
+
+  &__tile-note {
+    font-size: 12px;
+    color: var(--theme-elevation-500);
+  }
+
+  &__money {
+    display: flex;
+    flex-direction: column;
+    font-size: 17px;
+    line-height: 1.25;
+  }
+
+  // ---- A chart and what it is about --------------------------------------
+
+  &__panel {
+    margin-bottom: 16px;
+    padding: 16px 18px 12px;
+    border: 1px solid var(--theme-elevation-100);
+    border-radius: 10px;
+    background: var(--theme-elevation-0);
+
+    & h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    & > p {
+      margin: 5px 0 12px;
+      max-width: 78ch;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--theme-elevation-600);
+    }
+  }
+
+  &__pair {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 16px;
+
+    & > * {
+      margin-bottom: 0;
+    }
+  }
+
+  // ---- How they ended ----------------------------------------------------
+
+  &__outcomes {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+
+    & th,
+    & td {
+      padding: 7px 10px 7px 0;
+      text-align: start;
+      border-bottom: 1px solid var(--theme-elevation-50);
+    }
+
+    & thead th {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--theme-elevation-500);
+    }
+
+    & tbody tr:last-child th,
+    & tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    & td:last-child {
+      width: 45%;
+      padding-right: 0;
+    }
+  }
+
+  &__share {
+    display: block;
+    height: 8px;
+    border-radius: 4px;
+    background: var(--theme-elevation-100);
+    overflow: hidden;
+  }
+
+  &__share-fill {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+    background: var(--mf-chart);
+  }
+
+  &__foot {
+    max-width: 78ch;
+    margin: 6px 0 0;
+    font-size: 12px;
+    line-height: 1.55;
+    color: var(--theme-elevation-500);
+  }
+}
+
+// ---- The charts themselves -----------------------------------------------
+
+.mf-chart {
+  margin: 0;
+
+  &__svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  /** Recessive: one step off the surface, hairline, solid — never dashed. */
+  &__grid {
+    stroke: var(--theme-elevation-100);
+    stroke-width: 1;
+  }
+
+  &__axis {
+    stroke: var(--theme-elevation-200);
+    stroke-width: 1;
+  }
+
+  &__bar {
+    fill: var(--mf-chart);
+  }
+
+  /* Text wears text tokens, never the colour of the data. A label in the bar's
+     own blue would be identity where there is only one thing to identify. */
+  &__tick,
+  &__label {
+    fill: var(--theme-elevation-500);
+    font-size: 11px;
+    text-anchor: end;
+  }
+
+  &__label {
+    text-anchor: middle;
+  }
+
+  &__peak {
+    fill: var(--theme-elevation-800);
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  &__table {
+    margin-top: 6px;
+
+    & summary {
+      padding: 6px 0;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--theme-elevation-600);
+      cursor: pointer;
+    }
+
+    & table {
+      width: 100%;
+      max-width: 520px;
+      border-collapse: collapse;
+      font-variant-numeric: tabular-nums;
+    }
+
+    & th,
+    & td {
+      padding: 4px 10px 4px 0;
+      text-align: start;
+      font-size: 12px;
+      border-bottom: 1px solid var(--theme-elevation-50);
+    }
+
+    & thead th {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--theme-elevation-500);
+    }
+  }
+
+  &__note {
+    color: var(--theme-elevation-500);
+  }
+}

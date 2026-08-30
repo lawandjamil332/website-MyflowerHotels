@@ -147,6 +147,14 @@ export default buildConfig({
           Component: '@/components/admin/Calendar#default',
           path: '/calendar',
         },
+        /**
+         * A year of trading. Every number on it has been in the database since
+         * the first booking; none of it was ever added up.
+         */
+        analytics: {
+          Component: '@/components/admin/Analytics#default',
+          path: '/analytics',
+        },
       },
     },
     /**
