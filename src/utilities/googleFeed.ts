@@ -191,10 +191,17 @@ export type FeedNight = {
  * there is no price to quote. All four are the same answer to a guest — you
  * cannot have it — and Google is told the same thing in each case.
  */
-export const feedNights = async (payload: Payload, days = FEED_DAYS): Promise<FeedNight[]> => {
+export const feedNights = async (
+  payload: Payload,
+  options: { days?: number; from?: Date; roomIds?: number[] } = {},
+): Promise<FeedNight[]> => {
   const pool = dbPool(payload)
-  const from = startOfDayUtc(new Date())
+  const days = options.days ?? FEED_DAYS
+  const from = startOfDayUtc(options.from ?? new Date())
   const to = new Date(from.getTime() + days * 86_400_000)
+  // Narrowed when only a few rooms changed, so telling Google about one edited
+  // night does not mean rebuilding ninety days for fifty-seven rooms.
+  const only = options.roomIds?.length ? options.roomIds : null
 
   const [rooms, rates, stays] = await Promise.all([
     pool.query<RoomRow>(
@@ -204,7 +211,9 @@ export const feedNights = async (payload: Payload, days = FEED_DAYS): Promise<Fe
          LEFT JOIN rooms_locales rl ON rl._parent_id = r.id AND rl._locale = 'en'
          LEFT JOIN branches b       ON b.id = r.branch_id
         WHERE b.status IS DISTINCT FROM 'openingSoon'
+          AND ($1::int[] IS NULL OR r.id = ANY($1::int[]))
         ORDER BY r.branch_id, r.id`,
+      [only],
     ),
     pool.query<{
       room_id: number
@@ -214,13 +223,16 @@ export const feedNights = async (payload: Payload, days = FEED_DAYS): Promise<Fe
       closed: boolean | null
     }>(
       `SELECT room_id, date, price, rooms_to_sell, closed
-         FROM room_rates WHERE date >= $1 AND date < $2`,
-      [from, to],
+         FROM room_rates
+        WHERE date >= $1 AND date < $2
+          AND ($3::int[] IS NULL OR room_id = ANY($3::int[]))`,
+      [from, to, only],
     ),
     pool.query<{ room_id: number | null; check_in: Date; check_out: Date }>(
       `SELECT room_id, check_in, check_out FROM bookings
-        WHERE status = ANY($3) AND check_in < $2 AND check_out > $1`,
-      [from, to, OCCUPYING],
+        WHERE status = ANY($3) AND check_in < $2 AND check_out > $1
+          AND ($4::int[] IS NULL OR room_id = ANY($4::int[]))`,
+      [from, to, OCCUPYING, only],
     ),
   ])
 
@@ -277,6 +289,34 @@ export const feedNights = async (payload: Payload, days = FEED_DAYS): Promise<Fe
   return out
 }
 
+/** One night, as Google's Result element: a price, or a refusal. */
+export const resultFor = (night: FeedNight): string =>
+  [
+    '  <Result>',
+    `    <Property>${night.branchId}</Property>`,
+    `    <RoomID>${night.roomId}</RoomID>`,
+    `    <Checkin>${night.date}</Checkin>`,
+    '    <Nights>1</Nights>',
+    night.price === null
+      ? '    <Unavailable><NoVacancy/></Unavailable>'
+      : [
+          `    <Baserate currency="${escape(night.currency)}">${night.price}</Baserate>`,
+          `    <Tax currency="${escape(night.currency)}">0</Tax>`,
+          `    <OtherFees currency="${escape(night.currency)}">0</OtherFees>`,
+        ].join('\n'),
+    '  </Result>',
+  ].join('\n')
+
+/** Wraps Results in the envelope Google's endpoint expects. */
+export const transaction = (results: string[]): string =>
+  [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    `<Transaction timestamp="${new Date().toISOString()}" id="${Date.now()}">`,
+    ...results,
+    '</Transaction>',
+    '',
+  ].join('\n')
+
 /**
  * The rates document, as Google's Transaction message.
  *
@@ -299,7 +339,7 @@ export const ratesFeed = async (payload: Payload, days = FEED_DAYS): Promise<str
         WHERE b.status IS DISTINCT FROM 'openingSoon'
         ORDER BY r.branch_id, r.id`,
     ),
-    feedNights(payload, days),
+    feedNights(payload, { days }),
   ])
 
   const properties = rooms.rows.map((room) =>
@@ -317,23 +357,7 @@ export const ratesFeed = async (payload: Payload, days = FEED_DAYS): Promise<str
       .join('\n'),
   )
 
-  const results = nights.map((night) =>
-    [
-      '  <Result>',
-      `    <Property>${night.branchId}</Property>`,
-      `    <RoomID>${night.roomId}</RoomID>`,
-      `    <Checkin>${night.date}</Checkin>`,
-      '    <Nights>1</Nights>',
-      night.price === null
-        ? '    <Unavailable><NoVacancy/></Unavailable>'
-        : [
-            `    <Baserate currency="${escape(night.currency)}">${night.price}</Baserate>`,
-            `    <Tax currency="${escape(night.currency)}">0</Tax>`,
-            `    <OtherFees currency="${escape(night.currency)}">0</OtherFees>`,
-          ].join('\n'),
-      '  </Result>',
-    ].join('\n'),
-  )
+  const results = nights.map(resultFor)
 
   const now = new Date().toISOString()
 

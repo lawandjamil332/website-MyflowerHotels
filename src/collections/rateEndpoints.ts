@@ -1,6 +1,7 @@
 import type { Endpoint, PayloadRequest } from 'payload'
 
 import { dbPool } from '../utilities/db'
+import { pushNights } from '../utilities/googlePush'
 
 /**
  * Writing to the calendar.
@@ -157,6 +158,13 @@ export const setRate: Omit<Endpoint, 'root'> = {
     if (typeof edit === 'string') return refuse(edit)
 
     await write(req, [roomId], [date], edit)
+
+    // Fired and forgotten: a price is saved the moment the write returns, and
+    // nobody typing into the calendar should wait on Google to acknowledge it.
+    void pushNights(req.payload, [{ date: date.toISOString().slice(0, 10), roomId }]).catch(
+      () => {},
+    )
+
     return Response.json({ ok: true, nights: 1 })
   },
 }
@@ -205,6 +213,14 @@ export const bulkRates: Omit<Endpoint, 'root'> = {
     if (typeof edit === 'string') return refuse(edit)
 
     await write(req, roomIds, dates, edit)
+
+    void pushNights(
+      req.payload,
+      roomIds.flatMap((roomId) =>
+        dates.map((value) => ({ date: value.toISOString().slice(0, 10), roomId })),
+      ),
+    ).catch(() => {})
+
     return Response.json({ ok: true, nights: dates.length, rooms: roomIds.length })
   },
 }

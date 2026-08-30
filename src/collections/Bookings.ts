@@ -3,6 +3,7 @@ import type { CollectionConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { exportBookings } from './bookingExport'
 import { authenticated } from '../access/authenticated'
+import { nightsOfStay, pushNights } from '../utilities/googlePush'
 import { awardPointsForBooking } from '../utilities/points'
 import { sendReviewRequest } from '../utilities/reviewEmail'
 
@@ -56,6 +57,25 @@ export const Bookings: CollectionConfig = {
   endpoints: [exportBookings],
   hooks: {
     afterChange: [
+      /**
+       * Tell Google what this booking did to the room.
+       *
+       * The more urgent half of the feed. A price Google has wrong for an hour
+       * costs a little; a room Google still believes is free after the website
+       * sold it is how a hotel ends up with two guests holding the same key.
+       * So every change of status — sold, cancelled, no-show — re-sends that
+       * stay's nights, because all three move what is left.
+       */
+      async ({ doc, req, previousDoc }) => {
+        const roomId = typeof doc.room === 'object' ? doc.room?.id : doc.room
+        if (roomId && doc.checkIn && doc.checkOut && doc.status !== previousDoc?.status) {
+          void pushNights(
+            req.payload,
+            nightsOfStay(Number(roomId), new Date(doc.checkIn), new Date(doc.checkOut)),
+          ).catch(() => {})
+        }
+        return doc
+      },
       async ({ doc, req, previousDoc }) => {
         // Points land when a stay is marked as having happened, and only on the
         // change into that state — not on every later edit of a completed
