@@ -62,6 +62,33 @@ export const runChecks = async (): Promise<Check[] | null> => {
       })
     }
 
+    /**
+     * A hotel with no pin on the map.
+     *
+     * This began as a missing map on the branch page, which is bad enough. It
+     * became the first thing on this list to block money: Google Hotel Center
+     * matches a property to a real building by its coordinates, and a hotel
+     * without them cannot be sent at all. Two of the four are in that state
+     * right now, which means two of the four can never appear beside
+     * Booking.com in the box on their own Google listing, however good the
+     * rest of the site gets.
+     *
+     * Paste the hotel's Google Maps link into the hotel and the pin is read
+     * out of it — there is nothing to look up by hand.
+     */
+    const noPin = hotels.filter(
+      (h) => h.status !== 'openingSoon' && (h.latitude == null || h.longitude == null),
+    )
+    if (noPin.length) {
+      checks.push({
+        title: `${noPin.length} hotel${noPin.length > 1 ? 's have' : ' has'} no map pin`,
+        why: 'No map on the page, and Google cannot be sent the prices for a hotel it cannot place.',
+        detail: names(noPin),
+        weight: 'high',
+        href: '/admin/collections/branches',
+      })
+    }
+
     // "Hotel near the Citadel" is one of the commonest shapes this question
     // takes, and no street name answers it.
     const noNearby = hotels.filter((h) => !h.nearby)

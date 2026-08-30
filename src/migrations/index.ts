@@ -39,6 +39,7 @@ import * as migration_20260826_140000_local_claim_checked from './20260826_14000
 import * as migration_20260826_150000_branch_postal_code from './20260826_150000_branch_postal_code'
 import * as migration_20260830_090000_room_rates from './20260830_090000_room_rates'
 import * as migration_20260830_100000_room_rates_min_stay from './20260830_100000_room_rates_min_stay'
+import * as migration_20260830_110000_google_feed from './20260830_110000_google_feed'
 
 export const migrations = [
   {
@@ -247,5 +248,10 @@ export const migrations = [
     up: migration_20260830_100000_room_rates_min_stay.up,
     down: migration_20260830_100000_room_rates_min_stay.down,
     name: '20260830_100000_room_rates_min_stay',
+  },
+  {
+    up: migration_20260830_110000_google_feed.up,
+    down: migration_20260830_110000_google_feed.down,
+    name: '20260830_110000_google_feed',
   },
 ]

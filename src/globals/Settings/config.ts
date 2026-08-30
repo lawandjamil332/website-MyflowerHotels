@@ -72,6 +72,35 @@ export const Settings: GlobalConfig = {
        * site says only the part that needs no checking: four hotels, one
        * family, no foreign operator.
        */
+      /**
+       * Whether Google may have these hotels' prices.
+       *
+       * The box on a Google listing that reads "Booking.com — IQD 72,421" is
+       * Hotel Center, and it reads a feed, not a website: no amount of pages
+       * or markup puts a hotel in it. Switching this on serves the two
+       * documents Google needs — the property list at /google/hotels.xml and
+       * the rates at /google/rates.xml — built from the same rooms and
+       * calendar the website sells from, so the feed cannot quote a price the
+       * site would not honour.
+       *
+       * Off by default, and switching it on does not by itself put anything on
+       * Google: somebody still has to open a Hotel Center account and point it
+       * at those two addresses. This only decides whether the site is willing
+       * to answer.
+       */
+      name: 'googleFeed',
+      type: 'checkbox',
+      label: 'Offer prices to Google',
+      defaultValue: false,
+      admin: {
+        position: 'sidebar',
+        description:
+          'Serves the price feed Google Hotel Center reads, so My Flower can appear beside ' +
+          'Booking.com and Agoda on the Google listing. Needs a Hotel Center account pointed ' +
+          'at /google/hotels.xml as well — this switch only makes the site willing.',
+      },
+    },
+    {
       name: 'localClaimCheckedOn',
       type: 'date',
       label: 'Ownership claim last checked',

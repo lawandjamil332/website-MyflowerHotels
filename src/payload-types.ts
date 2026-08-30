@@ -2372,6 +2372,10 @@ export interface Setting {
    */
   ratesValidUntil?: string | null;
   /**
+   * Serves the price feed Google Hotel Center reads, so My Flower can appear beside Booking.com and Agoda on the Google listing. Needs a Hotel Center account pointed at /google/hotels.xml as well — this switch only makes the site willing.
+   */
+  googleFeed?: boolean | null;
+  /**
    * Set this and the About page adds: of every hotel brand in Erbil, none we know of has more branches than we do — with this date beside it. Leave empty and the line does not appear. Re-check it once a year; an out-of-date claim is worse than none.
    */
   localClaimCheckedOn?: string | null;
@@ -2487,6 +2491,7 @@ export interface Footer {
 export interface SettingsSelect<T extends boolean = true> {
   siteName?: T;
   ratesValidUntil?: T;
+  googleFeed?: T;
   localClaimCheckedOn?: T;
   establishedYear?: T;
   stars?: T;
