@@ -83,6 +83,35 @@ npm run test:e2e       # 18 suites, against a running site — source .env first
   `large` (1400) or `xlarge` (1920) sizes and heroes fall back to the original.
   That is an upload problem, not a code one.
 
+## Google Hotels — where this actually stands
+
+The site can already do its half. `/google/hotels.xml` lists the four hotels
+with their pins, `/google/rates.xml` serves ninety days from the same calendar
+the site sells from, and every rate written pushes to Google's ARI endpoint
+immediately. All of it is behind "Offer prices to Google" in Site settings and
+serves 404 until that is on. `GOOGLE_ARI_ENDPOINT/USERNAME/PASSWORD` are unset,
+so the push is a no-op until an account exists.
+
+What is missing is not code. **Google does not take rates from a hotel's own
+website.** It takes them from an approved connectivity partner. Two facts worth
+not rediscovering:
+
+- The owner-facing interest form (submitted 31 Aug 2026) auto-replies within the
+  hour from `no-reply-support` with a form letter. It is not a decision and
+  nobody reads the submission.
+- That letter offers managing rates by hand through Google Business Profile.
+  **That route closed on 30 July 2025** — Google's own page for the article the
+  letter links (`hotelprices/answer/10684696`) says self-service rates ended and
+  a partner is now required. Do not spend time on it.
+
+So there is one door with two ways through: apply as a connectivity partner
+(`hotelprices/answer/11946933`, "Step 1: Tell us about your company" — the
+integration already exists, which is unusual for an applicant), or adopt a
+partner from `ads.google.com/hotels/partners/`. The second works sooner and
+costs the thing this project has been protecting all along: prices would live in
+the partner's system, and the calendar becomes a second place to type a number.
+If it comes to that, push to the partner rather than retyping.
+
 ## What this site does not claim
 
 The owner has asked more than once for the site to say it is the biggest hotel
