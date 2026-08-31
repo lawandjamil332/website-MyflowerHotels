@@ -42,6 +42,7 @@ import * as migration_20260830_100000_room_rates_min_stay from './20260830_10000
 import * as migration_20260830_110000_google_feed from './20260830_110000_google_feed'
 import * as migration_20260830_120000_pin_hotels_2_and_4 from './20260830_120000_pin_hotels_2_and_4'
 import * as migration_20260831_090000_my_flower_4_address from './20260831_090000_my_flower_4_address'
+import * as migration_20260831_100000_nearby from './20260831_100000_nearby'
 
 export const migrations = [
   {
@@ -265,5 +266,10 @@ export const migrations = [
     up: migration_20260831_090000_my_flower_4_address.up,
     down: migration_20260831_090000_my_flower_4_address.down,
     name: '20260831_090000_my_flower_4_address',
+  },
+  {
+    up: migration_20260831_100000_nearby.up,
+    down: migration_20260831_100000_nearby.down,
+    name: '20260831_100000_nearby',
   },
 ]
