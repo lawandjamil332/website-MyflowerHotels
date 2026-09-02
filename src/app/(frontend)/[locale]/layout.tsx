@@ -106,8 +106,17 @@ export default async function LocaleLayout({ children, params }: Args) {
             __html: `document.documentElement.classList.add('js')`,
           }}
         />
-        <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        {/* The tab icon was a navy square with gold petals that nobody at the
+            hotel recognised — a mark drawn here rather than the group's own,
+            on the reasoning that a detailed logo turns to mush at 16px. It
+            does lose detail at that size; it is still theirs, and a stranger's
+            flower on the tab is worse than a small version of the real one.
+            The SVG is gone, and every size below is cut from the actual mark.
+            Listed smallest first, so a browser picking the first workable
+            entry does not download 192px to draw 16. */}
+        <link href="/favicon.ico" rel="icon" sizes="16x16 32x32 48x48" />
         <link href="/favicon-32.png" rel="icon" type="image/png" sizes="32x32" />
+        <link href="/favicon-192.png" rel="icon" type="image/png" sizes="192x192" />
         <link href="/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180" />
         {/* The icons existed in /public and nothing pointed at the manifest,
             so "Add to Home Screen" saved a browser screenshot rather than the

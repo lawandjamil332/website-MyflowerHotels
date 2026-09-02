@@ -28,8 +28,8 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: '#f1ede4',
     theme_color: '#0f2f4a',
     icons: [
-      { src: '/favicon.svg', sizes: 'any', type: 'image/svg+xml' },
       { src: '/favicon-32.png', sizes: '32x32', type: 'image/png' },
+      { src: '/favicon-192.png', sizes: '192x192', type: 'image/png' },
       { src: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
       // "maskable" lets Android crop it into whatever shape the launcher uses
       // instead of dropping the square onto a white tile.
