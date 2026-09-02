@@ -34,7 +34,7 @@ export function PageHero({
   return (
     <section
       className={cn(
-        'relative flex items-end overflow-hidden bg-ink',
+        'relative flex items-end overflow-hidden bg-bark',
         size === 'tall'
           ? 'h-[52svh] max-h-[28rem] min-h-[19rem]'
           : 'h-[38svh] max-h-[22rem] min-h-[15rem]',
@@ -48,13 +48,19 @@ export function PageHero({
         fallbackSrc={fallbackSrc}
         priority
         tone="ink"
-        imageClassName="object-[center_26%]"
+        imageClassName="object-[center_30%] saturate-[0.82] contrast-[1.06]"
       />
       {imageUrl ? (
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-black/88 via-black/45 to-black/60"
-        />
+        <>
+          {/* The same two-layer treatment as the homepage: a warm multiply so
+              the photograph belongs to the palette, then a vertical gradient
+              so the type on it stays legible. */}
+          <div aria-hidden="true" className="absolute inset-0 bg-bark/30 mix-blend-multiply" />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-bark/88 via-bark/45 to-bark/60"
+          />
+        </>
       ) : null}
 
       <div

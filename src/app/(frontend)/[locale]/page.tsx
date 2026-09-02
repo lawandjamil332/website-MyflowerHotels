@@ -179,7 +179,7 @@ export default async function HomePage({ params }: Args) {
           photograph again. Height comes from the content rather than a fixed
           vh, so nothing is ever clipped in the language with the longest
           labels. */}
-      <section className="relative flex min-h-[34rem] flex-col overflow-hidden bg-ink lg:min-h-[40rem]">
+      <section className="relative flex min-h-[34rem] flex-col overflow-hidden bg-bark lg:min-h-[40rem]">
         <PhotoFrame
           src={heroUrl}
           alt={mediaAlt(heroBranch?.heroImage) || siteName}
@@ -188,11 +188,24 @@ export default async function HomePage({ params }: Args) {
           fallbackSrc={shippedPhoto(heroBranch?.slug)}
           priority
           tone="ink"
-          imageClassName="object-[center_38%]"
+          // A slight grade, and the reason is the photographs rather than the
+          // design. Every picture this site has is a phone snapshot of a
+          // building facade in flat daylight, and dropped straight onto a page
+          // they read as documentation. Pulling a little saturation out and a
+          // little contrast in settles them into one warm register instead of
+          // four different afternoons, which is most of what "art-directed"
+          // means when the photography cannot be reshot.
+          imageClassName="object-[center_38%] saturate-[0.82] contrast-[1.06]"
         />
+        {/* Two layers. The warm one ties the picture to the palette — a flat
+            black scrim over a cool photograph leaves the hero grey while the
+            rest of the page is ivory and garnet, and that mismatch is half of
+            why the top of the page felt like a different site. The vertical
+            gradient underneath it is what keeps the type legible. */}
+        <div aria-hidden="true" className="absolute inset-0 bg-bark/30 mix-blend-multiply" />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/35"
+          className="absolute inset-0 bg-gradient-to-t from-bark/85 via-bark/25 to-bark/40"
         />
         <div aria-hidden="true" className="hero-glow absolute inset-0" />
 
@@ -264,17 +277,22 @@ export default async function HomePage({ params }: Args) {
         <section className="bg-sand">
           <div className={cn(shell, sectionY)}>
             <SectionHeading
+              eyebrow={t.home.introEyebrow}
               title={t.home.introTitle}
               lead={t.home.introBody}
               action={{ href: `/${locale}/about`, label: t.nav.about }}
             />
 
-            {/* Two across on a phone, not one. Five numbers stacked in a
-                single column ran to about five hundred pixels of scrolling to
-                deliver five short facts — and they are meant to be taken in at
-                a glance, which a column cannot do. They are short enough to
-                pair. */}
-            <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 sm:gap-x-8 sm:gap-y-9 lg:mt-12 lg:grid-cols-3 xl:grid-cols-5">
+            {/* Five facts on one rule, each ranged left in its own column.
+                They were five centred blocks, which is the arrangement a
+                template reaches for and the one that reads as weakest: five
+                numbers each finding its own middle line up with nothing, so
+                the row has no spine. Ranged left against a hairline they read
+                as a table of facts — which is what they are — and the eye runs
+                along them instead of hopping.
+                Two across on a phone rather than five stacked: they are meant
+                to be taken in at a glance, and a column of five cannot be. */}
+            <ul className="-mx-4 mt-12 grid grid-cols-2 gap-px border-y border-line bg-line sm:-mx-5 lg:mt-14 lg:grid-cols-3 xl:grid-cols-5">
               {[
                 // Dropped rather than shown as zero when the branch query comes
                 // back empty: "0 hotels in Erbil" is worse than saying nothing.
@@ -308,21 +326,18 @@ export default async function HomePage({ params }: Args) {
               ]
                 .filter((c): c is { value: string; label: string; note?: string } => c !== null)
                 .map((credit, i) => (
-                  <Reveal key={credit.label} delay={i * 90} className="text-center">
+                  <Reveal key={credit.label} delay={i * 80} className="bg-sand px-4 py-7 sm:px-5">
                     {/* Sized down from the four-item version: "2 million" is
                         several times the width of "4", and at the old size it
                         broke its column before it broke the line. */}
-                    <p className="font-display text-3xl leading-tight text-balance text-ink sm:text-4xl">
+                    <p className="font-display text-[1.9rem] leading-none text-balance text-ink sm:text-[2.15rem]">
                       {credit.value}
                     </p>
-                    {/* text-balance because these labels are no longer all
-                        two words — the guest one now names its scope, and left
-                        alone it broke with a single word on the last line. */}
-                    <p className="mt-2.5 text-[0.9rem] text-balance text-muted-ink">
+                    <p className="mt-3 text-[0.88rem] leading-snug text-muted-ink">
                       {credit.label}
                     </p>
                     {credit.note && (
-                      <p className="mt-1 text-[0.78rem] leading-snug text-balance text-muted-ink/80">
+                      <p className="mt-1.5 text-[0.78rem] leading-snug text-muted-ink/80">
                         {credit.note}
                       </p>
                     )}
@@ -343,8 +358,10 @@ export default async function HomePage({ params }: Args) {
           className={cn(shell, 'scroll-mt-[calc(var(--site-header-h,4.5rem)+5rem)]', sectionY)}
         >
           <SectionHeading
+            eyebrow={t.branchesPage.eyebrow}
             title={count(t.home.chooseBranch)}
             lead={t.home.chooseBranchLead}
+            action={{ href: `/${locale}/branches`, label: t.branchesPage.gridTitle }}
             className="mb-10 lg:mb-12"
           />
 
@@ -372,6 +389,7 @@ export default async function HomePage({ params }: Args) {
           <section className="bg-sand">
             <div className={cn(shell, sectionY)}>
               <SectionHeading
+                eyebrow={t.home.offersEverywhere}
                 title={t.home.offersTitle}
                 lead={t.home.offersLead}
                 className="mb-10 lg:mb-12"
@@ -403,7 +421,7 @@ export default async function HomePage({ params }: Args) {
         <section>
           <div className={cn(shell, sectionY)}>
             <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-              <Reveal className="relative aspect-4/3 overflow-hidden rounded-2xl bg-ink lg:aspect-3/2">
+              <Reveal className="relative aspect-4/3 overflow-hidden rounded-2xl bg-bark lg:aspect-3/2">
                 <PhotoFrame
                   src={mediaUrl(interludeBranch?.heroImage, 'large')}
                   alt={mediaAlt(interludeBranch?.heroImage) || siteName}
@@ -415,6 +433,7 @@ export default async function HomePage({ params }: Args) {
               </Reveal>
 
               <Reveal delay={120}>
+                <p className="eyebrow mb-3.5">{t.home.introEyebrow}</p>
                 <h2 className="font-display display-lg text-balance text-ink">
                   {count(t.home.interlude)}
                 </h2>
@@ -437,15 +456,23 @@ export default async function HomePage({ params }: Args) {
             mark of the thing it is talking about now. */}
         <section className="bg-sand">
           <div className={cn(shell, sectionY)}>
-            <SectionHeading title={t.home.assuranceTitle} className="mb-10 lg:mb-12" />
-            <div className="mx-auto grid max-w-5xl gap-5 sm:grid-cols-3 sm:gap-6">
+            <SectionHeading
+              eyebrow={t.home.ctaEyebrow}
+              title={t.home.assuranceTitle}
+              className="mb-10 lg:mb-12"
+            />
+            <div className="grid gap-5 sm:grid-cols-3 sm:gap-6">
               {t.home.assurance.map((item, i) => (
                 <Reveal key={item.title} delay={i * 90} className="h-full">
-                  <div className="flex h-full flex-col items-center rounded-2xl border border-line bg-card p-7 text-center">
+                  {/* Ranged left, like the heading above it and the cards in
+                      every rail. Centred text inside a bordered box is the
+                      shape a template makes; here the words start where every
+                      other word in the band starts. */}
+                  <div className="flex h-full flex-col rounded-2xl border border-line bg-card p-7">
                     <span className="text-brand" aria-hidden="true">
                       {assuranceMarks[i] ?? assuranceMarks[0]}
                     </span>
-                    <h3 className="font-display mt-4 text-xl leading-snug text-ink sm:text-2xl">
+                    <h3 className="font-display mt-5 text-xl leading-snug text-ink sm:text-[1.4rem]">
                       {item.title}
                     </h3>
                     <p className="mt-3 text-[0.98rem] leading-relaxed text-muted-ink">
@@ -462,9 +489,10 @@ export default async function HomePage({ params }: Args) {
           <section>
             <div className={cn(shell, sectionY)}>
               <SectionHeading
+                eyebrow={t.home.roomsEyebrow}
                 title={t.home.featuredRooms}
                 lead={t.home.roomsLead}
-                action={{ href: `/${locale}/rooms`, label: t.nav.rooms }}
+                action={{ href: `/${locale}/rooms`, label: t.roomsPage.title }}
                 className="mb-10 lg:mb-12"
               />
               <CardRail label={t.nav.rooms}>
@@ -501,7 +529,7 @@ export default async function HomePage({ params }: Args) {
 
         {/* Closing band. A photograph rather than a flat colour, so the page
             hands over to the footer on an image. */}
-        <section className="relative flex min-h-[26rem] items-center overflow-hidden bg-ink">
+        <section className="relative flex min-h-[26rem] items-center overflow-hidden bg-bark">
           {mediaUrl(closingBranch?.heroImage, 'xlarge') ? (
             <Image
               src={mediaUrl(closingBranch?.heroImage, 'xlarge')}

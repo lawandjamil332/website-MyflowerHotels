@@ -83,7 +83,7 @@ export function Gallery({ items, className }: { items: GalleryItem[]; className?
         <div
           role="dialog"
           aria-modal="true"
-          className="fixed inset-0 z-[60] flex flex-col bg-ink/97 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex flex-col bg-bark/97 backdrop-blur-sm"
         >
           <div className="flex items-center justify-between px-5 py-5 text-white sm:px-8">
             <span className="text-xs tracking-[0.2em] tabular-nums text-white/60">

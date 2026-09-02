@@ -50,7 +50,7 @@ export default function LocaleError({
   // guest lands on when something has already gone wrong would have looked like
   // the site had failed twice. Every other page opens dark; so does this one.
   return (
-    <section className="flex min-h-[70svh] items-center bg-ink text-center">
+    <section className="flex min-h-[70svh] items-center bg-bark text-center">
       <div className="mx-auto w-full max-w-xl px-6 pt-[calc(var(--site-header-h,4.5rem)+3rem)] pb-20">
         <p className="text-[0.72rem] font-semibold tracking-[0.14em] text-white/70 uppercase rtl:tracking-normal">
           {t.errors.eyebrow}

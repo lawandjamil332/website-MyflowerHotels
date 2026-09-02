@@ -10,23 +10,19 @@ import '@fontsource/ibm-plex-sans/600.css'
 import '@fontsource/ibm-plex-sans-arabic/400.css'
 import '@fontsource/ibm-plex-sans-arabic/500.css'
 import '@fontsource/ibm-plex-sans-arabic/600.css'
-// Headings. Latin subsets only for Cormorant — the Arabic and Kurdish glyphs
-// come from Noto Naskh, so shipping its Cyrillic and Vietnamese ranges would
-// be weight nobody on this site ever renders.
+// Headings. Latin subsets only for Fraunces — the Arabic and Kurdish glyphs
+// come from Noto Naskh, so shipping ranges this site never draws would be
+// weight paid for on every first visit and never used.
 //
-// 600 is the one that matters and it was the one missing. Every heading on
-// this site is set in `.font-display`, which asks for 600 — and the body sets
-// `font-synthesis-weight: none`, so a browser with no 600 face may not fake
-// one. It took the nearest it had, 500, and every headline on every page has
-// been rendering a weight lighter than the design asks for. Cormorant is a
-// high-contrast face that already sits optically light; a step under its
-// intended weight is most of why the headings looked thin.
-//
-// 300 came out in the same pass: nothing on the site has ever asked for it,
-// so it was a font file downloaded on every first visit and never drawn.
-import '@fontsource/cormorant-garamond/latin-400.css'
-import '@fontsource/cormorant-garamond/latin-500.css'
-import '@fontsource/cormorant-garamond/latin-600.css'
+// Three weights and no more. 600 is what `.font-display` asks for and is the
+// one every heading uses; 400 is for the few places a serif runs at body size;
+// 700 is held for the rare line that has to carry more. The body sets
+// `font-synthesis-weight: none`, so a weight that is asked for and not loaded
+// is silently served as the nearest one that is — which is how every headline
+// on the site spent months a step lighter than the design asked for.
+import '@fontsource/fraunces/latin-400.css'
+import '@fontsource/fraunces/latin-600.css'
+import '@fontsource/fraunces/latin-700.css'
 import '@fontsource/noto-naskh-arabic/arabic-400.css'
 import '@fontsource/noto-naskh-arabic/arabic-500.css'
 import '@fontsource/noto-naskh-arabic/arabic-600.css'
@@ -135,8 +131,11 @@ export default async function LocaleLayout({ children, params }: Args) {
             so "Add to Home Screen" saved a browser screenshot rather than the
             hotel. */}
         <link href="/manifest.webmanifest" rel="manifest" />
-        <meta name="theme-color" content="#0f2f4a" />
-        <meta name="theme-color" content="#0f3a5e" />
+        {/* The colour a phone paints its own chrome with. It was the old navy,
+            which is no longer a colour anywhere on this site. This is the
+            footer's wine-black, so the browser's furniture belongs to the
+            page rather than to a palette that has been replaced. */}
+        <meta name="theme-color" content="#241310" />
         <Hreflang locale={locale} />
       </head>
       <body className="bg-bone text-ink antialiased">

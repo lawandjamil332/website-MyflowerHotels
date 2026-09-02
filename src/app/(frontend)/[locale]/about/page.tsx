@@ -128,7 +128,7 @@ export default async function AboutPage({ params }: Args) {
 
       {/* A full-bleed breath between the story and the hotels themselves. */}
       {mediaUrl(interlude, 'xlarge') && (
-        <div className="relative h-[45vh] overflow-hidden bg-ink sm:h-[60vh]">
+        <div className="relative h-[45vh] overflow-hidden bg-bark sm:h-[60vh]">
           <Image
             src={mediaUrl(interlude, 'xlarge')}
             alt={mediaAlt(interlude) || siteName}

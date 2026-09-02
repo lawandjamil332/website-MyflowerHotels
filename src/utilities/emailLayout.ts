@@ -25,7 +25,7 @@ const MUTED = '#8a8378'
 const LINE = '#e7e2d9'
 const CARD = '#ffffff'
 const PAGE = '#f1ede4'
-const BRAND = '#0f2f4a'
+const BRAND = '#921921'
 const GOLD = '#b08d4f'
 const SERIF = `Georgia,'Times New Roman',Times,serif`
 

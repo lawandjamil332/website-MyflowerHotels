@@ -2,28 +2,34 @@ import Link from 'next/link'
 
 import { cn } from '@/utilities/ui'
 import { Reveal } from './Reveal'
-import { btnPrimary } from './ui'
+import { btnOnDark, btnOutline, btnSmall } from './ui'
 
 /**
- * Headline, lead, and the action that follows from them — centred.
+ * The opening of a section: a small label, a headline, a sentence, and the way
+ * on — set to the leading edge, with the action across from it.
  *
- * This used to open every section with a chapter numeral on a hairline and a
- * line of letterspaced capitals, which is how a magazine signals that a long
- * scroll has been edited. It is not how a hotel group signals anything. The
- * numerals told a guest which section they were in, a fact of no use to
- * anybody trying to find a room, and the 11px capitals above every heading
- * cost a moment's reading each time for decoration.
+ * It used to be centred, all of it, in every band down the page. That was the
+ * single loudest thing making this site look like a template. Centred type is
+ * what a page does when it has nothing to organise: every line finds its own
+ * middle, nothing lines up with anything, and the eye has to re-find the start
+ * of each line. A guest scanning six bands for the one they want reads six
+ * different starting points.
  *
- * So: one large serif line, one paragraph at a size adults actually read, and
- * a button. Centred, because a centred heading over a full-width band reads as
- * a section of a site, while a left-aligned one over the same band reads as a
- * column of an article.
+ * Ranged left, every heading, every sentence and every row of cards beneath
+ * them starts on one line down the whole page, and the button that leaves the
+ * section sits on the opposite margin where a reader's eye ends up anyway. That
+ * is what the reference does, and it is why its page reads as organised rather
+ * than as a stack of announcements.
+ *
+ * `align="center"` survives for the two places a centred block is still right —
+ * a short closing line over a photograph, where there is no column to belong to.
  */
 export function SectionHeading({
   title,
   lead,
+  eyebrow,
   tone = 'ink',
-  align = 'center',
+  align = 'start',
   action,
   className,
   immediate = false,
@@ -31,9 +37,11 @@ export function SectionHeading({
 }: {
   title: string
   lead?: string
+  /** Small label above the headline — what kind of thing this section is. */
+  eyebrow?: string
   tone?: 'ink' | 'light'
   align?: 'center' | 'start'
-  /** The pill that follows the lead, the way every band on the reference ends. */
+  /** The way out of the section, set across from the heading on a wide screen. */
   action?: { href: string; label: string; external?: boolean }
   className?: string
   /** Paint at once rather than fading in — for headings above the fold. */
@@ -42,51 +50,70 @@ export function SectionHeading({
 }) {
   const centred = align === 'center'
 
+  const link =
+    action &&
+    (action.external ? (
+      <a
+        href={action.href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cn(tone === 'light' ? btnOnDark : btnOutline, btnSmall, 'shrink-0')}
+      >
+        {action.label}
+      </a>
+    ) : (
+      <Link
+        href={action.href}
+        className={cn(tone === 'light' ? btnOnDark : btnOutline, btnSmall, 'shrink-0')}
+      >
+        {action.label}
+      </Link>
+    ))
+
   return (
     <Reveal
       immediate={immediate}
-      className={cn(centred ? 'mx-auto max-w-3xl text-center' : 'max-w-3xl', className)}
+      className={cn(
+        // The row: heading on the leading edge, action on the trailing one,
+        // and the two stacked on a phone where there is no room to face off.
+        centred
+          ? 'mx-auto max-w-3xl text-center'
+          : 'flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between sm:gap-10',
+        className,
+      )}
     >
-      <Tag
-        className={cn(
-          'font-display display-lg text-balance',
-          tone === 'light' ? 'text-white' : 'text-ink',
+      <div className={cn(!centred && 'max-w-2xl')}>
+        {eyebrow && (
+          <p className={cn('eyebrow mb-3.5', tone === 'light' && 'text-brass')}>{eyebrow}</p>
         )}
-      >
-        {title}
-      </Tag>
 
-      {lead && (
-        <p
+        <Tag
           className={cn(
-            'mt-4 text-[1.05rem] leading-[1.6] sm:text-[1.1rem]',
-            centred && 'mx-auto max-w-2xl',
-            tone === 'light' ? 'text-white/80' : 'text-muted-ink',
+            'font-display display-lg text-balance',
+            tone === 'light' ? 'text-white' : 'text-ink',
           )}
         >
-          {lead}
-        </p>
-      )}
+          {title}
+        </Tag>
 
-      {/* mt-7, not mt-8, and the lead above it lost a step too. These are the
-          same trim as sectionY and for the same reason: the heading block is
-          repeated six times down the homepage, so every step of padding in it
-          is spent six times over. */}
-      {action &&
-        (action.external ? (
-          <a
-            href={action.href}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={cn(btnPrimary, 'mt-7')}
+        {lead && (
+          <p
+            className={cn(
+              'mt-4 text-[1.05rem] leading-[1.6] sm:text-[1.1rem]',
+              centred && 'mx-auto max-w-2xl',
+              tone === 'light' ? 'text-white/80' : 'text-muted-ink',
+            )}
           >
-            {action.label}
-          </a>
-        ) : (
-          <Link href={action.href} className={cn(btnPrimary, 'mt-7')}>
-            {action.label}
-          </Link>
-        ))}
+            {lead}
+          </p>
+        )}
+
+        {/* Centred blocks keep the button under the words: there is no opposite
+            margin to send it to. */}
+        {centred && link && <div className="mt-7">{link}</div>}
+      </div>
+
+      {!centred && link}
     </Reveal>
   )
 }

@@ -14,8 +14,9 @@ import { Stars } from './Stars'
 import { shell } from './ui'
 
 /**
- * Ink footer. It closes the page on the darkest surface on the site, which is
- * what stops a long scroll of photographs from simply stopping.
+ * The footer, on the darkest surface the site has — a wine-black that belongs
+ * to the garnet rather than a flat one. It is what stops a long scroll of
+ * photographs from simply stopping.
  *
  * Every hotel is listed by name here as well as in the switcher: the
  * footer is where a returning guest looks for the branch they stayed at last
@@ -66,10 +67,10 @@ export async function SiteFooter({
     (showGroupContact && (tel || wa)) || settings.email || socialLinks.length > 0,
   )
 
-  // White, not brand. These headings were set in the brand navy on a footer
-  // painted the same brand navy, so "Menu", "Our hotels" and "Contact" were
-  // rendering at one-to-one contrast — present in the markup, read out by
-  // screen readers, and invisible to everyone looking at the page.
+  // White, not brand. These headings were once set in the brand colour on a
+  // footer painted that same colour, so "Menu", "Our hotels" and "Contact"
+  // were rendering at one-to-one contrast — in the markup, read out by screen
+  // readers, and invisible to everyone looking at the page.
   const columnHeading =
     'text-[0.72rem] font-semibold tracking-[0.16em] text-white/70 uppercase rtl:tracking-normal'
   // tap-safe-lg gives these a 44px hit area; the gap-6 on every column below
@@ -80,7 +81,7 @@ export async function SiteFooter({
     'flex h-11 w-11 items-center justify-center text-white/45 transition-colors duration-500 ease-luxe hover:text-white'
 
   return (
-    <footer className="bg-brand text-white">
+    <footer className="bg-bark text-white">
       <div className={cn(shell, 'py-16 sm:py-20')}>
         <div
           className={cn(
@@ -106,7 +107,7 @@ export async function SiteFooter({
               height={147}
               className="h-16 w-auto object-contain"
             />
-            <Stars count={settings.stars} className="mt-4" />
+            <Stars count={settings.stars} tone="light" className="mt-4" />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/75">
               {t.home.heroEyebrow}
             </p>
@@ -269,7 +270,13 @@ export async function SiteFooter({
             // Sized from the name's own length so it fills the width and stops
             // there. A fixed viewport size would clip "My Flower Hotels"
             // mid-word and leave a short name marooned in the middle.
-            fontSize: `clamp(2.75rem, ${Math.min(15, 205 / Math.max(siteName.length, 7)).toFixed(2)}vw, 13rem)`,
+            //
+            // The coefficient came down with the change of display face. It
+            // was tuned for Cormorant, whose letters are narrow; Fraunces sets
+            // the same sixteen characters about a third wider, and the old
+            // number ran "My Flower Hotels" off the right-hand edge — which is
+            // exactly the clipping this line exists to avoid.
+            fontSize: `clamp(2.5rem, ${Math.min(13, 150 / Math.max(siteName.length, 7)).toFixed(2)}vw, 11rem)`,
             letterSpacing: '0',
           }}
         >

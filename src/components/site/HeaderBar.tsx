@@ -160,7 +160,7 @@ export function HeaderBar({
           // Floating over the picture until the guest scrolls, then a solid
           // surface — because once the page beneath is white cards and text
           // there is no longer a photograph for white type to sit on.
-          condensed || menuOpen ? 'bg-ink shadow-[0_2px_16px_rgb(0_0_0/0.3)]' : 'bg-transparent',
+          condensed || menuOpen ? 'bg-bark shadow-[0_2px_16px_rgb(0_0_0/0.3)]' : 'bg-transparent',
         )}
       >
         {/* The gradient, not a colour: it is what keeps the wordmark legible
@@ -315,7 +315,7 @@ export function HeaderBar({
         className={cn(
           // Above the floating WhatsApp button (z-40), below the bar itself,
           // so the open menu is not stamped over by the green circle.
-          'fixed inset-0 z-[45] bg-ink transition-opacity duration-500 ease-luxe lg:hidden',
+          'fixed inset-0 z-[45] bg-bark transition-opacity duration-500 ease-luxe lg:hidden',
           menuOpen ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
       >

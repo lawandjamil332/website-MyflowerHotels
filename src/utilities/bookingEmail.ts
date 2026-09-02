@@ -241,7 +241,7 @@ const hotelPanel = (g: Gathered) => {
     t.email.hotelTitle,
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
       ${branch.address ? row(t.email.lAddress, iso(branch.address).replace(/\n/g, '<br>'), dir) : ''}
-      ${branch.phone ? row(t.email.lPhone, `<a href="tel:${esc(branch.phone.replace(/\s/g, ''))}" style="color:#0f2f4a;text-decoration:none;" dir="ltr">${esc(branch.phone)}</a>`, dir) : ''}
+      ${branch.phone ? row(t.email.lPhone, `<a href="tel:${esc(branch.phone.replace(/\s/g, ''))}" style="color:#921921;text-decoration:none;" dir="ltr">${esc(branch.phone)}</a>`, dir) : ''}
     </table>`,
     dir,
   )
@@ -255,8 +255,8 @@ const guestPanel = (g: Gathered) => {
     t.email.guestTitle,
     `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:collapse;">
       ${row(t.email.lName, iso(booking.guestName), dir, { strong: true })}
-      ${row(t.email.lPhone, `<a href="tel:${esc(booking.guestPhone.replace(/\s/g, ''))}" style="color:#0f2f4a;text-decoration:none;" dir="ltr">${esc(booking.guestPhone)}</a>`, dir, { strong: true })}
-      ${booking.guestEmail ? row(t.email.lEmail, `<a href="mailto:${esc(booking.guestEmail)}" style="color:#0f2f4a;text-decoration:none;" dir="ltr">${esc(booking.guestEmail)}</a>`, dir) : ''}
+      ${row(t.email.lPhone, `<a href="tel:${esc(booking.guestPhone.replace(/\s/g, ''))}" style="color:#921921;text-decoration:none;" dir="ltr">${esc(booking.guestPhone)}</a>`, dir, { strong: true })}
+      ${booking.guestEmail ? row(t.email.lEmail, `<a href="mailto:${esc(booking.guestEmail)}" style="color:#921921;text-decoration:none;" dir="ltr">${esc(booking.guestEmail)}</a>`, dir) : ''}
       ${row(t.email.lLanguage, esc(langName), dir)}
     </table>`,
     dir,

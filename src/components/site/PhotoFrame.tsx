@@ -65,7 +65,7 @@ export function PhotoFrame({
       aria-hidden="true"
       className={cn(
         'absolute inset-0 flex items-center justify-center',
-        tone === 'ink' ? 'bg-ink' : 'bg-sand',
+        tone === 'ink' ? 'bg-bark' : 'bg-sand',
         className,
       )}
     >
