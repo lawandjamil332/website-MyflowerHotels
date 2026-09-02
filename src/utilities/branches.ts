@@ -1,5 +1,6 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import { withCalendarPrices } from './fromPrice'
 
 import type { Locale } from '@/i18n/config'
 import type { Branch, Offer, Room } from '@/payload-types'
@@ -57,7 +58,7 @@ export const getRoomsForBranch = async (branchId: number, locale: Locale): Promi
       },
       overrideAccess: false,
     })
-    return docs
+    return await withCalendarPrices(payload, docs)
   } catch {
     return []
   }
@@ -102,7 +103,7 @@ export const getFeaturedRooms = async (locale: Locale, limit = 6): Promise<Room[
       }
       if (!added) break
     }
-    return spread
+    return await withCalendarPrices(payload, spread)
   } catch {
     return []
   }
@@ -121,7 +122,7 @@ export const getAllRooms = async (locale: Locale): Promise<Room[]> => {
       where: { isAvailable: { not_equals: false } },
       overrideAccess: false,
     })
-    return docs
+    return await withCalendarPrices(payload, docs)
   } catch {
     return []
   }
@@ -138,7 +139,7 @@ export const getRoomBySlug = async (slug: string, locale: Locale): Promise<Room 
       where: { slug: { equals: slug } },
       overrideAccess: false,
     })
-    return docs[0] ?? null
+    return (await withCalendarPrices(payload, docs))[0] ?? null
   } catch {
     return null
   }
