@@ -375,7 +375,7 @@ export default async function BranchPage({ params }: Args) {
       {faq.length > 0 && (
         <section className="bg-sand">
           <div className={cn(shell, sectionY)}>
-            <div className="mx-auto max-w-3xl">
+            <div>
               <Reveal>
                 <Faq entries={faq} title={t.faq.title} />
               </Reveal>

@@ -13,6 +13,7 @@ import { groupIdentity } from '@/utilities/group'
 import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { shippedPhoto } from '@/utilities/shippedPhoto'
+import { heroFor, photoPool } from '@/utilities/heroPhoto'
 import { shareImage } from '@/utilities/shareImage'
 import { comma } from '@/utilities/format'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
@@ -109,10 +110,25 @@ export default async function HomePage({ params }: Args) {
   const tel = toTelHref(settings.phone)
   const wa = toWhatsAppHref(settings.whatsapp)
 
-  // Two further photographs, so the page does not open, pause and close on the
-  // same image.
-  const interludeBranch = branches[2] ?? branches[0]
-  const closingBranch = branches[1] ?? branches[0]
+  // The page's two other large photographs, drawn from every picture the group
+  // has rather than from two more hotel heroes.
+  //
+  // They used to be `branches[2]` and `branches[1]` — which are the same two
+  // pictures the row of hotel cards is already showing, a few hundred pixels
+  // up. So the homepage displayed three photographs in total and displayed
+  // each of them twice, and a page that repeats its own pictures reads as a
+  // page with nothing to show.
+  //
+  // `photoPool` already exists for exactly this and every other page on the
+  // site already uses it: hotel heroes, then room photographs, then gallery
+  // pictures, deduplicated. Taking these two a third and two thirds of the way
+  // through it puts as much distance as possible between them, so the moment
+  // anybody uploads a lobby or a room the homepage starts showing it. With
+  // only three pictures in the group it wraps and repeats, which is the honest
+  // outcome of having three pictures.
+  const pool = photoPool(branches, rooms)
+  const interludePhoto = heroFor(pool, Math.floor(pool.length / 3))
+  const closingPhoto = heroFor(pool, Math.floor((pool.length * 2) / 3))
 
   // Sentences that spell the number out are filled from the branches actually
   // published, so opening a fifth hotel does not leave the copy saying four.
@@ -423,11 +439,11 @@ export default async function HomePage({ params }: Args) {
             <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
               <Reveal className="relative aspect-4/3 overflow-hidden rounded-2xl bg-bark lg:aspect-3/2">
                 <PhotoFrame
-                  src={mediaUrl(interludeBranch?.heroImage, 'large')}
-                  alt={mediaAlt(interludeBranch?.heroImage) || siteName}
+                  src={mediaUrl(interludePhoto, 'large')}
+                  alt={mediaAlt(interludePhoto) || siteName}
                   sizes="(min-width: 1024px) 46vw, 92vw"
-                  monogram={monogramOf(interludeBranch?.name || siteName)}
-                  fallbackSrc={shippedPhoto(interludeBranch?.slug)}
+                  monogram={monogramOf(siteName)}
+                  fallbackSrc={shippedPhoto(branches[2]?.slug)}
                   tone="ink"
                 />
               </Reveal>
@@ -520,8 +536,13 @@ export default async function HomePage({ params }: Args) {
         {faq.length > 0 && (
           <section className="bg-sand">
             <div className={cn(shell, sectionY)}>
-              <div className="mx-auto max-w-3xl">
-                <Faq entries={faq} title={t.faq.groupTitle} />
+              <div>
+                <Faq
+                  entries={faq}
+                  eyebrow={t.contact.eyebrow}
+                  title={t.faq.groupTitle}
+                  lead={t.home.chooseBranchLead}
+                />
               </div>
             </div>
           </section>
@@ -530,10 +551,10 @@ export default async function HomePage({ params }: Args) {
         {/* Closing band. A photograph rather than a flat colour, so the page
             hands over to the footer on an image. */}
         <section className="relative flex min-h-[26rem] items-center overflow-hidden bg-bark">
-          {mediaUrl(closingBranch?.heroImage, 'xlarge') ? (
+          {mediaUrl(closingPhoto, 'xlarge') ? (
             <Image
-              src={mediaUrl(closingBranch?.heroImage, 'xlarge')}
-              alt={mediaAlt(closingBranch?.heroImage) || siteName}
+              src={mediaUrl(closingPhoto, 'xlarge')}
+              alt={mediaAlt(closingPhoto) || siteName}
               fill
               sizes="100vw"
               className="object-cover"

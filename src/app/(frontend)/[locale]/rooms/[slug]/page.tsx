@@ -272,7 +272,7 @@ export default async function RoomPage({ params }: Args) {
           before they are willing to commit to this particular room. */}
       {faq.length > 0 && (
         <section className={cn(shell, sectionY)}>
-          <Reveal className="mx-auto max-w-3xl">
+          <Reveal>
             <Faq entries={faq} title={t.faq.roomTitle} />
           </Reveal>
         </section>

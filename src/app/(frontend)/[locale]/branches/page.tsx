@@ -247,7 +247,7 @@ export default async function BranchesPage({ params }: Args) {
 
       {faq.length > 0 && (
         <section className={cn(shell, sectionY)}>
-          <Reveal className="mx-auto max-w-3xl">
+          <Reveal>
             <Faq entries={faq} title={t.faq.groupTitle} />
           </Reveal>
         </section>
