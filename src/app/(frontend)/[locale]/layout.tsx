@@ -45,7 +45,7 @@ import { ContactDock } from '@/components/site/ContactDock'
 import { StayFinderDock } from '@/components/site/StayFinderDock'
 import { getSettings } from '@/utilities/getSettings'
 import { getBranches } from '@/utilities/branches'
-import { toWhatsAppHref } from '@/utilities/contact'
+import { toMapsHref, toWhatsAppHref } from '@/utilities/contact'
 
 // The database is not reachable during the deploy build, so pages render on
 // request. It also means content edited in the admin panel appears at once.
@@ -103,6 +103,24 @@ export default async function LocaleLayout({ children, params }: Args) {
         ? [{ name: settings.siteName || 'My Flower Hotels', href: settings.social.instagram }]
         : []
 
+  // And the same for the map. A guest standing in Erbil with the site open has
+  // one question the page cannot answer — which of these is nearest me, and how
+  // do I get there — and the answer lives in an app they already have.
+  //
+  // Per hotel, never for the group: four hotels in one city have four pins, and
+  // a single "find us" that opened one of them would be the same fault the
+  // WhatsApp button had before it was split, sending everybody to My Flower 1.
+  //
+  // `toMapsHref` is what the hotel pages and the booking emails already use, so
+  // a hotel with no share link pasted in still gets a pin from its coordinates
+  // rather than dropping off the list.
+  const mapsTargets = branches
+    .map((branch) => ({
+      name: branch.name,
+      href: toMapsHref(branch.googleMapsUrl, branch.latitude, branch.longitude),
+    }))
+    .filter((target): target is { name: string; href: string } => Boolean(target.href))
+
   return (
     <html lang={locale} dir={dir(locale)} suppressHydrationWarning>
       <head>
@@ -133,7 +151,7 @@ export default async function LocaleLayout({ children, params }: Args) {
         <link href="/manifest.webmanifest" rel="manifest" />
         {/* The colour a phone paints its own chrome with. It was the old navy,
             which is no longer a colour anywhere on this site. This is the
-            footer's wine-black, so the browser's furniture belongs to the
+            footer’s espresso, so the browser’s furniture belongs to the
             page rather than to a palette that has been replaced. */}
         <meta name="theme-color" content="#130e0b" />
         <Hreflang locale={locale} />
@@ -171,7 +189,9 @@ export default async function LocaleLayout({ children, params }: Args) {
             <ContactDock
               whatsapp={whatsappTargets}
               instagram={instagramTargets}
+              maps={mapsTargets}
               whatsappLabel={t.common.whatsapp}
+              mapsLabel={t.branch.getDirections}
               closeLabel={t.common.close}
             />
           </CurrencyProvider>

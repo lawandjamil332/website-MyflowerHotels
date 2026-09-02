@@ -4,25 +4,28 @@ import { useEffect, useRef, useState } from 'react'
 
 import { cn } from '@/utilities/ui'
 import { InstagramMark } from './InstagramMark'
+import { MapPinMark } from './MapPinMark'
 import { WhatsAppMark } from './WhatsAppMark'
 
 export type DockTarget = { name: string; href: string }
 
-type Channel = 'whatsapp' | 'instagram'
+type Channel = 'whatsapp' | 'instagram' | 'maps'
 
 /**
- * The buttons fixed to the corner of a phone screen: message us, or go and
- * look at us.
+ * The buttons fixed to the corner of a phone screen: message us, look at us, or
+ * find us.
  *
- * One component owns both because they share a corner. Written as two
- * independent buttons they would each keep their own open state, and opening
- * the second while the first was still up would stack one panel over the
- * other. Here only one channel can be open at a time.
+ * One component owns all three because they share a corner. Written as separate
+ * buttons they would each keep their own open state, and opening the second
+ * while the first was still up would stack one panel over the other. Here only
+ * one channel can be open at a time.
  *
- * Both keep their own brand colour rather than the site's navy, on the same
- * reasoning as the WhatsApp button in the enquiry forms: a guest recognises
- * these two marks faster than they read any label, and that recognition is the
- * whole reason the button is worth the corner it occupies.
+ * Each keeps its own brand colour rather than the site's, on the same reasoning
+ * as the WhatsApp button in the enquiry forms: a guest recognises these marks
+ * faster than they read any label, and that recognition is the whole reason the
+ * button is worth the corner it occupies. It is also why the palette's
+ * discipline does not apply here — these are three other companies' marks
+ * sitting on this page, not this site's own chrome.
  *
  * A channel with a single destination links straight out — a chooser offering
  * one choice is a tap wasted — and a channel with none does not appear.
@@ -30,12 +33,16 @@ type Channel = 'whatsapp' | 'instagram'
 export function ContactDock({
   whatsapp,
   instagram,
+  maps,
   whatsappLabel,
+  mapsLabel,
   closeLabel,
 }: {
   whatsapp: DockTarget[]
   instagram: DockTarget[]
+  maps: DockTarget[]
   whatsappLabel: string
+  mapsLabel: string
   closeLabel: string
 }) {
   const [open, setOpen] = useState<Channel | null>(null)
@@ -83,6 +90,17 @@ export function ContactDock({
       tone: 'bg-whatsapp',
       listTone: 'text-whatsapp',
       Mark: WhatsAppMark,
+    },
+    {
+      key: 'maps',
+      targets: maps,
+      label: mapsLabel,
+      // Google's own pin red. Not a colour from this site's palette, and
+      // deliberately so — a red pin is what "map" looks like to everybody, and
+      // a charcoal one would be a mystery button in the corner of the screen.
+      tone: 'bg-[#ea4335]',
+      listTone: 'text-[#ea4335]',
+      Mark: MapPinMark,
     },
   ]
 
