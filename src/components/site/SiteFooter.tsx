@@ -71,7 +71,7 @@ export async function SiteFooter({
   // rendering at one-to-one contrast — present in the markup, read out by
   // screen readers, and invisible to everyone looking at the page.
   const columnHeading =
-    'text-[0.65rem] tracking-[0.24em] text-white/70 uppercase rtl:tracking-normal'
+    'text-[0.72rem] font-semibold tracking-[0.16em] text-white/70 uppercase rtl:tracking-normal'
   // tap-safe-lg gives these a 44px hit area; the gap-6 on every column below
   // is what stops those areas overlapping each other.
   const columnLink =

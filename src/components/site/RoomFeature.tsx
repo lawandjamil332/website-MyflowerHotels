@@ -80,7 +80,7 @@ export function RoomFeature({
         </h3>
 
         {branch && (
-          <p className="mt-3 text-xs tracking-[0.18em] text-muted-ink uppercase rtl:tracking-normal">
+          <p className="mt-3 text-[0.72rem] font-semibold tracking-[0.14em] text-muted-ink uppercase rtl:tracking-normal">
             {branch.name}
           </p>
         )}
@@ -95,9 +95,7 @@ export function RoomFeature({
 
         {typeof room.priceFrom === 'number' && (
           <p className="mt-6 flex items-baseline gap-2 text-muted-ink">
-            <span className="text-[0.65rem] tracking-[0.2em] uppercase rtl:tracking-normal">
-              {t.room.from}
-            </span>
+            <span className="text-[0.85rem]">{t.room.from}</span>
             <Price
               amount={room.priceFrom}
               currency={room.currency}

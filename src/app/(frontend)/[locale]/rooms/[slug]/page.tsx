@@ -111,7 +111,7 @@ export default async function RoomPage({ params }: Args) {
         size="tall"
       >
         {room.isAvailable === false && (
-          <p className="mt-7 inline-block border border-white/35 px-4 py-2 text-[0.65rem] tracking-[0.2em] text-white uppercase rtl:tracking-normal">
+          <p className="mt-7 inline-block rounded-full border border-white/45 px-4 py-2 text-[0.8rem] font-medium text-white">
             {t.room.unavailable}
           </p>
         )}
@@ -124,7 +124,7 @@ export default async function RoomPage({ params }: Args) {
             <dl className={cn(shell, 'grid gap-px sm:grid-cols-2 lg:grid-cols-4')}>
               {facts.map((fact) => (
                 <div key={fact.label} className="py-8 lg:pe-8">
-                  <dt className="text-[0.6rem] tracking-[0.22em] text-muted-ink uppercase rtl:tracking-normal">
+                  <dt className="text-[0.72rem] font-semibold tracking-[0.14em] text-muted-ink uppercase rtl:tracking-normal">
                     {fact.label}
                   </dt>
                   <dd className="font-display mt-2 text-2xl leading-tight text-ink">
@@ -137,7 +137,7 @@ export default async function RoomPage({ params }: Args) {
           {layout && (
             <div className={cn(shell, facts.length > 0 && 'border-t border-line')}>
               <div className="flex flex-wrap items-baseline gap-x-4 gap-y-2 py-6">
-                <span className="text-[0.6rem] tracking-[0.22em] text-muted-ink uppercase rtl:tracking-normal">
+                <span className="text-[0.72rem] font-semibold tracking-[0.14em] text-muted-ink uppercase rtl:tracking-normal">
                   {t.room.layout}
                 </span>
                 <span className="text-[1.05rem] text-ink">{layout}</span>
@@ -172,10 +172,7 @@ export default async function RoomPage({ params }: Args) {
                   <p className="eyebrow">{t.room.detailsEyebrow}</p>
                   <div className="mt-7 space-y-5">
                     {summary.map((paragraph) => (
-                      <p
-                        key={paragraph}
-                        className="text-[1.0625rem] leading-[1.85] text-ink-soft"
-                      >
+                      <p key={paragraph} className="text-[1.0625rem] leading-[1.85] text-ink-soft">
                         {paragraph}
                       </p>
                     ))}
@@ -200,11 +197,16 @@ export default async function RoomPage({ params }: Args) {
           )}
 
           <aside className={cn(!hasDetails && 'mx-auto w-full max-w-md')}>
-            <Reveal delay={120} className={cn(hasDetails && 'lg:sticky lg:top-[calc(var(--site-header-h,4.5rem)+4.5rem)]')}>
+            <Reveal
+              delay={120}
+              className={cn(
+                hasDetails && 'lg:sticky lg:top-[calc(var(--site-header-h,4.5rem)+4.5rem)]',
+              )}
+            >
               <div className="border border-line rounded-2xl bg-card p-7 sm:p-8">
                 {price ? (
                   <>
-                    <p className="text-[0.6rem] tracking-[0.22em] text-muted-ink uppercase rtl:tracking-normal">
+                    <p className="text-[0.72rem] font-semibold tracking-[0.14em] text-muted-ink uppercase rtl:tracking-normal">
                       {t.room.from}
                     </p>
                     <Price

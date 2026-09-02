@@ -20,7 +20,7 @@ const field =
   'w-full border-0 border-b border-line bg-transparent px-0 py-3 text-ink placeholder:text-muted-ink/50 focus:border-brand focus:outline-none focus:ring-0 transition-colors duration-500 ease-luxe'
 
 const label =
-  'block text-[0.6rem] tracking-[0.2em] text-muted-ink uppercase rtl:tracking-normal'
+  'block text-[0.72rem] font-semibold tracking-[0.14em] text-muted-ink uppercase rtl:tracking-normal'
 
 function SubmitButton({ t }: { t: Dictionary }) {
   const { pending } = useFormStatus()
@@ -60,7 +60,10 @@ export function EnquiryForm({
 
   if (state.status === 'success') {
     return (
-      <div id="enquire" className={cn('border border-brand/40 rounded-2xl bg-card p-8 sm:p-10', className)}>
+      <div
+        id="enquire"
+        className={cn('border border-brand/40 rounded-2xl bg-card p-8 sm:p-10', className)}
+      >
         <p className="eyebrow">{t.form.eyebrow}</p>
         <p className="font-display mt-5 text-3xl text-ink">{t.form.successTitle}</p>
         <p className="mt-4 max-w-md leading-relaxed text-muted-ink">{t.form.successBody}</p>

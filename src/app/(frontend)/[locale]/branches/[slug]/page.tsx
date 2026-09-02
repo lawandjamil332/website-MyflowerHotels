@@ -155,7 +155,12 @@ export default async function BranchPage({ params }: Args) {
           )}
 
           <aside className={cn(!hasOverview && 'mx-auto w-full max-w-md')}>
-            <Reveal delay={120} className={cn(hasOverview && 'lg:sticky lg:top-[calc(var(--site-header-h,4.5rem)+4.5rem)]')}>
+            <Reveal
+              delay={120}
+              className={cn(
+                hasOverview && 'lg:sticky lg:top-[calc(var(--site-header-h,4.5rem)+4.5rem)]',
+              )}
+            >
               <div id="reserve-card" className="border border-line rounded-2xl bg-card p-7 sm:p-8">
                 <p className="eyebrow">{openingSoon ? opening : t.branch.stayEyebrow}</p>
                 <h2 className="font-display mt-4 text-2xl text-ink">
@@ -241,7 +246,7 @@ export default async function BranchPage({ params }: Args) {
                     <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-line pt-6">
                       {(branch.checkInAnyTime || branch.checkInTime) && (
                         <div>
-                          <dt className="text-[0.6rem] tracking-[0.2em] text-muted-ink uppercase rtl:tracking-normal">
+                          <dt className="text-[0.72rem] font-semibold tracking-[0.14em] text-muted-ink uppercase rtl:tracking-normal">
                             {t.branch.checkIn}
                           </dt>
                           <dd className="font-display mt-1.5 text-xl text-ink">
@@ -251,7 +256,7 @@ export default async function BranchPage({ params }: Args) {
                       )}
                       {branch.checkOutTime && (
                         <div>
-                          <dt className="text-[0.6rem] tracking-[0.2em] text-muted-ink uppercase rtl:tracking-normal">
+                          <dt className="text-[0.72rem] font-semibold tracking-[0.14em] text-muted-ink uppercase rtl:tracking-normal">
                             {t.branch.checkOut}
                           </dt>
                           <dd className="font-display mt-1.5 text-xl text-ink">

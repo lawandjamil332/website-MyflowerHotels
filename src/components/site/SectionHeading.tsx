@@ -45,10 +45,7 @@ export function SectionHeading({
   return (
     <Reveal
       immediate={immediate}
-      className={cn(
-        centred ? 'mx-auto max-w-3xl text-center' : 'max-w-3xl',
-        className,
-      )}
+      className={cn(centred ? 'mx-auto max-w-3xl text-center' : 'max-w-3xl', className)}
     >
       <Tag
         className={cn(

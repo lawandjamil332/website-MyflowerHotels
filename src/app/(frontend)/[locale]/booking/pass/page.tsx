@@ -62,7 +62,13 @@ export default async function BookingPassPage({ params, searchParams }: Args) {
   const [branch, room] = await Promise.all([
     branchId
       ? (payload
-          .findByID({ collection: 'branches', id: branchId, locale, depth: 0, overrideAccess: true })
+          .findByID({
+            collection: 'branches',
+            id: branchId,
+            locale,
+            depth: 0,
+            overrideAccess: true,
+          })
           .catch(() => null) as Promise<Branch | null>)
       : null,
     roomId
@@ -114,10 +120,7 @@ export default async function BookingPassPage({ params, searchParams }: Args) {
             and it is also the only thing in the stack that lays Arabic and
             Kurdish out correctly. */}
         <div className="mb-8 flex flex-wrap items-center gap-4 print:hidden">
-          <PrintButton
-            label={t.booking.savePdf}
-            className={cn(btnPrimary, btnSmall, 'tap-safe')}
-          />
+          <PrintButton label={t.booking.savePdf} className={cn(btnPrimary, btnSmall, 'tap-safe')} />
           <Link
             href={`/${locale}/booking`}
             className="link-line tap-safe text-sm text-muted-ink hover:text-ink"
@@ -137,7 +140,7 @@ export default async function BookingPassPage({ params, searchParams }: Args) {
           </header>
 
           <div className="mt-8 border border-line bg-sand px-6 py-7 text-center">
-            <p className="text-[0.6rem] tracking-[0.22em] text-muted-ink uppercase rtl:tracking-normal">
+            <p className="text-[0.72rem] font-semibold tracking-[0.14em] text-muted-ink uppercase rtl:tracking-normal">
               {t.email.refLabel}
             </p>
             <p
@@ -156,7 +159,7 @@ export default async function BookingPassPage({ params, searchParams }: Args) {
 
           <div className="mt-8 grid gap-6 sm:grid-cols-2">
             <div className="border border-line p-5">
-              <p className="text-[0.6rem] tracking-[0.2em] text-brand uppercase rtl:tracking-normal">
+              <p className="text-[0.72rem] font-semibold tracking-[0.14em] text-brand uppercase rtl:tracking-normal">
                 {t.email.lArriving}
               </p>
               <p className="font-display mt-2 text-lg leading-snug text-ink">{arriving}</p>
@@ -169,7 +172,7 @@ export default async function BookingPassPage({ params, searchParams }: Args) {
               )}
             </div>
             <div className="border border-line p-5">
-              <p className="text-[0.6rem] tracking-[0.2em] text-brand uppercase rtl:tracking-normal">
+              <p className="text-[0.72rem] font-semibold tracking-[0.14em] text-brand uppercase rtl:tracking-normal">
                 {t.email.lLeaving}
               </p>
               <p className="font-display mt-2 text-lg leading-snug text-ink">{leaving}</p>

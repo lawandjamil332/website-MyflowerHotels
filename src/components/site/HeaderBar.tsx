@@ -83,8 +83,7 @@ export function HeaderBar({
     // Hysteresis, not a single threshold. The bar changes its own height when
     // it collapses, and a page resting exactly on one threshold would trip it,
     // grow, untrip, shrink, and flicker for as long as the guest sat there.
-    const onScroll = () =>
-      setCondensed((was) => (was ? window.scrollY > 40 : window.scrollY > 96))
+    const onScroll = () => setCondensed((was) => (was ? window.scrollY > 40 : window.scrollY > 96))
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
@@ -161,9 +160,7 @@ export function HeaderBar({
           // Floating over the picture until the guest scrolls, then a solid
           // surface — because once the page beneath is white cards and text
           // there is no longer a photograph for white type to sit on.
-          condensed || menuOpen
-            ? 'bg-ink shadow-[0_2px_16px_rgb(0_0_0/0.3)]'
-            : 'bg-transparent',
+          condensed || menuOpen ? 'bg-ink shadow-[0_2px_16px_rgb(0_0_0/0.3)]' : 'bg-transparent',
         )}
       >
         {/* The gradient, not a colour: it is what keeps the wordmark legible

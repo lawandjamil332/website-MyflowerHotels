@@ -176,10 +176,7 @@ export default async function RoomsPage({ params, searchParams }: Args) {
               {hotel && <input type="hidden" name="hotel" value={hotel} />}
               {guests > 0 && <input type="hidden" name="guests" value={String(guests)} />}
               {bed && <input type="hidden" name="bed" value={bed} />}
-              <label
-                htmlFor="room-search"
-                className="me-2 text-[0.8rem] font-semibold text-ink"
-              >
+              <label htmlFor="room-search" className="me-2 text-[0.8rem] font-semibold text-ink">
                 {t.roomsPage.search}
               </label>
               {/* 16px minimum, or iOS zooms the page on focus and does not
@@ -204,7 +201,11 @@ export default async function RoomsPage({ params, searchParams }: Args) {
                   {t.roomsPage.filterHotel}
                 </span>
                 {branches.map((b) => (
-                  <Link key={b.id} href={linkTo('hotel', b.slug)} className={chip(hotel === b.slug)}>
+                  <Link
+                    key={b.id}
+                    href={linkTo('hotel', b.slug)}
+                    className={chip(hotel === b.slug)}
+                  >
                     {b.name}
                   </Link>
                 ))}
@@ -272,12 +273,7 @@ export default async function RoomsPage({ params, searchParams }: Args) {
                 <div className="mt-10 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
                   {group.map((room, i) => (
                     <Reveal key={room.id} delay={(i % 3) * 90}>
-                      <RoomCard
-                        room={room}
-                        locale={locale}
-                        t={t}
-                        priority={gi === 0 && i < 3}
-                      />
+                      <RoomCard room={room} locale={locale} t={t} priority={gi === 0 && i < 3} />
                     </Reveal>
                   ))}
                 </div>

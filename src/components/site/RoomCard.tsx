@@ -55,7 +55,7 @@ export function RoomCard({
           imageClassName="transition-transform duration-1000 ease-luxe group-hover:scale-105"
         />
         {room.isAvailable === false && (
-          <span className="absolute top-4 start-4 bg-ink/85 px-3 py-1.5 text-[0.6rem] tracking-[0.2em] text-bone uppercase rtl:tracking-normal">
+          <span className="absolute top-4 start-4 rounded-full bg-ink/85 px-3.5 py-1.5 text-[0.75rem] font-medium text-bone">
             {t.room.unavailable}
           </span>
         )}
@@ -64,17 +64,19 @@ export function RoomCard({
       <div className="mt-5 border-t border-line pt-5">
         <h3 className="font-display text-2xl leading-tight text-ink">{room.name}</h3>
 
+        {/* Sentence case at a readable size.
+            This line names the hotel, how many it sleeps, the bed and what is
+            in the room — seven or eight facts, and set in 11px letterspaced
+            capitals it came out as a wall of shouting that wrapped onto two
+            lines and had to be deciphered rather than read. It is the line a
+            guest actually scans to pick a room. */}
         {meta.length > 0 && (
-          <p className="mt-1.5 text-xs tracking-[0.12em] text-muted-ink uppercase rtl:tracking-normal">
-            {meta.join(' · ')}
-          </p>
+          <p className="mt-2 text-[0.88rem] leading-snug text-muted-ink">{meta.join(' · ')}</p>
         )}
 
         {typeof room.priceFrom === 'number' && (
           <p className="mt-4 flex items-baseline gap-2 text-sm text-muted-ink">
-            <span className="text-[0.65rem] tracking-[0.2em] uppercase rtl:tracking-normal">
-              {t.room.from}
-            </span>
+            <span className="text-[0.85rem]">{t.room.from}</span>
             <Price
               amount={room.priceFrom}
               currency={room.currency}
