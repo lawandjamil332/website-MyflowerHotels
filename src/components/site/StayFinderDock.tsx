@@ -85,10 +85,20 @@ export function StayFinderDock({
 
   return (
     <div
-      // aria-hidden while it is off screen: it holds a second copy of every
-      // field in the hero's search box, and a screen reader that reads out
-      // "Arriving" twice on one page has been told the page has two forms.
-      aria-hidden={!shown}
+      // `inert` while it is off screen, not `aria-hidden`.
+      //
+      // aria-hidden was the right instinct — this holds a second copy of every
+      // field in the hero's search box, and a screen reader reading "Arriving"
+      // twice has been told the page has two forms. But aria-hidden only hides
+      // it from being *read*; it stays in the tab order, so an invisible copy
+      // of five fields sat in front of the real ones. Tabbing into the page
+      // went through the dock first and never arrived at the hero's date
+      // fields at all — the keyboard suite caught it as "the arrival date is
+      // reachable" failing, which it no longer was.
+      //
+      // `inert` is the one attribute that does both: out of the accessibility
+      // tree and out of the tab order, in every browser that ships it.
+      inert={!shown}
       className={cn(
         // Under the header (z-50) and over the page, but below the phone menu
         // (z-45) — an open menu must not have a search bar floating on it.

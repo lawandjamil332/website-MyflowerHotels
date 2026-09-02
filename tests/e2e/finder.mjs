@@ -26,7 +26,10 @@ ok(
   (await p.locator('#finder-in').getAttribute('aria-invalid')) === 'true' &&
     (await p.evaluate(() => document.activeElement?.id)) === 'finder-in',
 )
-ok('the pill did not change shape', (await p.locator('form[aria-label]').boundingBox()).height < 400)
+// Scoped to the page's own finder. There is a second one in the sticky dock,
+// which lives in the layout outside <main>, so this is the way to name the
+// hero's without depending on which comes first in the document.
+ok('the pill did not change shape', (await p.locator('main form[aria-label]').boundingBox()).height < 400)
 
 // once a date is typed the search runs — the message is not a dead end
 await p.locator('#finder-in').fill(d(40))
