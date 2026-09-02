@@ -62,7 +62,7 @@ export function SectionHeading({
       {lead && (
         <p
           className={cn(
-            'mt-5 text-[1.05rem] leading-[1.65] sm:text-[1.15rem]',
+            'mt-4 text-[1.05rem] leading-[1.6] sm:text-[1.1rem]',
             centred && 'mx-auto max-w-2xl',
             tone === 'light' ? 'text-white/80' : 'text-muted-ink',
           )}
@@ -71,18 +71,22 @@ export function SectionHeading({
         </p>
       )}
 
+      {/* mt-7, not mt-8, and the lead above it lost a step too. These are the
+          same trim as sectionY and for the same reason: the heading block is
+          repeated six times down the homepage, so every step of padding in it
+          is spent six times over. */}
       {action &&
         (action.external ? (
           <a
             href={action.href}
             target="_blank"
             rel="noopener noreferrer"
-            className={cn(btnPrimary, 'mt-8')}
+            className={cn(btnPrimary, 'mt-7')}
           >
             {action.label}
           </a>
         ) : (
-          <Link href={action.href} className={cn(btnPrimary, 'mt-8')}>
+          <Link href={action.href} className={cn(btnPrimary, 'mt-7')}>
             {action.label}
           </Link>
         ))}

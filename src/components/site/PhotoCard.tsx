@@ -15,6 +15,10 @@ import { PhotoFrame } from './PhotoFrame'
  * announces itself at the same height instead of at whatever height its own
  * text ran to.
  *
+ * The plate is light. That is the second half of it and it is not a detail —
+ * a light plate reads as a label attached to a picture, and a dark one reads
+ * as a picture with something over it.
+ *
  * The mark is an arrow, not the reference's chevron. A chevron promises the
  * card will open in place; these go to a page, and drawing a control that lies
  * about where it takes you is worse than not matching.
@@ -69,27 +73,33 @@ export function PhotoCard({
         imageClassName="transition-transform duration-[1.2s] ease-luxe group-hover:scale-105"
       />
 
-      {/* Blurred rather than merely dark: over a bright sky a flat scrim turns
-          grey and reads as a bar laid across the picture, where the blur reads
-          as glass resting on it. */}
+      {/* A light plate, not a dark one.
+          It was black glass, on the reasoning that a dark plate keeps a
+          photograph looking like a photograph. What it actually did was put a
+          smoked panel over the top third of every picture in every row, so a
+          page of cards read as a page of things partly covered up. The
+          reference uses a plain light plate with dark type, and it is the
+          right call for the same reason a caption under a picture is: the
+          words stop competing with the image and simply sit beside it. */}
       <div
         className={cn(
-          'absolute inset-x-3 top-3 rounded-xl bg-black/50 px-4 py-3.5 backdrop-blur-md sm:inset-x-4 sm:top-4',
-          'transition-colors duration-500 ease-luxe group-hover:bg-black/65',
+          'absolute inset-x-3 top-3 rounded-xl bg-bone/95 px-4 py-3.5 backdrop-blur-sm sm:inset-x-4 sm:top-4',
+          'shadow-[0_6px_20px_-10px_rgb(0_0_0/0.45)]',
+          'transition-colors duration-500 ease-luxe group-hover:bg-bone',
         )}
       >
         <div className="flex items-start gap-3">
           <span className="min-w-0 flex-1">
-            <h3 className="font-display text-xl leading-tight text-balance text-white">{title}</h3>
-            {meta && <p className="mt-1 text-[0.82rem] leading-snug text-white/75">{meta}</p>}
+            <h3 className="font-display text-xl leading-tight text-balance text-ink">{title}</h3>
+            {meta && <p className="mt-1 text-[0.82rem] leading-snug text-muted-ink">{meta}</p>}
             {body && (
-              <p className="mt-2 line-clamp-2 text-[0.85rem] leading-snug text-white/70">{body}</p>
+              <p className="mt-2 line-clamp-2 text-[0.85rem] leading-snug text-muted-ink">{body}</p>
             )}
           </span>
 
           <span
             aria-hidden="true"
-            className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/45 text-white transition-colors duration-500 ease-luxe group-hover:bg-white group-hover:text-ink"
+            className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-brand/35 text-brand transition-colors duration-500 ease-luxe group-hover:bg-brand group-hover:text-white"
           >
             <svg
               viewBox="0 0 24 24"

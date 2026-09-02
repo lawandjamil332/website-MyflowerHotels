@@ -81,11 +81,21 @@ export async function SiteFooter({
 
   return (
     <footer className="bg-brand text-white">
-      <div className={cn(shell, 'py-20 sm:py-24')}>
+      <div className={cn(shell, 'py-16 sm:py-20')}>
         <div
           className={cn(
-            'grid gap-14 lg:gap-10',
-            hasContactColumn ? 'lg:grid-cols-[1.2fr_1fr_1fr_1fr]' : 'lg:grid-cols-[1.2fr_1fr_1fr]',
+            // items-start, and it is the whole fix for a footer that was half
+            // empty navy. A grid row stretches every cell to the tallest one,
+            // and the hotels column — four names, each with two numbers under
+            // it — is roughly three times the height of the menu beside it. So
+            // the short columns were being stretched to match and their links
+            // spread down four hundred pixels of nothing.
+            'grid items-start gap-12 lg:gap-14',
+            // The hotels take two columns' worth of width, because inside them
+            // they are laid out two across — see below.
+            hasContactColumn
+              ? 'lg:grid-cols-[1.1fr_0.8fr_1.6fr_0.9fr]'
+              : 'lg:grid-cols-[1.1fr_0.8fr_1.6fr]',
           )}
         >
           <div>
@@ -141,65 +151,74 @@ export async function SiteFooter({
               four accounts separately would print all four hotel names twice
               in one footer, and pairing them here says which is which without
               a word of explanation. */}
-          <nav className="flex flex-col items-start gap-8">
-            <p className={columnHeading}>{t.nav.branches}</p>
-            {branches.length > 0 ? (
-              branches.map((branch) => {
-                const branchWa = toWhatsAppHref(
-                  branch.whatsapp,
-                  `${t.branch.enquire} — ${branch.name}`,
-                )
-                const numbers = [branch.phone, branch.phoneAlt].filter(Boolean) as string[]
-                return (
-                  <div key={branch.id} className="flex flex-col items-start gap-4">
-                    <span className="flex items-center gap-2">
-                      <Link href={`/${locale}/branches/${branch.slug}`} className={columnLink}>
-                        {branch.name}
-                      </Link>
-                      {branchWa && (
-                        <a
-                          href={branchWa}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={`${branch.name} — ${t.common.whatsapp}`}
-                          className={iconLink}
-                        >
-                          <WhatsAppMark className="h-4 w-4" />
-                        </a>
-                      )}
-                      {branch.instagram && (
-                        <a
-                          href={branch.instagram}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={`${branch.name} — Instagram`}
-                          className={iconLink}
-                        >
-                          <InstagramMark />
-                        </a>
-                      )}
-                    </span>
-
-                    {numbers.length > 0 && (
-                      <span className="flex flex-wrap items-center gap-x-4 gap-y-3">
-                        {numbers.map((number) => (
+          <nav>
+            <p className={cn(columnHeading, 'mb-6 block')}>{t.nav.branches}</p>
+            {/* Two across, not four down.
+                Four hotels each carrying a name, two icons and two phone
+                numbers made a column about three times the height of the menu
+                beside it — so the footer was as tall as a section of the page
+                and two thirds of it was empty navy to the left of this list.
+                Paired, the whole footer is one screenful and the columns end
+                near enough together to read as a row. */}
+            <div className="grid items-start gap-x-10 gap-y-8 sm:grid-cols-2">
+              {branches.length > 0 ? (
+                branches.map((branch) => {
+                  const branchWa = toWhatsAppHref(
+                    branch.whatsapp,
+                    `${t.branch.enquire} — ${branch.name}`,
+                  )
+                  const numbers = [branch.phone, branch.phoneAlt].filter(Boolean) as string[]
+                  return (
+                    <div key={branch.id} className="flex flex-col items-start gap-4">
+                      <span className="flex items-center gap-2">
+                        <Link href={`/${locale}/branches/${branch.slug}`} className={columnLink}>
+                          {branch.name}
+                        </Link>
+                        {branchWa && (
                           <a
-                            key={number}
-                            href={toTelHref(number)}
-                            dir="ltr"
-                            className="link-line tap-safe tap-safe-lg text-xs text-white/50 transition-colors duration-500 ease-luxe hover:text-white"
+                            href={branchWa}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${branch.name} — ${t.common.whatsapp}`}
+                            className={iconLink}
                           >
-                            {number}
+                            <WhatsAppMark className="h-4 w-4" />
                           </a>
-                        ))}
+                        )}
+                        {branch.instagram && (
+                          <a
+                            href={branch.instagram}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${branch.name} — Instagram`}
+                            className={iconLink}
+                          >
+                            <InstagramMark />
+                          </a>
+                        )}
                       </span>
-                    )}
-                  </div>
-                )
-              })
-            ) : (
-              <span className="text-sm text-white/60">—</span>
-            )}
+
+                      {numbers.length > 0 && (
+                        <span className="flex flex-wrap items-center gap-x-4 gap-y-3">
+                          {numbers.map((number) => (
+                            <a
+                              key={number}
+                              href={toTelHref(number)}
+                              dir="ltr"
+                              className="link-line tap-safe tap-safe-lg text-xs text-white/50 transition-colors duration-500 ease-luxe hover:text-white"
+                            >
+                              {number}
+                            </a>
+                          ))}
+                        </span>
+                      )}
+                    </div>
+                  )
+                })
+              ) : (
+                <span className="text-sm text-white/60">—</span>
+              )}
+            </div>
           </nav>
 
           {hasContactColumn && (

@@ -37,6 +37,57 @@ import { btnLight, btnOnDark, btnPrimary, sectionY, shell } from '@/components/s
 
 type Args = { params: Promise<{ locale: string }> }
 
+/**
+ * One mark per reason to book direct, in the order the dictionary lists them:
+ * where the hotels are, how fast a message is answered, and the generator.
+ *
+ * Drawn here rather than pulled from an icon set, for the same reason the rest
+ * of the site draws its own: three shapes is not worth a dependency, and a set
+ * would bring a house style with it that is not this one. Indexed rather than
+ * keyed by the English title — the titles are translated, so a lookup by title
+ * would find nothing on the Kurdish and Arabic pages and leave the cards bare.
+ */
+const assuranceMarks = [
+  // A pin: every hotel is in the middle of the city.
+  <svg
+    key="place"
+    viewBox="0 0 24 24"
+    className="h-7 w-7"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+  >
+    <path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z" strokeLinejoin="round" />
+    <circle cx="12" cy="10" r="2.6" />
+  </svg>,
+  // A message: WhatsApp reaches the front desk.
+  <svg
+    key="reply"
+    viewBox="0 0 24 24"
+    className="h-7 w-7"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+  >
+    <path
+      d="M20 12a7.5 7.5 0 0 1-7.5 7.5H12l-4.5 2.2.6-2.9A7.5 7.5 0 1 1 20 12Z"
+      strokeLinejoin="round"
+    />
+    <path d="M8.75 11.5h6.5M8.75 14.5h4" strokeLinecap="round" />
+  </svg>,
+  // A bolt: the power does not stop.
+  <svg
+    key="power"
+    viewBox="0 0 24 24"
+    className="h-7 w-7"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+  >
+    <path d="M13.2 2.5 5.5 13.4h5.2l-.9 8.1 7.7-10.9h-5.2l.9-8.1Z" strokeLinejoin="round" />
+  </svg>,
+]
+
 export default async function HomePage({ params }: Args) {
   const { locale: raw } = await params
   if (!isLocale(raw)) notFound()
@@ -85,6 +136,11 @@ export default async function HomePage({ params }: Args) {
     locale === 'en' ? 'en' : undefined,
   )
 
+  // Written once and used three times — the schema description, the site
+  // description, and now the sentence in the band beside the photograph. It
+  // was already being built twice on this page.
+  const identity = groupIdentity(branches, t, locale, settings.establishedYear)
+
   const payload = await getPayload({ config: configPromise })
   const rate = await pointsRate(payload)
   const faq = buildGroupFaq(branches, t, locale, {
@@ -101,7 +157,7 @@ export default async function HomePage({ params }: Args) {
         phone={settings.phone}
         email={settings.email}
         establishedYear={settings.establishedYear}
-        description={groupIdentity(branches, t, locale, settings.establishedYear)}
+        description={identity}
         logoUrl={mediaUrl(settings.logo)}
         imageUrl={mediaUrl(settings.socialShareImage, 'og') || heroUrl}
         social={[
@@ -114,11 +170,7 @@ export default async function HomePage({ params }: Args) {
       <FaqSchema entries={faq} />
       {/* The site itself — its name, the three languages it is published in,
           and the one page here that answers a typed query. */}
-      <WebSiteSchema
-        siteName={siteName}
-        locale={locale}
-        description={groupIdentity(branches, t, locale, settings.establishedYear)}
-      />
+      <WebSiteSchema siteName={siteName} locale={locale} description={identity} />
       {/* The search box sits at the top of the picture, above the name, which
           is where the reference puts it and is the right way round: the one
           control a guest came to use should not be something they scroll to.
@@ -136,11 +188,11 @@ export default async function HomePage({ params }: Args) {
           fallbackSrc={shippedPhoto(heroBranch?.slug)}
           priority
           tone="ink"
-          imageClassName="object-[center_28%]"
+          imageClassName="object-[center_38%]"
         />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/45"
+          className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-black/35"
         />
         <div aria-hidden="true" className="hero-glow absolute inset-0" />
 
@@ -152,9 +204,7 @@ export default async function HomePage({ params }: Args) {
             hard-coded pt-28 that had to be re-measured by hand every time the
             bar changed, and was one pixel out at tablet widths. */}
         {branches.length > 0 && (
-          <div
-            className={cn(shell, 'relative pt-[calc(var(--site-header-h,4.5rem)+1.75rem)]')}
-          >
+          <div className={cn(shell, 'relative pt-[calc(var(--site-header-h,4.5rem)+1.75rem)]')}>
             <StayFinder
               hotels={branches.map((b) => ({
                 slug: b.slug,
@@ -224,7 +274,7 @@ export default async function HomePage({ params }: Args) {
                 deliver five short facts — and they are meant to be taken in at
                 a glance, which a column cannot do. They are short enough to
                 pair. */}
-            <ul className="mt-12 grid grid-cols-2 gap-x-6 gap-y-9 sm:gap-x-8 sm:gap-y-10 lg:mt-16 lg:grid-cols-3 xl:grid-cols-5">
+            <ul className="mt-10 grid grid-cols-2 gap-x-6 gap-y-8 sm:gap-x-8 sm:gap-y-9 lg:mt-12 lg:grid-cols-3 xl:grid-cols-5">
               {[
                 // Dropped rather than shown as zero when the branch query comes
                 // back empty: "0 hotels in Erbil" is worse than saying nothing.
@@ -256,9 +306,7 @@ export default async function HomePage({ params }: Args) {
                 { value: settings.stars ?? '4', label: t.home.creditStars },
                 { value: t.branch.anyTime, label: t.home.creditReception },
               ]
-                .filter(
-                  (c): c is { value: string; label: string; note?: string } => c !== null,
-                )
+                .filter((c): c is { value: string; label: string; note?: string } => c !== null)
                 .map((credit, i) => (
                   <Reveal key={credit.label} delay={i * 90} className="text-center">
                     {/* Sized down from the four-item version: "2 million" is
@@ -286,11 +334,18 @@ export default async function HomePage({ params }: Args) {
 
         {/* The hotels, as a rail. This is the decision the whole site exists
             to help with, so it gets the pattern the eye is trained on. */}
-        <section id="collection" className={cn(shell, 'scroll-mt-24', sectionY)}>
+        <section
+          id="collection"
+          // Clears the header *and* the docked search bar, both of which are
+          // fixed to the top — a plain scroll-mt-24 landed this heading
+          // underneath them, so "Explore the hotels" jumped to a band whose
+          // title was hidden behind the furniture.
+          className={cn(shell, 'scroll-mt-[calc(var(--site-header-h,4.5rem)+5rem)]', sectionY)}
+        >
           <SectionHeading
             title={count(t.home.chooseBranch)}
             lead={t.home.chooseBranchLead}
-            className="mb-12 lg:mb-16"
+            className="mb-10 lg:mb-12"
           />
 
           {branches.length > 0 ? (
@@ -319,7 +374,7 @@ export default async function HomePage({ params }: Args) {
               <SectionHeading
                 title={t.home.offersTitle}
                 lead={t.home.offersLead}
-                className="mb-12 lg:mb-16"
+                className="mb-10 lg:mb-12"
               />
               <CardRail label={t.home.offersTitle}>
                 {offers.map((offer, i) => (
@@ -332,41 +387,85 @@ export default async function HomePage({ params }: Args) {
           </section>
         )}
 
-        {/* One line of colour across the page, the way the reference breaks up
-            a long scroll without spending another photograph on it. */}
-        <section className="bg-brand">
-          <div className={cn(shell, 'py-16 text-center sm:py-20')}>
-            <Reveal>
-              <p className="font-display mx-auto max-w-3xl text-balance text-2xl leading-snug text-white sm:text-3xl">
-                {count(t.home.interlude)}
-              </p>
-            </Reveal>
+        {/* A photograph beside a sentence, rather than a sentence alone.
+
+            This band used to be one line of type centred in about four hundred
+            pixels of flat navy. It was there to break up a long scroll, which
+            is a real job — but a colour with nothing in it does not break a
+            scroll up, it puts a gap in it, and on a page a guest reads at
+            speed a gap looks like something that failed to load. The reference
+            breaks its scroll with exactly this: a picture on one side, a short
+            heading and a sentence on the other, and the way on.
+
+            Left on white: the photograph in it is the size of a section on its
+            own, so it separates this band from the one above without a change
+            of ground as well. */}
+        <section>
+          <div className={cn(shell, sectionY)}>
+            <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+              <Reveal className="relative aspect-4/3 overflow-hidden rounded-2xl bg-ink lg:aspect-3/2">
+                <PhotoFrame
+                  src={mediaUrl(interludeBranch?.heroImage, 'large')}
+                  alt={mediaAlt(interludeBranch?.heroImage) || siteName}
+                  sizes="(min-width: 1024px) 46vw, 92vw"
+                  monogram={monogramOf(interludeBranch?.name || siteName)}
+                  fallbackSrc={shippedPhoto(interludeBranch?.slug)}
+                  tone="ink"
+                />
+              </Reveal>
+
+              <Reveal delay={120}>
+                <h2 className="font-display display-lg text-balance text-ink">
+                  {count(t.home.interlude)}
+                </h2>
+                <p className="mt-5 max-w-xl text-[1.05rem] leading-[1.65] text-muted-ink sm:text-[1.1rem]">
+                  {identity}
+                </p>
+                <Link href={`/${locale}/branches`} className={cn(btnPrimary, 'mt-8')}>
+                  {t.nav.branches}
+                </Link>
+              </Reveal>
+            </div>
           </div>
         </section>
 
-        {/* Reasons to book direct, as bordered cards in a rail. */}
-        <section className={cn(shell, sectionY)}>
-          <SectionHeading title={t.home.assuranceTitle} className="mb-12 lg:mb-16" />
-          <CardRail label={t.home.assuranceTitle}>
-            {t.home.assurance.map((item) => (
-              <RailCard key={item.title}>
-                <div className="flex h-full flex-col rounded-2xl border border-line p-8 text-center">
-                  <h3 className="font-display text-2xl leading-snug text-ink">{item.title}</h3>
-                  <p className="mt-4 text-[1.02rem] leading-relaxed text-muted-ink">{item.body}</p>
-                </div>
-              </RailCard>
-            ))}
-          </CardRail>
+        {/* Reasons to book direct. A grid of three, not a rail: a rail is for
+            a row you scroll through, and three cards on a desktop never
+            scrolled — so it drew a pair of dead arrows under every one of
+            them. They also had nothing in them but two lines of type in a thin
+            rectangle, which is what an empty box looks like. Each carries the
+            mark of the thing it is talking about now. */}
+        <section className="bg-sand">
+          <div className={cn(shell, sectionY)}>
+            <SectionHeading title={t.home.assuranceTitle} className="mb-10 lg:mb-12" />
+            <div className="mx-auto grid max-w-5xl gap-5 sm:grid-cols-3 sm:gap-6">
+              {t.home.assurance.map((item, i) => (
+                <Reveal key={item.title} delay={i * 90} className="h-full">
+                  <div className="flex h-full flex-col items-center rounded-2xl border border-line bg-card p-7 text-center">
+                    <span className="text-brand" aria-hidden="true">
+                      {assuranceMarks[i] ?? assuranceMarks[0]}
+                    </span>
+                    <h3 className="font-display mt-4 text-xl leading-snug text-ink sm:text-2xl">
+                      {item.title}
+                    </h3>
+                    <p className="mt-3 text-[0.98rem] leading-relaxed text-muted-ink">
+                      {item.body}
+                    </p>
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+          </div>
         </section>
 
         {rooms.length > 0 && (
-          <section className="bg-sand">
+          <section>
             <div className={cn(shell, sectionY)}>
               <SectionHeading
                 title={t.home.featuredRooms}
                 lead={t.home.roomsLead}
                 action={{ href: `/${locale}/rooms`, label: t.nav.rooms }}
-                className="mb-12 lg:mb-16"
+                className="mb-10 lg:mb-12"
               />
               <CardRail label={t.nav.rooms}>
                 {rooms.map((room, i) => (
@@ -385,10 +484,17 @@ export default async function HomePage({ params }: Args) {
             slogan. Somebody arriving on the name alone had to click into a
             hotel before the site told them anything: how many there are,
             whether a card is needed, whether a booking can be undone. */}
+        {/* On sand, because the band above it is white too. Two white sections
+            running into each other do not read as two sections — they read as
+            one very tall one with a lot of nothing in the middle, which is
+            most of what made the old page feel empty. The grounds alternate
+            all the way down now. */}
         {faq.length > 0 && (
-          <section className={cn(shell, sectionY)}>
-            <div className="mx-auto max-w-3xl">
-              <Faq entries={faq} title={t.faq.groupTitle} />
+          <section className="bg-sand">
+            <div className={cn(shell, sectionY)}>
+              <div className="mx-auto max-w-3xl">
+                <Faq entries={faq} title={t.faq.groupTitle} />
+              </div>
             </div>
           </section>
         )}

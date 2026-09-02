@@ -40,9 +40,16 @@ export const shell =
   'mx-auto w-full max-w-[86rem] px-5 sm:px-8 lg:px-12 xl:max-w-[94rem] 2xl:max-w-[108rem] 2xl:px-16'
 
 /**
- * Vertical rhythm between major sections. Tighter than the previous design:
- * this layout is meant to be worked through rather than lingered over, and
- * the long airy gaps put the next section a scroll further away than it
- * needs to be.
+ * Vertical rhythm between major sections.
+ *
+ * Tightened again, and this time from a screenshot rather than from taste. At
+ * py-24 with a section heading carrying mb-16 under it, two consecutive bands
+ * put about four hundred pixels of empty ground between one row of cards and
+ * the next — so a page with real content on it read as a page waiting for
+ * content to load. The reference is dense: every band carries a row of cards
+ * or a photograph, and the space between them is a breath, not a gap.
+ *
+ * Air is worth paying for around a *heading*, which is why headings keep their
+ * own margin. It is not worth paying for twice in the same place.
  */
-export const sectionY = 'py-14 sm:py-20 lg:py-24'
+export const sectionY = 'py-12 sm:py-16 lg:py-20'
