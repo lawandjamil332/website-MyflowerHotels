@@ -10,6 +10,8 @@ import { getBranches } from '@/utilities/branches'
 import { availableRoomsAcross, nightsBetween, type AvailableRoom } from '@/utilities/booking'
 import { formatNumber } from '@/utilities/format'
 import { getSettings } from '@/utilities/getSettings'
+import { mediaAlt, mediaUrl } from '@/utilities/media'
+import { shippedPhoto } from '@/utilities/shippedPhoto'
 import { layoutParts } from '@/utilities/layout'
 import { pointsForStay, pointsRate } from '@/utilities/points'
 import { currentGuest } from '@/actions/account'
@@ -136,11 +138,21 @@ export default async function BookPage({ params, searchParams }: Args) {
 
   return (
     <>
+      {/* With no picture, PageHero draws the initials of its own title inside
+          a hairline frame — so the page a guest lands on from "Reserve" opened
+          on a black band with the letters "P Y" floating in it, cut from the
+          words "Plan your stay". That stand-in exists for a hotel whose photos
+          have not been uploaded yet, not for a page that simply never asked
+          for one. It asks for one now: the hotel being booked, or the first
+          one, which is the same photograph the homepage opens on. */}
       <PageHero
         title={chosenBranch ? chosenBranch.name : t.search.title}
         lead={
           searchable ? `${checkInRaw} → ${checkOutRaw} · ${nights} ${t.booking.nights}` : undefined
         }
+        imageUrl={mediaUrl((chosenBranch ?? branches[0])?.heroImage, 'xlarge')}
+        imageAlt={mediaAlt((chosenBranch ?? branches[0])?.heroImage)}
+        fallbackSrc={shippedPhoto((chosenBranch ?? branches[0])?.slug)}
       />
 
       <section className={cn(shell, sectionY)}>
@@ -148,7 +160,10 @@ export default async function BookPage({ params, searchParams }: Args) {
           // Arriving here from "Reserve" with nothing chosen yet: ask the
           // question rather than sending them back to the homepage to be asked
           // it there.
-          <div className="mx-auto max-w-4xl">
+          // max-w-4xl squeezed the search box into 896px where it wants 1088,
+          // and the two date fields were clipped mid-word — "mm/dd/yyy" on the
+          // one page whose entire job is taking those two dates.
+          <div className="mx-auto max-w-[68rem]">
             <SectionHeading
               title={t.search.title}
               lead={t.booking.lead}

@@ -13,11 +13,23 @@ import '@fontsource/ibm-plex-sans-arabic/600.css'
 // Headings. Latin subsets only for Cormorant — the Arabic and Kurdish glyphs
 // come from Noto Naskh, so shipping its Cyrillic and Vietnamese ranges would
 // be weight nobody on this site ever renders.
-import '@fontsource/cormorant-garamond/latin-300.css'
+//
+// 600 is the one that matters and it was the one missing. Every heading on
+// this site is set in `.font-display`, which asks for 600 — and the body sets
+// `font-synthesis-weight: none`, so a browser with no 600 face may not fake
+// one. It took the nearest it had, 500, and every headline on every page has
+// been rendering a weight lighter than the design asks for. Cormorant is a
+// high-contrast face that already sits optically light; a step under its
+// intended weight is most of why the headings looked thin.
+//
+// 300 came out in the same pass: nothing on the site has ever asked for it,
+// so it was a font file downloaded on every first visit and never drawn.
 import '@fontsource/cormorant-garamond/latin-400.css'
 import '@fontsource/cormorant-garamond/latin-500.css'
+import '@fontsource/cormorant-garamond/latin-600.css'
 import '@fontsource/noto-naskh-arabic/arabic-400.css'
 import '@fontsource/noto-naskh-arabic/arabic-500.css'
+import '@fontsource/noto-naskh-arabic/arabic-600.css'
 
 import '../globals.css'
 

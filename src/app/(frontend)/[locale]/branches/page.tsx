@@ -130,7 +130,7 @@ export default async function BranchesPage({ params }: Args) {
           to be read as "here are the four hotels" had an outline that said
           nothing of the kind, to a screen reader or to anything parsing it. */}
       <section className={cn(shell, sectionY)}>
-        <SectionHeading title={t.branchesPage.gridTitle} className="mb-10 lg:mb-14" />
+        <SectionHeading title={t.branchesPage.gridTitle} className="mb-10 lg:mb-12" />
         <div className="grid gap-6 sm:grid-cols-2 lg:gap-8">
           {branches.map((branch, i) => (
             <BranchCard
@@ -151,7 +151,7 @@ export default async function BranchesPage({ params }: Args) {
           <SectionHeading
             title={t.branchesPage.glanceTitle}
             lead={t.branchesPage.glanceLead}
-            className="mb-10 lg:mb-14"
+            className="mb-10 lg:mb-12"
           />
           <Reveal delay={120}>
             {/* Wide tables are the classic way a page ends up scrolling
