@@ -61,33 +61,39 @@
     'Fraunces', 'Noto Naskh Arabic', 'IBM Plex Serif', 'IBM Plex Sans Arabic', Georgia, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Garnet, brass, ivory and a warm near-black — taken from the hotel's own
-     logo rather than invented.
-     The palette used to be built on a navy. Sampled, the logo is 24,000 pixels
-     of red and no navy at all: the lotus, the four stars and the word HOTEL are
-     all one crimson. So the site was wearing a colour its own sign does not
-     have. This is that crimson matured into something a hotel can be painted
-     with — the bright logo red at full strength across a page would look loud
-     and cheap, while a deep garnet reads the way a hotel reads.
-     The grounds are warm ivory rather than white, and the near-black carries a
-     little red-brown, so the whole page sits on the warm side of neutral with
-     the garnet instead of fighting it. Brass is the small ornament: hairlines,
-     stars, a mark on a dark ground. It is never body text — on ivory it is
-     2.6:1, which is a decoration, not a word. */
-  --color-ink: oklch(23% 0.016 40deg);
-  --color-ink-soft: oklch(35% 0.016 40deg);
-  --color-bone: oklch(98.5% 0.005 80deg);
-  --color-sand: oklch(95% 0.013 76deg);
-  --color-brand: oklch(43% 0.155 24deg);
-  --color-brand-bright: oklch(52% 0.185 26deg);
+  /* Charcoal, brass and warm ivory. One metal, no second colour.
+     Two palettes came before this. A navy that appears nowhere on the hotel's
+     own sign, and then a garnet taken from the sign — the logo is 24,000
+     pixels of red — on the reasoning that a site should wear its own colour.
+     That reasoning was half right and the result was still the loudest thing
+     on the page: a saturated red button repeated down every band is what a
+     high-street shop looks like, not a hotel.
+     The hotels this group is judged against solve it the same way. Near-black
+     or a deep neutral, one metal, and the colour comes from the photography
+     and the mark. So the buttons and the dark bands are a warm charcoal, the
+     ornament is brass, and the grounds are warm ivory and parchment.
+     The point of it is what it does to the logo: with no other colour on the
+     page, that multicoloured lotus is the only colour a guest sees, and it
+     reads as the brand rather than as one more red thing among many.
+     Brass is never body text — on ivory it is 2.8:1, which is a decoration,
+     not a word. Bronze is its readable sibling, for the small labels that need
+     to be metallic *and* legible on a light ground. */
+  --color-ink: oklch(22% 0.01 60deg);
+  --color-ink-soft: oklch(35% 0.01 60deg);
+  --color-bone: oklch(98.5% 0.004 80deg);
+  --color-sand: oklch(95.5% 0.01 74deg);
+  --color-brand: oklch(26% 0.012 60deg);
+  --color-brand-bright: oklch(36% 0.014 60deg);
   /* The darkest surface on the site: the footer, and the bands that close a
-     page. A wine-black rather than a flat one, so it belongs to the garnet. */
-  --color-bark: oklch(21% 0.028 32deg);
-  --color-brass: oklch(70% 0.1 76deg);
-  --color-line: oklch(88.5% 0.012 72deg);
-  --color-muted-ink: oklch(50% 0.015 45deg);
-  /* WhatsApp's own green, held at a weight that sits beside the garnet rather
-     than shouting over it. Still unmistakably the WhatsApp colour, which is
+     page. A shade under the ink, so a dark band and the type on it are two
+     different blacks rather than one. */
+  --color-bark: oklch(17% 0.01 60deg);
+  --color-brass: oklch(68% 0.105 74deg);
+  --color-bronze: oklch(46% 0.07 72deg);
+  --color-line: oklch(89% 0.008 72deg);
+  --color-muted-ink: oklch(50% 0.009 62deg);
+  /* WhatsApp's own green, and on this palette it is the one saturated colour
+     on the page besides the logo. Still unmistakably the WhatsApp colour, which is
      the point — guests here recognise it faster than they read any label. */
   --color-whatsapp: oklch(56% 0.115 152deg);
 
@@ -143,25 +149,25 @@
      phone, two on a desktop. */
   --site-header-h: 4.5rem;
 
-  --background: oklch(98.5% 0.005 80deg);
-  --foreground: oklch(23% 0.016 40deg);
+  --background: oklch(98.5% 0.004 80deg);
+  --foreground: oklch(22% 0.01 60deg);
   --card: oklch(100% 0 0deg);
-  --card-foreground: oklch(23% 0.016 40deg);
+  --card-foreground: oklch(22% 0.01 60deg);
   --popover: oklch(100% 0 0deg);
-  --popover-foreground: oklch(23% 0.016 40deg);
-  --primary: oklch(43% 0.155 24deg);
+  --popover-foreground: oklch(22% 0.01 60deg);
+  --primary: oklch(26% 0.012 60deg);
   --primary-foreground: oklch(100% 0 0deg);
-  --secondary: oklch(95% 0.013 76deg);
-  --secondary-foreground: oklch(23% 0.016 40deg);
-  --muted: oklch(95% 0.013 76deg);
-  --muted-foreground: oklch(50% 0.015 45deg);
-  --accent: oklch(43% 0.155 24deg);
+  --secondary: oklch(95.5% 0.01 74deg);
+  --secondary-foreground: oklch(22% 0.01 60deg);
+  --muted: oklch(95.5% 0.01 74deg);
+  --muted-foreground: oklch(50% 0.009 62deg);
+  --accent: oklch(26% 0.012 60deg);
   --accent-foreground: oklch(100% 0 0deg);
   --destructive: oklch(57.7% 0.245 27.325deg);
   --destructive-foreground: oklch(57.7% 0.245 27.325deg);
-  --border: oklch(88.5% 0.012 72deg);
-  --input: oklch(88.5% 0.012 72deg);
-  --ring: oklch(43% 0.155 24deg);
+  --border: oklch(89% 0.008 72deg);
+  --input: oklch(89% 0.008 72deg);
+  --ring: oklch(26% 0.012 60deg);
   --chart-1: oklch(64.6% 0.222 41.116deg);
   --chart-2: oklch(60% 0.118 184.704deg);
   --chart-3: oklch(39.8% 0.07 227.392deg);
@@ -399,7 +405,7 @@ html[data-theme='light'] {
   }
 
   /* Type set over a photograph. Plain white, because the whole point of this
-     palette is that nothing competes with the garnet that means "press here" —
+     palette is that nothing competes with the mark and the photography —
      a headline that shimmers would be the loudest thing on the page and the
      least useful. */
   .text-hero {
@@ -411,20 +417,25 @@ html[data-theme='light'] {
   .hero-glow {
     background: radial-gradient(
       70% 60% at 22% 80%,
-      oklch(21% 0.028 32deg / 0.6) 0%,
+      oklch(17% 0.01 60deg / 0.6) 0%,
       transparent 72%
     );
   }
 
   /* Small uppercase label above a heading. Short tracking and real weight:
      this is a signpost to be scanned, not a decorative line of capitals. */
+  /* Bronze, not the brand colour. The brand colour is now a charcoal a shade
+     off the heading beneath it, so an eyebrow set in it stopped being a label
+     and became a smaller heading. Bronze is the metal at a weight that is
+     still a word — 6.9:1 on ivory, where brass is 2.8:1 and would be
+     decoration. */
   .eyebrow {
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.1em;
     text-transform: uppercase;
     line-height: 1;
-    color: var(--color-brand);
+    color: var(--color-bronze);
   }
 
   [dir='rtl'] .eyebrow {

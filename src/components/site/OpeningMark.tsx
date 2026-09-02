@@ -22,7 +22,7 @@ export function OpeningMark({
         'inline-block rounded-full border px-3.5 py-1.5 text-[0.72rem] font-semibold tracking-[0.14em] uppercase rtl:tracking-normal',
         tone === 'light'
           ? 'border-white/50 bg-bark/55 text-white backdrop-blur-sm'
-          : 'border-brand/50 text-brand',
+          : 'border-bronze/60 text-bronze',
         className,
       )}
     >

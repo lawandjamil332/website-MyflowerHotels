@@ -485,7 +485,7 @@ export default async function HomePage({ params }: Args) {
                       shape a template makes; here the words start where every
                       other word in the band starts. */}
                   <div className="flex h-full flex-col rounded-2xl border border-line bg-card p-7">
-                    <span className="text-brand" aria-hidden="true">
+                    <span className="text-bronze" aria-hidden="true">
                       {assuranceMarks[i] ?? assuranceMarks[0]}
                     </span>
                     <h3 className="font-display mt-5 text-xl leading-snug text-ink sm:text-[1.4rem]">

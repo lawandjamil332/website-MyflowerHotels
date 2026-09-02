@@ -135,7 +135,7 @@ export default async function LocaleLayout({ children, params }: Args) {
             which is no longer a colour anywhere on this site. This is the
             footer's wine-black, so the browser's furniture belongs to the
             page rather than to a palette that has been replaced. */}
-        <meta name="theme-color" content="#241310" />
+        <meta name="theme-color" content="#130e0b" />
         <Hreflang locale={locale} />
       </head>
       <body className="bg-bone text-ink antialiased">
