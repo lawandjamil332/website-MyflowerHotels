@@ -115,8 +115,14 @@ export default async function BranchesPage({ params }: Args) {
           result cannot assume anybody has read that one. */}
       <section className="bg-sand">
         <div className={cn(shell, 'py-12 sm:py-16')}>
-          <Reveal className="mx-auto max-w-2xl">
-            <p className="text-center text-[1.02rem] leading-[1.8] text-ink">{identity}</p>
+          {/* Ranged left at a large size, like a standfirst under a headline
+              — not centred. Every heading and every card on this page starts
+              on the page's own margin now, and one centred paragraph in the
+              middle of them was the last thing on it finding its own axis. */}
+          <Reveal className="max-w-3xl">
+            <p className="font-display text-[1.35rem] leading-[1.5] text-balance text-ink sm:text-[1.6rem]">
+              {identity}
+            </p>
           </Reveal>
         </div>
       </section>

@@ -88,41 +88,55 @@ export default async function AboutPage({ params }: Args) {
         imageAlt={mediaAlt(heroSource)}
       />
 
-      {/* The story as a centred band rather than a heading in one column and
-          prose in another. Both paragraphs are two sentences, which is the
-          length a centred measure carries — this is a section of a site, not
-          the opening spread of an article. */}
+      {/* The story, ranged left in one column with the group's own statement
+          across from it.
+
+          It was a centred band: heading centred, two paragraphs centred under
+          it, and a third centred under a rule. Three centred blocks stacked is
+          the arrangement that made every page on this site look like a
+          template — each block finds its own middle, so nothing lines up with
+          the heading, the hero or the cards further down. Ranged left they are
+          one column a reader runs down, and the ownership sentence gets the
+          facing half rather than a rule and more centred type. */}
       <section className="bg-sand">
         <div className={cn(shell, sectionY)}>
-          <SectionHeading title={t.home.introTitle} lead={t.about.body1} />
-          {/* Set to match SectionHeading's own lead exactly, so the two
-              paragraphs read as one column rather than two treatments. */}
-          <Reveal delay={120} className="mx-auto mt-6 max-w-2xl text-center">
-            <p className="text-[1.05rem] leading-[1.65] text-muted-ink sm:text-[1.15rem]">
-              {t.about.body2}
-            </p>
-          </Reveal>
+          <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:gap-16">
+            <div>
+              <SectionHeading
+                eyebrow={t.about.eyebrow}
+                title={t.home.introTitle}
+                lead={t.about.body1}
+              />
+              {/* Set to match SectionHeading's own lead exactly, so the two
+                  paragraphs read as one column rather than two treatments. */}
+              <Reveal delay={120} className="mt-5 max-w-2xl">
+                <p className="text-[1.05rem] leading-[1.65] text-muted-ink sm:text-[1.1rem]">
+                  {t.about.body2}
+                </p>
+              </Reveal>
+            </div>
 
-          {/* Who owns this and how many there are, in one sentence, stated
-              plainly enough to be quoted. Most of the multi-property hotel
-              names here are foreign operators running a local
-              building; independent and Kurdish-owned across four hotels is the
-              genuinely unusual thing here, and it was nowhere on the site. */}
-          <Reveal delay={200} className="mx-auto mt-10 max-w-2xl">
-            <p className="border-t border-line pt-8 text-center text-[1.02rem] leading-[1.8] text-ink">
-              {identity}
-            </p>
-            {/* Set in smaller, quieter type than the sentence above it. The
-                claim above is a fact about who owns this company; this one is
-                a comparison the group believes and has dated, and reading as
-                slightly more careful than the line before it is exactly
-                right. */}
-            {claim && (
-              <p className="mt-5 text-center text-[0.92rem] leading-[1.7] text-muted-ink">
-                {claim}
-              </p>
-            )}
-          </Reveal>
+            {/* Who owns this and how many there are, in one sentence, stated
+                plainly enough to be quoted. Most of the multi-property hotel
+                names here are foreign operators running a local building;
+                independent and Kurdish-owned across four hotels is the
+                genuinely unusual thing here, and it was nowhere on the site. */}
+            <Reveal delay={200} className="lg:pt-2">
+              <div className="border-s-2 border-brass ps-6">
+                <p className="font-display text-[1.25rem] leading-[1.5] text-balance text-ink sm:text-[1.4rem]">
+                  {identity}
+                </p>
+                {/* Set in smaller, quieter type than the sentence above it. The
+                    claim above is a fact about who owns this company; this one
+                    is a comparison the group believes and has dated, and
+                    reading as slightly more careful than the line before it is
+                    exactly right. */}
+                {claim && (
+                  <p className="mt-5 text-[0.92rem] leading-[1.7] text-muted-ink">{claim}</p>
+                )}
+              </div>
+            </Reveal>
+          </div>
         </div>
       </section>
 

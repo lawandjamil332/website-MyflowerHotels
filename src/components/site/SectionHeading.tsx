@@ -119,9 +119,13 @@ export function SectionHeading({
 }
 
 /**
- * A small centred heading with a rule running out either side — the treatment
- * the reference uses to separate a list of logos or links from the band above
- * it, where a full-size heading would be too much weight.
+ * A small heading with a rule running out past it, for separating a list from
+ * the band above where a full-size heading would be too much weight.
+ *
+ * The rule used to run out on both sides with the heading floating in the
+ * middle of it. That is a centred treatment, and it went with the rest of them
+ * — a heading suspended between two hairlines lines up with nothing on the
+ * page. It starts on the leading edge now and the rule runs out from it.
  */
 export function RuledHeading({
   title,
@@ -135,10 +139,9 @@ export function RuledHeading({
   const rule = tone === 'light' ? 'bg-white/25' : 'bg-line'
   return (
     <div className={cn('flex items-center gap-5', className)}>
-      <span aria-hidden="true" className={cn('h-px flex-1', rule)} />
       <h2
         className={cn(
-          'font-display text-center text-2xl sm:text-3xl',
+          'font-display text-2xl sm:text-[1.7rem]',
           tone === 'light' ? 'text-white' : 'text-ink',
         )}
       >

@@ -86,7 +86,7 @@
   --color-brass: oklch(70% 0.1 76deg);
   --color-line: oklch(88.5% 0.012 72deg);
   --color-muted-ink: oklch(50% 0.015 45deg);
-  /* WhatsApp's own green, held at a weight that sits beside the blue rather
+  /* WhatsApp's own green, held at a weight that sits beside the garnet rather
      than shouting over it. Still unmistakably the WhatsApp colour, which is
      the point — guests here recognise it faster than they read any label. */
   --color-whatsapp: oklch(56% 0.115 152deg);
@@ -399,7 +399,7 @@ html[data-theme='light'] {
   }
 
   /* Type set over a photograph. Plain white, because the whole point of this
-     palette is that nothing competes with the blue that means "press here" —
+     palette is that nothing competes with the garnet that means "press here" —
      a headline that shimmers would be the loudest thing on the page and the
      least useful. */
   .text-hero {
