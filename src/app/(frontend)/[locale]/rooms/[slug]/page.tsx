@@ -150,7 +150,7 @@ export default async function RoomPage({ params }: Args) {
       {/* As on the hotel page: with no description and no amenities written,
           the wide column is empty, so the price card becomes the section
           rather than sitting beside a blank third of the screen. */}
-      <section className={cn(shell, 'py-20 sm:py-24 lg:py-28')}>
+      <section className={cn(shell, sectionY)}>
         <div className={cn('grid gap-14 lg:gap-20', hasDetails && 'lg:grid-cols-[1.4fr_0.9fr]')}>
           {hasDetails && (
             <div>
@@ -200,7 +200,7 @@ export default async function RoomPage({ params }: Args) {
           )}
 
           <aside className={cn(!hasDetails && 'mx-auto w-full max-w-md')}>
-            <Reveal delay={120} className={cn(hasDetails && 'lg:sticky lg:top-28')}>
+            <Reveal delay={120} className={cn(hasDetails && 'lg:sticky lg:top-[calc(var(--site-header-h,4.5rem)+4.5rem)]')}>
               <div className="border border-line rounded-2xl bg-card p-7 sm:p-8">
                 {price ? (
                   <>

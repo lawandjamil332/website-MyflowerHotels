@@ -19,7 +19,7 @@ import { SectionHeading } from '@/components/site/SectionHeading'
 import { BreadcrumbSchema, ContactSchema } from '@/components/site/StructuredData'
 import { Reveal } from '@/components/site/Reveal'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
-import { btnOutline, btnSmall, btnWhatsApp, shell } from '@/components/site/ui'
+import { btnOutline, btnSmall, btnWhatsApp, sectionY, shell } from '@/components/site/ui'
 
 type Args = { params: Promise<{ locale: string }> }
 
@@ -52,7 +52,7 @@ export default async function ContactPage({ params }: Args) {
         imageAlt={mediaAlt(heroSource)}
       />
 
-      <section className={cn(shell, 'py-20 sm:py-24 lg:py-28')}>
+      <section className={cn(shell, sectionY)}>
         {branches.length > 0 ? (
           <ol className="border-t border-line">
             {branches.map((branch, i) => {

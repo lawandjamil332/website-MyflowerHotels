@@ -99,12 +99,19 @@ export default async function RoomsPage({ params, searchParams }: Args) {
     return `/${locale}/rooms${query ? `?${query}` : ''}`
   }
 
+  // Rounded, sentence case, at a size an adult reads without leaning in.
+  //
+  // These were square boxes of 10px letterspaced capitals, which is the one
+  // magazine habit the rest of the site dropped and this page kept — so a
+  // hotel's name came out as "MY FLOWER 1" and every filter cost a moment's
+  // reading. They are the controls that make this page useful; they should
+  // look like controls.
   const chip = (active: boolean) =>
     cn(
-      'inline-block border px-4 py-2 text-[0.65rem] tracking-[0.16em] uppercase transition-colors duration-500 ease-luxe rtl:tracking-normal',
+      'inline-flex items-center rounded-full border px-4 py-2 text-[0.85rem] font-medium transition-colors duration-500 ease-luxe',
       active
-        ? 'border-ink bg-ink text-bone'
-        : 'border-line text-muted-ink hover:border-ink hover:text-ink',
+        ? 'border-brand bg-brand text-white'
+        : 'border-line text-muted-ink hover:border-brand hover:text-brand',
     )
 
   // In the order the hotels are published, so the page does not reshuffle
@@ -171,7 +178,7 @@ export default async function RoomsPage({ params, searchParams }: Args) {
               {bed && <input type="hidden" name="bed" value={bed} />}
               <label
                 htmlFor="room-search"
-                className="me-2 text-[0.58rem] tracking-[0.2em] text-muted-ink uppercase rtl:tracking-normal"
+                className="me-2 text-[0.8rem] font-semibold text-ink"
               >
                 {t.roomsPage.search}
               </label>
@@ -184,7 +191,7 @@ export default async function RoomsPage({ params, searchParams }: Args) {
                 defaultValue={q}
                 maxLength={80}
                 placeholder={t.roomsPage.searchPlaceholder}
-                className="min-w-0 flex-1 border border-line bg-transparent px-4 py-2 text-base text-ink placeholder:text-muted-ink/70 focus:border-ink focus:outline-none sm:max-w-xs"
+                className="min-w-0 flex-1 rounded-full border border-line bg-transparent px-4 py-2 text-base text-ink placeholder:text-muted-ink/70 focus:border-brand focus:outline-none sm:max-w-xs"
               />
               <button type="submit" className={chip(false)}>
                 {t.roomsPage.apply}
@@ -193,7 +200,7 @@ export default async function RoomsPage({ params, searchParams }: Args) {
 
             {branches.length > 0 && (
               <div className="flex flex-wrap items-center gap-3">
-                <span className="me-2 text-[0.58rem] tracking-[0.2em] text-muted-ink uppercase rtl:tracking-normal">
+                <span className="me-2 text-[0.8rem] font-semibold text-ink">
                   {t.roomsPage.filterHotel}
                 </span>
                 {branches.map((b) => (
@@ -205,7 +212,7 @@ export default async function RoomsPage({ params, searchParams }: Args) {
             )}
 
             <div className="flex flex-wrap items-center gap-3">
-              <span className="me-2 text-[0.58rem] tracking-[0.2em] text-muted-ink uppercase rtl:tracking-normal">
+              <span className="me-2 text-[0.8rem] font-semibold text-ink">
                 {t.roomsPage.filterGuests}
               </span>
               {[1, 2, 3, 4].map((n) => (
@@ -217,7 +224,7 @@ export default async function RoomsPage({ params, searchParams }: Args) {
             </div>
 
             <div className="flex flex-wrap items-center gap-3">
-              <span className="me-2 text-[0.58rem] tracking-[0.2em] text-muted-ink uppercase rtl:tracking-normal">
+              <span className="me-2 text-[0.8rem] font-semibold text-ink">
                 {t.roomsPage.filterBed}
               </span>
               {beds.map((b) => (
@@ -236,7 +243,7 @@ export default async function RoomsPage({ params, searchParams }: Args) {
             {anyFilter && (
               <Link
                 href={`/${locale}/rooms`}
-                className="link-line text-[0.65rem] tracking-[0.18em] text-ink uppercase rtl:tracking-normal"
+                className="link-line text-[0.85rem] font-medium text-brand"
               >
                 {t.roomsPage.clear}
               </Link>

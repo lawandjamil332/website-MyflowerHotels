@@ -126,7 +126,7 @@ export default async function BranchPage({ params }: Args) {
           With neither a description nor amenities written yet, the wide column
           would be empty and the card would sit marooned beside a third of a
           screen of nothing. In that case the card becomes the whole section. */}
-      <section className={cn(shell, 'py-20 sm:py-24 lg:py-28')}>
+      <section className={cn(shell, sectionY)}>
         <div className={cn('grid gap-14 lg:gap-20', hasOverview && 'lg:grid-cols-[1.4fr_0.9fr]')}>
           {hasOverview && (
             <div>
@@ -155,7 +155,7 @@ export default async function BranchPage({ params }: Args) {
           )}
 
           <aside className={cn(!hasOverview && 'mx-auto w-full max-w-md')}>
-            <Reveal delay={120} className={cn(hasOverview && 'lg:sticky lg:top-28')}>
+            <Reveal delay={120} className={cn(hasOverview && 'lg:sticky lg:top-[calc(var(--site-header-h,4.5rem)+4.5rem)]')}>
               <div id="reserve-card" className="border border-line rounded-2xl bg-card p-7 sm:p-8">
                 <p className="eyebrow">{openingSoon ? opening : t.branch.stayEyebrow}</p>
                 <h2 className="font-display mt-4 text-2xl text-ink">
