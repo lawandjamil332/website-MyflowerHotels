@@ -90,11 +90,23 @@ export function StayFinder({
   locale,
   t,
   className,
+  idPrefix = 'finder',
+  compact = false,
 }: {
   hotels: FinderHotel[]
   locale: Locale
   t: Dictionary
   className?: string
+  /**
+   * Two of these can be on screen at once — the one in the hero and the one
+   * docked at the top of the window — and a form control is addressed by an
+   * id that has to be unique in the document. Without this the docked bar's
+   * labels pointed at the hero's fields, so tapping "Arriving" up there
+   * scrolled the page back to the top and opened the wrong calendar.
+   */
+  idPrefix?: string
+  /** The docked version: same fields, less height, so it clears less page. */
+  compact?: boolean
 }) {
   const router = useRouter()
   const [hotel, setHotel] = useState('')
@@ -119,7 +131,7 @@ export function StayFinder({
     if (!checkIn || !checkOut) {
       setMissing(true)
       // Put them in the field that is actually holding the search up.
-      const id = !checkIn ? 'finder-in' : 'finder-out'
+      const id = !checkIn ? `${idPrefix}-in` : `${idPrefix}-out`
       document.getElementById(id)?.focus()
       return
     }
@@ -162,9 +174,11 @@ export function StayFinder({
   //
   // has-[:focus-visible] rather than focus-within, so the ring answers a Tab
   // and not a mouse click, matching every other control on the site.
-  const cell =
-    'flex flex-1 min-w-0 items-center gap-3.5 px-5 py-3.5 border-line lg:px-6 ' +
-    'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-inset has-[:focus-visible]:ring-brand'
+  const cell = cn(
+    'flex flex-1 min-w-0 items-center gap-3.5 border-line',
+    compact ? 'px-4 py-2 lg:px-5' : 'px-5 py-3.5 lg:px-6',
+    'has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-inset has-[:focus-visible]:ring-brand',
+  )
 
   // A date input draws its own calendar button, so beside the icon in the cell
   // every date field showed two calendars — and in Arabic, where the field
@@ -189,7 +203,7 @@ export function StayFinder({
     missing && empty ? 'rounded-xl ring-2 ring-brand/70 ring-offset-2 ring-offset-card' : ''
 
   return (
-    <div className="mx-auto w-full max-w-[68rem]">
+    <div className={cn('mx-auto w-full', compact ? 'max-w-[64rem]' : 'max-w-[68rem]')}>
       <form
         onSubmit={submit}
         aria-label={t.search.title}
@@ -199,8 +213,10 @@ export function StayFinder({
           // of the page gutter. Run the full width of the shell it stops being
           // an object sitting on the picture and becomes a band ruled across
           // the page.
-          'w-full rounded-2xl bg-card p-2 lg:rounded-full lg:p-2.5',
-          'shadow-[0_24px_70px_-28px_rgb(0_0_0/0.55)]',
+          'w-full bg-card',
+          compact
+            ? 'rounded-xl p-1.5 shadow-[0_10px_30px_-16px_rgb(0_0_0/0.45)] lg:rounded-full lg:p-1.5'
+            : 'rounded-2xl p-2 shadow-[0_24px_70px_-28px_rgb(0_0_0/0.55)] lg:rounded-full lg:p-2.5',
           // Two columns on a phone rather than five stacked rows. The two dates
           // belong side by side anyway — they are one decision — and pairing them
           // takes a whole field's height out of a control that now sits at the
@@ -212,11 +228,11 @@ export function StayFinder({
         <div className={cn(cell, 'col-span-2 border-b lg:col-auto lg:border-b-0 lg:border-e')}>
           <BuildingIcon />
           <span className="min-w-0 flex-1">
-            <label className={label} htmlFor="finder-hotel">
+            <label className={label} htmlFor={`${idPrefix}-hotel`}>
               {t.search.hotel}
             </label>
             <select
-              id="finder-hotel"
+              id={`${idPrefix}-hotel`}
               value={hotel}
               onChange={(e) => setHotel(e.target.value)}
               className={cn(field, 'mt-1.5')}
@@ -234,11 +250,11 @@ export function StayFinder({
         <div className={cn(cell, 'border-b border-e lg:border-b-0')}>
           <CalendarIcon />
           <span className="min-w-0 flex-1">
-            <label className={label} htmlFor="finder-in">
+            <label className={label} htmlFor={`${idPrefix}-in`}>
               {t.search.arriving}
             </label>
             <input
-              id="finder-in"
+              id={`${idPrefix}-in`}
               type="date"
               dir="ltr"
               min={today}
@@ -253,11 +269,11 @@ export function StayFinder({
         <div className={cn(cell, 'border-b lg:border-b-0 lg:border-e')}>
           <CalendarIcon />
           <span className="min-w-0 flex-1">
-            <label className={label} htmlFor="finder-out">
+            <label className={label} htmlFor={`${idPrefix}-out`}>
               {t.search.leaving}
             </label>
             <input
-              id="finder-out"
+              id={`${idPrefix}-out`}
               type="date"
               dir="ltr"
               min={checkIn || today}
@@ -274,11 +290,11 @@ export function StayFinder({
         >
           <GuestIcon />
           <span className="min-w-0 flex-1">
-            <label className={label} htmlFor="finder-guests">
+            <label className={label} htmlFor={`${idPrefix}-guests`}>
               {t.search.guests}
             </label>
             <select
-              id="finder-guests"
+              id={`${idPrefix}-guests`}
               value={guests}
               onChange={(e) => setGuests(e.target.value)}
               className={cn(field, 'mt-1.5')}
@@ -296,7 +312,11 @@ export function StayFinder({
 
         <button
           type="submit"
-          className={cn(btnPrimary, 'col-span-2 mt-2 shrink-0 lg:col-auto lg:mt-0 lg:px-9')}
+          className={cn(
+            btnPrimary,
+            'col-span-2 mt-2 shrink-0 lg:col-auto lg:mt-0',
+            compact ? 'px-6 py-3 text-[0.88rem] lg:px-7' : 'lg:px-9',
+          )}
         >
           {t.search.submit}
         </button>

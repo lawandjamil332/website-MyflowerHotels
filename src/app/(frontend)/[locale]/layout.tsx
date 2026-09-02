@@ -34,6 +34,7 @@ import { Hreflang } from '@/components/site/Hreflang'
 import { SiteHeader } from '@/components/site/SiteHeader'
 import { SiteFooter } from '@/components/site/SiteFooter'
 import { ContactDock } from '@/components/site/ContactDock'
+import { StayFinderDock } from '@/components/site/StayFinderDock'
 import { getSettings } from '@/utilities/getSettings'
 import { getBranches } from '@/utilities/branches'
 import { toWhatsAppHref } from '@/utilities/contact'
@@ -142,6 +143,18 @@ export default async function LocaleLayout({ children, params }: Args) {
             </a>
 
             <SiteHeader locale={locale} t={t} settings={settings} />
+            {/* Rides at the top of every page once the guest scrolls, so the
+                dates they have just decided on can be typed where they are
+                rather than back at the top of the homepage. */}
+            <StayFinderDock
+              locale={locale}
+              t={t}
+              hotels={branches.map((branch) => ({
+                slug: branch.slug,
+                name: branch.name,
+                openingSoon: branch.status === 'openingSoon',
+              }))}
+            />
             <main id="main">{children}</main>
             <SiteFooter locale={locale} t={t} settings={settings} />
             <ContactDock

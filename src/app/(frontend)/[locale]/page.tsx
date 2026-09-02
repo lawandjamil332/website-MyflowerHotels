@@ -144,15 +144,17 @@ export default async function HomePage({ params }: Args) {
         />
         <div aria-hidden="true" className="hero-glow absolute inset-0" />
 
-        {/* Which hotel, which nights, how many — carried into the enquiry
-            rather than checked against availability nobody is holding.
+        {/* Which hotel, which nights, how many — checked against the same
+            calendar the site sells from.
 
-            pt-28 clears the header, which stands 81px tall. At pt-20 the pill
-            sat one pixel under it at tablet widths and seven clear at phone
-            widths — the control the page opens with, tucked behind the menu.
-            Measured, not guessed. */}
+            The clearance is the header's own measured height plus a gap,
+            published by the bar as a custom property. It used to be a
+            hard-coded pt-28 that had to be re-measured by hand every time the
+            bar changed, and was one pixel out at tablet widths. */}
         {branches.length > 0 && (
-          <div className={cn(shell, 'relative pt-28')}>
+          <div
+            className={cn(shell, 'relative pt-[calc(var(--site-header-h,4.5rem)+1.75rem)]')}
+          >
             <StayFinder
               hotels={branches.map((b) => ({
                 slug: b.slug,

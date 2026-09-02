@@ -121,6 +121,13 @@
 }
 
 :root {
+  /* How tall the fixed bar at the top of every page is. The bar itself
+     measures and overwrites this the moment it mounts; these two values are
+     what the first paint uses, so a hero's clearance is right before any
+     JavaScript has run rather than jumping into place afterwards. One row on a
+     phone, two on a desktop. */
+  --site-header-h: 4.5rem;
+
   --background: oklch(100% 0 0deg);
   --foreground: oklch(21% 0.005 60deg);
   --card: oklch(100% 0 0deg);
@@ -307,6 +314,12 @@ html[data-theme='light'] {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+}
+
+@media (width >= 64rem) {
+  :root {
+    --site-header-h: 8rem;
   }
 }
 

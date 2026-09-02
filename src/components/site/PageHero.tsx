@@ -57,7 +57,14 @@ export function PageHero({
         />
       ) : null}
 
-      <div className={cn(shell, 'relative pt-24 pb-10 sm:pb-12')}>
+      <div
+        className={cn(
+          shell,
+          // The header's own measured height plus a gap, rather than a fixed
+          // pt-24 that was written when the bar was one row tall.
+          'relative pt-[calc(var(--site-header-h,4.5rem)+1.5rem)] pb-10 sm:pb-12',
+        )}
+      >
         {/* The eyebrow is brand blue by default, which is a mid tone and
             illegible over a photograph — on dark it goes white. */}
         {eyebrow && (

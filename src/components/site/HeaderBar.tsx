@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
@@ -11,6 +11,9 @@ import { cn } from '@/utilities/ui'
 import { CurrencySwitch } from './Currency'
 import { LocaleSwitcher } from './LocaleSwitcher'
 import { btnLight, btnSmall, shell } from './ui'
+
+/** See CardRail for why this is hoisted rather than chosen inside a component. */
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
 
 type Props = {
   locale: Locale
@@ -41,13 +44,26 @@ function PersonIcon() {
 }
 
 /**
- * A solid navy bar, present from the first pixel and unchanged by scrolling.
+ * Two rows over the photograph: who we are and how you are set up on top, then
+ * where you can go underneath.
  *
- * The previous design floated it transparently over the hero so the
- * photograph could run full-bleed. That is the right call for a single
- * property selling a mood; it is the wrong one here. A group site is
- * navigated, and navigation you can always see — in a colour that never
- * shifts under you — is worth more than an uninterrupted photograph.
+ * This replaces a single solid bar, and the reason is what a solid bar does to
+ * a hotel page. Every page on this site opens on a picture; a black band ruled
+ * across the top of it cuts the photograph off at the ankles and makes the
+ * page start twice. Every hotel group of any size floats its navigation on the
+ * image instead and lets the picture run to the top of the screen — so that is
+ * what this does, over a gradient dark enough to keep white type legible on a
+ * bright sky.
+ *
+ * Splitting it in two is the other half. A single row had the language codes,
+ * the currency, the account and five pages all competing at the same weight,
+ * which is why nothing on it led. Now the top row carries the things a guest
+ * sets once — language, currency, who they are — and the row beneath carries
+ * the pages, with the one button that books a room at the end of it.
+ *
+ * Scrolling collapses the two rows into one. The pages stay reachable, the
+ * bar stops taking a tenth of a phone screen, and the search bar docks
+ * underneath it.
  */
 export function HeaderBar({
   locale,
@@ -59,15 +75,40 @@ export function HeaderBar({
   guestName = '',
 }: Props) {
   const pathname = usePathname()
-  const [solid, setSolid] = useState(false)
+  const [condensed, setCondensed] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const header = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    const onScroll = () => setSolid(window.scrollY > 24)
+    // Hysteresis, not a single threshold. The bar changes its own height when
+    // it collapses, and a page resting exactly on one threshold would trip it,
+    // grow, untrip, shrink, and flicker for as long as the guest sat there.
+    const onScroll = () =>
+      setCondensed((was) => (was ? window.scrollY > 40 : window.scrollY > 96))
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  // Publishes the bar's real height, so everything that has to clear it — the
+  // hero's top padding, the docked search bar, the anchor scroll offset — can
+  // read one number instead of each carrying its own guess. The guesses were
+  // the bug this replaces: the hero's clearance was a hard-coded pt-28 that
+  // had to be re-measured by hand every time the bar changed, and it went
+  // wrong in the language with the longest menu labels.
+  const publishHeight = useCallback(() => {
+    const h = header.current?.offsetHeight
+    if (h) document.documentElement.style.setProperty('--site-header-h', `${h}px`)
+  }, [])
+
+  useIsomorphicLayoutEffect(() => {
+    publishHeight()
+    const el = header.current
+    if (!el) return
+    const observer = new ResizeObserver(publishHeight)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [publishHeight, condensed])
 
   // Navigating from inside the overlay should close it; without this the menu
   // stays open on top of the page the guest just asked for.
@@ -105,112 +146,166 @@ export function HeaderBar({
 
   const accountLabel = guestName || t.account.signIn
 
-  // The bar is navy at every scroll position, so everything on it takes the
-  // light treatment. Scrolling only tightens the height and adds a shadow.
+  // Which page you are on, marked under the label. `startsWith` rather than
+  // equality so /branches/my-flower-2 still lights "Our hotels" — but the home
+  // link has to be exact, or it would be lit on every page of the site.
+  const isCurrent = (href: string) =>
+    href === `/${locale}` ? pathname === href : pathname.startsWith(href)
+
   return (
     <>
       <header
+        ref={header}
         className={cn(
-          'fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-ink transition-shadow duration-500 ease-luxe',
-          solid && !menuOpen && 'shadow-[0_2px_12px_rgb(0_0_0/0.28)]',
+          'fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow] duration-500 ease-luxe',
+          // Floating over the picture until the guest scrolls, then a solid
+          // surface — because once the page beneath is white cards and text
+          // there is no longer a photograph for white type to sit on.
+          condensed || menuOpen
+            ? 'bg-ink shadow-[0_2px_16px_rgb(0_0_0/0.3)]'
+            : 'bg-transparent',
         )}
       >
+        {/* The gradient, not a colour: it is what keeps the wordmark legible
+            over a bright sky without painting a band across the photograph.
+            It fades out with the bar's solid state so the two never stack. */}
         <div
+          aria-hidden="true"
           className={cn(
-            shell,
-            'relative flex items-center justify-between gap-3 transition-[height] duration-500 ease-luxe sm:gap-6',
-            solid && !menuOpen ? 'h-16' : 'h-18 sm:h-20',
+            'pointer-events-none absolute inset-x-0 top-0 h-[180%] bg-gradient-to-b from-black/75 via-black/35 to-transparent transition-opacity duration-500 ease-luxe',
+            condensed || menuOpen ? 'opacity-0' : 'opacity-100',
           )}
-        >
-          {/* `min-w-0` matters: a long hotel name is wide enough to push the
-              menu button off a 360px screen if the wordmark is allowed to
-              refuse to shrink. */}
-          <Link
-            href={`/${locale}`}
-            className="flex min-w-0 items-center gap-3"
-            aria-label={siteName}
-          >
-            {logoUrl ? (
-              <Image
-                // The dark-surface artwork already carries a legible wordmark,
-                // so it must not be run through a filter — that would flatten
-                // the flower to a white silhouette and throw the brand away.
-                src={logoLightUrl || logoUrl}
-                alt={logoAlt || siteName}
-                width={228}
-                height={147}
-                priority
-                className={cn(
-                  'w-auto object-contain transition-all duration-500 ease-luxe',
-                  solid && !menuOpen ? 'h-10' : 'h-12 sm:h-14',
-                  !logoLightUrl && 'brightness-0 invert',
-                )}
-              />
-            ) : (
-              <span className="font-display truncate text-lg leading-none text-white sm:text-xl">
-                {siteName}
-              </span>
+        />
+
+        <div className={cn(shell, 'relative')}>
+          {/* Row one: the wordmark, and the three things a guest sets once. */}
+          <div
+            className={cn(
+              'flex items-center justify-between gap-3 transition-[height] duration-500 ease-luxe sm:gap-6',
+              condensed && !menuOpen ? 'h-16' : 'h-18 lg:h-[4.5rem]',
             )}
-          </Link>
+          >
+            {/* `min-w-0` matters: a long hotel name is wide enough to push the
+                menu button off a 360px screen if the wordmark is allowed to
+                refuse to shrink. */}
+            <Link
+              href={`/${locale}`}
+              className="flex min-w-0 items-center gap-3"
+              aria-label={siteName}
+            >
+              {logoUrl ? (
+                <Image
+                  // The dark-surface artwork already carries a legible
+                  // wordmark, so it must not be run through a filter — that
+                  // would flatten the flower to a white silhouette and throw
+                  // the brand away.
+                  src={logoLightUrl || logoUrl}
+                  alt={logoAlt || siteName}
+                  width={228}
+                  height={147}
+                  priority
+                  className={cn(
+                    'w-auto object-contain transition-all duration-500 ease-luxe',
+                    condensed && !menuOpen ? 'h-10' : 'h-12 sm:h-14',
+                    !logoLightUrl && 'brightness-0 invert',
+                  )}
+                />
+              ) : (
+                <span className="font-display truncate text-lg leading-none text-white sm:text-xl">
+                  {siteName}
+                </span>
+              )}
+            </Link>
 
-          <nav className="hidden items-center gap-7 text-[0.92rem] font-medium text-white/85 lg:flex xl:gap-9">
-            {links.map((link) => (
+            <div className="flex shrink-0 items-center gap-1 sm:gap-4">
+              <CurrencySwitch className="hidden border-white/25 md:inline-flex" />
+              <LocaleSwitcher current={locale} label={t.common.language} tone="light" />
+
+              {/* Shown from tablet up rather than desktop only: on a phone this
+                  would crowd the burger, and the phone menu carries it. */}
               <Link
-                key={link.href}
-                href={link.href}
-                className="transition-colors duration-300 ease-luxe hover:text-white"
+                href={`/${locale}/account`}
+                className="tap-safe hidden items-center gap-2 text-[0.85rem] font-medium text-white/85 transition-colors duration-300 ease-luxe hover:text-white md:inline-flex"
               >
-                {link.label}
+                <PersonIcon />
+                <span className="max-w-[9rem] truncate">{accountLabel}</span>
               </Link>
-            ))}
-          </nav>
 
-          <div className="flex shrink-0 items-center gap-2 sm:gap-5">
-            <CurrencySwitch className="hidden border-white/25 md:inline-flex" />
-            <LocaleSwitcher current={locale} label={t.common.language} tone="light" />
+              {/* On a phone the second row does not exist, so the button that
+                  books a room rides up here rather than being lost with it. */}
+              <Link
+                href={`/${locale}/book`}
+                className={cn(btnLight, btnSmall, 'hidden sm:inline-flex lg:hidden')}
+              >
+                {t.common.reserve}
+              </Link>
 
-            {/* Shown from tablet up rather than desktop only: on a phone this
-                would crowd the burger, and the phone menu carries it instead. */}
-            <Link
-              href={`/${locale}/account`}
-              className="tap-safe hidden items-center gap-2 text-[0.92rem] font-medium text-white/85 transition-colors duration-300 ease-luxe hover:text-white md:inline-flex"
-            >
-              <PersonIcon />
-              <span className="max-w-[9rem] truncate">{accountLabel}</span>
-            </Link>
+              <button
+                type="button"
+                onClick={() => setMenuOpen((open) => !open)}
+                aria-expanded={menuOpen}
+                aria-controls="site-menu"
+                aria-label={menuOpen ? t.common.close : t.common.menu}
+                className="relative -me-1 flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-[5px] text-white lg:hidden"
+              >
+                <span
+                  className={cn(
+                    'block h-px w-6 bg-current transition-transform duration-500 ease-luxe',
+                    menuOpen && 'translate-y-[3px] rotate-45',
+                  )}
+                />
+                <span
+                  className={cn(
+                    'block h-px w-6 bg-current transition-transform duration-500 ease-luxe',
+                    menuOpen && '-translate-y-[3px] -rotate-45',
+                  )}
+                />
+              </button>
+            </div>
+          </div>
 
-            {/* Reserve means reserve now that there is something to reserve
-                with. It used to open WhatsApp, and was hidden when no WhatsApp
-                number was set — a booking page is always there, so the button
-                always is too. Internal, so it is a Link and stays in the tab. */}
-            <Link
-              href={`/${locale}/book`}
-              className={cn(btnLight, btnSmall, 'hidden lg:inline-flex')}
-            >
-              {t.common.reserve}
-            </Link>
+          {/* Row two: the pages, and the one button that takes a booking.
+              Collapsed away on scroll — by then the guest is reading, and the
+              row they need back is one flick of the wheel up. */}
+          <div
+            className={cn(
+              'hidden overflow-hidden border-t transition-all duration-500 ease-luxe lg:block',
+              condensed && !menuOpen
+                ? 'h-0 border-transparent opacity-0'
+                : 'h-14 border-white/15 opacity-100',
+            )}
+          >
+            <div className="flex h-14 items-center justify-between gap-6">
+              <nav className="flex items-center gap-8 text-[0.88rem] font-medium xl:gap-10">
+                {links.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    aria-current={isCurrent(link.href) ? 'page' : undefined}
+                    className={cn(
+                      'relative py-1 transition-colors duration-300 ease-luxe hover:text-white',
+                      isCurrent(link.href) ? 'text-white' : 'text-white/80',
+                    )}
+                  >
+                    {link.label}
+                    {/* The marker is drawn rather than an underline so it sits
+                        clear of the descenders in "Rooms" and does not cut the
+                        Kurdish and Arabic labels through the middle. */}
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        'absolute inset-x-0 -bottom-1 h-[2px] rounded-full bg-white transition-opacity duration-300 ease-luxe',
+                        isCurrent(link.href) ? 'opacity-100' : 'opacity-0',
+                      )}
+                    />
+                  </Link>
+                ))}
+              </nav>
 
-            <button
-              type="button"
-              onClick={() => setMenuOpen((open) => !open)}
-              aria-expanded={menuOpen}
-              aria-controls="site-menu"
-              aria-label={menuOpen ? t.common.close : t.common.menu}
-              className="relative -me-1 flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-[5px] text-white lg:hidden"
-            >
-              <span
-                className={cn(
-                  'block h-px w-6 bg-current transition-transform duration-500 ease-luxe',
-                  menuOpen && 'translate-y-[3px] rotate-45',
-                )}
-              />
-              <span
-                className={cn(
-                  'block h-px w-6 bg-current transition-transform duration-500 ease-luxe',
-                  menuOpen && '-translate-y-[3px] -rotate-45',
-                )}
-              />
-            </button>
+              <Link href={`/${locale}/book`} className={cn(btnLight, btnSmall, 'shrink-0')}>
+                {t.common.reserve}
+              </Link>
+            </div>
           </div>
         </div>
       </header>
