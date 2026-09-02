@@ -36,20 +36,52 @@ export function StayFinderDock({
   locale: Locale
   t: Dictionary
 }) {
+  // Desktop only, and decided in JavaScript rather than by a CSS class.
+  //
+  // Hiding it with `hidden lg:block` still builds it: on a phone the whole
+  // search form would sit in the page, five fields deep, inside a box nobody
+  // can see. It is a second form with the same five labels as the one in the
+  // picture, and everything that reads a document rather than looking at it —
+  // a screen reader, a password manager, the browser's own autofill — would
+  // find two of everything and have to guess which the guest meant. On a phone
+  // there is no dock at all now; the Reserve button in the header is one tap
+  // to the same place.
+  const [wide, setWide] = useState(false)
+
+  // Whether the search box has ever been needed on this page. Same reasoning:
+  // it is not built until the guest has scrolled far enough to want it. Once
+  // built it stays, so hiding and showing it again is a transition rather than
+  // a rebuild.
+  const [built, setBuilt] = useState(false)
   const [shown, setShown] = useState(false)
 
   useEffect(() => {
+    // 64rem — the same width Tailwind's `lg` breaks at, written here in the
+    // one place the two have to agree.
+    const query = window.matchMedia('(min-width: 64rem)')
+    const sync = () => setWide(query.matches)
+    sync()
+    query.addEventListener('change', sync)
+    return () => query.removeEventListener('change', sync)
+  }, [])
+
+  useEffect(() => {
+    if (!wide) return
     // Hysteresis again, for the same reason as the header: the dock has a
     // shadow and a blurred backing, and a page resting on a single threshold
     // would flicker it on and off under a trackpad's inertia.
     const onScroll = () =>
-      setShown((was) => (was ? window.scrollY > 300 : window.scrollY > 420))
+      setShown((was) => {
+        const next = was ? window.scrollY > 300 : window.scrollY > 420
+        if (next) setBuilt(true)
+        return next
+      })
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
-  }, [])
+  }, [wide])
 
-  if (hotels.length === 0) return null
+  if (hotels.length === 0 || !wide) return null
 
   return (
     <div
@@ -65,9 +97,7 @@ export function StayFinderDock({
         // header publishes that as a custom property when it collapses, so
         // this never has to know how tall the bar happens to be in Kurdish.
         'top-[var(--site-header-h,4.5rem)]',
-        shown
-          ? 'translate-y-0 opacity-100'
-          : 'pointer-events-none -translate-y-3 opacity-0',
+        shown ? 'translate-y-0 opacity-100' : 'pointer-events-none -translate-y-3 opacity-0',
       )}
     >
       {/* A band behind the pill rather than the pill alone. The reference
@@ -77,13 +107,8 @@ export function StayFinderDock({
           it and the labels stop being readable. The blurred band costs a few
           pixels and makes it work everywhere. */}
       <div className="border-b border-line/70 bg-bone/85 py-2.5 backdrop-blur-md">
-        {/* Hidden on a phone: five fields deep, it would eat half the screen
-            on every page. The phone keeps the Reserve button in the header,
-            which is one tap to the same place. The hiding is done out here
-            rather than on the form, because the form already sets its own
-            display and the two rules would race. */}
-        <div className={cn(shell, 'hidden lg:block')}>
-          <StayFinder hotels={hotels} locale={locale} t={t} idPrefix="dock" compact />
+        <div className={shell}>
+          {built && <StayFinder hotels={hotels} locale={locale} t={t} idPrefix="dock" compact />}
         </div>
       </div>
     </div>
