@@ -165,7 +165,7 @@ export default async function AboutPage({ params }: Args) {
             sizes="100vw"
             className="object-cover saturate-[0.82] contrast-[1.06]"
           />
-          <div aria-hidden="true" className="absolute inset-0 bg-bark/25 mix-blend-multiply" />
+          <div aria-hidden="true" className="absolute inset-0 bg-bark/18 mix-blend-multiply" />
           <div
             aria-hidden="true"
             className="absolute inset-0 bg-gradient-to-t from-bark/80 via-bark/20 to-transparent"

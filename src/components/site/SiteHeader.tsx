@@ -35,11 +35,11 @@ export async function SiteHeader({
       t={t}
       guestName={guestName}
       siteName={settings.siteName || 'My Flower Hotels'}
-      // An uploaded logo wins. Otherwise the group's own artwork ships with
-      // the site, in two versions: full colour for the solid bar, and one with
-      // the wordmark lifted to bone for while the bar is over a photograph.
+      // An uploaded logo wins; otherwise the group's own artwork ships with
+      // the site. Full colour, because the bar it sits on is a pale band now
+      // — the version with the wordmark lifted to bone was for the near-black
+      // bar and is no longer used anywhere but the print stylesheet.
       logoUrl={uploaded || '/logo.png'}
-      logoLightUrl={uploaded ? '' : '/logo-light.png'}
       logoAlt={mediaAlt(settings.logo)}
     />
   )

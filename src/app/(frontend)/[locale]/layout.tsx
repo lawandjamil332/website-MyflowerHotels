@@ -149,11 +149,12 @@ export default async function LocaleLayout({ children, params }: Args) {
             so "Add to Home Screen" saved a browser screenshot rather than the
             hotel. */}
         <link href="/manifest.webmanifest" rel="manifest" />
-        {/* The colour a phone paints its own chrome with. It was the old navy,
-            which is no longer a colour anywhere on this site. This is the
-            footer’s espresso, so the browser’s furniture belongs to the
-            page rather than to a palette that has been replaced. */}
-        <meta name="theme-color" content="#130e0b" />
+        {/* The colour a phone paints its own chrome with, and it has to be
+            the colour of the bar directly under it or the two read as two
+            different sites stacked. It was the footer's near-black, from when
+            the masthead was near-black too; the masthead is the page's own
+            pale ground now, so this is that. */}
+        <meta name="theme-color" content="#fbfaf7" />
         <Hreflang locale={locale} />
       </head>
       <body className="bg-bone text-ink antialiased">

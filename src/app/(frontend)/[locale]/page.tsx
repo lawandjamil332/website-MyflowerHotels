@@ -231,10 +231,10 @@ export default async function HomePage({ params }: Args) {
             top edge under a dark header was the two of them running together
             with no line between. The picture is brightest where it meets the
             band and darkens under the words. */}
-        <div aria-hidden="true" className="absolute inset-0 bg-bark/25 mix-blend-multiply" />
+        <div aria-hidden="true" className="absolute inset-0 bg-bark/18 mix-blend-multiply" />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-bark/85 via-bark/30 to-bark/10"
+          className="absolute inset-0 bg-gradient-to-t from-bark/82 via-bark/26 to-bark/5"
         />
         <div aria-hidden="true" className="hero-glow absolute inset-0" />
 
@@ -641,7 +641,7 @@ export default async function HomePage({ params }: Args) {
               className="object-cover"
             />
           ) : null}
-          <div aria-hidden="true" className="absolute inset-0 bg-black/70" />
+          <div aria-hidden="true" className="absolute inset-0 bg-bark/62" />
 
           <div className={cn(shell, 'relative py-20 text-center sm:py-24')}>
             <Reveal className="mx-auto max-w-2xl">

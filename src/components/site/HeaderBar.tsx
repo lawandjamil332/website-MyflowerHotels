@@ -10,7 +10,7 @@ import type { Dictionary } from '@/i18n/dictionaries'
 import { cn } from '@/utilities/ui'
 import { CurrencySwitch } from './Currency'
 import { LocaleSwitcher } from './LocaleSwitcher'
-import { btnLight, btnSmall, shell } from './ui'
+import { btnPrimary, btnSmall, shell } from './ui'
 
 /** See CardRail for why this is hoisted rather than chosen inside a component. */
 const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect
@@ -20,7 +20,6 @@ type Props = {
   t: Dictionary
   siteName: string
   logoUrl: string
-  logoLightUrl?: string
   logoAlt: string
   /** First name of the signed-in guest, or '' when nobody is. */
   guestName?: string
@@ -45,21 +44,28 @@ function PersonIcon() {
 
 /**
  * A masthead: the mark and the guest's own settings on top, the pages ranged
- * underneath it, on a solid dark band.
+ * underneath it, on a solid pale band.
  *
- * This has been three things. A single solid bar with everything on it at one
+ * This has been four things. A single solid bar with everything on it at one
  * weight, so nothing led. Then two rows floated transparently over the hero
  * photograph, which is a real pattern and the wrong one here — it looks
  * considered on a bright, wide, professionally shot picture, and over the dark
  * building photographs this site actually has it turned the whole top of the
  * page to mush, header and photograph running into each other with no edge
- * between them.
+ * between them. Then a solid near-black band, which fixed that and brought its
+ * own problem: it is the first thing on every page of the site, and a black
+ * slab across the top makes the whole site read as dark whatever colour the
+ * page under it is.
  *
- * So: a solid band, and the photograph starts cleanly beneath it. That is what
- * the reference does, and the reason it works there is the reason it works
- * here — the band is a fixed, legible object of known height that the search
- * bar can sit against, and the picture below it is allowed to be a picture
- * rather than a backdrop for text.
+ * So: a solid band in the page's own light ground, with a hairline under it,
+ * and the photograph starts cleanly beneath that. The band is still a fixed,
+ * legible object of known height that the search bar can sit against, and the
+ * picture below it is still allowed to be a picture rather than a backdrop for
+ * text — but the top of the page is now the same colour as the page.
+ *
+ * The mark goes back to its full-colour artwork here. On the black band it had
+ * to be the version with the wordmark lifted to bone; on this one the flower
+ * is the only colour in the bar, which is exactly where the palette wants it.
  *
  * The split is what makes it a masthead rather than a toolbar. The top row is
  * the things a guest sets once — language, currency, who they are — plus the
@@ -73,7 +79,6 @@ export function HeaderBar({
   t,
   siteName,
   logoUrl,
-  logoLightUrl,
   logoAlt,
   guestName = '',
 }: Props) {
@@ -159,8 +164,8 @@ export function HeaderBar({
       <header
         ref={header}
         className={cn(
-          'fixed inset-x-0 top-0 z-50 bg-bark transition-shadow duration-500 ease-luxe',
-          condensed && !menuOpen && 'shadow-[0_2px_16px_rgb(0_0_0/0.35)]',
+          'fixed inset-x-0 top-0 z-50 border-b border-line bg-bone transition-shadow duration-500 ease-luxe',
+          condensed && !menuOpen && 'shadow-[0_1px_14px_rgb(0_0_0/0.07)]',
         )}
       >
         <div className={shell}>
@@ -183,11 +188,9 @@ export function HeaderBar({
             >
               {logoUrl ? (
                 <Image
-                  // The dark-surface artwork already carries a legible
-                  // wordmark, so it must not be run through a filter — that
-                  // would flatten the flower to a white silhouette and throw
-                  // the brand away.
-                  src={logoLightUrl || logoUrl}
+                  // Full colour, on a light band. The light-surface artwork is
+                  // still shipped and still used by the footer's dark ground.
+                  src={logoUrl}
                   alt={logoAlt || siteName}
                   width={228}
                   height={147}
@@ -195,11 +198,10 @@ export function HeaderBar({
                   className={cn(
                     'w-auto object-contain transition-all duration-500 ease-luxe',
                     condensed && !menuOpen ? 'h-9' : 'h-10 sm:h-11',
-                    !logoLightUrl && 'brightness-0 invert',
                   )}
                 />
               ) : (
-                <span className="font-display truncate text-lg leading-none text-white sm:text-xl">
+                <span className="font-display truncate text-lg leading-none text-ink sm:text-xl">
                   {siteName}
                 </span>
               )}
@@ -208,15 +210,15 @@ export function HeaderBar({
             <div className="flex shrink-0 items-center gap-1 sm:gap-4">
               <CurrencySwitch
                 label={t.common.currency}
-                className="hidden border-white/25 md:inline-flex"
+                className="hidden md:inline-flex"
               />
-              <LocaleSwitcher current={locale} label={t.common.language} tone="light" />
+              <LocaleSwitcher current={locale} label={t.common.language} />
 
               {/* Shown from tablet up rather than desktop only: on a phone this
                   would crowd the burger, and the phone menu carries it. */}
               <Link
                 href={`/${locale}/account`}
-                className="tap-safe hidden items-center gap-2 text-[0.82rem] font-medium text-white/85 transition-colors duration-300 ease-luxe hover:text-white md:inline-flex"
+                className="tap-safe hidden items-center gap-2 text-[0.82rem] font-medium text-muted-ink transition-colors duration-300 ease-luxe hover:text-ink md:inline-flex"
               >
                 <PersonIcon />
                 <span className="max-w-[9rem] truncate">{accountLabel}</span>
@@ -228,7 +230,7 @@ export function HeaderBar({
                   means it survives the second row collapsing on scroll. */}
               <Link
                 href={`/${locale}/book`}
-                className={cn(btnLight, btnSmall, 'hidden sm:inline-flex')}
+                className={cn(btnPrimary, btnSmall, 'hidden sm:inline-flex')}
               >
                 {t.common.reserve}
               </Link>
@@ -239,7 +241,7 @@ export function HeaderBar({
                 aria-expanded={menuOpen}
                 aria-controls="site-menu"
                 aria-label={menuOpen ? t.common.close : t.common.menu}
-                className="relative -me-1 flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-[5px] text-white lg:hidden"
+                className="relative -me-1 flex h-10 w-10 shrink-0 flex-col items-center justify-center gap-[5px] text-ink lg:hidden"
               >
                 <span
                   className={cn(
@@ -271,7 +273,7 @@ export function HeaderBar({
               'hidden overflow-hidden border-t transition-all duration-500 ease-luxe lg:block',
               condensed && !menuOpen
                 ? 'h-0 border-transparent opacity-0'
-                : 'h-12 border-white/12 opacity-100',
+                : 'h-12 border-line opacity-100',
             )}
           >
             <nav className="flex h-12 items-center gap-8 text-[0.88rem] font-medium xl:gap-10">
@@ -281,8 +283,8 @@ export function HeaderBar({
                   href={link.href}
                   aria-current={isCurrent(link.href) ? 'page' : undefined}
                   className={cn(
-                    'relative py-1 transition-colors duration-300 ease-luxe hover:text-white',
-                    isCurrent(link.href) ? 'text-white' : 'text-white/75',
+                    'relative py-1 transition-colors duration-300 ease-luxe hover:text-ink',
+                    isCurrent(link.href) ? 'text-ink' : 'text-muted-ink',
                   )}
                 >
                   {link.label}
@@ -292,7 +294,7 @@ export function HeaderBar({
                   <span
                     aria-hidden="true"
                     className={cn(
-                      'absolute inset-x-0 -bottom-1 h-[2px] rounded-full bg-brass transition-opacity duration-300 ease-luxe',
+                      'absolute inset-x-0 -bottom-1 h-[2px] rounded-full bg-brand transition-opacity duration-300 ease-luxe',
                       isCurrent(link.href) ? 'opacity-100' : 'opacity-0',
                     )}
                   />
@@ -311,7 +313,7 @@ export function HeaderBar({
         className={cn(
           // Above the floating WhatsApp button (z-40), below the bar itself,
           // so the open menu is not stamped over by the green circle.
-          'fixed inset-0 z-[45] bg-bark transition-opacity duration-500 ease-luxe lg:hidden',
+          'fixed inset-0 z-[45] bg-bone transition-opacity duration-500 ease-luxe lg:hidden',
           menuOpen ? 'opacity-100' : 'pointer-events-none opacity-0',
         )}
       >
@@ -323,7 +325,7 @@ export function HeaderBar({
                 href={link.href}
                 style={{ transitionDelay: menuOpen ? `${120 + i * 70}ms` : '0ms' }}
                 className={cn(
-                  'font-display border-b border-white/10 py-5 text-3xl text-white transition-all duration-700 ease-luxe sm:text-4xl',
+                  'font-display border-b border-line py-5 text-3xl text-ink transition-all duration-700 ease-luxe sm:text-4xl',
                   menuOpen ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0',
                 )}
               >
@@ -334,20 +336,20 @@ export function HeaderBar({
 
           <div className="flex flex-col gap-8">
             <div className="flex flex-col gap-3">
-              <Link href={`/${locale}/book`} className={cn(btnLight, 'w-full')}>
+              <Link href={`/${locale}/book`} className={cn(btnPrimary, 'w-full')}>
                 {t.common.reserve}
               </Link>
               {/* Beside Reserve, not buried in the list of pages above it —
                   these two are the things a guest came to do. */}
               <Link
                 href={`/${locale}/account`}
-                className="tap-safe flex items-center justify-center gap-2 py-2 text-[0.95rem] font-medium text-white/85"
+                className="tap-safe flex items-center justify-center gap-2 py-2 text-[0.95rem] font-medium text-muted-ink"
               >
                 <PersonIcon />
                 <span className="truncate">{accountLabel}</span>
               </Link>
             </div>
-            <LocaleSwitcher current={locale} label={t.common.language} tone="light" size="full" />
+            <LocaleSwitcher current={locale} label={t.common.language} size="full" />
           </div>
         </div>
       </div>

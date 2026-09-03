@@ -55,10 +55,10 @@ export function PageHero({
           {/* The same two-layer treatment as the homepage: a warm multiply so
               the photograph belongs to the palette, then a vertical gradient
               so the type on it stays legible. */}
-          <div aria-hidden="true" className="absolute inset-0 bg-bark/30 mix-blend-multiply" />
+          <div aria-hidden="true" className="absolute inset-0 bg-bark/22 mix-blend-multiply" />
           <div
             aria-hidden="true"
-            className="absolute inset-0 bg-gradient-to-t from-bark/88 via-bark/45 to-bark/60"
+            className="absolute inset-0 bg-gradient-to-t from-bark/85 via-bark/38 to-bark/12"
           />
         </>
       ) : null}

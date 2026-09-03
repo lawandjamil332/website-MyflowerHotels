@@ -14,9 +14,11 @@ import { Stars } from './Stars'
 import { shell } from './ui'
 
 /**
- * The footer, on the darkest surface the site has — a warm near-black that
- * belongs to the charcoal rather than a flat one. It is what stops a long
- * scroll of photographs from simply stopping.
+ * The footer, on a soft ground a shade under the page rather than on the
+ * near-black it used to sit on. It is still what stops a long scroll of
+ * photographs from simply stopping — a change of surface does that; it does
+ * not take a slab of black to do it, and a black foot under a black masthead
+ * made a light page read as a dark site.
  *
  * Every hotel is listed by name here as well as in the switcher: the
  * footer is where a returning guest looks for the branch they stayed at last
@@ -67,26 +69,27 @@ export async function SiteFooter({
     (showGroupContact && (tel || wa)) || settings.email || socialLinks.length > 0,
   )
 
-  // White, not brand. These headings were once set in the brand colour on a
-  // footer painted that same colour, so "Menu", "Our hotels" and "Contact"
-  // were rendering at one-to-one contrast — in the markup, read out by screen
-  // readers, and invisible to everyone looking at the page.
+  // A quiet grey, never the brand colour. These headings were once set in the
+  // brand colour on a footer painted that same colour, so "Menu", "Our hotels"
+  // and "Contact" were rendering at one-to-one contrast — in the markup, read
+  // out by screen readers, and invisible to everyone looking at the page. The
+  // ground has changed twice since; the rule has not.
   const columnHeading =
-    'text-[0.72rem] font-semibold tracking-[0.16em] text-white/70 uppercase rtl:tracking-normal'
+    'text-[0.72rem] font-semibold tracking-[0.16em] text-muted-ink uppercase rtl:tracking-normal'
   // tap-safe-lg gives these a 44px hit area; the gap-6 on every column below
   // is what stops those areas overlapping each other.
   const columnLink =
-    'link-line tap-safe tap-safe-lg text-sm text-white/60 transition-colors duration-500 ease-luxe hover:text-white'
+    'link-line tap-safe tap-safe-lg text-sm text-muted-ink transition-colors duration-500 ease-luxe hover:text-ink'
   const iconLink =
-    'flex h-11 w-11 items-center justify-center text-white/45 transition-colors duration-500 ease-luxe hover:text-white'
+    'flex h-11 w-11 items-center justify-center text-muted-ink/80 transition-colors duration-500 ease-luxe hover:text-ink'
 
   return (
-    <footer className="bg-bark text-white">
+    <footer className="bg-sand text-ink">
       <div className={cn(shell, 'py-16 sm:py-20')}>
         <div
           className={cn(
             // items-start, and it is the whole fix for a footer that was half
-            // empty navy. A grid row stretches every cell to the tallest one,
+            // empty ground. A grid row stretches every cell to the tallest one,
             // and the hotels column — four names, each with two numbers under
             // it — is roughly three times the height of the menu beside it. So
             // the short columns were being stretched to match and their links
@@ -101,7 +104,7 @@ export async function SiteFooter({
         >
           <div>
             <Image
-              src="/logo-light.png"
+              src="/logo.png"
               alt={siteName}
               width={228}
               height={147}
@@ -110,10 +113,9 @@ export async function SiteFooter({
             <Stars
               count={settings.stars}
               label={t.home.creditStars}
-              tone="light"
               className="mt-4"
             />
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/75">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-soft">
               {t.home.heroEyebrow}
             </p>
             {/* Translated, like everything else on the page. This was the
@@ -121,7 +123,7 @@ export async function SiteFooter({
                 the footer of every Kurdish and Arabic page as the one English
                 word on it. */}
             {settings.establishedYear && (
-              <p className="mt-2 text-xs tracking-[0.12em] text-white/65 uppercase rtl:tracking-normal">
+              <p className="mt-2 text-xs tracking-[0.12em] text-muted-ink uppercase rtl:tracking-normal">
                 {t.home.creditSince} {settings.establishedYear}
               </p>
             )}
@@ -176,7 +178,7 @@ export async function SiteFooter({
                 Four hotels each carrying a name, two icons and two phone
                 numbers made a column about three times the height of the menu
                 beside it — so the footer was as tall as a section of the page
-                and two thirds of it was empty navy to the left of this list.
+                and two thirds of it was empty ground to the left of this list.
                 Paired, the whole footer is one screenful and the columns end
                 near enough together to read as a row. */}
             <div className="grid items-start gap-x-10 gap-y-8 sm:grid-cols-2">
@@ -224,7 +226,7 @@ export async function SiteFooter({
                               key={number}
                               href={toTelHref(number)}
                               dir="ltr"
-                              className="link-line tap-safe tap-safe-lg text-xs text-white/50 transition-colors duration-500 ease-luxe hover:text-white"
+                              className="link-line tap-safe tap-safe-lg text-xs text-muted-ink transition-colors duration-500 ease-luxe hover:text-ink"
                             >
                               {number}
                             </a>
@@ -235,7 +237,7 @@ export async function SiteFooter({
                   )
                 })
               ) : (
-                <span className="text-sm text-white/60">—</span>
+                <span className="text-sm text-muted-ink">—</span>
               )}
             </div>
           </nav>
@@ -283,7 +285,7 @@ export async function SiteFooter({
           rather than a line of small print. */}
       <div className={cn(shell, 'overflow-hidden pt-4')} aria-hidden="true">
         <p
-          className="font-display leading-[0.8] whitespace-nowrap text-white/[0.07] select-none"
+          className="font-display leading-[0.8] whitespace-nowrap text-ink/[0.06] select-none"
           style={{
             // Sized from the name's own length so it fills the width and stops
             // there. A fixed viewport size would clip "My Flower Hotels"
@@ -302,17 +304,17 @@ export async function SiteFooter({
         </p>
       </div>
 
-      <div className="border-t border-white/10">
+      <div className="border-t border-line">
         <div
           className={cn(
             shell,
             'flex flex-col-reverse items-center justify-between gap-5 py-7 sm:flex-row',
           )}
         >
-          <p className="text-xs text-white/65">
+          <p className="text-xs text-muted-ink">
             © {new Date().getFullYear()} {siteName}
           </p>
-          <LocaleSwitcher current={locale} label={t.common.language} tone="light" size="full" />
+          <LocaleSwitcher current={locale} label={t.common.language} size="full" />
         </div>
       </div>
     </footer>
