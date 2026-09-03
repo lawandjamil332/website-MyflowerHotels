@@ -23,3 +23,6 @@ node_modules/
 
 # TypeScript incremental build cache
 tsconfig.tsbuildinfo
+
+# Local dev server log, written by `npm run start` in a session.
+.srv.log
