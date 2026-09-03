@@ -12,11 +12,11 @@
 const base =
   'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-full text-[0.95rem] font-semibold leading-none transition-all duration-300 ease-luxe focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50'
 
-/** Solid garnet pill. The one thing on a light section meant to be pressed. */
+/** Solid charcoal pill. The one thing on a light section meant to be pressed. */
 export const btnPrimary = `${base} bg-brand px-8 py-4 text-white hover:bg-brand-bright focus-visible:ring-brand focus-visible:ring-offset-bone`
 
 /**
- * Outlined in the same garnet, for the secondary action beside it.
+ * Outlined in the same charcoal, for the secondary action beside it.
  *
  * No fill of its own. It used to carry `bg-bone`, which is the page's ivory —
  * so on the parchment bands it drew a paler rectangle behind itself and read
@@ -26,7 +26,7 @@ export const btnPrimary = `${base} bg-brand px-8 py-4 text-white hover:bg-brand-
  */
 export const btnOutline = `${base} border border-brand/70 px-8 py-4 text-brand hover:border-brand hover:bg-brand hover:text-white focus-visible:ring-brand focus-visible:ring-offset-bone`
 
-/** Sits on a photograph or on the wine-black footer. */
+/** Sits on a photograph or on the near-black footer. */
 export const btnOnDark = `${base} border border-white/70 px-8 py-4 text-white hover:border-white hover:bg-white hover:text-ink focus-visible:ring-white focus-visible:ring-offset-transparent`
 
 /** Filled light pill on a dark ground — the primary action over a hero. */

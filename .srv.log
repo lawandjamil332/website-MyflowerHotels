@@ -1,0 +1,30 @@
+
+> hotel-site@1.0.0 start
+> npm run check-env && npm run migrate && cross-env NODE_OPTIONS=--no-deprecation next start
+
+
+> hotel-site@1.0.0 check-env
+> node scripts/check-env.mjs
+
+  Photo storage: the database.
+
+  No storage bucket is configured, so uploaded photographs are stored
+  in Postgres, which keeps its own permanent volume. They survive a
+  redeploy. Nothing needs doing.
+
+  A bucket is optional: it would hand the serving of images off to the
+  storage service instead of this app. If one is ever attached, the
+  site switches to it on the next start with no code change.
+
+
+> hotel-site@1.0.0 migrate
+> cross-env NODE_OPTIONS=--no-deprecation payload migrate
+
+[00:51:20] [33mWARN[39m: [36mNo email adapter provided. Email will be written to console. More info at https://payloadcms.com/docs/email/overview.[39m
+[00:51:20] [32mINFO[39m: [36mReading migration files from /home/user/website-MyflowerHotels/src/migrations[39m
+[00:51:21] [32mINFO[39m: [36mDone.[39m
+▲ Next.js 16.2.6
+- Local:         http://localhost:3000
+- Network:       http://192.0.2.2:3000
+✓ Ready in 118ms
+[00:51:33] [33mWARN[39m: [36mNo email adapter provided. Email will be written to console. More info at https://payloadcms.com/docs/email/overview.[39m

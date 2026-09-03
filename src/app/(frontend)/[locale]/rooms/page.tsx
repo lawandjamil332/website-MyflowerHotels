@@ -259,7 +259,11 @@ export default async function RoomsPage({ params, searchParams }: Args) {
             other on the site. The hotel name doubles as the way through to
             the hotel. */}
         {grouped.length > 0 ? (
-          <div className="mt-10 space-y-16">
+          // Tighter above the first hotel's name and under it. At the laptop
+          // size a guest saw the banner, the filters, the count and a hotel
+          // name, and then the fold — no room at all on the page whose whole
+          // subject is the rooms. The gaps here were the difference.
+          <div className="mt-7 space-y-14">
             {grouped.map(({ branch, rooms: group }, gi) => (
               <div key={branch.id}>
                 <h2 className="font-display border-b border-line pb-4 text-2xl text-ink">
@@ -270,7 +274,7 @@ export default async function RoomsPage({ params, searchParams }: Args) {
                     {branch.name}
                   </Link>
                 </h2>
-                <div className="mt-10 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="mt-8 grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3">
                   {group.map((room, i) => (
                     <Reveal key={room.id} delay={(i % 3) * 90}>
                       <RoomCard room={room} locale={locale} t={t} priority={gi === 0 && i < 3} />

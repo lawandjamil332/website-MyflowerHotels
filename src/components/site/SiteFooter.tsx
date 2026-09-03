@@ -14,9 +14,9 @@ import { Stars } from './Stars'
 import { shell } from './ui'
 
 /**
- * The footer, on the darkest surface the site has — a wine-black that belongs
- * to the garnet rather than a flat one. It is what stops a long scroll of
- * photographs from simply stopping.
+ * The footer, on the darkest surface the site has — a warm near-black that
+ * belongs to the charcoal rather than a flat one. It is what stops a long
+ * scroll of photographs from simply stopping.
  *
  * Every hotel is listed by name here as well as in the switcher: the
  * footer is where a returning guest looks for the branch they stayed at last
@@ -119,32 +119,41 @@ export async function SiteFooter({
             <div aria-hidden="true" className="rule-brand mt-7" />
           </div>
 
-          <nav className="flex flex-col items-start gap-6">
-            <p className={columnHeading}>{t.common.menu}</p>
-            <Link href={`/${locale}`} className={columnLink}>
-              {t.nav.home}
-            </Link>
-            <Link href={`/${locale}/branches`} className={columnLink}>
-              {t.nav.branches}
-            </Link>
-            <Link href={`/${locale}/rooms`} className={columnLink}>
-              {t.nav.rooms}
-            </Link>
-            <Link href={`/${locale}/about`} className={columnLink}>
-              {t.nav.about}
-            </Link>
-            <Link href={`/${locale}/contact`} className={columnLink}>
-              {t.nav.contact}
-            </Link>
-            <Link href={`/${locale}/account`} className={columnLink}>
-              {t.account.myBookings}
-            </Link>
-            {/* For the guest who booked without an account, which is most of
-                them. Without a door here their reference opens nothing and
-                every change goes through somebody answering a phone. */}
-            <Link href={`/${locale}/booking`} className={columnLink}>
-              {t.booking.manageTitle}
-            </Link>
+          <nav>
+            <p className={cn(columnHeading, 'mb-6 block')}>{t.common.menu}</p>
+            {/* Two across until the footer becomes a row of columns.
+                Seven links, each needing a 44px tap target with a gap either
+                side of it, is close to five hundred pixels of phone screen for
+                a list of seven short words — and it sat above four hotels
+                doing the same thing, so the footer alone was two screenfuls.
+                Paired, it is one short block, and at desktop width it goes
+                back to the single column the row is built around. */}
+            <div className="grid grid-cols-2 items-start gap-x-6 gap-y-6 lg:grid-cols-1">
+              <Link href={`/${locale}`} className={columnLink}>
+                {t.nav.home}
+              </Link>
+              <Link href={`/${locale}/branches`} className={columnLink}>
+                {t.nav.branches}
+              </Link>
+              <Link href={`/${locale}/rooms`} className={columnLink}>
+                {t.nav.rooms}
+              </Link>
+              <Link href={`/${locale}/about`} className={columnLink}>
+                {t.nav.about}
+              </Link>
+              <Link href={`/${locale}/contact`} className={columnLink}>
+                {t.nav.contact}
+              </Link>
+              <Link href={`/${locale}/account`} className={columnLink}>
+                {t.account.myBookings}
+              </Link>
+              {/* For the guest who booked without an account, which is most of
+                  them. Without a door here their reference opens nothing and
+                  every change goes through somebody answering a phone. */}
+              <Link href={`/${locale}/booking`} className={columnLink}>
+                {t.booking.manageTitle}
+              </Link>
+            </div>
           </nav>
 
           {/* Each hotel keeps its own Instagram, so the account sits beside the

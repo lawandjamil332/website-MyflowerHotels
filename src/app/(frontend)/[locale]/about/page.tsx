@@ -140,16 +140,46 @@ export default async function AboutPage({ params }: Args) {
         </div>
       </section>
 
-      {/* A full-bleed breath between the story and the hotels themselves. */}
+      {/* A full-bleed breath between the story and the hotels themselves —
+          with something written on it.
+
+          It used to be 60vh of bare photograph: on a laptop, five hundred
+          pixels of a phone snapshot of a facade and nothing else, sitting
+          between two blocks of type. A picture carrying no words in the middle
+          of a page reads as a gap somebody filled rather than a thing somebody
+          chose. Where it is and how long it has been there is already written
+          in two places on this site, so it costs no new sentence to say it
+          here, and the plate becomes a statement.
+
+          Fixed heights rather than vh, so it is the same plate on a laptop and
+          on a tall monitor instead of growing to half of whatever screen it
+          lands on. The grade and the gradient are the hero's, which is what
+          keeps the four different afternoons these photographs were taken on
+          reading as one page. */}
       {mediaUrl(interlude, 'xlarge') && (
-        <div className="relative h-[45vh] overflow-hidden bg-bark sm:h-[60vh]">
+        <div className="relative flex h-[20rem] items-end overflow-hidden bg-bark sm:h-[25rem] lg:h-[30rem]">
           <Image
             src={mediaUrl(interlude, 'xlarge')}
             alt={mediaAlt(interlude) || siteName}
             fill
             sizes="100vw"
-            className="object-cover"
+            className="object-cover saturate-[0.82] contrast-[1.06]"
           />
+          <div aria-hidden="true" className="absolute inset-0 bg-bark/25 mix-blend-multiply" />
+          <div
+            aria-hidden="true"
+            className="absolute inset-0 bg-gradient-to-t from-bark/80 via-bark/20 to-transparent"
+          />
+          <div className={cn(shell, 'relative pb-10 sm:pb-12')}>
+            <p className="font-display text-[1.5rem] leading-tight text-balance text-white sm:text-[2rem]">
+              {t.home.heroEyebrow}
+            </p>
+            {settings.establishedYear && (
+              <p className="mt-3 text-xs tracking-[0.14em] text-white/70 uppercase rtl:tracking-normal">
+                Since {settings.establishedYear}
+              </p>
+            )}
+          </div>
         </div>
       )}
 

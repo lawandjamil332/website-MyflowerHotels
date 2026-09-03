@@ -305,7 +305,14 @@ export default async function HomePage({ params }: Args) {
             {count(t.home.heroLead)}
           </p>
 
-          <div className="rise mt-7 flex flex-wrap gap-3" style={{ animationDelay: '0.5s' }}>
+          {/* Stacked full width on a phone, side by side from tablet up.
+              At 390px the two pills wrapped onto two lines at two different
+              widths, so the corner of the hero ended in a ragged step. Given
+              the whole column they read as two deliberate choices. */}
+          <div
+            className="rise mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
+            style={{ animationDelay: '0.5s' }}
+          >
             <Link href="#collection" className={btnLight}>
               {t.home.exploreCollection}
             </Link>
@@ -635,7 +642,11 @@ export default async function HomePage({ params }: Args) {
                 {t.home.ctaLead}
               </p>
 
-              <div className="mt-9 flex flex-wrap justify-center gap-3 sm:gap-4">
+              {/* Stacked on a phone, side by side above it — the same
+                  treatment as the banner at the top. Two pills of different
+                  widths centred on one line left a lopsided pair against the
+                  floating buttons in the corner. */}
+              <div className="mx-auto mt-9 flex max-w-sm flex-col gap-3 sm:max-w-none sm:flex-row sm:flex-wrap sm:justify-center sm:gap-4">
                 {wa && (
                   <a href={wa} target="_blank" rel="noopener noreferrer" className={btnLight}>
                     <WhatsAppMark />

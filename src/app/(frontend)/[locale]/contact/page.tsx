@@ -9,7 +9,6 @@ import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { heroFor, photoPool } from '@/utilities/heroPhoto'
 import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
-import { branchLocative } from '@/utilities/teasers'
 import { cn } from '@/utilities/ui'
 import { OpeningMark, isOpeningSoon, openingLabel } from '@/components/site/OpeningMark'
 import { EnquiryForm } from '@/components/site/EnquiryForm'
@@ -78,11 +77,15 @@ export default async function ContactPage({ params }: Args) {
                           {branch.name}
                         </Link>
                       </h2>
-                      {branchLocative(branch) && (
-                        <p className="mt-2 max-w-[22ch] text-sm leading-relaxed text-muted-ink">
-                          {branchLocative(branch)}
-                        </p>
-                      )}
+                      {/* The landmark line that sits under this name
+                          everywhere else on the site is not repeated here.
+                          Beside it in the next column is the postal address —
+                          "Erbil — 100m Street, beside Today Restaurant" — and
+                          under the name was "100m Street — beside Today
+                          Restaurant", so every row on this page said the same
+                          thing twice, a hand's width apart. On the page whose
+                          job is the address, the address is the one that
+                          stays. */}
                       {openingSoon && (
                         <OpeningMark
                           label={openingLabel(branch, t.branch.openingSoon)}
@@ -138,7 +141,12 @@ export default async function ContactPage({ params }: Args) {
                         )}
                     </div>
 
-                    <div className="flex flex-col gap-2.5">
+                    {/* Full width on a phone, and about the width of a button
+                        above it. Stretched across the whole column they were
+                        420px pills with three centred words adrift in the
+                        middle, which reads as a control that does not know how
+                        big it wants to be. */}
+                    <div className="flex flex-col gap-2.5 lg:max-w-[14rem]">
                       {!openingSoon && wa && (
                         <a
                           href={wa}
