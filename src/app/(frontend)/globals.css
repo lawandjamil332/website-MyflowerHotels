@@ -61,40 +61,50 @@
     'Fraunces', 'Noto Naskh Arabic', 'IBM Plex Serif', 'IBM Plex Sans Arabic', Georgia, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Charcoal, brass and warm ivory. One metal, no second colour.
-     Two palettes came before this. A navy that appears nowhere on the hotel's
-     own sign, and then a garnet taken from the sign — the logo is 24,000
-     pixels of red — on the reasoning that a site should wear its own colour.
-     That reasoning was half right and the result was still the loudest thing
-     on the page: a saturated red button repeated down every band is what a
-     high-street shop looks like, not a hotel.
-     The hotels this group is judged against solve it the same way. Near-black
-     or a deep neutral, one metal, and the colour comes from the photography
-     and the mark. So the buttons and the dark bands are a warm charcoal, the
-     ornament is brass, and the grounds are warm ivory and parchment.
-     The point of it is what it does to the logo: with no other colour on the
-     page, that multicoloured lotus is the only colour a guest sees, and it
-     reads as the brand rather than as one more red thing among many.
-     Brass is never body text — on ivory it is 2.8:1, which is a decoration,
-     not a word. Bronze is its readable sibling, for the small labels that need
-     to be metallic *and* legible on a light ground. */
-  --color-ink: oklch(22% 0.01 60deg);
-  --color-ink-soft: oklch(35% 0.01 60deg);
-  --color-bone: oklch(98.5% 0.004 80deg);
-  --color-sand: oklch(95.5% 0.01 74deg);
-  --color-brand: oklch(26% 0.012 60deg);
-  --color-brand-bright: oklch(36% 0.014 60deg);
-  /* The darkest surface on the site: the footer, and the bands that close a
-     page. A shade under the ink, so a dark band and the type on it are two
-     different blacks rather than one. */
-  --color-bark: oklch(17% 0.01 60deg);
-  --color-brass: oklch(68% 0.105 74deg);
-  --color-bronze: oklch(46% 0.07 72deg);
-  --color-line: oklch(89% 0.008 72deg);
-  --color-muted-ink: oklch(50% 0.009 62deg);
-  /* WhatsApp's own green, and on this palette it is the one saturated colour
-     on the page besides the logo. Still unmistakably the WhatsApp colour, which is
-     the point — guests here recognise it faster than they read any label. */
+  /* No colour. White, greys and a near-black — and that is the whole palette.
+
+     Three came before it. A navy that appears nowhere on the hotel's own sign.
+     Then a garnet taken from the sign, on the reasoning that a site should
+     wear its own colour — which was half right and still made every band look
+     like a high-street shop. Then charcoal and brass, which was calmer and
+     still put a near-black slab across the top and bottom of every page.
+
+     The owner's judgement, and it is the right one: the site was reading dark.
+     So the grounds are white and light grey, the type is a near-black, the
+     buttons are a charcoal, and there is no accent colour at all.
+
+     What that does is the point. This logo is a multicoloured lotus with red
+     stars — it is already the loudest thing anyone will see. With nothing else
+     on the page competing, it is the only colour a guest meets, and it reads
+     as the brand rather than as one more coloured thing among many. The
+     photographs get the same benefit: on a coloured page they have to fight
+     the page, and on this one they are the page.
+
+     Deliberately neutral rather than warmed: a hint of warm in the greys is
+     the usual trick to stop a grey page looking like an unstyled one, and it
+     is not needed here because the photographs and the mark carry all the
+     warmth the page has.
+
+     `mist` and `slate` are the two greys of the ornament scale — the hairline
+     under a heading, a star rating, the rule beside a quotation. They were
+     called brass and bronze when they were metals; naming a grey after a metal
+     would only mislead whoever reads this next. `slate` is the readable one,
+     for small labels on a light ground; `mist` is for a light mark on a dark
+     ground and is never body text. */
+  --color-ink: oklch(21% 0 0deg);
+  --color-ink-soft: oklch(35% 0 0deg);
+  --color-bone: oklch(99% 0 0deg);
+  --color-sand: oklch(96% 0 0deg);
+  --color-brand: oklch(28% 0 0deg);
+  --color-brand-bright: oklch(38% 0 0deg);
+  /* The scrim over a photograph, and the ground of the picture viewer. The
+     only near-black surfaces left on the site, and both exist so that white
+     type on a photograph can be read. */
+  --color-bark: oklch(20% 0 0deg);
+  --color-mist: oklch(72% 0 0deg);
+  --color-slate: oklch(45% 0 0deg);
+  --color-line: oklch(90% 0 0deg);
+  --color-muted-ink: oklch(46% 0 0deg);
   --color-whatsapp: oklch(56% 0.115 152deg);
 
   /* Long, decelerating easing, kept from the previous design because it costs
@@ -417,7 +427,7 @@ html[data-theme='light'] {
   .hero-glow {
     background: radial-gradient(
       70% 60% at 22% 80%,
-      oklch(17% 0.01 60deg / 0.6) 0%,
+      oklch(16% 0 0deg / 0.55) 0%,
       transparent 72%
     );
   }
@@ -427,7 +437,7 @@ html[data-theme='light'] {
   /* Bronze, not the brand colour. The brand colour is now a charcoal a shade
      off the heading beneath it, so an eyebrow set in it stopped being a label
      and became a smaller heading. Bronze is the metal at a weight that is
-     still a word — 6.9:1 on ivory, where brass is 2.8:1 and would be
+     still a word — 7.2:1 on the page's white, where mist is 2.3:1 and would be
      decoration. */
   .eyebrow {
     font-size: 0.72rem;
@@ -435,7 +445,7 @@ html[data-theme='light'] {
     letter-spacing: 0.1em;
     text-transform: uppercase;
     line-height: 1;
-    color: var(--color-bronze);
+    color: var(--color-slate);
   }
 
   [dir='rtl'] .eyebrow {
@@ -564,7 +574,7 @@ html[data-theme='light'] {
   .rule-brand {
     inline-size: 2.75rem;
     block-size: 2px;
-    background: var(--color-brass);
+    background: var(--color-mist);
   }
 }
 

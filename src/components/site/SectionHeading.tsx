@@ -85,7 +85,7 @@ export function SectionHeading({
     >
       <div className={cn(!centred && 'max-w-2xl')}>
         {eyebrow && (
-          <p className={cn('eyebrow mb-3.5', tone === 'light' && 'text-brass')}>{eyebrow}</p>
+          <p className={cn('eyebrow mb-3.5', tone === 'light' && 'text-mist')}>{eyebrow}</p>
         )}
 
         <Tag

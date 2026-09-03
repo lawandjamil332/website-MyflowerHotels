@@ -122,7 +122,7 @@ export default async function AboutPage({ params }: Args) {
                 independent and Kurdish-owned across four hotels is the
                 genuinely unusual thing here, and it was nowhere on the site. */}
             <Reveal delay={200} className="lg:pt-2">
-              <div className="border-s-2 border-brass ps-6">
+              <div className="border-s-2 border-mist ps-6">
                 <p className="font-display text-[1.25rem] leading-[1.5] text-balance text-ink sm:text-[1.4rem]">
                   {identity}
                 </p>
