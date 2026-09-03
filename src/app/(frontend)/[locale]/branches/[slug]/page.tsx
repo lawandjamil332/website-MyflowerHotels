@@ -78,6 +78,25 @@ export default async function BranchPage({ params }: Args) {
   const opening = openingLabel(branch, t.branch.openingSoon)
   const hasOverview = Boolean(branch.description) || (branch.amenities?.length ?? 0) > 0
 
+  // What the left-hand column can show even when nobody has written a word of
+  // description. Every hotel has an address, a landmark line, and its hours —
+  // and until these moved out of the reservation card, a hotel with no
+  // description rendered as one narrow card adrift in the middle of a laptop
+  // screen with five hundred pixels of white either side of it. Which is every
+  // hotel on this site: none of the four has a description or an amenity
+  // entered yet.
+  const hasFacts = Boolean(
+    branch.address ||
+      branch.nearby ||
+      branch.checkInAnyTime ||
+      branch.checkInTime ||
+      branch.checkOutTime,
+  )
+  const hasLeftColumn = hasOverview || hasFacts
+
+  const factLabel =
+    'text-[0.72rem] font-semibold tracking-[0.14em] text-muted-ink uppercase rtl:tracking-normal'
+
   const gallery: GalleryItem[] = (branch.gallery ?? [])
     .filter((g) => mediaUrl(g))
     .map((g) => ({
@@ -127,8 +146,8 @@ export default async function BranchPage({ params }: Args) {
           would be empty and the card would sit marooned beside a third of a
           screen of nothing. In that case the card becomes the whole section. */}
       <section className={cn(shell, sectionY)}>
-        <div className={cn('grid gap-14 lg:gap-20', hasOverview && 'lg:grid-cols-[1.4fr_0.9fr]')}>
-          {hasOverview && (
+        <div className={cn('grid gap-14 lg:gap-20', hasLeftColumn && 'lg:grid-cols-[1.4fr_0.9fr]')}>
+          {hasLeftColumn && (
             <div>
               {/* The eyebrow labels the description; with no description written
                 yet it would sit orphaned above the amenities. */}
@@ -151,14 +170,71 @@ export default async function BranchPage({ params }: Args) {
                   <AmenityList amenities={branch.amenities} t={t} className="mt-7" columns={2} />
                 </Reveal>
               )}
+
+              {/* Where it is, what it is near, and the hours — out here in the
+                  wide column rather than stacked inside the reservation card.
+
+                  The card was doing two jobs at once. It carried the facts a
+                  guest reads *and* the buttons they press, which made it tall,
+                  narrow and slow to scan; and on a hotel with nothing written
+                  about it — which is all four of them — it was the only thing
+                  on the band, so the page was a single column of small print
+                  floating in the middle of a laptop screen. Split, the facts
+                  get the width to be read across and the card goes back to
+                  being what its name says. */}
+              {hasFacts && (
+                <Reveal
+                  delay={hasOverview ? 210 : 60}
+                  className={hasOverview ? 'mt-14 border-t border-line pt-12' : undefined}
+                >
+                  {!hasOverview && <p className="eyebrow mb-7">{t.branch.overviewEyebrow}</p>}
+                  <dl className="grid gap-x-12 gap-y-8 sm:grid-cols-2">
+                    {branch.address && (
+                      <div className="sm:col-span-2">
+                        <dt className={factLabel}>{t.branch.location}</dt>
+                        <dd className="mt-2.5 leading-relaxed whitespace-pre-line text-ink-soft">
+                          {branch.address}
+                        </dd>
+                        {/* What this hotel is near, in the owner's own words.
+                            Guests look for a room by what it is close to far
+                            more often than by the name of the hotel, and until
+                            this field existed a page about a hotel ten minutes
+                            from the Citadel contained neither the word Citadel
+                            nor the ten minutes. */}
+                        {branch.nearby && (
+                          <dd className="mt-3 leading-relaxed whitespace-pre-line text-muted-ink">
+                            {branch.nearby}
+                          </dd>
+                        )}
+                      </div>
+                    )}
+                    {!openingSoon && (branch.checkInAnyTime || branch.checkInTime) && (
+                      <div>
+                        <dt className={factLabel}>{t.branch.checkIn}</dt>
+                        <dd className="font-display mt-2 text-2xl text-ink">
+                          {branch.checkInAnyTime ? t.branch.anyTime : branch.checkInTime}
+                        </dd>
+                      </div>
+                    )}
+                    {!openingSoon && branch.checkOutTime && (
+                      <div>
+                        <dt className={factLabel}>{t.branch.checkOut}</dt>
+                        <dd className="font-display mt-2 text-2xl text-ink">
+                          {branch.checkOutTime}
+                        </dd>
+                      </div>
+                    )}
+                  </dl>
+                </Reveal>
+              )}
             </div>
           )}
 
-          <aside className={cn(!hasOverview && 'mx-auto w-full max-w-md')}>
+          <aside className={cn(!hasLeftColumn && 'mx-auto w-full max-w-md')}>
             <Reveal
               delay={120}
               className={cn(
-                hasOverview && 'lg:sticky lg:top-[calc(var(--site-header-h,4.5rem)+4.5rem)]',
+                hasLeftColumn && 'lg:sticky lg:top-[calc(var(--site-header-h,4.5rem)+4.5rem)]',
               )}
             >
               <div id="reserve-card" className="border border-line rounded-2xl bg-card p-7 sm:p-8">
@@ -169,23 +245,6 @@ export default async function BranchPage({ params }: Args) {
                 {openingSoon && (
                   <p className="mt-4 text-sm leading-relaxed text-muted-ink">
                     {t.branch.openingBody}
-                  </p>
-                )}
-
-                {branch.address && (
-                  <p className="mt-5 text-sm leading-relaxed whitespace-pre-line text-muted-ink">
-                    {branch.address}
-                  </p>
-                )}
-
-                {/* What this hotel is near, in the owner's own words. Guests
-                    look for a room by what it is close to far more often than
-                    by the name of the hotel, and until this field existed a
-                    page about a hotel ten minutes from the Citadel contained
-                    neither the word Citadel nor the ten minutes. */}
-                {branch.nearby && (
-                  <p className="mt-4 text-sm leading-relaxed whitespace-pre-line text-muted-ink">
-                    {branch.nearby}
                   </p>
                 )}
 
@@ -240,32 +299,6 @@ export default async function BranchPage({ params }: Args) {
                       </p>
                     )
                   })()}
-
-                {!openingSoon &&
-                  (branch.checkInAnyTime || branch.checkInTime || branch.checkOutTime) && (
-                    <dl className="mt-6 grid grid-cols-2 gap-4 border-t border-line pt-6">
-                      {(branch.checkInAnyTime || branch.checkInTime) && (
-                        <div>
-                          <dt className="text-[0.72rem] font-semibold tracking-[0.14em] text-muted-ink uppercase rtl:tracking-normal">
-                            {t.branch.checkIn}
-                          </dt>
-                          <dd className="font-display mt-1.5 text-xl text-ink">
-                            {branch.checkInAnyTime ? t.branch.anyTime : branch.checkInTime}
-                          </dd>
-                        </div>
-                      )}
-                      {branch.checkOutTime && (
-                        <div>
-                          <dt className="text-[0.72rem] font-semibold tracking-[0.14em] text-muted-ink uppercase rtl:tracking-normal">
-                            {t.branch.checkOut}
-                          </dt>
-                          <dd className="font-display mt-1.5 text-xl text-ink">
-                            {branch.checkOutTime}
-                          </dd>
-                        </div>
-                      )}
-                    </dl>
-                  )}
 
                 {/* A hotel that is not open yet still answers the phone.
                     These were hidden along with everything else while the copy
@@ -441,14 +474,43 @@ export default async function BranchPage({ params }: Args) {
       {!openingSoon && (
         <section className="bg-sand">
           <div className={cn(shell, sectionY)}>
-            <Reveal>
-              <EnquiryForm
-                t={t}
-                branchId={branch.id}
-                whatsappHref={wa}
-                className="mx-auto max-w-3xl"
-              />
-            </Reveal>
+            {/* The invitation on one side, the form on the other.
+                Centred on its own the card was 768px of form with a thousand
+                pixels of empty ground either side of it on a wide screen — and
+                it carried its own heading, so the band had a title nobody
+                could see from the left margin. Split, the row fills, and the
+                two faster ways to reach the desk sit under the words asking
+                for a message rather than below the send button. */}
+            <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-16">
+              <Reveal>
+                <p className="eyebrow">{t.form.eyebrow}</p>
+                <h2 className="font-display display-lg mt-5 text-ink">{t.form.title}</h2>
+                <p className="mt-5 max-w-md text-[1.05rem] leading-[1.6] text-muted-ink">
+                  {t.form.lead}
+                </p>
+                <div className="mt-8 flex flex-col gap-3 sm:max-w-xs">
+                  {wa && (
+                    <a
+                      href={wa}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={cn(btnWhatsApp, btnSmall)}
+                    >
+                      <WhatsAppMark />
+                      {t.common.whatsapp}
+                    </a>
+                  )}
+                  {tel && (
+                    <a href={tel} dir="ltr" className={cn(btnOutline, btnSmall)}>
+                      {branch.phone}
+                    </a>
+                  )}
+                </div>
+              </Reveal>
+              <Reveal delay={120}>
+                <EnquiryForm t={t} branchId={branch.id} whatsappHref={wa} showHeading={false} />
+              </Reveal>
+            </div>
           </div>
         </section>
       )}

@@ -36,12 +36,23 @@ export function EnquiryForm({
   branchId,
   roomId,
   whatsappHref,
+  /**
+   * Whether the card draws its own eyebrow, heading and lead.
+   *
+   * Off when the band around it already carries them. On a wide screen the
+   * form is a 768px card, and centred on its own it left a thousand pixels of
+   * empty ground either side; ranged beside its own heading it is a two-column
+   * band that fills the row. The card keeps the heading when nothing outside
+   * it is providing one, so nothing turns up untitled.
+   */
+  showHeading = true,
   className,
 }: {
   t: Dictionary
   branchId?: number
   roomId?: number
   whatsappHref?: string
+  showHeading?: boolean
   className?: string
 }) {
   const [state, action] = useActionState<EnquiryState, FormData>(submitEnquiry, {
@@ -79,9 +90,13 @@ export function EnquiryForm({
       action={action}
       className={cn('scroll-mt-28 border border-line rounded-2xl bg-card p-8 sm:p-10', className)}
     >
-      <p className="eyebrow">{t.form.eyebrow}</p>
-      <h2 className="font-display display-lg mt-5 text-ink">{t.form.title}</h2>
-      <p className="mt-4 max-w-md leading-relaxed text-muted-ink">{t.form.lead}</p>
+      {showHeading && (
+        <>
+          <p className="eyebrow">{t.form.eyebrow}</p>
+          <h2 className="font-display display-lg mt-5 text-ink">{t.form.title}</h2>
+          <p className="mt-4 max-w-md leading-relaxed text-muted-ink">{t.form.lead}</p>
+        </>
+      )}
 
       <input type="hidden" name="branch" value={branchId ?? ''} />
       <input type="hidden" name="room" value={roomId ?? ''} />
@@ -92,7 +107,7 @@ export function EnquiryForm({
         <input id="company" name="company" type="text" tabIndex={-1} autoComplete="off" />
       </div>
 
-      <div className="mt-9 grid gap-x-8 gap-y-7 sm:grid-cols-2">
+      <div className={cn('grid gap-x-8 gap-y-7 sm:grid-cols-2', showHeading && 'mt-9')}>
         <div>
           <label className={label} htmlFor="enq-name">
             {t.form.name}

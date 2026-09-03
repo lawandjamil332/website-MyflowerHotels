@@ -307,15 +307,39 @@ export default async function RoomPage({ params }: Args) {
 
       <section className="bg-sand">
         <div className={cn(shell, sectionY)}>
-          <Reveal>
-            <EnquiryForm
-              t={t}
-              branchId={branch?.id}
-              roomId={room.id}
-              whatsappHref={wa}
-              className="mx-auto max-w-3xl"
-            />
-          </Reveal>
+          {/* The invitation on one side, the form on the other — see the same
+              band on a hotel's page for why. */}
+          <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-16">
+            <Reveal>
+              <p className="eyebrow">{t.form.eyebrow}</p>
+              <h2 className="font-display display-lg mt-5 text-ink">{t.form.title}</h2>
+              <p className="mt-5 max-w-md text-[1.05rem] leading-[1.6] text-muted-ink">
+                {t.form.lead}
+              </p>
+              {wa && (
+                <div className="mt-8 flex flex-col gap-3 sm:max-w-xs">
+                  <a
+                    href={wa}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={cn(btnWhatsApp, btnSmall)}
+                  >
+                    <WhatsAppMark />
+                    {t.common.whatsapp}
+                  </a>
+                </div>
+              )}
+            </Reveal>
+            <Reveal delay={120}>
+              <EnquiryForm
+                t={t}
+                branchId={branch?.id}
+                roomId={room.id}
+                whatsappHref={wa}
+                showHeading={false}
+              />
+            </Reveal>
+          </div>
         </div>
       </section>
     </>

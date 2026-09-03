@@ -6,6 +6,9 @@ import { getPayload } from 'payload'
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { formatNumber } from '@/utilities/format'
+import { getBranches } from '@/utilities/branches'
+import { heroFor, photoPool } from '@/utilities/heroPhoto'
+import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { pointsBalance, pointsForStay, pointsHistory, pointsRate } from '@/utilities/points'
 import { currentGuest, signOut } from '@/actions/account'
 import { cn } from '@/utilities/ui'
@@ -29,12 +32,21 @@ export default async function AccountPage({ params }: Args) {
 
   // Signed out: the two forms, side by side, with no wall in front of either.
   if (!guest) {
+    const gateHero = heroFor(photoPool(await getBranches(locale)), 5)
     return (
       <>
         {/* Named for what a signed-out visitor can do here, not for what they
             would see if they were already signed in. "My bookings" over two
             empty forms is a page describing somebody else's screen. */}
-        <PageHero title={t.account.gateTitle} lead={t.account.gateLead} />
+        {/* A photograph, like every other page. With none, PageHero draws the
+            title's initials instead, so the sign-in page opened on a black band
+            carrying a giant grey "S I". */}
+        <PageHero
+          title={t.account.gateTitle}
+          lead={t.account.gateLead}
+          imageUrl={mediaUrl(gateHero, 'xlarge')}
+          imageAlt={mediaAlt(gateHero)}
+        />
         <section className={cn(shell, sectionY)}>
           <div className="mx-auto grid max-w-4xl gap-10 lg:grid-cols-2 lg:gap-14">
             <div className="rounded-2xl border border-line bg-card p-7 sm:p-9">

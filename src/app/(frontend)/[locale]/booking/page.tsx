@@ -3,6 +3,9 @@ import type { Metadata } from 'next'
 
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
+import { getBranches } from '@/utilities/branches'
+import { heroFor, photoPool } from '@/utilities/heroPhoto'
+import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { cn } from '@/utilities/ui'
 import { ManageBooking } from '@/components/site/ManageBooking'
 import { PageHero } from '@/components/site/PageHero'
@@ -30,9 +33,20 @@ export default async function ManageBookingPage({ params, searchParams }: Args) 
     .slice(0, 24)
     .toUpperCase()
 
+  // A photograph, like every other page on the site. Without one PageHero
+  // falls back to drawing the title's initials, so the page a guest reaches
+  // from their confirmation email opened on a black band with a giant grey
+  // "F Y" on it.
+  const heroSource = heroFor(photoPool(await getBranches(locale)), 4)
+
   return (
     <>
-      <PageHero title={t.booking.manageTitle} lead={t.booking.manageLead} />
+      <PageHero
+        title={t.booking.manageTitle}
+        lead={t.booking.manageLead}
+        imageUrl={mediaUrl(heroSource, 'xlarge')}
+        imageAlt={mediaAlt(heroSource)}
+      />
       <section className={cn(shell, sectionY)}>
         <ManageBooking t={t} reference={reference} />
       </section>
