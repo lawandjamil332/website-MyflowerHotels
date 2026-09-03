@@ -61,49 +61,49 @@
     'Fraunces', 'Noto Naskh Arabic', 'IBM Plex Serif', 'IBM Plex Sans Arabic', Georgia, serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* No colour. White, greys and a near-black — and that is the whole palette.
+  /* Greys, a near-black, and one sky blue.
 
-     Three came before it. A navy that appears nowhere on the hotel's own sign.
-     Then a garnet taken from the sign, on the reasoning that a site should
-     wear its own colour — which was half right and still made every band look
-     like a high-street shop. Then charcoal and brass, which was calmer and
-     still put a near-black slab across the top and bottom of every page.
+     Four palettes came before it. A navy that appears nowhere on the hotel's
+     own sign. A garnet taken from the sign, which made every band look like a
+     high-street shop. Charcoal and brass, which was calmer and still put a
+     near-black slab at the top and bottom of every page. Then no colour at
+     all, which fixed the darkness and left the page with nothing of its own.
 
-     The owner's judgement, and it is the right one: the site was reading dark.
-     So the grounds are white and light grey, the type is a near-black, the
-     buttons are a charcoal, and there is no accent colour at all.
+     This is that page with one colour added and used sparingly. Everything a
+     guest reads — headings, body, small print — is still a neutral grey or a
+     near-black. The blue does three jobs and no others: the buttons, the
+     colour of a band, and the ornament.
 
-     What that does is the point. This logo is a multicoloured lotus with red
-     stars — it is already the loudest thing anyone will see. With nothing else
-     on the page competing, it is the only colour a guest meets, and it reads
-     as the brand rather than as one more coloured thing among many. The
-     photographs get the same benefit: on a coloured page they have to fight
-     the page, and on this one they are the page.
+     The two tones exist because one cannot do both jobs. A sky blue pale
+     enough to be called sky cannot carry white text on a button — nothing
+     above about 55% lightness can — so `sand` is the pale one a guest sees
+     across a whole band, and `brand` is the deeper one for anything with type
+     on it. `brand-bright` is the hover, and it is *darker* than `brand` rather
+     than lighter: on a mid-tone blue, going lighter walks the white label
+     straight off the contrast standard.
 
-     Deliberately neutral rather than warmed: a hint of warm in the greys is
-     the usual trick to stop a grey page looking like an unstyled one, and it
-     is not needed here because the photographs and the mark carry all the
-     warmth the page has.
+     The logo keeps its job. It is a multicoloured lotus with red stars, and
+     with the page carrying one cool blue and nothing else warm, it is still
+     the only thing on screen in that register — which is the whole reason the
+     palette has been pulled back this far.
 
-     `mist` and `slate` are the two greys of the ornament scale — the hairline
-     under a heading, a star rating, the rule beside a quotation. They were
-     called brass and bronze when they were metals; naming a grey after a metal
-     would only mislead whoever reads this next. `slate` is the readable one,
-     for small labels on a light ground; `mist` is for a light mark on a dark
-     ground and is never body text. */
+     `mist` and `slate` are the ornament scale — the rule beside a quotation, a
+     star rating, a label over a photograph. `slate` is the readable grey for
+     small labels on a light ground; `mist` is the pale sky for a mark on a
+     dark ground, and it is never body text: it is 2.2:1 on white. */
   --color-ink: oklch(21% 0 0deg);
   --color-ink-soft: oklch(35% 0 0deg);
   --color-bone: oklch(99% 0 0deg);
-  --color-sand: oklch(96% 0 0deg);
-  --color-brand: oklch(28% 0 0deg);
-  --color-brand-bright: oklch(38% 0 0deg);
+  --color-sand: oklch(96.5% 0.018 232deg);
+  --color-brand: oklch(52% 0.115 236deg);
+  --color-brand-bright: oklch(44% 0.105 236deg);
   /* The scrim over a photograph, and the ground of the picture viewer. The
      only near-black surfaces left on the site, and both exist so that white
      type on a photograph can be read. */
   --color-bark: oklch(20% 0 0deg);
-  --color-mist: oklch(72% 0 0deg);
+  --color-mist: oklch(78% 0.075 232deg);
   --color-slate: oklch(45% 0 0deg);
-  --color-line: oklch(90% 0 0deg);
+  --color-line: oklch(90% 0.01 232deg);
   --color-muted-ink: oklch(46% 0 0deg);
   --color-whatsapp: oklch(56% 0.115 152deg);
 
@@ -437,7 +437,7 @@ html[data-theme='light'] {
   /* Bronze, not the brand colour. The brand colour is now a charcoal a shade
      off the heading beneath it, so an eyebrow set in it stopped being a label
      and became a smaller heading. Bronze is the metal at a weight that is
-     still a word — 7.2:1 on the page's white, where mist is 2.3:1 and would be
+     still a word — 7.2:1 on the page's white, where mist is 2.2:1 and would be
      decoration. */
   .eyebrow {
     font-size: 0.72rem;

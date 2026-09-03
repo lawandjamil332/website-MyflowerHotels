@@ -154,7 +154,7 @@ export default async function LocaleLayout({ children, params }: Args) {
             different sites stacked. It was the footer's near-black, from when
             the masthead was near-black too; the masthead is the page's own
             pale ground now, so this is that. */}
-        <meta name="theme-color" content="#fbfaf7" />
+        <meta name="theme-color" content="#fcfcfc" />
         <Hreflang locale={locale} />
       </head>
       <body className="bg-bone text-ink antialiased">
