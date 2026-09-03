@@ -215,25 +215,32 @@ export default async function HomePage({ params }: Args) {
         />
         {/* Two layers. The warm one ties the picture to the palette — a flat
             black scrim over a cool photograph leaves the hero grey while the
-            rest of the page is ivory and garnet, and that mismatch is half of
+            rest of the page is ivory and charcoal, and that mismatch is half of
             why the top of the page felt like a different site. The vertical
-            gradient underneath it is what keeps the type legible. */}
-        <div aria-hidden="true" className="absolute inset-0 bg-bark/30 mix-blend-multiply" />
+            gradient underneath it is what keeps the type legible.
+            Lighter at the top than it was: the header is a solid band now, so
+            the gradient no longer has a wordmark to hold up there, and a dark
+            top edge under a dark header was the two of them running together
+            with no line between. The picture is brightest where it meets the
+            band and darkens under the words. */}
+        <div aria-hidden="true" className="absolute inset-0 bg-bark/25 mix-blend-multiply" />
         <div
           aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-t from-bark/85 via-bark/25 to-bark/40"
+          className="absolute inset-0 bg-gradient-to-t from-bark/85 via-bark/30 to-bark/10"
         />
         <div aria-hidden="true" className="hero-glow absolute inset-0" />
 
         {/* Which hotel, which nights, how many — checked against the same
             calendar the site sells from.
 
-            The clearance is the header's own measured height plus a gap,
-            published by the bar as a custom property. It used to be a
-            hard-coded pt-28 that had to be re-measured by hand every time the
-            bar changed, and was one pixel out at tablet widths. */}
+            Tucked right under the header rather than floating in the middle of
+            the picture: the reference sets its search bar against the bottom
+            edge of the masthead, so the two read as one piece of furniture and
+            the photograph below them is uninterrupted. The clearance is the
+            bar's own measured height, published as a custom property, so this
+            stays correct in the language with the longest menu labels. */}
         {branches.length > 0 && (
-          <div className={cn(shell, 'relative pt-[calc(var(--site-header-h,4.5rem)+1.75rem)]')}>
+          <div className={cn(shell, 'relative pt-[calc(var(--site-header-h,4.5rem)+1.25rem)]')}>
             <StayFinder
               hotels={branches.map((b) => ({
                 slug: b.slug,
@@ -246,7 +253,14 @@ export default async function HomePage({ params }: Args) {
           </div>
         )}
 
-        <div className={cn(shell, 'relative mt-auto pt-14 pb-16 sm:pb-20')}>
+        {/* The name and the way in, sitting in the middle of what is left of
+            the picture rather than pinned to its bottom edge.
+            At the bottom the block had the search bar above it and the page
+            below it and nothing but photograph in between, so the hero read as
+            two things stacked with a hole in the middle. Centred in the space
+            under the search bar it is one composition, which is where the
+            reference puts its own headline. */}
+        <div className={cn(shell, 'relative flex flex-1 flex-col justify-center py-14 sm:py-16')}>
           <div className="rise flex items-center gap-4" style={{ animationDelay: '0.2s' }}>
             <p className="eyebrow text-white">{t.home.heroEyebrow}</p>
             <Stars count={settings.stars} tone="light" />

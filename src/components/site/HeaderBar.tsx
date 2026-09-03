@@ -44,26 +44,29 @@ function PersonIcon() {
 }
 
 /**
- * Two rows over the photograph: who we are and how you are set up on top, then
- * where you can go underneath.
+ * A masthead: the mark and the guest's own settings on top, the pages ranged
+ * underneath it, on a solid dark band.
  *
- * This replaces a single solid bar, and the reason is what a solid bar does to
- * a hotel page. Every page on this site opens on a picture; a black band ruled
- * across the top of it cuts the photograph off at the ankles and makes the
- * page start twice. Every hotel group of any size floats its navigation on the
- * image instead and lets the picture run to the top of the screen — so that is
- * what this does, over a gradient dark enough to keep white type legible on a
- * bright sky.
+ * This has been three things. A single solid bar with everything on it at one
+ * weight, so nothing led. Then two rows floated transparently over the hero
+ * photograph, which is a real pattern and the wrong one here — it looks
+ * considered on a bright, wide, professionally shot picture, and over the dark
+ * building photographs this site actually has it turned the whole top of the
+ * page to mush, header and photograph running into each other with no edge
+ * between them.
  *
- * Splitting it in two is the other half. A single row had the language codes,
- * the currency, the account and five pages all competing at the same weight,
- * which is why nothing on it led. Now the top row carries the things a guest
- * sets once — language, currency, who they are — and the row beneath carries
- * the pages, with the one button that books a room at the end of it.
+ * So: a solid band, and the photograph starts cleanly beneath it. That is what
+ * the reference does, and the reason it works there is the reason it works
+ * here — the band is a fixed, legible object of known height that the search
+ * bar can sit against, and the picture below it is allowed to be a picture
+ * rather than a backdrop for text.
  *
- * Scrolling collapses the two rows into one. The pages stay reachable, the
- * bar stops taking a tenth of a phone screen, and the search bar docks
- * underneath it.
+ * The split is what makes it a masthead rather than a toolbar. The top row is
+ * the things a guest sets once — language, currency, who they are — plus the
+ * one button that takes a booking. The row beneath is nothing but the five
+ * pages, ranged from the same margin the wordmark starts on, so the list reads
+ * as a list. Scrolling collapses the second row away; the first stays, and the
+ * search bar docks under it.
  */
 export function HeaderBar({
   locale,
@@ -156,30 +159,18 @@ export function HeaderBar({
       <header
         ref={header}
         className={cn(
-          'fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow] duration-500 ease-luxe',
-          // Floating over the picture until the guest scrolls, then a solid
-          // surface — because once the page beneath is white cards and text
-          // there is no longer a photograph for white type to sit on.
-          condensed || menuOpen ? 'bg-bark shadow-[0_2px_16px_rgb(0_0_0/0.3)]' : 'bg-transparent',
+          'fixed inset-x-0 top-0 z-50 bg-bark transition-shadow duration-500 ease-luxe',
+          condensed && !menuOpen && 'shadow-[0_2px_16px_rgb(0_0_0/0.35)]',
         )}
       >
-        {/* The gradient, not a colour: it is what keeps the wordmark legible
-            over a bright sky without painting a band across the photograph.
-            It fades out with the bar's solid state so the two never stack. */}
-        <div
-          aria-hidden="true"
-          className={cn(
-            'pointer-events-none absolute inset-x-0 top-0 h-[180%] bg-gradient-to-b from-black/75 via-black/35 to-transparent transition-opacity duration-500 ease-luxe',
-            condensed || menuOpen ? 'opacity-0' : 'opacity-100',
-          )}
-        />
-
-        <div className={cn(shell, 'relative')}>
-          {/* Row one: the wordmark, and the three things a guest sets once. */}
+        <div className={shell}>
+          {/* Row one: the mark, and the things a guest sets once — the
+              language, the currency, who they are, and the way to a booking.
+              Small type, because none of it is what the page is about. */}
           <div
             className={cn(
               'flex items-center justify-between gap-3 transition-[height] duration-500 ease-luxe sm:gap-6',
-              condensed && !menuOpen ? 'h-16' : 'h-18 lg:h-[4.5rem]',
+              condensed && !menuOpen ? 'h-14' : 'h-16 lg:h-[4.25rem]',
             )}
           >
             {/* `min-w-0` matters: a long hotel name is wide enough to push the
@@ -203,7 +194,7 @@ export function HeaderBar({
                   priority
                   className={cn(
                     'w-auto object-contain transition-all duration-500 ease-luxe',
-                    condensed && !menuOpen ? 'h-10' : 'h-12 sm:h-14',
+                    condensed && !menuOpen ? 'h-9' : 'h-10 sm:h-11',
                     !logoLightUrl && 'brightness-0 invert',
                   )}
                 />
@@ -222,17 +213,19 @@ export function HeaderBar({
                   would crowd the burger, and the phone menu carries it. */}
               <Link
                 href={`/${locale}/account`}
-                className="tap-safe hidden items-center gap-2 text-[0.85rem] font-medium text-white/85 transition-colors duration-300 ease-luxe hover:text-white md:inline-flex"
+                className="tap-safe hidden items-center gap-2 text-[0.82rem] font-medium text-white/85 transition-colors duration-300 ease-luxe hover:text-white md:inline-flex"
               >
                 <PersonIcon />
                 <span className="max-w-[9rem] truncate">{accountLabel}</span>
               </Link>
 
-              {/* On a phone the second row does not exist, so the button that
-                  books a room rides up here rather than being lost with it. */}
+              {/* Up here beside the account, not down in the row of pages.
+                  The pages are places; this is the one action, and it belongs
+                  with the other things a guest does rather than reads. It also
+                  means it survives the second row collapsing on scroll. */}
               <Link
                 href={`/${locale}/book`}
-                className={cn(btnLight, btnSmall, 'hidden sm:inline-flex lg:hidden')}
+                className={cn(btnLight, btnSmall, 'hidden sm:inline-flex')}
               >
                 {t.common.reserve}
               </Link>
@@ -261,48 +254,48 @@ export function HeaderBar({
             </div>
           </div>
 
-          {/* Row two: the pages, and the one button that takes a booking.
-              Collapsed away on scroll — by then the guest is reading, and the
-              row they need back is one flick of the wheel up. */}
+          {/* Row two: nothing but the pages, ranged from the same margin the
+              wordmark above them starts on.
+              It used to end with the Reserve button on the opposite side,
+              which made the row a mix of two things — five places and one
+              action — and gave the eye two places to land. With the action
+              moved up beside the account, this row is one list, and the list
+              begins directly under the mark. That is the arrangement the
+              reference uses and it is what makes a header read as a masthead
+              rather than as a toolbar. */}
           <div
             className={cn(
               'hidden overflow-hidden border-t transition-all duration-500 ease-luxe lg:block',
               condensed && !menuOpen
                 ? 'h-0 border-transparent opacity-0'
-                : 'h-14 border-white/15 opacity-100',
+                : 'h-12 border-white/12 opacity-100',
             )}
           >
-            <div className="flex h-14 items-center justify-between gap-6">
-              <nav className="flex items-center gap-8 text-[0.88rem] font-medium xl:gap-10">
-                {links.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    aria-current={isCurrent(link.href) ? 'page' : undefined}
+            <nav className="flex h-12 items-center gap-8 text-[0.88rem] font-medium xl:gap-10">
+              {links.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={isCurrent(link.href) ? 'page' : undefined}
+                  className={cn(
+                    'relative py-1 transition-colors duration-300 ease-luxe hover:text-white',
+                    isCurrent(link.href) ? 'text-white' : 'text-white/75',
+                  )}
+                >
+                  {link.label}
+                  {/* The marker is drawn rather than an underline so it sits
+                      clear of the descenders in "Rooms" and does not cut the
+                      Kurdish and Arabic labels through the middle. */}
+                  <span
+                    aria-hidden="true"
                     className={cn(
-                      'relative py-1 transition-colors duration-300 ease-luxe hover:text-white',
-                      isCurrent(link.href) ? 'text-white' : 'text-white/80',
+                      'absolute inset-x-0 -bottom-1 h-[2px] rounded-full bg-brass transition-opacity duration-300 ease-luxe',
+                      isCurrent(link.href) ? 'opacity-100' : 'opacity-0',
                     )}
-                  >
-                    {link.label}
-                    {/* The marker is drawn rather than an underline so it sits
-                        clear of the descenders in "Rooms" and does not cut the
-                        Kurdish and Arabic labels through the middle. */}
-                    <span
-                      aria-hidden="true"
-                      className={cn(
-                        'absolute inset-x-0 -bottom-1 h-[2px] rounded-full bg-white transition-opacity duration-300 ease-luxe',
-                        isCurrent(link.href) ? 'opacity-100' : 'opacity-0',
-                      )}
-                    />
-                  </Link>
-                ))}
-              </nav>
-
-              <Link href={`/${locale}/book`} className={cn(btnLight, btnSmall, 'shrink-0')}>
-                {t.common.reserve}
-              </Link>
-            </div>
+                  />
+                </Link>
+              ))}
+            </nav>
           </div>
         </div>
       </header>
