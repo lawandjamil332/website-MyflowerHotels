@@ -151,10 +151,9 @@ export default async function LocaleLayout({ children, params }: Args) {
         <link href="/manifest.webmanifest" rel="manifest" />
         {/* The colour a phone paints its own chrome with, and it has to be
             the colour of the bar directly under it or the two read as two
-            different sites stacked. It was the footer's near-black, from when
-            the masthead was near-black too; the masthead is the page's own
-            pale ground now, so this is that. */}
-        <meta name="theme-color" content="#fbfcfd" />
+            different sites stacked. That bar is the navy masthead, so this is
+            the navy. */}
+        <meta name="theme-color" content="#1a315e" />
         <Hreflang locale={locale} />
       </head>
       <body className="bg-bone text-ink antialiased">
