@@ -16,10 +16,18 @@ import { btnOnDark, btnOutline, btnSmall } from './ui'
  * different starting points.
  *
  * Ranged left, every heading, every sentence and every row of cards beneath
- * them starts on one line down the whole page, and the button that leaves the
- * section sits on the opposite margin where a reader's eye ends up anyway. That
- * is what the reference does, and it is why its page reads as organised rather
- * than as a stack of announcements.
+ * them starts on one line down the whole page. That is what the reference does,
+ * and it is why its page reads as organised rather than as a stack of
+ * announcements.
+ *
+ * The way on sits under the sentence, not across from it. It used to go to the
+ * opposite margin, which is right when a row of cards runs under the heading
+ * and holds that margin down — and every heading that had cards under it has
+ * since had its button moved into the row of arrows, where the two ends of the
+ * row both mean something. What was left was one band with no cards, on a shell
+ * that keeps widening past the laptop sizes: a lone pill six hundred pixels
+ * from the last word, with nothing in between. Under the sentence it belongs to
+ * the sentence.
  *
  * `align="center"` survives for the two places a centred block is still right —
  * a short closing line over a photograph, where there is no column to belong to.
@@ -41,7 +49,7 @@ export function SectionHeading({
   eyebrow?: string
   tone?: 'ink' | 'light'
   align?: 'center' | 'start'
-  /** The way out of the section, set across from the heading on a wide screen. */
+  /** The way out of the section, set under the sentence. */
   action?: { href: string; label: string; external?: boolean }
   className?: string
   /** Paint at once rather than fading in — for headings above the fold. */
@@ -73,14 +81,7 @@ export function SectionHeading({
   return (
     <Reveal
       immediate={immediate}
-      className={cn(
-        // The row: heading on the leading edge, action on the trailing one,
-        // and the two stacked on a phone where there is no room to face off.
-        centred
-          ? 'mx-auto max-w-3xl text-center'
-          : 'flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between sm:gap-10',
-        className,
-      )}
+      className={cn(centred && 'mx-auto max-w-3xl text-center', className)}
     >
       <div className={cn(!centred && 'max-w-2xl')}>
         {eyebrow && (
@@ -108,12 +109,8 @@ export function SectionHeading({
           </p>
         )}
 
-        {/* Centred blocks keep the button under the words: there is no opposite
-            margin to send it to. */}
-        {centred && link && <div className="mt-7">{link}</div>}
+        {link && <div className="mt-7">{link}</div>}
       </div>
-
-      {!centred && link}
     </Reveal>
   )
 }
