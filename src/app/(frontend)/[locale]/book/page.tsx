@@ -23,6 +23,33 @@ import { PageHero } from '@/components/site/PageHero'
 import { SectionHeading } from '@/components/site/SectionHeading'
 import { btnOutline, btnPrimary, sectionY, shell } from '@/components/site/ui'
 
+/**
+ * What these nights cost, and what one of them costs.
+ *
+ * `stayTotal` is the sum the calendar actually produces — the room's standing
+ * price for every night, plus the difference for any night the hotel has given
+ * a price of its own. The multiplication behind it covers a room whose rates
+ * have never been touched, which is the same number, and stops a missing rate
+ * showing a guest nothing at all.
+ */
+const stayTotalOf = (room: AvailableRoom, nights: number) =>
+  room.stayTotal ?? (room.priceFrom ? room.priceFrom * nights : null)
+
+/**
+ * Every night the same price? Then the nightly figure is a rate. If the
+ * calendar has priced one of these nights differently it is an average, the
+ * label beside it says so, and the total under it stays the number that is
+ * paid.
+ */
+const evenNightly = (room: AvailableRoom, nights: number) =>
+  stayTotalOf(room, nights) === (room.priceFrom ?? 0) * nights
+
+const perNightOf = (room: AvailableRoom, nights: number) => {
+  const total = stayTotalOf(room, nights)
+  if (total === null || nights < 1) return room.priceFrom
+  return total / nights
+}
+
 type Args = {
   params: Promise<{ locale: string }>
   searchParams: Promise<Record<string, string | string[] | undefined>>
@@ -96,16 +123,9 @@ export default async function BookPage({ params, searchParams }: Args) {
 
   const nights = searchable ? nightsBetween(checkIn!, checkOut!) : 0
   const chosen = rooms.find((room) => room.id === chosenRoomId) ?? null
-  /**
-   * What these nights cost, not what a night costs times how many.
-   *
-   * `stayTotal` already counts any night the hotel has given a price of its
-   * own in the calendar. The multiplication is kept behind it for a room whose
-   * rates have never been touched and for the moment before this page has a
-   * room chosen — the same number in both cases, and the fallback is what
-   * stops a missing rate showing a guest nothing at all.
-   */
-  const total = chosen?.stayTotal ?? (chosen?.priceFrom ? chosen.priceFrom * nights : null)
+  // What these nights cost, not what a night costs times how many — see
+  // `stayTotalOf` above, which the room cards use for the same sum.
+  const total = chosen ? stayTotalOf(chosen, nights) : null
 
   // What this stay is worth in points, worked out here so the confirm step can
   // say it before the guest commits rather than leaving them to find out.
@@ -198,20 +218,38 @@ export default async function BookPage({ params, searchParams }: Args) {
             </div>
 
             {total !== null && (
-              <p className="mb-8 flex items-baseline gap-3 border-y border-line py-5">
-                <span className="text-[0.72rem] font-semibold tracking-[0.16em] text-muted-ink uppercase rtl:tracking-normal">
-                  {t.booking.total}
-                </span>
-                <Price
-                  amount={total}
-                  currency={chosen.currency}
-                  locale={locale}
-                  className="font-display text-3xl text-ink"
-                />
-                <span className="text-sm text-muted-ink">
-                  · {nights} {t.booking.nights}
-                </span>
-              </p>
+              <div className="mb-8 border-y border-line py-5">
+                <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className="text-[0.72rem] font-semibold tracking-[0.16em] text-muted-ink uppercase rtl:tracking-normal">
+                    {t.booking.total}
+                  </span>
+                  <Price
+                    amount={total}
+                    currency={chosen.currency}
+                    locale={locale}
+                    className="font-display text-3xl text-ink"
+                  />
+                  <span className="text-sm text-muted-ink">
+                    · {nights} {t.booking.nights}
+                  </span>
+                </p>
+                {/* The rate this total came from. The total is the headline
+                    here because it is the figure being agreed to, but a guest
+                    on the last screen before they commit is checking that this
+                    is the room they picked — and the number they picked it by
+                    was the price of a night. */}
+                <p className="mt-2 flex flex-wrap items-baseline gap-x-1.5 text-[0.85rem] text-muted-ink">
+                  <Price
+                    amount={perNightOf(chosen, nights)}
+                    currency={chosen.currency}
+                    locale={locale}
+                    className="font-semibold text-ink-soft"
+                  />
+                  <span>
+                    {evenNightly(chosen, nights) ? t.room.perNight : t.booking.perNightAverage}
+                  </span>
+                </p>
+              </div>
             )}
 
             <BookingForm
@@ -318,18 +356,45 @@ export default async function BookPage({ params, searchParams }: Args) {
                           </div>
 
                           <div className="flex flex-wrap items-center gap-5">
+                            {/* A night, then the whole stay.
+                                This card used to print one number — the total
+                                for the dates — and a guest cannot do anything
+                                with that on its own. A nightly rate is how
+                                every hotel is priced and how this one is
+                                compared against the hotel down the street, and
+                                a guest who has just typed seven nights cannot
+                                divide by seven in their head to check it. Both
+                                are here now, with the rate leading because it
+                                is the number being scanned and the total right
+                                under it because it is the number being paid. */}
                             {room.priceFrom ? (
-                              <p className="flex items-baseline gap-2">
-                                <Price
-                                  amount={room.stayTotal ?? room.priceFrom * nights}
-                                  currency={room.currency}
-                                  locale={locale}
-                                  className="font-display text-2xl text-ink"
-                                />
-                                <span className="text-xs text-muted-ink">
-                                  {nights} {t.booking.nights}
-                                </span>
-                              </p>
+                              <div>
+                                <p className="flex flex-wrap items-baseline gap-x-1.5">
+                                  <Price
+                                    amount={perNightOf(room, nights)}
+                                    currency={room.currency}
+                                    locale={locale}
+                                    className="font-display text-2xl text-ink"
+                                  />
+                                  <span className="text-xs text-muted-ink">
+                                    {evenNightly(room, nights)
+                                      ? t.room.perNight
+                                      : t.booking.perNightAverage}
+                                  </span>
+                                </p>
+                                <p className="mt-1.5 flex flex-wrap items-baseline gap-x-1.5 text-[0.8rem] text-muted-ink">
+                                  <span>{t.booking.total}</span>
+                                  <Price
+                                    amount={stayTotalOf(room, nights)}
+                                    currency={room.currency}
+                                    locale={locale}
+                                    className="font-semibold text-ink-soft"
+                                  />
+                                  <span>
+                                    · {nights} {t.booking.nights}
+                                  </span>
+                                </p>
+                              </div>
                             ) : null}
                             <Link href={`${back}&room=${room.id}`} className={btnPrimary}>
                               {t.booking.reserve}

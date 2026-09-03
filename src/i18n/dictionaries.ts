@@ -242,6 +242,14 @@ export type Dictionary = {
     doneLead: string
     reference: string
     total: string
+    /**
+     * Said instead of "per night" when the nights in a stay are not all the
+     * same price. The figure beside the label is the stay divided by its
+     * nights, so it is an average and not a rate any single night is sold at
+     * — and a guest who multiplies it back out will not land exactly on the
+     * total printed under it. Saying which of the two it is costs one word.
+     */
+    perNightAverage: string
     manageTitle: string
     manageLead: string
     yourReference: string
@@ -690,6 +698,7 @@ const en: Dictionary = {
     doneLead: 'We have sent the details on. Keep this reference — it is what to quote at the desk.',
     reference: 'Booking reference',
     total: 'Total',
+    perNightAverage: 'average per night',
     manageTitle: 'Find your booking',
     manageLead: 'Enter your reference and the phone number you booked with.',
     yourReference: 'Booking reference',
@@ -1180,6 +1189,7 @@ const ku: Dictionary = {
     doneLead: 'زانیارییەکانمان ناردووە. ئەم ژمارەیە بپارێزە — لە پێشوازی پێویستت پێیەتی.',
     reference: 'ژمارەی حیجز',
     total: 'کۆی گشتی',
+    perNightAverage: 'بە مامناوەند بۆ هەر شەوێک',
     manageTitle: 'حیجزەکەت بدۆزەرەوە',
     manageLead: 'ژمارەی حیجز و ئەو ژمارە تەلەفۆنە بنووسە کە پێی حیجزت کرد.',
     yourReference: 'ژمارەی حیجز',
@@ -1663,6 +1673,7 @@ const ar: Dictionary = {
     doneLead: 'أرسلنا التفاصيل. احتفظ بهذا الرقم — هو ما تذكره عند الاستقبال.',
     reference: 'رقم الحجز',
     total: 'الإجمالي',
+    perNightAverage: 'متوسط سعر الليلة',
     manageTitle: 'ابحث عن حجزك',
     manageLead: 'أدخل رقم الحجز ورقم الهاتف الذي حجزت به.',
     yourReference: 'رقم الحجز',
