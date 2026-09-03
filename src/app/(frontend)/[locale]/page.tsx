@@ -34,7 +34,15 @@ import { buildGroupFaq } from '@/utilities/faq'
 import { pointsRate } from '@/utilities/points'
 import { Stars } from '@/components/site/Stars'
 import { WhatsAppMark } from '@/components/site/WhatsAppMark'
-import { btnLight, btnOnDark, btnPrimary, sectionY, shell } from '@/components/site/ui'
+import {
+  btnLight,
+  btnOnDark,
+  btnOutline,
+  btnPrimary,
+  btnSmall,
+  sectionY,
+  shell,
+} from '@/components/site/ui'
 
 type Args = { params: Promise<{ locale: string }> }
 
@@ -238,9 +246,22 @@ export default async function HomePage({ params }: Args) {
             edge of the masthead, so the two read as one piece of furniture and
             the photograph below them is uninterrupted. The clearance is the
             bar's own measured height, published as a custom property, so this
-            stays correct in the language with the longest menu labels. */}
+            stays correct in the language with the longest menu labels.
+
+            On a phone it goes second instead. Stacked, the form is six
+            controls one under another — a third of a phone screen — so above
+            the name it was the first thing a guest met, and the hotel's own
+            name was pushed below the fold with no photograph left around it.
+            The order swaps rather than the form moving: the name and the
+            picture greet a guest, and the form is the next thing under it,
+            still inside the hero and still without a scroll on most phones. */}
         {branches.length > 0 && (
-          <div className={cn(shell, 'relative pt-[calc(var(--site-header-h,4.5rem)+1.25rem)]')}>
+          <div
+            className={cn(
+              shell,
+              'relative order-2 pb-12 lg:order-none lg:pt-[calc(var(--site-header-h,4.5rem)+1.25rem)] lg:pb-0',
+            )}
+          >
             <StayFinder
               hotels={branches.map((b) => ({
                 slug: b.slug,
@@ -260,7 +281,13 @@ export default async function HomePage({ params }: Args) {
             two things stacked with a hole in the middle. Centred in the space
             under the search bar it is one composition, which is where the
             reference puts its own headline. */}
-        <div className={cn(shell, 'relative flex flex-1 flex-col justify-center py-14 sm:py-16')}>
+        <div
+          className={cn(
+            shell,
+            'relative order-1 flex flex-1 flex-col justify-center lg:order-none',
+            'pt-[calc(var(--site-header-h,4.5rem)+2.5rem)] pb-10 lg:pt-16 lg:pb-16',
+          )}
+        >
           <div className="rise flex items-center gap-4" style={{ animationDelay: '0.2s' }}>
             <p className="eyebrow text-white">{t.home.heroEyebrow}</p>
             <Stars count={settings.stars} tone="light" />
@@ -391,12 +418,18 @@ export default async function HomePage({ params }: Args) {
             eyebrow={t.branchesPage.eyebrow}
             title={count(t.home.chooseBranch)}
             lead={t.home.chooseBranchLead}
-            action={{ href: `/${locale}/branches`, label: t.branchesPage.gridTitle }}
             className="mb-10 lg:mb-12"
           />
 
           {branches.length > 0 ? (
-            <CardRail label={t.nav.branches}>
+            <CardRail
+              label={t.nav.branches}
+              action={
+                <Link href={`/${locale}/branches`} className={cn(btnOutline, btnSmall)}>
+                  {t.branchesPage.gridTitle}
+                </Link>
+              }
+            >
               {branches.map((branch, i) => (
                 <RailCard key={branch.id}>
                   <BranchCard branch={branch} locale={locale} t={t} priority={i < 2} />
@@ -445,36 +478,47 @@ export default async function HomePage({ params }: Args) {
             breaks its scroll with exactly this: a picture on one side, a short
             heading and a sentence on the other, and the way on.
 
-            Left on white: the photograph in it is the size of a section on its
-            own, so it separates this band from the one above without a change
-            of ground as well. */}
-        <section>
-          <div className={cn(shell, sectionY)}>
-            <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
-              <Reveal className="relative aspect-4/3 overflow-hidden rounded-2xl bg-bark lg:aspect-3/2">
-                <PhotoFrame
-                  src={mediaUrl(interludePhoto, 'large')}
-                  alt={mediaAlt(interludePhoto) || siteName}
-                  sizes="(min-width: 1024px) 46vw, 92vw"
-                  monogram={monogramOf(siteName)}
-                  fallbackSrc={shippedPhoto(branches[2]?.slug)}
-                  tone="ink"
-                />
-              </Reveal>
+            Full-bleed, and that is the second thing it fixes. Inside the page
+            gutter it was a rounded picture with the section's own padding above
+            it and the rail's padding below — so between the row of hotels and
+            this photograph sat a hundred and eighty pixels of white with
+            nothing in it, and two white bands running together read as one very
+            tall empty one. Run to the edge of the screen the photograph *is*
+            the join: it starts the band, no gap can open above it, and a
+            picture that touches the edge is the oldest trick there is for
+            making a page feel like it was laid out rather than stacked. */}
+        <section className="bg-sand">
+          <div className="grid items-stretch lg:grid-cols-2">
+            <Reveal className="relative min-h-[18rem] bg-bark sm:min-h-[24rem] lg:min-h-[32rem]">
+              <PhotoFrame
+                src={mediaUrl(interludePhoto, 'large')}
+                alt={mediaAlt(interludePhoto) || siteName}
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                monogram={monogramOf(siteName)}
+                fallbackSrc={shippedPhoto(branches[2]?.slug)}
+                tone="ink"
+                imageClassName="saturate-[0.82] contrast-[1.06]"
+              />
+            </Reveal>
 
-              <Reveal delay={120}>
-                <p className="eyebrow mb-3.5">{t.home.introEyebrow}</p>
-                <h2 className="font-display display-lg text-balance text-ink">
-                  {count(t.home.interlude)}
-                </h2>
-                <p className="mt-5 max-w-xl text-[1.05rem] leading-[1.65] text-muted-ink sm:text-[1.1rem]">
-                  {identity}
-                </p>
-                <Link href={`/${locale}/branches`} className={cn(btnPrimary, 'mt-8')}>
-                  {t.nav.branches}
-                </Link>
-              </Reveal>
-            </div>
+            {/* The text keeps the page's own margin on its outer side and a
+                generous one against the picture, so it reads as a column of a
+                spread rather than as a caption stuck to the image. */}
+            <Reveal
+              delay={120}
+              className="flex flex-col justify-center px-5 py-14 sm:px-8 lg:py-20 lg:ps-16 lg:pe-12 xl:ps-20"
+            >
+              <p className="eyebrow mb-3.5">{t.home.introEyebrow}</p>
+              <h2 className="font-display display-lg text-balance text-ink">
+                {count(t.home.interlude)}
+              </h2>
+              <p className="mt-5 max-w-xl text-[1.05rem] leading-[1.65] text-muted-ink sm:text-[1.1rem]">
+                {identity}
+              </p>
+              <Link href={`/${locale}/branches`} className={cn(btnPrimary, 'mt-8 self-start')}>
+                {t.nav.branches}
+              </Link>
+            </Reveal>
           </div>
         </section>
 
@@ -522,10 +566,16 @@ export default async function HomePage({ params }: Args) {
                 eyebrow={t.home.roomsEyebrow}
                 title={t.home.featuredRooms}
                 lead={t.home.roomsLead}
-                action={{ href: `/${locale}/rooms`, label: t.roomsPage.title }}
                 className="mb-10 lg:mb-12"
               />
-              <CardRail label={t.nav.rooms}>
+              <CardRail
+                label={t.nav.rooms}
+                action={
+                  <Link href={`/${locale}/rooms`} className={cn(btnOutline, btnSmall)}>
+                    {t.roomsPage.title}
+                  </Link>
+                }
+              >
                 {rooms.map((room, i) => (
                   <RailCard key={room.id}>
                     <RoomCard room={room} locale={locale} t={t} showBranch priority={i < 2} />
@@ -551,12 +601,14 @@ export default async function HomePage({ params }: Args) {
           <section className="bg-sand">
             <div className={cn(shell, sectionY)}>
               <div>
-                <Faq
-                  entries={faq}
-                  eyebrow={t.contact.eyebrow}
-                  title={t.faq.groupTitle}
-                  lead={t.home.chooseBranchLead}
-                />
+                {/* No lead under this heading, and no label over it.
+                    It carried "Choose the one that suits your stay" — the
+                    sentence that belongs to the row of hotels much further up
+                    the page — sitting under "Questions about the group", where
+                    it answered nothing and made the section look assembled by
+                    somebody who was not reading it. A list of questions says
+                    what it is. */}
+                <Faq entries={faq} title={t.faq.groupTitle} />
               </div>
             </div>
           </section>

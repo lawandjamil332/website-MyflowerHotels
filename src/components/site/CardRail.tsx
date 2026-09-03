@@ -37,12 +37,24 @@ const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : us
 export function CardRail({
   children,
   label,
+  action,
   className,
   tone = 'ink',
 }: {
   children: React.ReactNode
   /** Names the row for screen readers, e.g. "Our hotels". */
   label: string
+  /**
+   * The way out of the section — "every room we have", "all four hotels" —
+   * rendered at the start of the row the arrows close.
+   *
+   * It used to sit across from the heading, on the opposite margin. On a wide
+   * screen that put a lone pill at the far right of about nine hundred pixels
+   * of nothing, which reads as a button that has come loose rather than as a
+   * considered piece of layout. Down here it has the arrows to answer to and
+   * the row has two ends that both mean something.
+   */
+  action?: React.ReactNode
   className?: string
   tone?: 'ink' | 'light'
 }) {
@@ -121,34 +133,47 @@ export function CardRail({
         {children}
       </div>
 
-      {/* Only when there is somewhere to go. These used to render always and
-          merely disable themselves, so every rail that fitted its band — which
-          on a desktop was all of them — closed with a pair of dead circles. */}
-      <div className={cn('mt-7 flex justify-end gap-3', !scrollable && 'hidden')}>
-        {([-1, 1] as const).map((direction) => (
-          <button
-            key={direction}
-            type="button"
-            onClick={() => step(direction)}
-            disabled={direction === -1 ? atStart : atEnd}
-            aria-label={direction === -1 ? `${label}: previous` : `${label}: next`}
-            className={cn(
-              'flex h-11 w-11 items-center justify-center rounded-full border transition-colors duration-300 ease-luxe',
-              arrow,
-            )}
-          >
-            <svg
-              viewBox="0 0 24 24"
-              aria-hidden="true"
-              className={cn('h-4 w-4', direction === -1 && 'rotate-180', 'rtl:-scale-x-100')}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
+      {/* The row that closes the rail: the way out of the section on the
+          leading edge, the arrows on the trailing one.
+          The arrows appear only when there is somewhere to go — they used to
+          render always and merely disable themselves, so every rail that
+          fitted its band, which on a desktop was all of them, closed with a
+          pair of dead circles. The row itself stays whenever there is an
+          action to carry. */}
+      <div
+        className={cn(
+          'mt-7 flex items-center gap-4',
+          action ? 'justify-between' : 'justify-end',
+          !scrollable && !action && 'hidden',
+        )}
+      >
+        {action}
+        <div className={cn('flex gap-3', !scrollable && 'hidden')}>
+          {([-1, 1] as const).map((direction) => (
+            <button
+              key={direction}
+              type="button"
+              onClick={() => step(direction)}
+              disabled={direction === -1 ? atStart : atEnd}
+              aria-label={direction === -1 ? `${label}: previous` : `${label}: next`}
+              className={cn(
+                'flex h-11 w-11 items-center justify-center rounded-full border transition-colors duration-300 ease-luxe',
+                arrow,
+              )}
             >
-              <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </button>
-        ))}
+              <svg
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                className={cn('h-4 w-4', direction === -1 && 'rotate-180', 'rtl:-scale-x-100')}
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   )

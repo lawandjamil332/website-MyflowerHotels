@@ -59,5 +59,11 @@ export const shell =
  *
  * Air is worth paying for around a *heading*, which is why headings keep their
  * own margin. It is not worth paying for twice in the same place.
+ *
+ * Down one more step after measuring the reference rather than guessing at it:
+ * its bands sit about thirty-five pixels apart where two of ours sat a hundred
+ * and sixty. A section's padding is spent twice at every join — once by the
+ * band above and once by the band below — so every step here costs double
+ * everywhere.
  */
-export const sectionY = 'py-12 sm:py-16 lg:py-20'
+export const sectionY = 'py-11 sm:py-14 lg:py-16'

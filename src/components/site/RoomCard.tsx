@@ -74,16 +74,22 @@ export function RoomCard({
           <p className="mt-2 text-[0.88rem] leading-snug text-muted-ink">{meta.join(' · ')}</p>
         )}
 
+        {/* One line, not three pieces.
+            "From", the rate and "per night" were three spans at three sizes
+            with an even gap between them, so the eye read three fragments and
+            had to assemble the sentence. The rate is the thing being said, so
+            it carries the weight; the two words around it are the same small
+            quiet size and sit tight against it. */}
         {typeof room.priceFrom === 'number' && (
-          <p className="mt-4 flex items-baseline gap-2 text-sm text-muted-ink">
-            <span className="text-[0.85rem]">{t.room.from}</span>
+          <p className="mt-4 flex flex-wrap items-baseline gap-x-1.5 text-[0.85rem] text-muted-ink">
+            <span>{t.room.from}</span>
             <Price
               amount={room.priceFrom}
               currency={room.currency}
               locale={locale}
-              className="font-display text-xl text-ink"
+              className="font-display text-[1.35rem] leading-none text-ink"
             />
-            <span className="text-xs">{t.room.perNight}</span>
+            <span>{t.room.perNight}</span>
           </p>
         )}
       </div>
