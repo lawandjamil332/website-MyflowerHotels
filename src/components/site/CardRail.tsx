@@ -37,6 +37,8 @@ const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : us
 export function CardRail({
   children,
   label,
+  previousLabel,
+  nextLabel,
   action,
   className,
   tone = 'ink',
@@ -44,6 +46,14 @@ export function CardRail({
   children: React.ReactNode
   /** Names the row for screen readers, e.g. "Our hotels". */
   label: string
+  /**
+   * What the two arrows are called. Required rather than defaulted, because a
+   * default would be English and nothing on the page would show it was wrong:
+   * these labels are drawn as shapes and only ever spoken aloud, so "previous"
+   * and "next" sat in English on every Kurdish and Arabic page unnoticed.
+   */
+  previousLabel: string
+  nextLabel: string
   /**
    * The way out of the section — "every room we have", "all four hotels" —
    * rendered at the start of the row the arrows close.
@@ -155,7 +165,7 @@ export function CardRail({
               type="button"
               onClick={() => step(direction)}
               disabled={direction === -1 ? atStart : atEnd}
-              aria-label={direction === -1 ? `${label}: previous` : `${label}: next`}
+              aria-label={`${label}: ${direction === -1 ? previousLabel : nextLabel}`}
               className={cn(
                 'flex h-11 w-11 items-center justify-center rounded-full border transition-colors duration-300 ease-luxe',
                 arrow,

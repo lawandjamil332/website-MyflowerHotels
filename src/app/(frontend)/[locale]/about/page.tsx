@@ -174,9 +174,14 @@ export default async function AboutPage({ params }: Args) {
             <p className="font-display text-[1.5rem] leading-tight text-balance text-white sm:text-[2rem]">
               {t.home.heroEyebrow}
             </p>
+            {/* "Welcoming guests since", in the language of the page. It was
+                the English word "Since" written straight into the markup, so
+                a Kurdish reader and an Arabic reader both got one English
+                word stamped across the photograph. The phrase is already
+                translated for the same year on the front page. */}
             {settings.establishedYear && (
               <p className="mt-3 text-xs tracking-[0.14em] text-white/70 uppercase rtl:tracking-normal">
-                Since {settings.establishedYear}
+                {t.home.creditSince} {settings.establishedYear}
               </p>
             )}
           </div>
@@ -192,7 +197,11 @@ export default async function AboutPage({ params }: Args) {
           />
           {/* The same rail the homepage uses for the same four hotels: a guest
               who has just read who runs them is one swipe from choosing one. */}
-          <CardRail label={t.nav.branches}>
+          <CardRail
+            label={t.nav.branches}
+            previousLabel={t.common.previous}
+            nextLabel={t.common.next}
+          >
             {branches.map((branch, i) => (
               <RailCard key={branch.id}>
                 <BranchCard branch={branch} locale={locale} t={t} priority={i < 2} />

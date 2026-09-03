@@ -425,6 +425,16 @@ export type Dictionary = {
     reserve: string
     menu: string
     close: string
+    /**
+     * Spoken labels, never printed. The arrows on a row of cards, the picture
+     * viewer's controls and the currency switcher are all drawn as shapes, so
+     * their names exist only for a screen reader — which is exactly why they
+     * sat in English on the Kurdish and Arabic pages for as long as they did:
+     * nobody looking at the page could see them.
+     */
+    previous: string
+    next: string
+    currency: string
   }
 }
 
@@ -810,14 +820,16 @@ const en: Dictionary = {
     btnWhatsApp: 'Message us on WhatsApp',
     footerGuest:
       'We are looking forward to having you. If anything about this booking is wrong, reply to this email or send us a WhatsApp — a person reads both.',
-    footerHotel: 'Sent by the website when a guest books. The booking is already in the admin panel.',
+    footerHotel:
+      'Sent by the website when a guest books. The booking is already in the admin panel.',
     subjGuest: 'Your booking at {hotel} — {ref}',
     subjHotel: 'New booking {ref} — {hotel} — {date}',
     preGuest: '{ref} · {arriving} · {nights}',
     preHotel: '{guest} · {room} · {arriving}',
     newEyebrow: 'New booking',
     newTitle: 'New booking at {hotel}',
-    newLead: 'A guest has booked through the website. The room is already out of stock for these nights.',
+    newLead:
+      'A guest has booked through the website. The room is already out of stock for these nights.',
     cxEyebrow: 'Booking cancelled',
     cxTitle: 'Your booking is cancelled',
     cxLead: 'This is your record of it. There is nothing to pay, and nothing further to do.',
@@ -909,6 +921,9 @@ const en: Dictionary = {
     reserve: 'Reserve',
     menu: 'Menu',
     close: 'Close',
+    previous: 'Previous',
+    next: 'Next',
+    currency: 'Currency',
   },
 }
 
@@ -1295,7 +1310,8 @@ const ku: Dictionary = {
     btnWhatsApp: 'نامە بنێرە بە واتساپ',
     footerGuest:
       'بە خۆشحاڵییەوە چاوەڕێت دەکەین. ئەگەر شتێک لەم حیجزەدا هەڵە بوو، وەڵامی ئەم ئیمەیلە بدەرەوە یان واتساپێکمان بۆ بنێرە — کەسێک هەردووکیان دەخوێنێتەوە.',
-    footerHotel: 'لە لایەن ماڵپەڕەکە نێردراوە کاتێک میوانێک حیجز دەکات. حیجزەکە پێشتر لە پانێڵی بەڕێوەبردندایە.',
+    footerHotel:
+      'لە لایەن ماڵپەڕەکە نێردراوە کاتێک میوانێک حیجز دەکات. حیجزەکە پێشتر لە پانێڵی بەڕێوەبردندایە.',
     subjGuest: 'حیجزەکەت لە {hotel} — {ref}',
     subjHotel: 'حیجزی نوێ {ref} — {hotel} — {date}',
     preGuest: '{ref} · {arriving} · {nights}',
@@ -1394,6 +1410,9 @@ const ku: Dictionary = {
     reserve: 'حیجز',
     menu: 'لیست',
     close: 'داخستن',
+    previous: 'پێشوو',
+    next: 'دواتر',
+    currency: 'دراو',
   },
 }
 
@@ -1501,8 +1520,7 @@ const ar: Dictionary = {
     summaryWhere: 'تقع في {hotel}، {where}، في {city}.',
     summaryPrice:
       'تبدأ من {price} في الليلة، تُدفع في الفندق عند الوصول — لا تُؤخذ بطاقة لحجز الغرفة ولا توجد رسوم حجز.',
-    summaryPay:
-      'تدفع في الفندق عند الوصول — لا تُؤخذ بطاقة لحجز الغرفة ولا توجد رسوم حجز.',
+    summaryPay: 'تدفع في الفندق عند الوصول — لا تُؤخذ بطاقة لحجز الغرفة ولا توجد رسوم حجز.',
   },
   about: {
     eyebrow: 'عن المجموعة',
@@ -1785,8 +1803,7 @@ const ar: Dictionary = {
     cxEyebrow: 'أُلغي الحجز',
     cxTitle: 'تم إلغاء حجزك',
     cxLead: 'هذا سجلك بذلك. لا شيء للدفع، ولا شيء آخر عليك فعله.',
-    cxNotice:
-      'إن لم تكن أنت من ألغى الحجز، اتصل بنا فوراً وسنعيده إن كانت الغرفة ما زالت متاحة.',
+    cxNotice: 'إن لم تكن أنت من ألغى الحجز، اتصل بنا فوراً وسنعيده إن كانت الغرفة ما زالت متاحة.',
     cxHotelTitle: 'أُلغي — {hotel}',
     cxHotelLead: 'ألغى الضيف الحجز من الموقع. الغرفة عادت للبيع — احذفها من الدفتر.',
     subjGuestCx: 'أُلغي — {ref} — {hotel}',
@@ -1871,6 +1888,9 @@ const ar: Dictionary = {
     reserve: 'احجز',
     menu: 'القائمة',
     close: 'إغلاق',
+    previous: 'السابق',
+    next: 'التالي',
+    currency: 'العملة',
   },
 }
 

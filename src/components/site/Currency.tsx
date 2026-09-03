@@ -107,7 +107,7 @@ export function Price({
 }
 
 /** The switch itself. Renders nothing when there is no rate to switch with. */
-export function CurrencySwitch({ className }: { className?: string }) {
+export function CurrencySwitch({ label, className }: { label: string; className?: string }) {
   const { display, setDisplay, rate } = useContext(CurrencyContext)
   if (rate === null) return null
 
@@ -115,7 +115,7 @@ export function CurrencySwitch({ className }: { className?: string }) {
     <div
       className={cn('inline-flex items-center rounded-full border border-line p-0.5', className)}
       role="group"
-      aria-label="Currency"
+      aria-label={label}
     >
       {(['IQD', 'USD'] as const).map((code) => (
         <button

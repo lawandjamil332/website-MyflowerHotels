@@ -206,7 +206,10 @@ export function HeaderBar({
             </Link>
 
             <div className="flex shrink-0 items-center gap-1 sm:gap-4">
-              <CurrencySwitch className="hidden border-white/25 md:inline-flex" />
+              <CurrencySwitch
+                label={t.common.currency}
+                className="hidden border-white/25 md:inline-flex"
+              />
               <LocaleSwitcher current={locale} label={t.common.language} tone="light" />
 
               {/* Shown from tablet up rather than desktop only: on a phone this

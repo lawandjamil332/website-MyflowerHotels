@@ -20,11 +20,65 @@
 > hotel-site@1.0.0 migrate
 > cross-env NODE_OPTIONS=--no-deprecation payload migrate
 
-[00:51:20] [33mWARN[39m: [36mNo email adapter provided. Email will be written to console. More info at https://payloadcms.com/docs/email/overview.[39m
-[00:51:20] [32mINFO[39m: [36mReading migration files from /home/user/website-MyflowerHotels/src/migrations[39m
-[00:51:21] [32mINFO[39m: [36mDone.[39m
+[01:20:43] [33mWARN[39m: [36mNo email adapter provided. Email will be written to console. More info at https://payloadcms.com/docs/email/overview.[39m
+[01:20:43] [32mINFO[39m: [36mReading migration files from /home/user/website-MyflowerHotels/src/migrations[39m
+[01:20:43] [32mINFO[39m: [36mDone.[39m
 ▲ Next.js 16.2.6
 - Local:         http://localhost:3000
 - Network:       http://192.0.2.2:3000
-✓ Ready in 118ms
-[00:51:33] [33mWARN[39m: [36mNo email adapter provided. Email will be written to console. More info at https://payloadcms.com/docs/email/overview.[39m
+✓ Ready in 125ms
+[01:20:56] [33mWARN[39m: [36mNo email adapter provided. Email will be written to console. More info at https://payloadcms.com/docs/email/overview.[39m
+[01:21:11] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-488D7Y — My Flower 1 — Saturday, 01 May 2027'[39m
+[01:21:11] [32mINFO[39m: [36mBooking MF-488D7Y → dev@example.com[39m
+[01:21:29] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-V2KDDJ — My Flower 1 — Sunday, 20 September 2026'[39m
+[01:21:29] [32mINFO[39m: [36mBooking MF-V2KDDJ → dev@example.com[39m
+[01:21:43] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-2374JA — My Flower 1 — Tuesday, 13 October 2026'[39m
+[01:21:43] [32mINFO[39m: [36mBooking MF-2374JA → dev@example.com[39m
+[01:22:07] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-PWYG78 — My Flower 1 — Tuesday, 01 December 2026'[39m
+[01:22:07] [32mINFO[39m: [36mBooking MF-PWYG78 → dev@example.com[39m
+[01:23:06] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-RQNY93 — My Flower 1 — Friday, 01 January 2027'[39m
+[01:23:06] [32mINFO[39m: [36mBooking MF-RQNY93 → dev@example.com[39m
+[01:23:15] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-3SZHHQ — My Flower 1 — Tuesday, 10 August 2027'[39m
+[01:23:15] [32mINFO[39m: [36mBooking MF-3SZHHQ → dev@example.com[39m
+[01:23:33] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'CANCELLED MF-3SZHHQ — My Flower 1 — Tuesday, 10 August 2027'[39m
+[01:23:33] [32mINFO[39m: [36mBooking MF-3SZHHQ → dev@example.com[39m
+[01:27:03] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-Q5UVMD — My Flower 1 — Tuesday, 02 March 2027'[39m
+[01:27:03] [32mINFO[39m: [36mBooking MF-Q5UVMD → dev@example.com[39m
+[01:27:07] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-C5D46Y — My Flower 1 — Wednesday, 03 March 2027'[39m
+[01:27:07] [32mINFO[39m: [36mBooking MF-C5D46Y → dev@example.com[39m
+[01:27:12] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-U44NTU — My Flower 1 — Thursday, 04 March 2027'[39m
+[01:27:12] [32mINFO[39m: [36mBooking MF-U44NTU → dev@example.com[39m
+[01:27:16] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-HUDEHR — My Flower 1 — Friday, 05 March 2027'[39m
+[01:27:16] [32mINFO[39m: [36mBooking MF-HUDEHR → dev@example.com[39m
+[01:27:20] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-6G5NP2 — My Flower 1 — Saturday, 06 March 2027'[39m
+[01:27:20] [32mINFO[39m: [36mBooking MF-6G5NP2 → dev@example.com[39m
+[01:27:24] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-HD3ATY — My Flower 1 — Sunday, 07 March 2027'[39m
+[01:27:24] [32mINFO[39m: [36mBooking MF-HD3ATY → dev@example.com[39m
+[01:27:28] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-6QWRYK — My Flower 1 — Monday, 01 March 2027'[39m
+[01:27:28] [32mINFO[39m: [36mBooking MF-6QWRYK → dev@example.com[39m
+[01:27:33] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-HZ4V2S — My Flower 1 — Tuesday, 02 March 2027'[39m
+[01:27:33] [32mINFO[39m: [36mBooking MF-HZ4V2S → dev@example.com[39m
+[01:27:37] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-55H28V — My Flower 1 — Wednesday, 03 March 2027'[39m
+[01:27:37] [32mINFO[39m: [36mBooking MF-55H28V → dev@example.com[39m
+[01:27:41] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-AEQK45 — My Flower 1 — Thursday, 04 March 2027'[39m
+[01:27:41] [32mINFO[39m: [36mBooking MF-AEQK45 → dev@example.com[39m
+[01:27:45] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-MR5SMX — My Flower 1 — Friday, 05 March 2027'[39m
+[01:27:45] [32mINFO[39m: [36mBooking MF-MR5SMX → dev@example.com[39m
+[01:27:50] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-DQAKQZ — My Flower 1 — Saturday, 06 March 2027'[39m
+[01:27:50] [32mINFO[39m: [36mBooking MF-DQAKQZ → dev@example.com[39m
+[01:27:54] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-BY8N4P — My Flower 1 — Sunday, 07 March 2027'[39m
+[01:27:54] [32mINFO[39m: [36mBooking MF-BY8N4P → dev@example.com[39m
+[01:27:58] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-8W9M6E — My Flower 1 — Monday, 01 March 2027'[39m
+[01:27:58] [32mINFO[39m: [36mBooking MF-8W9M6E → dev@example.com[39m
+[01:28:02] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-UJTY9G — My Flower 1 — Tuesday, 02 March 2027'[39m
+[01:28:02] [32mINFO[39m: [36mBooking MF-UJTY9G → dev@example.com[39m
+[01:28:06] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-NYMMZ7 — My Flower 1 — Wednesday, 03 March 2027'[39m
+[01:28:06] [32mINFO[39m: [36mBooking MF-NYMMZ7 → dev@example.com[39m
+[01:28:11] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-SZX35C — My Flower 1 — Thursday, 04 March 2027'[39m
+[01:28:11] [32mINFO[39m: [36mBooking MF-SZX35C → dev@example.com[39m
+[01:28:15] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-CDKS38 — My Flower 1 — Friday, 05 March 2027'[39m
+[01:28:15] [32mINFO[39m: [36mBooking MF-CDKS38 → dev@example.com[39m
+[01:28:19] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-EKCQSU — My Flower 1 — Saturday, 06 March 2027'[39m
+[01:28:19] [32mINFO[39m: [36mBooking MF-EKCQSU → dev@example.com[39m
+[01:28:23] [32mINFO[39m: [36mEmail attempted without being configured. To: 'dev@example.com', Subject: 'New booking MF-BAKMJV — My Flower 1 — Sunday, 07 March 2027'[39m
+[01:28:23] [32mINFO[39m: [36mBooking MF-BAKMJV → dev@example.com[39m

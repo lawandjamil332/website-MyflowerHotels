@@ -146,7 +146,7 @@ export default async function ContactPage({ params }: Args) {
                         420px pills with three centred words adrift in the
                         middle, which reads as a control that does not know how
                         big it wants to be. */}
-                    <div className="flex flex-col gap-2.5 lg:max-w-[14rem]">
+                    <div className="flex flex-col gap-2.5 lg:w-[14rem] lg:justify-self-end">
                       {!openingSoon && wa && (
                         <a
                           href={wa}

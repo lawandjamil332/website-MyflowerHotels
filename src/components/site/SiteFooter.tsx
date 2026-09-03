@@ -107,13 +107,22 @@ export async function SiteFooter({
               height={147}
               className="h-16 w-auto object-contain"
             />
-            <Stars count={settings.stars} tone="light" className="mt-4" />
+            <Stars
+              count={settings.stars}
+              label={t.home.creditStars}
+              tone="light"
+              className="mt-4"
+            />
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/75">
               {t.home.heroEyebrow}
             </p>
+            {/* Translated, like everything else on the page. This was the
+                English word "Since" written into the markup, so it stood in
+                the footer of every Kurdish and Arabic page as the one English
+                word on it. */}
             {settings.establishedYear && (
               <p className="mt-2 text-xs tracking-[0.12em] text-white/65 uppercase rtl:tracking-normal">
-                Since {settings.establishedYear}
+                {t.home.creditSince} {settings.establishedYear}
               </p>
             )}
             <div aria-hidden="true" className="rule-brand mt-7" />

@@ -358,7 +358,14 @@ export default async function BranchPage({ params }: Args) {
           <div className={cn(shell, sectionY)}>
             <SectionHeading title={t.branch.gallery} className="mb-10 lg:mb-14" />
             <Reveal>
-              <Gallery items={gallery} />
+              <Gallery
+                items={gallery}
+                labels={{
+                  close: t.common.close,
+                  previous: t.common.previous,
+                  next: t.common.next,
+                }}
+              />
             </Reveal>
           </div>
         </section>
@@ -388,7 +395,11 @@ export default async function BranchPage({ params }: Args) {
         <section className={cn(shell, sectionY)}>
           <SectionHeading title={t.branch.rooms} className="mb-12 lg:mb-16" />
           {rooms.length > 0 ? (
-            <CardRail label={t.branch.rooms}>
+            <CardRail
+              label={t.branch.rooms}
+              previousLabel={t.common.previous}
+              nextLabel={t.common.next}
+            >
               {rooms.map((room, i) => (
                 <RailCard key={room.id}>
                   <RoomCard room={room} locale={locale} t={t} priority={i < 2} />
@@ -411,7 +422,11 @@ export default async function BranchPage({ params }: Args) {
       {otherBranches.length > 0 && (
         <section className={cn(shell, sectionY)}>
           <SectionHeading title={t.branch.otherHotels} className="mb-12 lg:mb-16" />
-          <CardRail label={t.branch.otherHotels}>
+          <CardRail
+            label={t.branch.otherHotels}
+            previousLabel={t.common.previous}
+            nextLabel={t.common.next}
+          >
             {otherBranches.map((other) => (
               <RailCard key={other.id}>
                 <BranchCard branch={other} locale={locale} t={t} />

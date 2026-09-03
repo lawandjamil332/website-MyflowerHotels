@@ -262,7 +262,14 @@ export default async function RoomPage({ params }: Args) {
           <div className={cn(shell, sectionY)}>
             <SectionHeading title={t.branch.gallery} className="mb-10 lg:mb-14" />
             <Reveal>
-              <Gallery items={gallery} />
+              <Gallery
+                items={gallery}
+                labels={{
+                  close: t.common.close,
+                  previous: t.common.previous,
+                  next: t.common.next,
+                }}
+              />
             </Reveal>
           </div>
         </section>
@@ -284,7 +291,11 @@ export default async function RoomPage({ params }: Args) {
       {siblings.length > 0 && (
         <section className={cn(shell, sectionY)}>
           <SectionHeading title={t.branch.rooms} className="mb-12 lg:mb-16" />
-          <CardRail label={t.branch.rooms}>
+          <CardRail
+            label={t.branch.rooms}
+            previousLabel={t.common.previous}
+            nextLabel={t.common.next}
+          >
             {siblings.map((sibling) => (
               <RailCard key={sibling.id}>
                 <RoomCard room={sibling} locale={locale} t={t} />

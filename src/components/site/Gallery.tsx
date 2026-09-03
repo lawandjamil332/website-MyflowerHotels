@@ -15,7 +15,20 @@ export type GalleryItem = { url: string; alt: string; full?: string }
  * Tapping a photograph opens it full-screen — on a phone the thumbnails are
  * too small to judge a room by, which is the whole reason the guest is here.
  */
-export function Gallery({ items, className }: { items: GalleryItem[]; className?: string }) {
+export function Gallery({
+  items,
+  labels,
+  className,
+}: {
+  items: GalleryItem[]
+  /**
+   * The three controls in the full-screen viewer are drawn as shapes, so
+   * these names are only ever spoken aloud — which is how they stayed in
+   * English on the Kurdish and Arabic pages without anyone seeing it.
+   */
+  labels: { close: string; previous: string; next: string }
+  className?: string
+}) {
   const [openAt, setOpenAt] = useState<number | null>(null)
 
   const close = useCallback(() => setOpenAt(null), [])
@@ -92,7 +105,7 @@ export function Gallery({ items, className }: { items: GalleryItem[]; className?
             <button
               type="button"
               onClick={close}
-              aria-label="Close"
+              aria-label={labels.close}
               className="text-[0.7rem] tracking-[0.22em] uppercase transition-colors duration-500 hover:text-brand rtl:tracking-normal"
             >
               ✕
@@ -114,7 +127,7 @@ export function Gallery({ items, className }: { items: GalleryItem[]; className?
               <button
                 type="button"
                 onClick={() => step(-1)}
-                aria-label="Previous"
+                aria-label={labels.previous}
                 className="border border-white/25 px-6 py-3 text-white transition-colors duration-500 hover:border-white hover:bg-white hover:text-ink"
               >
                 ←
@@ -122,7 +135,7 @@ export function Gallery({ items, className }: { items: GalleryItem[]; className?
               <button
                 type="button"
                 onClick={() => step(1)}
-                aria-label="Next"
+                aria-label={labels.next}
                 className="border border-white/25 px-6 py-3 text-white transition-colors duration-500 hover:border-white hover:bg-white hover:text-ink"
               >
                 →

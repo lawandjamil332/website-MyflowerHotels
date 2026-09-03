@@ -15,10 +15,18 @@ import { cn } from '@/utilities/ui'
  */
 export function Stars({
   count,
+  label,
   className,
   tone = 'brand',
 }: {
   count?: string | number | null
+  /**
+   * What a screen reader says instead of counting shapes — "Star rating", in
+   * the language of the page. It was the English phrase "4-star hotel"
+   * written into the markup, which nobody could see was wrong because nobody
+   * looking at the page ever sees it.
+   */
+  label: string
   className?: string
   tone?: 'brand' | 'light'
 }) {
@@ -28,7 +36,7 @@ export function Stars({
   return (
     <span
       className={cn('inline-flex items-center gap-1', className)}
-      aria-label={`${n}-star hotel`}
+      aria-label={`${label}: ${n}`}
     >
       {Array.from({ length: Math.min(n, 5) }).map((_, i) => (
         <svg

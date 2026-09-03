@@ -290,7 +290,7 @@ export default async function HomePage({ params }: Args) {
         >
           <div className="rise flex items-center gap-4" style={{ animationDelay: '0.2s' }}>
             <p className="eyebrow text-white">{t.home.heroEyebrow}</p>
-            <Stars count={settings.stars} tone="light" />
+            <Stars count={settings.stars} label={t.home.creditStars} tone="light" />
           </div>
           <h1
             className="font-display display-hero text-hero rise mt-4 max-w-4xl text-balance"
@@ -431,6 +431,8 @@ export default async function HomePage({ params }: Args) {
           {branches.length > 0 ? (
             <CardRail
               label={t.nav.branches}
+              previousLabel={t.common.previous}
+              nextLabel={t.common.next}
               action={
                 <Link href={`/${locale}/branches`} className={cn(btnOutline, btnSmall)}>
                   {t.branchesPage.gridTitle}
@@ -464,7 +466,11 @@ export default async function HomePage({ params }: Args) {
                 lead={t.home.offersLead}
                 className="mb-10 lg:mb-12"
               />
-              <CardRail label={t.home.offersTitle}>
+              <CardRail
+                label={t.home.offersTitle}
+                previousLabel={t.common.previous}
+                nextLabel={t.common.next}
+              >
                 {offers.map((offer, i) => (
                   <RailCard key={offer.id}>
                     <OfferCard offer={offer} locale={locale} t={t} priority={i < 2} />
@@ -577,6 +583,8 @@ export default async function HomePage({ params }: Args) {
               />
               <CardRail
                 label={t.nav.rooms}
+                previousLabel={t.common.previous}
+                nextLabel={t.common.next}
                 action={
                   <Link href={`/${locale}/rooms`} className={cn(btnOutline, btnSmall)}>
                     {t.roomsPage.title}
