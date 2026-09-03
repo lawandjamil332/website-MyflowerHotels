@@ -266,5 +266,11 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
           .replace('{city}', t.seo.locality)
       : fillCount(t.about.lead, branches.length, locale)
 
-  return { title, description }
+  // `absolute`, because this title already opens with the group's name and the
+  // layout's template appends it to everything. Without it the search result
+  // for this page read "My Flower Hotels — Kurdish-owned hotel group in Erbil |
+  // My Flower Hotels" — the name twice, and seventy-two characters where
+  // Google shows about sixty, so the half that was cut was the half that says
+  // what the page is.
+  return { title: { absolute: title }, description }
 }
