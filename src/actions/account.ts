@@ -53,6 +53,14 @@ export async function signIn(_prev: AccountResult, formData: FormData): Promise<
   const password = text(formData.get('password'))
   const locale = text(formData.get('locale')) || 'en'
   if (!email || !password) return { status: 'error', message: 'required' }
+  // Payload locks an account after a few wrong passwords, which stops somebody
+  // hammering one guest. It does nothing about the other shape of the attack —
+  // one common password tried against a thousand addresses, where no single
+  // account ever sees a second wrong try. This limits that, and twenty in ten
+  // minutes is far past what a guest mistyping their own password will reach.
+  if (!allow(await callerKey('signin'), 20, 10 * 60_000)) {
+    return { status: 'error', message: 'bad' }
+  }
 
   try {
     const payload = await getPayload({ config: configPromise })
@@ -79,6 +87,17 @@ export async function signUp(_prev: AccountResult, formData: FormData): Promise<
   const locale = text(formData.get('locale')) || 'en'
   if (!email || !password || !name) return { status: 'error', message: 'required' }
   if (tooWeak(password)) return { status: 'error', message: 'weak' }
+  // Nothing stopped a loop here, and every turn of it was a real guest row in
+  // the admin panel.
+  //
+  // Twenty in ten minutes, not six. The number has to clear the worst honest
+  // case, and the worst honest case is a lot of people behind one address:
+  // hotel wifi, a tour group on the same carrier, a family at one desk. Six
+  // would have refused a real guest on a busy morning. Twenty never will, and
+  // a script opening accounts in bulk is doing thousands, not twenty-one.
+  if (!allow(await callerKey('signup'), 20, 10 * 60_000)) {
+    return { status: 'error', message: 'bad' }
+  }
 
   try {
     const payload = await getPayload({ config: configPromise })
@@ -92,7 +111,7 @@ export async function signUp(_prev: AccountResult, formData: FormData): Promise<
     if (result?.token) await setSession(result.token)
 
     // Bookings they already made, before they had anywhere to keep them.
-    await claimBookings(payload, Number(created.id), email, phone)
+    await claimBookings(payload, Number(created.id), email)
   } catch (error) {
     const message = String(error)
     if (/duplicate|unique|already/i.test(message)) return { status: 'error', message: 'taken' }
@@ -111,31 +130,38 @@ export async function signUp(_prev: AccountResult, formData: FormData): Promise<
  * guest is worse than no account. Their history — and the points those stays
  * earned — has to be waiting for them.
  *
- * Matched on email or phone. Email alone would miss almost everyone, since the
- * booking form asks for a phone number and treats email as optional. Phone is
- * compared on its last nine digits, so +964 750 111 2222 on the booking finds
- * 07501112222 on the account.
+ * Matched on the email address only, and that is a deliberate narrowing.
  *
- * Only ever claims bookings with no owner. A booking already attached to
- * somebody cannot be moved by signing up with their number.
+ * It used to match on the phone number as well — last nine digits, so
+ * +964 750 111 2222 on a booking found 07501112222 on an account. The
+ * reasoning was sound: the booking form asks for a phone and treats email as
+ * optional, so email alone misses most guests. The consequence was not.
+ * Signing up proves you hold the email address you signed up with; it proves
+ * nothing at all about the phone number you typed into a box. So anyone who
+ * knew a guest's number could open an account with it and walk away with that
+ * guest's stay — their name, their hotel, their dates, what they paid, and the
+ * points it earned — while the guest it belonged to could never claim it,
+ * because a booking is only ever claimed once.
+ *
+ * A phone number is not a secret. It is on a business card, in a WhatsApp
+ * group, on a form at a shop counter. It cannot be the only thing standing
+ * between a stranger and somebody's stay history.
+ *
+ * Nothing is lost that mattered. A guest who books with an email still gets
+ * their history the moment they sign up, and a guest who books without one now
+ * gets it through "Find your booking", which already asks for the reference
+ * from their own confirmation as well as the number — proof they hold the
+ * booking rather than a claim that they might.
+ *
+ * Only ever claims bookings with no owner, as before.
  */
-const claimBookings = async (
-  payload: Payload,
-  guestId: number,
-  email: string,
-  phone: string,
-): Promise<void> => {
-  const digits = phone.replace(/\D/g, '')
-  const tail = digits.length >= 9 ? digits.slice(-9) : ''
-
+const claimBookings = async (payload: Payload, guestId: number, email: string): Promise<void> => {
   try {
     const { rows } = await dbPool(payload).query<{ id: number; status: string }>(
       `UPDATE bookings SET guest_id = $1
-        WHERE guest_id IS NULL
-          AND ( LOWER(guest_email) = $2
-                OR ($3 <> '' AND RIGHT(REGEXP_REPLACE(guest_phone, '\\D', '', 'g'), 9) = $3) )
+        WHERE guest_id IS NULL AND LOWER(guest_email) = $2
         RETURNING id, status`,
-      [guestId, email, tail],
+      [guestId, email],
     )
 
     // Stays that had already finished before the account existed still earned

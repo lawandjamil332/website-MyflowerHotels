@@ -1,10 +1,13 @@
 'use server'
 
 import configPromise from '@payload-config'
-import { getPayload } from 'payload'
+import { getPayload, type Payload } from 'payload'
 
 import { sendCancellationEmails } from '@/utilities/bookingEmail'
 import { allow, callerKey } from '@/utilities/throttle'
+import { currentGuest } from './account'
+import { awardPointsForBooking } from '@/utilities/points'
+import { dbPool } from '@/utilities/db'
 
 export type FoundBooking = {
   reference: string
@@ -127,12 +130,47 @@ export async function findBooking(_prev: LookupResult, formData: FormData): Prom
   try {
     const found = await load(reference, phone)
     if (!found) return { status: 'error', message: 'notFound' }
+    // Signed in? Then this stay joins their account.
+    //
+    // This is the safe half of what signing up used to do on its own. Claiming
+    // a booking off a phone number alone let anyone who knew the number take
+    // the stay; here the guest has just produced the reference from their own
+    // confirmation as well, which is the proof that was missing. Same benefit —
+    // a returning guest's history is waiting for them — without the hole.
+    await attachToAccount(found.payload, found.booking)
     return {
       status: 'found',
       booking: shape(found.booking, await alreadyReviewed(found.payload, Number(found.booking.id))),
     }
   } catch {
     return { status: 'error', message: 'generic' }
+  }
+}
+
+/**
+ * Puts a booking the guest has just proved they hold onto their account.
+ *
+ * Only ever a booking with no owner: one already attached to somebody cannot be
+ * moved, whatever anybody produces. Failures are swallowed on purpose — finding
+ * a booking must never break because filing it did.
+ */
+const attachToAccount = async (
+  payload: Payload,
+  booking: { id: number | string; guest?: unknown; status?: string | null },
+): Promise<void> => {
+  try {
+    if (booking.guest) return
+    const guest = await currentGuest()
+    if (!guest?.id) return
+    const { rowCount } = await dbPool(payload).query(
+      `UPDATE bookings SET guest_id = $1 WHERE id = $2 AND guest_id IS NULL`,
+      [Number(guest.id), Number(booking.id)],
+    )
+    if (rowCount && booking.status === 'completed') {
+      await awardPointsForBooking(payload, Number(booking.id)).catch(() => {})
+    }
+  } catch {
+    // Nothing a guest looking for their booking should ever see.
   }
 }
 

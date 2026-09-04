@@ -97,5 +97,54 @@ ok('and the database agrees with what the page said', stored === accepted, `${st
 
 sql(`delete from bookings where guest_name = '${NAME}'`)
 sql(`update rooms set quantity = 3 where branch_id = 1`)
+
+// ---------------------------------------------------------------------------
+// Opening accounts, which was not limited at all.
+//
+// Every turn of a loop here was a real guest row in the admin panel. It lives
+// in this suite rather than beside the rest of the account checks because
+// proving a per-address allowance means spending it, and a suite that spends
+// one starves every suite that runs after it. This one runs last.
+// ---------------------------------------------------------------------------
+const stamp = Date.now()
+const flood = await chromium.launch({
+  args: ['--no-sandbox'],
+  executablePath: process.env.CHROME_PATH || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
+})
+let landed = 0
+for (let i = 0; i < 26; i++) {
+  const ctx = await flood.newContext()
+  const pg = await ctx.newPage()
+  try {
+    await pg.goto(`${base}/en/account`, { waitUntil: 'networkidle', timeout: 60000 })
+    const form = pg.locator('form').filter({ has: pg.locator('input[name="name"]') }).first()
+    if ((await form.count()) > 0) {
+      await form.locator('input[name="name"]').fill('Flood')
+      await form.locator('input[type="email"]').fill(`flood-${stamp}-${i}@example.com`)
+      const ph = form.locator('input[name="phone"], input[type="tel"]').first()
+      if (await ph.count()) await ph.fill(`+9647700${2000 + i}`)
+      await form.locator('input[type="password"]').first().fill('Str0ngPassw0rd!x')
+      await form.locator('button[type="submit"]').first().click()
+      await pg.waitForTimeout(1600)
+      if (/\/account/.test(pg.url())) landed++
+    }
+  } catch {
+    // A refused attempt is the point; it must not stop the loop.
+  }
+  await ctx.close()
+}
+await flood.close()
+
+const opened = Number(
+  sql(`select count(*) from guests where email like 'flood-${stamp}-%@example.com'`),
+)
+ok(
+  'opening accounts in a loop is refused',
+  opened < 26,
+  `${landed} of 26 landed, ${opened} accounts created`,
+)
+ok('but ordinary sign-up still works', opened >= 1, `${opened} created before the limit`)
+sql(`delete from guests where email like 'flood-${stamp}-%@example.com'`)
+
 console.log(`\n${failed} failed`)
 process.exit(failed ? 1 : 0)
