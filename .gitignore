@@ -32,3 +32,6 @@ tsconfig.tsbuildinfo
 # lines long, and a `git add -A` sweeps it into the commit if it is not named
 # here — which has happened.
 .suite.log
+
+# Build output, written by `npm run build` in a session. Same reason again.
+.build.log

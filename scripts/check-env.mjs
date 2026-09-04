@@ -3,6 +3,8 @@
  * missing or malformed, instead of a stack trace from inside node_modules.
  */
 
+import { existsSync } from 'node:fs'
+
 const problems = []
 
 const secret = process.env.PAYLOAD_SECRET
@@ -176,6 +178,55 @@ const mailLines = mailGmailApi
         ]
 
 console.log(mailLines.join('\n'))
+
+// Whether the confirmation can be attached as a PDF, said out loud for the
+// same reason as the block above: it is invisible from the outside. Both
+// letters still go out without it, carrying the link they always did, so a
+// deployment with no browser looks completely healthy right up until somebody
+// notices that no attachment has ever arrived.
+//
+// The list and the order must match CANDIDATES and NAMES in
+// src/utilities/bookingPdf.ts. They are written twice because this file is
+// plain JavaScript run before the app exists and that one is TypeScript inside
+// it, and two lists that are meant to agree will eventually not — so if you
+// add an address to one, add it to the other. A boot line claiming no browser
+// while the app happily prints is worse than no line at all.
+const browserPath = (() => {
+  const fixed = [
+    process.env.PDF_BROWSER_PATH,
+    process.env.PLAYWRIGHT_CHROMIUM_PATH,
+    '/usr/bin/chromium',
+    '/usr/bin/chromium-browser',
+    '/usr/bin/google-chrome',
+    '/usr/bin/google-chrome-stable',
+    '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
+  ].filter(Boolean)
+  for (const path of fixed) {
+    if (existsSync(path)) return path
+  }
+  for (const dir of (process.env.PATH ?? '').split(':')) {
+    if (!dir) continue
+    for (const name of ['chromium', 'chromium-browser', 'google-chrome', 'google-chrome-stable']) {
+      if (existsSync(`${dir}/${name}`)) return `${dir}/${name}`
+    }
+  }
+  return null
+})()
+
+console.log(
+  browserPath
+    ? [`  Confirmation PDF: yes, printed by ${browserPath}.`, ''].join('\n')
+    : [
+        '  Confirmation PDF: NO BROWSER. Confirmations go out with a link and',
+        '  no attachment. Everything else about them is unaffected.',
+        '',
+        '  nixpacks.toml installs chromium for this. If it is in the deployed',
+        '  commit and this line still says no, the build did not run it — check',
+        '  the build log. /next/pdf-check on the running site, signed in to the',
+        '  admin panel, says exactly which step fails.',
+        '',
+      ].join('\n'),
+)
 
 if (problems.length > 0) {
   const lines = [

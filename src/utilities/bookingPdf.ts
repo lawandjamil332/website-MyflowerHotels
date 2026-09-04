@@ -65,7 +65,7 @@ const exists = async (path: string): Promise<boolean> => {
  * `/usr/bin/chromium` to check for. The fixed list is what covers a Debian
  * image, a developer's laptop and this repository's own test browser.
  */
-const findBrowser = async (): Promise<string | null> => {
+export const findBrowser = async (): Promise<string | null> => {
   for (const path of CANDIDATES) {
     if (path && (await exists(path))) return path
   }
@@ -77,6 +77,39 @@ const findBrowser = async (): Promise<string | null> => {
     }
   }
   return null
+}
+
+/**
+ * The same search, reported rather than performed — every place looked and
+ * what was found there.
+ *
+ * It exists because "the PDF did not arrive" has several causes that look
+ * identical from an inbox: the deployment has no browser, the browser is there
+ * but will not start, the page it prints did not load, or the code that does
+ * any of it is not deployed at all. `/next/pdf-check` reads this and says which
+ * one it is, from inside the running container, the way `/next/mail-check` did
+ * for SMTP.
+ */
+export const browserSearch = async (): Promise<{
+  found: string | null
+  fixedPaths: { path: string; exists: boolean }[]
+  onPath: string[]
+}> => {
+  const fixedPaths = []
+  for (const path of CANDIDATES) {
+    if (path) fixedPaths.push({ path, exists: await exists(path) })
+  }
+
+  const onPath: string[] = []
+  for (const dir of (process.env.PATH ?? '').split(':')) {
+    if (!dir) continue
+    for (const name of NAMES) {
+      const path = `${dir}/${name}`
+      if (await exists(path)) onPath.push(path)
+    }
+  }
+
+  return { found: await findBrowser(), fixedPaths, onPath }
 }
 
 /** A4 with the margins a hotel letter is printed at. */

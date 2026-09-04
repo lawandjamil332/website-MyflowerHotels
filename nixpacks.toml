@@ -12,13 +12,23 @@
 # letters go out carrying the link they always did. Nothing breaks; the
 # attachment simply is not there.
 #
-# `fonts-noto-*` are not optional either. A container with no Arabic font prints
-# a page of empty boxes, which is the failure that looks like a broken document
-# rather than a missing one.
+# The fonts are not optional either. A container with no Arabic font prints a
+# page of empty boxes, which is the failure that looks like a broken document
+# rather than a missing one. `noto-fonts` carries the Arabic script, which is
+# what both Kurdish and Arabic are written in here.
+#
+# Chinese, Japanese and Korean are deliberately not installed. This site is
+# written in three languages and none of them is one of those; the CJK package
+# is several hundred megabytes, it is the one name in this list that has been
+# renamed between nixpkgs releases, and a name that does not resolve fails the
+# whole build — which serves the previous deployment and looks, from an inbox,
+# exactly like the attachment quietly not working.
 [phases.setup]
-nixPkgs = ["...", "chromium", "noto-fonts", "noto-fonts-cjk-sans", "noto-fonts-emoji"]
+nixPkgs = ["...", "chromium", "noto-fonts", "noto-fonts-emoji"]
 
 [variables]
-# Where `renderBookingPdf` looks first. Nix puts chromium on PATH rather than at
-# a fixed address, so the path is resolved at build time into this variable.
+# Stops npm's postinstall fetching a second browser over the one installed
+# above. Nix puts chromium on PATH rather than at a fixed address, so nothing
+# here names its location — `findBrowser` in src/utilities/bookingPdf.ts walks
+# PATH for exactly that reason.
 PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"
