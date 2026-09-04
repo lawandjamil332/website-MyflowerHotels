@@ -8,6 +8,7 @@ import { formatDateLong, formatNumber, formatPrice } from './format'
 import { getServerSideURL } from './getURL'
 import { mediaUrl } from './media'
 import { toMapsHref, toTelHref, toWhatsAppHref } from './contact'
+import { renderBookingPdf, type BookingPdf } from './bookingPdf'
 import { signReference } from './bookingToken'
 import {
   button,
@@ -270,10 +271,10 @@ const send = async (
   subject: string,
   html: string,
   text: string,
-  { critical }: { critical: boolean },
+  { critical, attachments }: { critical: boolean; attachments?: BookingPdf[] },
 ) => {
   try {
-    await payload.sendEmail({ to, subject, html, text })
+    await payload.sendEmail({ to, subject, html, text, ...(attachments?.length ? { attachments } : {}) })
     payload.logger.info(`Booking ${reference} → ${to}`)
   } catch (error) {
     if (critical) {
@@ -301,6 +302,17 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
     const passUrl = `${base}/${locale}/booking/pass?ref=${booking.reference}&t=${signReference(booking.reference)}`
     const maps = toMapsHref(branch?.googleMapsUrl, branch?.latitude, branch?.longitude)
     const wa = toWhatsAppHref(branch?.whatsapp, `${booking.reference}`)
+
+    // The confirmation as a file, rendered once and attached to both letters.
+    //
+    // It is the guest's pass page printed, so the document and the page a
+    // guest is shown can never drift apart, and so the Kurdish and Arabic on
+    // it are shaped by a browser rather than by a PDF library that cannot do
+    // it. `renderBookingPdf` never throws and returns null when there is no
+    // browser to print with, in which case both letters go out exactly as they
+    // did before, with the link.
+    const pdf = await renderBookingPdf(payload, booking.reference, passUrl)
+    const attachments = pdf ? [pdf] : undefined
 
     // ---- the hotel's work order ----
     if (!hotelInbox) {
@@ -356,7 +368,7 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
         }),
         html,
         plain,
-        { critical: true },
+        { critical: true, attachments },
       )
     }
 
@@ -420,7 +432,7 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
         fill(t.email.subjGuest, { hotel: branch?.name ?? siteName, ref: booking.reference }),
         html,
         `${fill(t.email.confirmTitle, { name: booking.guestName })}\n\n${plain}\n${t.email.deskNotice}\n${manageUrl}\n`,
-        { critical: false },
+        { critical: false, attachments },
       )
     }
   } catch (error) {

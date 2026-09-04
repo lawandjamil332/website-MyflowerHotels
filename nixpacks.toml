@@ -1,0 +1,24 @@
+# Chromium, so the booking confirmation can be a real PDF.
+#
+# The confirmation is produced by printing the booking pass page in a headless
+# browser. That is not a shortcut — it is the only way to get Kurdish and Arabic
+# right. Both join their letters and both run right to left, and a PDF library
+# places glyphs without shaping or reordering them: fed a Kurdish hotel name it
+# writes disconnected letters backwards. A browser already does it correctly on
+# the page the guest is looking at, so the document is that page, printed.
+#
+# Without this file the site still runs and still sends both confirmation
+# emails — `renderBookingPdf` finds no browser, says so in the log once, and the
+# letters go out carrying the link they always did. Nothing breaks; the
+# attachment simply is not there.
+#
+# `fonts-noto-*` are not optional either. A container with no Arabic font prints
+# a page of empty boxes, which is the failure that looks like a broken document
+# rather than a missing one.
+[phases.setup]
+nixPkgs = ["...", "chromium", "noto-fonts", "noto-fonts-cjk-sans", "noto-fonts-emoji"]
+
+[variables]
+# Where `renderBookingPdf` looks first. Nix puts chromium on PATH rather than at
+# a fixed address, so the path is resolved at build time into this variable.
+PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1"

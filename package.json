@@ -1,7 +1,7 @@
 {
   "name": "hotel-site",
   "version": "1.0.0",
-  "description": "Hotel group website — three branches in Erbil",
+  "description": "Hotel group website \u2014 three branches in Erbil",
   "type": "module",
   "scripts": {
     "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=4096\" next build",
@@ -55,6 +55,7 @@
     "next": "16.2.6",
     "next-sitemap": "^4.2.3",
     "payload": "3.86.0",
+    "playwright-core": "^1.62.1",
     "prism-react-renderer": "^2.3.1",
     "react": "19.2.6",
     "react-dom": "19.2.6",
@@ -74,7 +75,6 @@
     "autoprefixer": "^10.4.19",
     "eslint": "^9.16.0",
     "eslint-config-next": "16.2.6",
-    "playwright-core": "^1.62.1",
     "postcss": "^8.4.38",
     "prettier": "^3.4.2",
     "tailwindcss": "^4.1.18",

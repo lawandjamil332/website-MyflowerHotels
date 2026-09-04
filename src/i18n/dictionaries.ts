@@ -341,6 +341,15 @@ export type Dictionary = {
     lQuoted: string
     lAddress: string
     lPhone: string
+    /**
+     * The hotel's own number, distinct from the guest's.
+     *
+     * It needs its own word because `lPhone` is already "الهاتف" in Arabic and
+     * "تەلەفۆن" in Kurdish, and a confirmation carrying two rows labelled
+     * identically — one the guest's number, one the hotel's — is worse than one
+     * carrying neither.
+     */
+    lHotelPhone: string
     lName: string
     lEmail: string
     lNotes: string
@@ -813,6 +822,7 @@ const en: Dictionary = {
     lQuoted: 'Quoted',
     lAddress: 'Address',
     lPhone: 'Phone',
+    lHotelPhone: 'Hotel telephone',
     lName: 'Name',
     lEmail: 'Email',
     lNotes: 'Notes',
@@ -1304,6 +1314,7 @@ const ku: Dictionary = {
     lQuoted: 'نرخی خەملێنراو',
     lAddress: 'ناونیشان',
     lPhone: 'تەلەفۆن',
+    lHotelPhone: 'تەلەفۆنی هۆتێل',
     lName: 'ناو',
     lEmail: 'ئیمەیل',
     lNotes: 'تێبینی',
@@ -1787,6 +1798,7 @@ const ar: Dictionary = {
     lQuoted: 'السعر المقدَّر',
     lAddress: 'العنوان',
     lPhone: 'الهاتف',
+    lHotelPhone: 'هاتف الفندق',
     lName: 'الاسم',
     lEmail: 'البريد',
     lNotes: 'ملاحظات',

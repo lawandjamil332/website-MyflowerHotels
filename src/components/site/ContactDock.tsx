@@ -119,7 +119,7 @@ export function ContactDock({
     <div
       ref={wrap}
       style={{ bottom: 'calc(1.25rem + env(safe-area-inset-bottom))' }}
-      className="fixed end-5 z-40 flex flex-col items-end gap-3 md:hidden"
+      className="fixed end-5 z-40 flex flex-col items-end gap-3 md:hidden print:hidden"
     >
       {openChannel && openChannel.targets.length > 1 && (
         <div

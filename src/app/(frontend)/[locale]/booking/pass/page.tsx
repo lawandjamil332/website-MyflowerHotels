@@ -200,6 +200,13 @@ export default async function BookingPassPage({ params, searchParams }: Args) {
             {line(t.email.lRate, rate)}
             {line(t.email.lTotal, total ? `${total} · ${t.email.payAtHotel}` : null)}
             {line(t.email.lAddress, branch?.address)}
+            {/* The hotel's own number, as text rather than only as a button.
+                It was screen-only, on the reasoning that a link on paper is
+                dead ink — true of the button, not of the number. This document
+                is what a guest opens standing at an airport at two in the
+                morning, and the one thing they want from it then is the number
+                of the hotel expecting them. */}
+            {line(t.email.lHotelPhone, branch?.phone, true)}
             {line(t.email.lNotes, booking.notes)}
           </dl>
 
