@@ -35,3 +35,7 @@ tsconfig.tsbuildinfo
 
 # Build output, written by `npm run build` in a session. Same reason again.
 .build.log
+
+# A browser fetched by scripts/install-browser.mjs when the image came without
+# one. Hundreds of megabytes, and specific to the machine that downloaded it.
+.playwright/

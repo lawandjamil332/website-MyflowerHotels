@@ -47,6 +47,46 @@ const CANDIDATES = [
 /** Names it goes by, for the search along PATH. */
 const NAMES = ['chromium', 'chromium-browser', 'google-chrome', 'google-chrome-stable']
 
+/**
+ * Directories holding browsers Playwright downloaded rather than the system.
+ *
+ * `.playwright` is where scripts/install-browser.mjs puts one when the image
+ * came without: inside the project rather than the user's home cache, because
+ * the deploy image is built from the project directory and a cache outside it
+ * does not survive into the container that runs the site.
+ */
+const DOWNLOAD_DIRS = [process.env.PLAYWRIGHT_BROWSERS_PATH, '.playwright']
+
+/**
+ * Where the executable sits inside one of those, and both spellings are
+ * needed. Chromium builds used to unpack to `chrome-linux`; the Chrome for
+ * Testing builds Playwright now downloads unpack to `chrome-linux64`. Checking
+ * only the older one finds the browser on a machine that already had it and
+ * misses the one just downloaded — which is a search that works everywhere
+ * except the case it was written for.
+ */
+const INSIDE = ['chrome-linux/chrome', 'chrome-linux64/chrome']
+
+const downloadedBrowser = async (): Promise<string | null> => {
+  const { readdir } = await import('node:fs/promises')
+  for (const dir of DOWNLOAD_DIRS) {
+    if (!dir) continue
+    let entries: string[]
+    try {
+      entries = await readdir(dir)
+    } catch {
+      continue // No such directory, which is the ordinary case.
+    }
+    for (const entry of entries) {
+      for (const inside of INSIDE) {
+        const candidate = `${dir}/${entry}/${inside}`
+        if (await exists(candidate)) return candidate
+      }
+    }
+  }
+  return null
+}
+
 const exists = async (path: string): Promise<boolean> => {
   try {
     await access(path)
@@ -76,7 +116,7 @@ export const findBrowser = async (): Promise<string | null> => {
       if (await exists(path)) return path
     }
   }
-  return null
+  return await downloadedBrowser()
 }
 
 /**
@@ -94,6 +134,7 @@ export const browserSearch = async (): Promise<{
   found: string | null
   fixedPaths: { path: string; exists: boolean }[]
   onPath: string[]
+  downloaded: string | null
 }> => {
   const fixedPaths = []
   for (const path of CANDIDATES) {
@@ -109,7 +150,12 @@ export const browserSearch = async (): Promise<{
     }
   }
 
-  return { found: await findBrowser(), fixedPaths, onPath }
+  return {
+    found: await findBrowser(),
+    fixedPaths,
+    onPath,
+    downloaded: await downloadedBrowser(),
+  }
 }
 
 /** A4 with the margins a hotel letter is printed at. */

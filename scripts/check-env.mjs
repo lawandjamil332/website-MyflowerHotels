@@ -3,7 +3,7 @@
  * missing or malformed, instead of a stack trace from inside node_modules.
  */
 
-import { existsSync } from 'node:fs'
+import { existsSync, readdirSync } from 'node:fs'
 
 const problems = []
 
@@ -210,6 +210,25 @@ const browserPath = (() => {
       if (existsSync(`${dir}/${name}`)) return `${dir}/${name}`
     }
   }
+  // Last, one Playwright downloaded — .playwright is where
+  // scripts/install-browser.mjs puts it during the build when the image
+  // arrived without a browser of its own. Both spellings of the directory
+  // inside are checked: older builds unpack to chrome-linux, current ones to
+  // chrome-linux64.
+  for (const dir of [process.env.PLAYWRIGHT_BROWSERS_PATH, '.playwright']) {
+    if (!dir) continue
+    let entries
+    try {
+      entries = readdirSync(dir)
+    } catch {
+      continue
+    }
+    for (const entry of entries) {
+      for (const inside of ['chrome-linux/chrome', 'chrome-linux64/chrome']) {
+        if (existsSync(`${dir}/${entry}/${inside}`)) return `${dir}/${entry}/${inside}`
+      }
+    }
+  }
   return null
 })()
 
@@ -220,10 +239,13 @@ console.log(
         '  Confirmation PDF: NO BROWSER. Confirmations go out with a link and',
         '  no attachment. Everything else about them is unaffected.',
         '',
-        '  nixpacks.toml installs chromium for this. If it is in the deployed',
-        '  commit and this line still says no, the build did not run it — check',
-        '  the build log. /next/pdf-check on the running site, signed in to the',
-        '  admin panel, says exactly which step fails.',
+        '  Two things try to provide one: nixpacks.toml asks the host to install',
+        '  chromium, and failing that scripts/install-browser.mjs downloads one',
+        '  during the build. Both have run by the time this prints, so if it',
+        '  still says no, the build log will say which of them could not.',
+        '',
+        '  /next/pdf-check on the running site, signed in to the admin panel,',
+        '  says exactly which step fails.',
         '',
       ].join('\n'),
 )
