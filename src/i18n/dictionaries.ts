@@ -619,7 +619,7 @@ const en: Dictionary = {
     localLead:
       '{count} hotels, one Kurdish family, no foreign operator. Of every hotel brand in {city}, we know of none with more branches. Checked {date}.',
     ownershipStructure:
-      'International hotel brands do not usually own their hotels. They manage a building for the investor who owns it, or franchise their name to it, so two hotels under one brand can belong to two different owners. All {count} of ours are owned and run by the same family, under one name.',
+      '{count} hotels, one family, one name. We own them and we run them — not a franchise, not a building managed for somebody else.',
     identityOneCity:
       'Today we run {count}, all of them in {city}, {country} — the same owners, the same standard, {count} addresses.',
     identityManyCities: 'Today we run {count} across {country}, in {cities}.',
@@ -1121,7 +1121,7 @@ const ku: Dictionary = {
     localLead:
       '{count} هۆتێل، یەک خێزانی کورد، بەبێ بەڕێوەبەری بیانی. لە نێو هەموو براندە هۆتێلییەکانی {city}، ئێمە هیچیان ناناسین کە لق زیاتری هەبێت. پشکنراوە لە {date}.',
     ownershipStructure:
-      'براندە هۆتێلییە نێودەوڵەتییەکان زۆرجار خاوەنی هۆتێلەکانیان نین. باڵەخانەیەک بۆ ئەو وەبەرهێنەرە بەڕێوە دەبەن کە خاوەنیەتی، یان ناوەکەیان بە ئیمتیاز پێدەدەن، بۆیە دوو هۆتێل لەژێر یەک براندا دەکرێت هی دوو خاوەنی جیاواز بن. هەموو {count} هۆتێلی ئێمە خاوەندارێتی و بەڕێوەبردنیان لەلایەن هەمان خێزانەوەیە، بە یەک ناو.',
+      '{count} هۆتێل، یەک خێزان، یەک ناو. خۆمان خاوەنیانین و خۆمان بەڕێوەیان دەبەین — نە ئیمتیاز، نە باڵەخانەیەک بۆ کەسێکی تر بەڕێوە ببرێت.',
     identityOneCity:
       'ئەمڕۆ {count} هۆتێلمان هەیە، هەموویان لە {city}، {country} — هەمان خاوەن، هەمان ئاست، {count} ناونیشان.',
     identityManyCities: 'ئەمڕۆ {count} هۆتێلمان هەیە بەسەر {country} دا، لە {cities}.',
@@ -1617,7 +1617,7 @@ const ar: Dictionary = {
     localLead:
       '{count} فنادق، بيت كردي واحد، دون مشغّل أجنبي. ومن بين كل العلامات الفندقية في {city}، لا نعلم بعلامة لها فروع أكثر. جرى التحقق في {date}.',
     ownershipStructure:
-      'العلامات الفندقية العالمية لا تملك فنادقها في الغالب. فهي تُدير المبنى لحساب المستثمر الذي يملكه، أو تمنح اسمها بامتياز، حتى إن فندقين تحت علامة واحدة قد يعودان إلى مالكَين مختلفَين. أما فنادقنا، وعددها {count}، فيملكها ويديرها البيت نفسه تحت اسم واحد.',
+      '{count} فنادق، بيت واحد، اسم واحد. نملكها ونديرها بأنفسنا — لا امتياز، ولا مبنى يُدار لحساب سوانا.',
     identityOneCity:
       'ونُدير اليوم {count} فنادق، جميعها في {city}، {country} — المُلّاك أنفسهم، والمستوى نفسه، و{count} عناوين.',
     identityManyCities: 'ونُدير اليوم {count} فنادق في أنحاء {country}، في {cities}.',
