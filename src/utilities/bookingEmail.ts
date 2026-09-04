@@ -7,7 +7,7 @@ import { isLocale, type Locale } from '@/i18n/config'
 import { formatDateLong, formatNumber, formatPrice } from './format'
 import { getServerSideURL } from './getURL'
 import { mediaUrl } from './media'
-import { toMapsHref, toTelHref, toWhatsAppHref } from './contact'
+import { toMapsHref, toTelHref, toWhatsAppHref, whatsappMessage } from './contact'
 import { renderBookingPdf, type BookingPdf } from './bookingPdf'
 import { signReference } from './bookingToken'
 import {
@@ -301,7 +301,14 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
     // the email already has everything the form would ask for.
     const passUrl = `${base}/${locale}/booking/pass?ref=${booking.reference}&t=${signReference(booking.reference)}`
     const maps = toMapsHref(branch?.googleMapsUrl, branch?.latitude, branch?.longitude)
-    const wa = toWhatsAppHref(branch?.whatsapp, `${booking.reference}`)
+    const wa = toWhatsAppHref(
+      branch?.whatsapp,
+      whatsappMessage(t, {
+        siteName,
+        hotel: branch?.name,
+        reference: booking.reference,
+      }),
+    )
 
     // The confirmation as a file, rendered once and attached to both letters.
     //

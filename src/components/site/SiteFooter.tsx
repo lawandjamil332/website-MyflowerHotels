@@ -5,7 +5,7 @@ import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
 import type { SiteSettings } from '@/utilities/getSettings'
 import { getBranches } from '@/utilities/branches'
-import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
+import { toTelHref, toWhatsAppHref, whatsappMessage } from '@/utilities/contact'
 import { cn } from '@/utilities/ui'
 import { InstagramMark } from './InstagramMark'
 import { WhatsAppMark } from './WhatsAppMark'
@@ -35,7 +35,7 @@ export async function SiteFooter({
 }) {
   const siteName = settings.siteName || 'My Flower Hotels'
   const tel = toTelHref(settings.phone)
-  const wa = toWhatsAppHref(settings.whatsapp)
+  const wa = toWhatsAppHref(settings.whatsapp, whatsappMessage(t, { siteName }))
   const social = settings.social ?? {}
   const branches = await getBranches(locale)
 
@@ -186,7 +186,7 @@ export async function SiteFooter({
                 branches.map((branch) => {
                   const branchWa = toWhatsAppHref(
                     branch.whatsapp,
-                    `${t.branch.enquire} — ${branch.name}`,
+                    whatsappMessage(t, { siteName, hotel: branch.name }),
                   )
                   const numbers = [branch.phone, branch.phoneAlt].filter(Boolean) as string[]
                   return (

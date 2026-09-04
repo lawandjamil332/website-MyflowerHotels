@@ -9,7 +9,7 @@ import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { comma, formatNumber, formatPrice } from '@/utilities/format'
 import { layoutLine } from '@/utilities/layout'
 import { Price } from '@/components/site/Currency'
-import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
+import { toTelHref, toWhatsAppHref, whatsappMessage } from '@/utilities/contact'
 import { shareImage } from '@/utilities/shareImage'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { cn } from '@/utilities/ui'
@@ -28,6 +28,7 @@ import { WhatsAppMark } from '@/components/site/WhatsAppMark'
 import RichText from '@/components/RichText'
 import { btnOutline, btnSmall, btnWhatsApp, sectionY, shell } from '@/components/site/ui'
 import { getSettings } from '@/utilities/getSettings'
+import { SITE_NAME } from '@/utilities/site'
 import type { Branch } from '@/payload-types'
 
 type Args = { params: Promise<{ locale: string; slug: string }> }
@@ -58,12 +59,12 @@ export default async function RoomPage({ params }: Args) {
     ? (await getRoomsForBranch(branch.id, locale)).filter((r) => r.id !== room.id)
     : []
 
-  // Pre-fills the WhatsApp message with the room, so the guest does not have
-  // to explain which one they mean.
-  const enquiryText = branch
-    ? `${t.room.enquire}: ${room.name} — ${branch.name}`
-    : `${t.room.enquire}: ${room.name}`
-  const wa = toWhatsAppHref(branch?.whatsapp, enquiryText)
+  // Names the room as well as the hotel, so the guest does not have to explain
+  // which one they mean and the desk can answer without asking.
+  const wa = toWhatsAppHref(
+    branch?.whatsapp,
+    whatsappMessage(t, { siteName: settings.siteName || SITE_NAME, hotel: branch?.name, room: room.name }),
+  )
   const tel = toTelHref(branch?.phone)
 
   const facts = [

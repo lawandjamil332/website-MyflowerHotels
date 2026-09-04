@@ -45,7 +45,7 @@ import { ContactDock } from '@/components/site/ContactDock'
 import { StayFinderDock } from '@/components/site/StayFinderDock'
 import { getSettings } from '@/utilities/getSettings'
 import { getBranches } from '@/utilities/branches'
-import { toMapsHref, toWhatsAppHref } from '@/utilities/contact'
+import { toMapsHref, toWhatsAppHref, whatsappMessage } from '@/utilities/contact'
 
 // The database is not reachable during the deploy build, so pages render on
 // request. It also means content edited in the admin panel appears at once.
@@ -77,11 +77,17 @@ export default async function LocaleLayout({ children, params }: Args) {
   const hotelChats = branches
     .map((branch) => ({
       name: branch.name,
-      href: toWhatsAppHref(branch.whatsapp, `${t.branch.enquire} — ${branch.name}`),
+      href: toWhatsAppHref(
+        branch.whatsapp,
+        whatsappMessage(t, { siteName: settings.siteName || 'My Flower Hotels', hotel: branch.name }),
+      ),
     }))
     .filter((chat): chat is { name: string; href: string } => Boolean(chat.href))
 
-  const groupChat = toWhatsAppHref(settings.whatsapp)
+  const groupChat = toWhatsAppHref(
+    settings.whatsapp,
+    whatsappMessage(t, { siteName: settings.siteName || 'My Flower Hotels' }),
+  )
   const whatsappTargets =
     hotelChats.length > 0
       ? hotelChats

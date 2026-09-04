@@ -8,7 +8,7 @@ import { getBranches } from '@/utilities/branches'
 import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { heroFor, photoPool } from '@/utilities/heroPhoto'
-import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
+import { toMapsHref, toTelHref, toWhatsAppHref, whatsappMessage } from '@/utilities/contact'
 import { cn } from '@/utilities/ui'
 import { OpeningMark, isOpeningSoon, openingLabel } from '@/components/site/OpeningMark'
 import { EnquiryForm } from '@/components/site/EnquiryForm'
@@ -29,6 +29,7 @@ export default async function ContactPage({ params }: Args) {
 
   const t = getDictionary(locale)
   const [branches, settings] = await Promise.all([getBranches(locale), getSettings(locale)])
+  const siteName = settings.siteName || 'My Flower Hotels'
   // Offset 3. Picking branches[2] by hand was already an attempt at this, and
   // it broke the moment a hotel was added or reordered.
   const heroSource = heroFor(photoPool(branches), 3)
@@ -36,7 +37,7 @@ export default async function ContactPage({ params }: Args) {
   return (
     <>
       <ContactSchema
-        siteName={settings.siteName || 'My Flower Hotels'}
+        siteName={siteName}
         locale={locale}
         branches={branches}
         phone={settings.phone}
@@ -55,7 +56,10 @@ export default async function ContactPage({ params }: Args) {
         {branches.length > 0 ? (
           <ol className="border-t border-line">
             {branches.map((branch, i) => {
-              const wa = toWhatsAppHref(branch.whatsapp, `${t.branch.enquire} — ${branch.name}`)
+              const wa = toWhatsAppHref(
+                branch.whatsapp,
+                whatsappMessage(t, { siteName, hotel: branch.name }),
+              )
               const tel = toTelHref(branch.phone)
               const telAlt = toTelHref(branch.phoneAlt)
               const maps = toMapsHref(branch.googleMapsUrl, branch.latitude, branch.longitude)
@@ -200,7 +204,7 @@ export default async function ContactPage({ params }: Args) {
         </Reveal>
 
         <Reveal className="mt-16">
-          <EnquiryForm t={t} whatsappHref={toWhatsAppHref(settings.whatsapp)} />
+          <EnquiryForm t={t} whatsappHref={toWhatsAppHref(settings.whatsapp, whatsappMessage(t, { siteName }))} />
         </Reveal>
 
         {(settings.phone || settings.email || settings.whatsapp) && (
@@ -209,9 +213,9 @@ export default async function ContactPage({ params }: Args) {
             <h2 className="font-display mt-4 text-2xl text-ink sm:text-3xl">{t.home.ctaTitle}</h2>
             <p className="mt-4 max-w-lg text-sm leading-relaxed text-muted-ink">{t.home.ctaLead}</p>
             <div className="mt-7 flex flex-wrap gap-3">
-              {toWhatsAppHref(settings.whatsapp) && (
+              {toWhatsAppHref(settings.whatsapp, whatsappMessage(t, { siteName })) && (
                 <a
-                  href={toWhatsAppHref(settings.whatsapp)}
+                  href={toWhatsAppHref(settings.whatsapp, whatsappMessage(t, { siteName }))}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(btnWhatsApp, btnSmall)}

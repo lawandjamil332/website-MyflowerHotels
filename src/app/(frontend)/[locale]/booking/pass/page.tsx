@@ -8,7 +8,8 @@ import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { verifyReference } from '@/utilities/bookingToken'
 import { formatDateLong, formatNumber, formatPrice } from '@/utilities/format'
-import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
+import { toMapsHref, toTelHref, toWhatsAppHref, whatsappMessage } from '@/utilities/contact'
+import { SITE_NAME } from '@/utilities/site'
 import { cn } from '@/utilities/ui'
 import { btnPrimary, btnSmall, shell } from '@/components/site/ui'
 import { PrintButton } from '@/components/site/PrintButton'
@@ -84,7 +85,10 @@ export default async function BookingPassPage({ params, searchParams }: Args) {
   const total = formatPrice(Number(booking.totalAmount) || null, booking.currency, locale)
   const rate = formatPrice(Number(room?.priceFrom) || null, booking.currency, locale)
   const maps = toMapsHref(branch?.googleMapsUrl, branch?.latitude, branch?.longitude)
-  const wa = toWhatsAppHref(branch?.whatsapp, reference)
+  const wa = toWhatsAppHref(
+    branch?.whatsapp,
+    whatsappMessage(t, { siteName: SITE_NAME, hotel: branch?.name, reference }),
+  )
   const tel = toTelHref(branch?.phone)
 
   // `ltr` for values that are not prose. A telephone number set in Arabic or

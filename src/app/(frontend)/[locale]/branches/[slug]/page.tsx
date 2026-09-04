@@ -7,8 +7,9 @@ import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { getBranchBySlug, getBranches, getRoomsForBranch } from '@/utilities/branches'
 import { getSettings } from '@/utilities/getSettings'
+import { SITE_NAME } from '@/utilities/site'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
-import { toMapsHref, toTelHref, toWhatsAppHref } from '@/utilities/contact'
+import { toMapsHref, toTelHref, toWhatsAppHref, whatsappMessage } from '@/utilities/contact'
 import { branchLocative } from '@/utilities/teasers'
 import { comma, formatDateLong, formatNumber } from '@/utilities/format'
 import { shippedPhoto } from '@/utilities/shippedPhoto'
@@ -69,7 +70,10 @@ export default async function BranchPage({ params }: Args) {
   const rate = await pointsRate(payload)
   const faq = buildFaq(branch, rooms, t, locale, { pointsEnabled: rate.enabled })
   const maps = toMapsHref(branch.googleMapsUrl, branch.latitude, branch.longitude)
-  const wa = toWhatsAppHref(branch.whatsapp, `${t.branch.enquire} — ${branch.name}`)
+  const wa = toWhatsAppHref(
+    branch.whatsapp,
+    whatsappMessage(t, { siteName: settings.siteName || SITE_NAME, hotel: branch.name }),
+  )
   const tel = toTelHref(branch.phone)
   const telAlt = toTelHref(branch.phoneAlt)
   // Not open yet: the page still shows the hotel, but must not offer a phone

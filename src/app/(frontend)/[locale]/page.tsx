@@ -17,7 +17,7 @@ import { heroFor, photoPool } from '@/utilities/heroPhoto'
 import { shareImage } from '@/utilities/shareImage'
 import { comma } from '@/utilities/format'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import { toTelHref, toWhatsAppHref } from '@/utilities/contact'
+import { toTelHref, toWhatsAppHref, whatsappMessage } from '@/utilities/contact'
 import { cn } from '@/utilities/ui'
 import { BranchCard } from '@/components/site/BranchCard'
 import { CardRail, RailCard } from '@/components/site/CardRail'
@@ -116,7 +116,7 @@ export default async function HomePage({ params }: Args) {
   const heroUrl = mediaUrl(heroBranch?.heroImage, 'xlarge')
   const siteName = settings.siteName || 'My Flower Hotels'
   const tel = toTelHref(settings.phone)
-  const wa = toWhatsAppHref(settings.whatsapp)
+  const wa = toWhatsAppHref(settings.whatsapp, whatsappMessage(t, { siteName }))
 
   // The page's two other large photographs, drawn from every picture the group
   // has rather than from two more hotel heroes.

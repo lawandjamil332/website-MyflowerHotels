@@ -443,6 +443,36 @@ export type Dictionary = {
     menu: string
     close: string
     /**
+     * What a WhatsApp button writes into the message box before the guest
+     * types anything.
+     *
+     * It used to be the label off the button — "Enquire about a stay — My
+     * Flower 3" — which reads to whoever answers as a fragment with no sender
+     * and no origin. Reception could not tell it apart from a message somebody
+     * typed off a signboard, and the one thing worth knowing about it was
+     * exactly what it did not say: this guest is standing on the website right
+     * now, looking at that hotel.
+     *
+     * So every one of them opens by saying where the guest came from, and then
+     * says what they want. `{site}` is the group's own name, `{hotel}` the
+     * branch they were reading, `{room}` the room, `{ref}` a booking they
+     * already hold.
+     */
+    waAsk: string
+    waAskGroup: string
+    waRoom: string
+    /**
+     * For a room whose own name already names its hotel — "Deluxe Double —
+     * My Flower 2", which is how every room here is named. Saying the hotel
+     * again after that reads as a stutter, and the check cannot be "does the
+     * room name contain the hotel name": room names stay in English while the
+     * hotel's is translated, so on the Arabic page the two never match.
+     * Whether the name carries a suffix is the same question in every
+     * language.
+     */
+    waRoomOnly: string
+    waBooking: string
+    /**
      * Spoken labels, never printed. The arrows on a row of cards, the picture
      * viewer's controls and the currency switcher are all drawn as shapes, so
      * their names exist only for a screen reader — which is exactly why they
@@ -940,6 +970,13 @@ const en: Dictionary = {
     reserve: 'Reserve',
     menu: 'Menu',
     close: 'Close',
+    waAsk:
+      'Hello — I came from the {site} website. I would like to ask about a stay at {hotel}.',
+    waAskGroup: 'Hello — I came from the {site} website. I would like to ask about a stay.',
+    waRoom:
+      'Hello — I came from the {site} website. I would like to ask about {room} at {hotel}.',
+    waRoomOnly: 'Hello — I came from the {site} website. I would like to ask about {room}.',
+    waBooking: 'Hello — I came from the {site} website. My booking reference is {ref}.',
     previous: 'Previous',
     next: 'Next',
     currency: 'Currency',
@@ -1431,6 +1468,13 @@ const ku: Dictionary = {
     reserve: 'حیجز',
     menu: 'لیست',
     close: 'داخستن',
+    waAsk:
+      'سڵاو — لە ماڵپەڕی {site}ـەوە هاتووم. دەمەوێت دەربارەی مانەوە لە {hotel} بپرسم.',
+    waAskGroup: 'سڵاو — لە ماڵپەڕی {site}ـەوە هاتووم. دەمەوێت دەربارەی مانەوە بپرسم.',
+    waRoom:
+      'سڵاو — لە ماڵپەڕی {site}ـەوە هاتووم. دەمەوێت دەربارەی {room} لە {hotel} بپرسم.',
+    waRoomOnly: 'سڵاو — لە ماڵپەڕی {site}ـەوە هاتووم. دەمەوێت دەربارەی {room} بپرسم.',
+    waBooking: 'سڵاو — لە ماڵپەڕی {site}ـەوە هاتووم. ژمارەی حیجزەکەم {ref}ـە.',
     previous: 'پێشوو',
     next: 'دواتر',
     currency: 'دراو',
@@ -1911,6 +1955,11 @@ const ar: Dictionary = {
     reserve: 'احجز',
     menu: 'القائمة',
     close: 'إغلاق',
+    waAsk: 'مرحباً — جئت من موقع {site}. أود الاستفسار عن الإقامة في {hotel}.',
+    waAskGroup: 'مرحباً — جئت من موقع {site}. أود الاستفسار عن الإقامة.',
+    waRoom: 'مرحباً — جئت من موقع {site}. أود الاستفسار عن {room} في {hotel}.',
+    waRoomOnly: 'مرحباً — جئت من موقع {site}. أود الاستفسار عن {room}.',
+    waBooking: 'مرحباً — جئت من موقع {site}. رقم حجزي هو {ref}.',
     previous: 'السابق',
     next: 'التالي',
     currency: 'العملة',

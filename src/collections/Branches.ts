@@ -419,6 +419,12 @@ export const Branches: CollectionConfig = {
             {
               name: 'email',
               type: 'email',
+              admin: {
+                description:
+                  'Leave empty unless this hotel takes its own bookings. Reservations are ' +
+                  'central: with this blank, everything for this hotel goes to the ' +
+                  'reservations address in Site settings, which is the one place to change it.',
+              },
             },
             {
               type: 'row',

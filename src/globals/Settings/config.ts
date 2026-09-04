@@ -219,7 +219,18 @@ export const Settings: GlobalConfig = {
               'Full international format, e.g. +9647501234567. Powers the floating WhatsApp button.',
           },
         },
-        { name: 'email', type: 'email' },
+        {
+          name: 'email',
+          type: 'email',
+          label: 'Reservations email',
+          admin: {
+            description:
+              'Where every booking and enquiry from the website is sent. One address for all ' +
+              'four hotels — reservations are taken centrally and passed to the branch, so this ' +
+              'is the only address that needs filling in. A hotel only needs its own address ' +
+              'below if it should receive its bookings directly instead of here.',
+          },
+        },
       ],
     },
     {
