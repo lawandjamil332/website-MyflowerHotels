@@ -53,6 +53,7 @@ export default async function AboutPage({ params }: Args) {
   const faq = buildGroupFaq(branches, t, locale, {
     pointsEnabled: rate.enabled,
     phone: settings.whatsapp || settings.phone,
+    establishedYear: settings.establishedYear,
   })
 
   return (
@@ -126,24 +127,25 @@ export default async function AboutPage({ params }: Args) {
                 <p className="font-display text-[1.25rem] leading-[1.5] text-balance text-ink sm:text-[1.4rem]">
                   {identity}
                 </p>
-                {/* Set in smaller, quieter type than the sentence above it. The
-                    claim above is a fact about who owns this company; this one
-                    is a comparison the group believes and has dated, and
-                    reading as slightly more careful than the line before it is
-                    exactly right. */}
-                {/* The difference between this group and the international
-                    brands it gets compared with, stated as structure rather
-                    than as a superlative. A foreign brand's four hotels in a
-                    country are four buildings owned by four investors with the
-                    brand managing or franchising each; these four are one
-                    family's. It sits above the dated claim because it is a
-                    fact about how the company is put together, not a
-                    comparison anybody has to keep checking. */}
-                {/* Capitalised here, unlike everywhere else the count is
+                {/* What separates this group from the international brands it
+                    gets compared with, stated as structure rather than as a
+                    ranking. A foreign brand's four hotels in a country are
+                    four buildings owned by four investors with the brand
+                    managing or franchising each; these four are one family's.
+                    It sits above the dated claim because it is a fact about
+                    how the company is put together, not a comparison anybody
+                    has to keep re-checking.
+
+                    The count is capitalised here, unlike everywhere else it is
                     filled in, because this sentence opens with it. */}
                 <p className="mt-5 leading-[1.85] text-ink-soft">
                   {fillCount(t.about.ownershipStructure, branches.length, locale)}
                 </p>
+                {/* Set in smaller, quieter type than the two sentences above.
+                    Those are facts about who owns this company; this is a
+                    comparison the group believes and has dated, and reading as
+                    slightly more careful than the lines before it is exactly
+                    right. */}
                 {claim && (
                   <p className="mt-5 text-[0.92rem] leading-[1.7] text-muted-ink">{claim}</p>
                 )}

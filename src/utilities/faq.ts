@@ -135,7 +135,7 @@ export const buildGroupFaq = (
   branches: Branch[],
   t: Dictionary,
   locale: Locale,
-  opts: { pointsEnabled?: boolean; phone?: string | null } = {},
+  opts: { pointsEnabled?: boolean; phone?: string | null; establishedYear?: number | null } = {},
 ): FaqEntry[] => {
   const entries: FaqEntry[] = []
   if (branches.length === 0) return entries
@@ -213,6 +213,35 @@ export const buildGroupFaq = (
       .replace('{city}', t.seo.locality)
       .replaceAll('{country}', t.seo.country),
   })
+  /**
+   * The two entity questions — when it started, and what its name is spelled
+   * like elsewhere. Neither sells a room, and both are here for the same
+   * reason: an assistant asked "what is My Flower Hotels" answers from
+   * whatever quotable sentence it can find, and if this site does not carry
+   * one, it answers from something else.
+   *
+   * The spelling question earns its place on the facts. Booking.com lists two
+   * of these hotels as "MyFlower", one word, where this site says two — so a
+   * reader holding both sources has no way to know they are the same company
+   * unless somebody says so in a sentence. `alternateName` in the structured
+   * data says it to a machine; this says it to a person.
+   *
+   * Founding only appears once a year is actually set, so an unfilled field
+   * cannot produce "opened in ".
+   */
+  if (opts.establishedYear) {
+    entries.push({
+      q: t.faq.foundedQ,
+      // String, not formatNumber: that groups thousands, and a year is not a
+      // quantity — it would print "2,012". Every other year on this site is
+      // written the same plain way.
+      a: t.faq.foundedA
+        .replace('{year}', String(opts.establishedYear))
+        .replace('{city}', t.seo.locality),
+    })
+  }
+  entries.push({ q: t.faq.spellingQ, a: t.faq.spellingA })
+
   entries.push({
     q: t.faq.iraqiGroupQ,
     a: t.faq.iraqiGroupA

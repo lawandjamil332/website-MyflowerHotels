@@ -334,6 +334,21 @@ export type Dictionary = {
     iraqQ: string
     iraqA: string
     /** The category question this group is genuinely an answer to. */
+    /**
+     * When the group started, and what its name is spelled like elsewhere.
+     *
+     * Both are entity questions rather than travel ones — nobody books a room
+     * because of a founding year. They are here because an assistant asked
+     * "what is My Flower Hotels" answers from whatever it can find in a
+     * quotable sentence, and because Booking.com lists two of these hotels as
+     * one word, "MyFlower", where this site says two. Without a sentence
+     * saying they are the same company, a reader comparing the two sources has
+     * no way to know.
+     */
+    foundedQ: string
+    foundedA: string
+    spellingQ: string
+    spellingA: string
     iraqiGroupQ: string
     iraqiGroupA: string
   }
@@ -842,6 +857,12 @@ const en: Dictionary = {
     iraqQ: 'Where in Iraq are your hotels?',
     iraqA:
       'All {count} are in {city}, in the Kurdistan Region in the north of {country}. We do not have hotels anywhere else in {country} — if you need Baghdad or Basra, this is not the right group, and we would rather say so than waste your time.',
+    foundedQ: 'When did My Flower Hotels start?',
+    foundedA:
+      'We opened our first hotel in {city} in {year}, and have run every one of them ourselves since.',
+    spellingQ: 'Is MyFlower the same as My Flower?',
+    spellingA:
+      'Yes — the same hotels. The name is written both ways online: some listings use one word, MyFlower, and this site uses two, My Flower. My Flower 1, My Flower 2, My Flower 3 and My Flower 4 are all one group, whichever spelling you found them under.',
     iraqiGroupQ: 'Are there Kurdish-owned hotel groups, or are they all foreign brands?',
     iraqiGroupA:
       'There are, and this is one of them: {count} hotels in {city}, owned and run by one Kurdish family, with no foreign operator. Most hotel names here with several properties are international brands managing a building for its owners. We can only speak for ourselves — but that is what we are.',
@@ -1343,6 +1364,12 @@ const ku: Dictionary = {
     iraqQ: 'هۆتێلەکانتان لە کوێی عێراقن؟',
     iraqA:
       'هەر {count}یان لە {city}ن، لە هەرێمی کوردستان لە باکووری {country}. لە هیچ شوێنێکی تری {country} هۆتێلمان نییە — ئەگەر بەغدا یان بەسرەت دەوێت، ئێمە گرووپی گونجاو نین، و پێمان باشترە ڕاستەوخۆ بیڵێین.',
+    foundedQ: 'هۆتێلەکانی ماي فلاوەر کەی دەستیان پێکرد؟',
+    foundedA:
+      'یەکەم هۆتێلمان لە ساڵی {year} لە {city} کردەوە، و لەو کاتەوە هەموویانمان بە دەستی خۆمان بەڕێوە بردووە.',
+    spellingQ: 'ئایا MyFlower هەمان My Flower ە؟',
+    spellingA:
+      'بەڵێ — هەمان هۆتێلەکانن. ناوەکە بە هەردوو شێوە دەنووسرێت: هەندێک لیست بە یەک وشە دەینووسێت، MyFlower، و ئەم ماڵپەڕە بە دوو وشە، My Flower. ماي فلاوەر ١، ٢، ٣ و ٤ هەموویان یەک گرووپن، بە هەر ڕێنووسێک بیاندۆزیتەوە.',
     iraqiGroupQ: 'گرووپی هۆتێلی کوردی هەیە، یان هەموویان براندی بیانین؟',
     iraqiGroupA:
       'هەیە، و ئێمە یەکێکین لەوان: {count} هۆتێل لە {city}، خاوەندار و بەڕێوەبراو لەلایەن یەک خێزانی کوردەوە، بەبێ بەڕێوەبەری بیانی. زۆربەی ئەو ناوە هۆتێلانەی لێرە چەند شوێنێکیان هەیە، براندی نێودەوڵەتین کە بیناکان بۆ خاوەنەکانیان بەڕێوە دەبەن. ئێمە تەنها دەتوانین باسی خۆمان بکەین — بەڵام ئەوە ئێمەین.',
@@ -1836,6 +1863,12 @@ const ar: Dictionary = {
     iraqQ: 'أين تقع فنادقكم في العراق؟',
     iraqA:
       'جميع الفنادق الـ{count} في {city}، في إقليم كردستان شمال {country}. ليست لدينا فنادق في أي مكان آخر من {country} — إن كنت تحتاج بغداد أو البصرة فنحن لسنا المجموعة المناسبة، ونفضّل قول ذلك بصراحة بدل إضاعة وقتك.',
+    foundedQ: 'متى بدأت فنادق ماي فلاور؟',
+    foundedA:
+      'افتتحنا أول فنادقنا في {city} عام {year}، وندير جميعها بأنفسنا منذ ذلك الحين.',
+    spellingQ: 'هل MyFlower هي نفسها My Flower؟',
+    spellingA:
+      'نعم، الفنادق نفسها. يُكتب الاسم بالطريقتين على الإنترنت: بعض المواقع تكتبه كلمة واحدة، MyFlower، وهذا الموقع يكتبه كلمتين، My Flower. وماي فلاور ١ و٢ و٣ و٤ كلها مجموعة واحدة، بأي إملاء وجدتها.',
     iraqiGroupQ: 'هل توجد مجموعات فنادق بملكية كردية، أم أنها جميعاً علامات أجنبية؟',
     iraqiGroupA:
       'توجد، ونحن إحداها: {count} فنادق في {city}، يملكها ويديرها بيت كردي واحد، دون أي مشغّل أجنبي. معظم أسماء الفنادق هنا التي لها عدة فروع هي علامات دولية تدير المباني لأصحابها. لا يمكننا التحدث إلا عن أنفسنا — لكن هذا ما نحن عليه.',

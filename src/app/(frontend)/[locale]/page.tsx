@@ -170,6 +170,7 @@ export default async function HomePage({ params }: Args) {
   const faq = buildGroupFaq(branches, t, locale, {
     pointsEnabled: rate.enabled,
     phone: settings.whatsapp || settings.phone,
+    establishedYear: settings.establishedYear,
   })
 
   return (
