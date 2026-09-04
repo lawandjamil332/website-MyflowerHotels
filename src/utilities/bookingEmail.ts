@@ -8,7 +8,7 @@ import { formatDateLong, formatNumber, formatPrice } from './format'
 import { getServerSideURL } from './getURL'
 import { mediaUrl } from './media'
 import { toMapsHref, toTelHref, toWhatsAppHref, whatsappMessage } from './contact'
-import { renderBookingPdf, type BookingPdf } from './bookingPdf'
+import { renderBookingPdfResult, type BookingPdf } from './bookingPdf'
 import { signReference } from './bookingToken'
 import {
   button,
@@ -318,8 +318,27 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
     // it. `renderBookingPdf` never throws and returns null when there is no
     // browser to print with, in which case both letters go out exactly as they
     // did before, with the link.
-    const pdf = await renderBookingPdf(payload, booking.reference, passUrl)
+    const { pdf, problem } = await renderBookingPdfResult(payload, booking.reference, passUrl)
     const attachments = pdf ? [pdf] : undefined
+
+    // When it fails, say why on the hotel's own copy — and only there.
+    //
+    // This missed three attempts at a fix because there was no way to see it.
+    // The site was healthy, both letters arrived, the deployment logs are not
+    // somewhere the owner reads, and the symptom was an absence. Meanwhile the
+    // one channel proven to work on every booking is the email itself, so the
+    // reason rides along on it: reservations get a line naming what failed,
+    // and the build it happened on, which also answers whether the deployment
+    // is running the code that was meant to fix it.
+    //
+    // Never on the guest's copy. A guest is owed a confirmation, not a report
+    // about a server.
+    const build = process.env.RAILWAY_GIT_COMMIT_SHA?.slice(0, 7)
+    const pdfNote = problem
+      ? `No PDF attached to this booking. ${problem} The guest's copy went out with a link ` +
+        `to the confirmation instead, so nothing is lost for them.` +
+        (build ? ` (Build ${build}.)` : '')
+      : null
 
     // ---- the hotel's work order ----
     if (!hotelInbox) {
@@ -340,6 +359,7 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
         title: fill(t.email.newTitle, { hotel: iso(branch?.name ?? siteName) }),
         body:
           para(esc(t.email.newLead), 'ltr') +
+          (pdfNote ? noticeBand([esc(pdfNote)], 'ltr') : '') +
           referenceBlock(t.email.refLabel, booking.reference, 'ltr') +
           datesBlock({ ...g, dir: 'ltr' }) +
           guestPanel(g) +
@@ -374,7 +394,9 @@ export const sendBookingEmails = async (payload: Payload, reference: string): Pr
           date: g.arriving,
         }),
         html,
-        plain,
+        // On the text twin too, because that is what lands in the log when a
+        // send fails and what some clients show instead of the HTML.
+        pdfNote ? `${plain}\n${pdfNote}\n` : plain,
         { critical: true, attachments },
       )
     }

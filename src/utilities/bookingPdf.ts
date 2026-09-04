@@ -33,8 +33,16 @@ import type { Payload } from 'payload'
  * committed long before this runs — is untouched.
  */
 
-/** Fixed places a browser might be, in the order worth trying. */
-const CANDIDATES = [
+/**
+ * Fixed places a browser might be, in the order worth trying.
+ *
+ * Read when the search runs rather than when this file is imported, so that
+ * PDF_BROWSER_PATH still means something to code that sets it afterwards — a
+ * test proving what happens when the browser is wrong, most of all. Captured at
+ * import, the variable is only settable by whoever launched the process, which
+ * makes the failure path the one thing that cannot be exercised.
+ */
+const candidates = () => [
   process.env.PDF_BROWSER_PATH,
   process.env.PLAYWRIGHT_CHROMIUM_PATH,
   '/usr/bin/chromium',
@@ -55,7 +63,7 @@ const NAMES = ['chromium', 'chromium-browser', 'google-chrome', 'google-chrome-s
  * the deploy image is built from the project directory and a cache outside it
  * does not survive into the container that runs the site.
  */
-const DOWNLOAD_DIRS = [process.env.PLAYWRIGHT_BROWSERS_PATH, '.playwright']
+const downloadDirs = () => [process.env.PLAYWRIGHT_BROWSERS_PATH, '.playwright']
 
 /**
  * Where the executable sits inside one of those, and both spellings are
@@ -69,7 +77,7 @@ const INSIDE = ['chrome-linux/chrome', 'chrome-linux64/chrome']
 
 const downloadedBrowser = async (): Promise<string | null> => {
   const { readdir } = await import('node:fs/promises')
-  for (const dir of DOWNLOAD_DIRS) {
+  for (const dir of downloadDirs()) {
     if (!dir) continue
     let entries: string[]
     try {
@@ -106,7 +114,7 @@ const exists = async (path: string): Promise<boolean> => {
  * image, a developer's laptop and this repository's own test browser.
  */
 export const findBrowser = async (): Promise<string | null> => {
-  for (const path of CANDIDATES) {
+  for (const path of candidates()) {
     if (path && (await exists(path))) return path
   }
   for (const dir of (process.env.PATH ?? '').split(':')) {
@@ -137,7 +145,7 @@ export const browserSearch = async (): Promise<{
   downloaded: string | null
 }> => {
   const fixedPaths = []
-  for (const path of CANDIDATES) {
+  for (const path of candidates()) {
     if (path) fixedPaths.push({ path, exists: await exists(path) })
   }
 
@@ -178,7 +186,22 @@ export const renderBookingPdf = async (
   payload: Payload,
   reference: string,
   url: string,
-): Promise<BookingPdf | null> => {
+): Promise<BookingPdf | null> => (await renderBookingPdfResult(payload, reference, url)).pdf
+
+/**
+ * The same, with the reason it failed rather than only the failure.
+ *
+ * The reason exists because this ran for days in production returning null and
+ * there was no way to find out why: the deployment logs are not somewhere the
+ * owner reads, the site was healthy, both letters arrived, and the only symptom
+ * was a missing attachment. So the reason now travels to the one place known to
+ * work — the hotel's own copy of the booking email. See sendBookingEmails.
+ */
+export const renderBookingPdfResult = async (
+  payload: Payload,
+  reference: string,
+  url: string,
+): Promise<{ pdf: BookingPdf | null; problem: string | null }> => {
   const executablePath = await findBrowser()
   if (!executablePath) {
     payload.logger.info(
@@ -186,7 +209,7 @@ export const renderBookingPdf = async (
         `rather than an attached PDF. Install chromium and the attachment starts working on ` +
         `its own — see nixpacks.toml.`,
     )
-    return null
+    return { pdf: null, problem: 'No browser is installed on the server.' }
   }
 
   let browser
@@ -214,13 +237,18 @@ export const renderBookingPdf = async (
     await page.evaluate(() => document.fonts.ready)
     const content = await page.pdf(PAGE)
     payload.logger.info(`Booking ${reference}: confirmation rendered, ${content.length} bytes`)
-    return { filename: `${reference}.pdf`, content }
+    return { pdf: { filename: `${reference}.pdf`, content }, problem: null }
   } catch (error) {
     payload.logger.warn(
       `Booking ${reference}: the confirmation PDF could not be rendered, so the email goes ` +
         `out with a link instead — ${error}`,
     )
-    return null
+    return {
+      pdf: null,
+      // The browser's own words, trimmed. They name the missing library or the
+      // address that would not load, which is the whole value of this line.
+      problem: `The browser at ${executablePath} failed: ${String(error).split('\n')[0].slice(0, 300)}`,
+    }
   } finally {
     await browser?.close().catch(() => {})
   }

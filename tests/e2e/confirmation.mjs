@@ -1,7 +1,7 @@
 import { execSync } from 'node:child_process'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
-import { renderBookingPdf } from '../../src/utilities/bookingPdf.ts'
+import { renderBookingPdf, renderBookingPdfResult } from '../../src/utilities/bookingPdf.ts'
 import { signReference } from '../../src/utilities/bookingToken.ts'
 import { sendBookingEmails } from '../../src/utilities/bookingEmail.ts'
 
@@ -126,6 +126,49 @@ if (hotelLetter) {
 } else {
   console.log('SKIP  no hotel address is set, so there is no hotel copy to check')
 }
+
+// --- and when it fails, the hotel is told why --------------------------------
+//
+// The whole reason this exists: the attachment was missing in production for
+// days and there was nothing to read. Three fixes were shipped blind. The
+// reason now travels on the hotel's own copy of the booking, which is the one
+// channel proven to work on every booking — so the next failure explains
+// itself instead of needing another round.
+//
+// Failure is provoked by pointing the search at something that exists and is
+// not a browser, rather than by hiding the real one: a browser is looked for in
+// half a dozen places, so a test that hides it is really a test of the hiding.
+// /bin/false is found, launched, and does not speak the protocol.
+process.env.PDF_BROWSER_PATH = '/bin/false'
+const broken = await renderBookingPdfResult(payload, REF, passUrl('en'))
+ok('a confirmation that will not render reports why', Boolean(broken.problem), broken.problem ?? 'no reason given')
+ok('and it does not pretend to have produced one', broken.pdf === null)
+
+const noted = []
+payload.sendEmail = async (message) => {
+  noted.push(message)
+  return { messageId: 'captured' }
+}
+try {
+  await sendBookingEmails(payload, REF)
+} finally {
+  delete process.env.PDF_BROWSER_PATH
+  payload.sendEmail = realSend
+}
+
+const hotelCopy = noted.find((m) => !String(m.to).includes('guest@example.com'))
+const guestCopy = noted.find((m) => String(m.to).includes('guest@example.com'))
+if (hotelCopy) {
+  ok(
+    'the hotel’s copy says no PDF was attached',
+    String(hotelCopy.html).includes('No PDF attached'),
+  )
+  ok('and the plain text says it too', String(hotelCopy.text).includes('No PDF attached'))
+}
+ok(
+  'the guest is never shown any of it',
+  !guestCopy || !String(guestCopy.html).includes('No PDF attached'),
+)
 
 wipe()
 console.log(`\n${fails} failed`)
