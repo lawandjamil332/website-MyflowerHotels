@@ -131,6 +131,27 @@ export default async function AboutPage({ params }: Args) {
                     is a comparison the group believes and has dated, and
                     reading as slightly more careful than the line before it is
                     exactly right. */}
+                {/* The difference between this group and the international
+                    brands it gets compared with, stated as structure rather
+                    than as a superlative. A foreign brand's four hotels in a
+                    country are four buildings owned by four investors with the
+                    brand managing or franchising each; these four are one
+                    family's. It sits above the dated claim because it is a
+                    fact about how the company is put together, not a
+                    comparison anybody has to keep checking. */}
+                <p className="mt-5 leading-[1.85] text-ink-soft">
+                  {/* Lower-cased, because the count lands mid-sentence here
+                      and countWord returns it capitalised for the start of
+                      one — "All Four of ours" is a capital letter in the
+                      middle of a clause. Arabic and Kurdish have no case, so
+                      this changes nothing in either. */}
+                  {t.about.ownershipStructure.replace(
+                    '{count}',
+                    countWord(branches.length, locale).toLocaleLowerCase(
+                      locale === 'en' ? 'en' : undefined,
+                    ),
+                  )}
+                </p>
                 {claim && (
                   <p className="mt-5 text-[0.92rem] leading-[1.7] text-muted-ink">{claim}</p>
                 )}

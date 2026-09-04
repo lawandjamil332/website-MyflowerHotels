@@ -112,6 +112,20 @@ export type Dictionary = {
      * Carries {count}, {city} and {date}.
      */
     localLead: string
+    /**
+     * How this group differs from the international brands it is compared
+     * with, stated as the structural fact it is rather than as a superlative.
+     *
+     * The owner's point, and it is a good one: a foreign brand's four hotels
+     * in a country are four buildings owned by four different investors, with
+     * the brand managing or franchising each. His four are one family's, under
+     * one name. That is checkable, it is the thing none of the competitors can
+     * say, and it needs no date on it — unlike "the biggest", which needs a
+     * date because it can stop being true without anybody here doing anything.
+     *
+     * Carries {count}.
+     */
+    ownershipStructure: string
     identityOneCity: string
     identityManyCities: string
   }
@@ -604,6 +618,8 @@ const en: Dictionary = {
     identityOpened: 'We opened our first hotel in {city} in {year}.',
     localLead:
       '{count} hotels, one Kurdish family, no foreign operator. Of every hotel brand in {city}, we know of none with more branches. Checked {date}.',
+    ownershipStructure:
+      'International hotel brands do not usually own their hotels. They manage a building for the investor who owns it, or franchise their name to it, so two hotels under one brand can belong to two different owners. All {count} of ours are owned and run by the same family, under one name.',
     identityOneCity:
       'Today we run {count}, all of them in {city}, {country} — the same owners, the same standard, {count} addresses.',
     identityManyCities: 'Today we run {count} across {country}, in {cities}.',
@@ -1104,6 +1120,8 @@ const ku: Dictionary = {
     identityOpened: 'یەکەم هۆتێلمان لە ساڵی {year} لە {city} کردەوە.',
     localLead:
       '{count} هۆتێل، یەک خێزانی کورد، بەبێ بەڕێوەبەری بیانی. لە نێو هەموو براندە هۆتێلییەکانی {city}، ئێمە هیچیان ناناسین کە لق زیاتری هەبێت. پشکنراوە لە {date}.',
+    ownershipStructure:
+      'براندە هۆتێلییە نێودەوڵەتییەکان زۆرجار خاوەنی هۆتێلەکانیان نین. باڵەخانەیەک بۆ ئەو وەبەرهێنەرە بەڕێوە دەبەن کە خاوەنیەتی، یان ناوەکەیان بە ئیمتیاز پێدەدەن، بۆیە دوو هۆتێل لەژێر یەک براندا دەکرێت هی دوو خاوەنی جیاواز بن. هەموو {count} هۆتێلی ئێمە خاوەندارێتی و بەڕێوەبردنیان لەلایەن هەمان خێزانەوەیە، بە یەک ناو.',
     identityOneCity:
       'ئەمڕۆ {count} هۆتێلمان هەیە، هەموویان لە {city}، {country} — هەمان خاوەن، هەمان ئاست، {count} ناونیشان.',
     identityManyCities: 'ئەمڕۆ {count} هۆتێلمان هەیە بەسەر {country} دا، لە {cities}.',
@@ -1598,6 +1616,8 @@ const ar: Dictionary = {
     identityOpened: 'افتتحنا أول فنادقنا في {city} عام {year}.',
     localLead:
       '{count} فنادق، بيت كردي واحد، دون مشغّل أجنبي. ومن بين كل العلامات الفندقية في {city}، لا نعلم بعلامة لها فروع أكثر. جرى التحقق في {date}.',
+    ownershipStructure:
+      'العلامات الفندقية العالمية لا تملك فنادقها في الغالب. فهي تُدير المبنى لحساب المستثمر الذي يملكه، أو تمنح اسمها بامتياز، حتى إن فندقين تحت علامة واحدة قد يعودان إلى مالكَين مختلفَين. أما فنادقنا، وعددها {count}، فيملكها ويديرها البيت نفسه تحت اسم واحد.',
     identityOneCity:
       'ونُدير اليوم {count} فنادق، جميعها في {city}، {country} — المُلّاك أنفسهم، والمستوى نفسه، و{count} عناوين.',
     identityManyCities: 'ونُدير اليوم {count} فنادق في أنحاء {country}، في {cities}.',
