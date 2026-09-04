@@ -119,6 +119,64 @@ console.log(
       ].join('\n'),
 )
 
+// Whether a booking can actually be posted, said out loud at start-up.
+//
+// This is the one thing about the site that could be entirely broken while
+// every page worked perfectly, and until now nothing said so. Bookings are
+// made, written to the database and shown in the admin panel whether or not a
+// letter can leave the building; with no transport configured the site writes
+// the booking into the log and carries on. So the owner saw a working site,
+// took bookings, and received nothing — with no line anywhere telling him why.
+//
+// A statement of fact like the storage line above, not a warning: a site with
+// no mail configured still runs, and saying "cannot start" over it would be a
+// lie. The names mirror src/payload.config.ts, which chooses between them in
+// the same order.
+const mailGmailApi = anyOf('GMAIL_CLIENT_ID') && anyOf('GMAIL_CLIENT_SECRET') &&
+  anyOf('GMAIL_REFRESH_TOKEN') && anyOf('GMAIL_FROM_ADDRESS')
+const mailResend = anyOf('RESEND_API_KEY')
+const mailSmtp = anyOf('SMTP_HOST') && anyOf('SMTP_USER') && anyOf('SMTP_PASS')
+
+const smtpPort = process.env.SMTP_PORT?.trim() || '587'
+const mailLines = mailGmailApi
+  ? [`  Mail: the Gmail API, as ${process.env.GMAIL_FROM_ADDRESS}.`, '']
+  : mailResend
+    ? ['  Mail: Resend.', '']
+    : mailSmtp
+      ? [
+          `  Mail: SMTP, ${process.env.SMTP_HOST} port ${smtpPort}, as ${process.env.SMTP_USER}.`,
+          '',
+          '  If bookings are made and no letter arrives, the likeliest cause is',
+          '  the host blocking outbound SMTP rather than anything here. Open',
+          '  /next/mail-check on the running site — it dials the port and says',
+          '  whether it is reachable.',
+          '',
+        ]
+      : [
+          '  Mail: NOT CONFIGURED. Bookings will be taken and nobody told.',
+          '',
+          '  A guest can book, the booking is saved and appears in the admin',
+          '  panel, and no letter goes to the guest or to reservations. The',
+          '  booking is written into this log instead, which nobody reads.',
+          '',
+          '  To send through the reservations Gmail account, set these three:',
+          '',
+          '    SMTP_HOST = smtp.gmail.com',
+          '    SMTP_USER = the Gmail address',
+          '    SMTP_PASS = a Google app password, not the account password',
+          '',
+          '  An app password is made at myaccount.google.com > Security >',
+          '  2-Step Verification > App passwords, and is sixteen letters.',
+          '',
+          '  Then open /next/mail-check on the running site: it says whether',
+          '  the host lets SMTP out at all. Some do not, and if this one does',
+          '  not, GMAIL_CLIENT_ID/SECRET/REFRESH_TOKEN/FROM_ADDRESS sends',
+          '  through the same mailbox over HTTPS instead.',
+          '',
+        ]
+
+console.log(mailLines.join('\n'))
+
 if (problems.length > 0) {
   const lines = [
     '',
