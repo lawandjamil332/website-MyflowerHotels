@@ -26,3 +26,9 @@ tsconfig.tsbuildinfo
 
 # Local dev server log, written by `npm run start` in a session.
 .srv.log
+
+# Test-run output, written by `node tests/run.mjs` in a session. Same reason as
+# the line above: it is a record of one run on one machine, it is thousands of
+# lines long, and a `git add -A` sweeps it into the commit if it is not named
+# here — which has happened.
+.suite.log
