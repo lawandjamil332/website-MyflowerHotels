@@ -34,6 +34,7 @@ import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
+import { GoogleAnalyticsScripts } from '@/components/site/GoogleAnalyticsScripts'
 import { GOOGLE_SITE_VERIFICATION, SITE_NAME } from '@/utilities/site'
 import { dir, isLocale, locales, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
@@ -202,6 +203,10 @@ export default async function LocaleLayout({ children, params }: Args) {
             />
           </CurrencyProvider>
         </Providers>
+        {/* Last in the body, and it renders nothing unless
+            NEXT_PUBLIC_GA_MEASUREMENT_ID is set — so no page opened in
+            development or by the test suite is counted as a guest. */}
+        <GoogleAnalyticsScripts />
       </body>
     </html>
   )

@@ -250,6 +250,27 @@ console.log(
       ].join('\n'),
 )
 
+// Whether visitors are being counted, on the same principle as the two blocks
+// above: it is invisible from the outside, and the cost of it being off is
+// paid silently in months of figures nobody can ever get back.
+const ga = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim()
+console.log(
+  ga
+    ? [`  Visitors: counted, Google Analytics ${ga}.`, ''].join('\n')
+    : [
+        '  Visitors: NOT COUNTED. Nobody is measuring who visits the site.',
+        '',
+        '  Bookings are still recorded and the Analytics tab in the admin panel',
+        '  still works — that measures what was sold, not who came. To count',
+        '  visitors, set NEXT_PUBLIC_GA_MEASUREMENT_ID to the Google Analytics',
+        '  measurement ID, which looks like G-XXXXXXXXXX.',
+        '',
+        '  Search Console needs nothing set: the site is already verified with',
+        '  Google and shows the last 16 months at search.google.com/search-console.',
+        '',
+      ].join('\n'),
+)
+
 if (problems.length > 0) {
   const lines = [
     '',
