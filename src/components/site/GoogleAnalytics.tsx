@@ -37,15 +37,28 @@ export const GoogleAnalyticsPageViews: React.FC<{ measurementId: string }> = ({
       return
     }
 
-    const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag
-    if (typeof gtag !== 'function') return
+    // Sent a beat after the path changes, because the title has not caught up
+    // yet. React swaps the URL before the new page's <title> is applied, so
+    // reading document.title here reports the title of the page just left —
+    // and on the first navigation of a visit there is no title at all. Either
+    // way "Pages and screens" fills with blanks and wrong names, which is a
+    // report nobody can use.
+    const timer = window.setTimeout(() => {
+      const gtag = (window as unknown as { gtag?: (...args: unknown[]) => void }).gtag
+      if (typeof gtag !== 'function') return
 
-    gtag('event', 'page_view', {
-      send_to: measurementId,
-      page_path: pathname,
-      page_location: window.location.href,
-      page_title: document.title,
-    })
+      gtag('event', 'page_view', {
+        send_to: measurementId,
+        page_path: pathname,
+        page_location: window.location.href,
+        page_title: document.title,
+      })
+    }, 400)
+
+    // A guest who moves on again before the timer fires is one navigation, not
+    // two: the pending view is dropped and the page they actually landed on is
+    // the one counted.
+    return () => window.clearTimeout(timer)
   }, [pathname, measurementId])
 
   return null

@@ -1,6 +1,7 @@
 import Script from 'next/script'
 
 import { GoogleAnalyticsPageViews } from './GoogleAnalytics'
+import { TapTracking } from './TapTracking'
 
 /**
  * Google Analytics, and nothing at all when it is not configured.
@@ -41,6 +42,10 @@ export const GoogleAnalyticsScripts: React.FC = () => {
         `}
       </Script>
       <GoogleAnalyticsPageViews measurementId={measurementId} />
+      {/* Inside this guard deliberately: with no measurement ID there is
+          nothing to send taps to, so the listener would be a document-wide
+          click handler on every page doing nothing at all. */}
+      <TapTracking />
     </>
   )
 }

@@ -1,13 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { useActionState, useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 
 import type { Dictionary } from '@/i18n/dictionaries'
 import type { Locale } from '@/i18n/config'
 import { formatNumber } from '@/utilities/format'
 import type { AvailableRoom } from '@/utilities/booking'
 import { cn } from '@/utilities/ui'
+import { EVENTS, track } from '@/utilities/track'
 import { submitBooking, type BookingResult } from '@/actions/booking'
 import { SignUpForm } from './AccountForms'
 import { btnPrimary } from './ui'
@@ -25,6 +26,7 @@ export function BookingForm({
   locale,
   room,
   branchId,
+  hotelName,
   checkIn,
   checkOut,
   guests,
@@ -37,6 +39,8 @@ export function BookingForm({
   locale: string
   room: AvailableRoom
   branchId: number
+  /** Only for the analytics event — "My Flower 3" reads where an id does not. */
+  hotelName?: string
   checkIn: string
   checkOut: string
   guests?: number | null
@@ -67,6 +71,40 @@ export function BookingForm({
       ? crypto.randomUUID()
       : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
   )
+
+  /**
+   * The booking, counted once.
+   *
+   * This is the number the whole of Analytics exists to produce: not how many
+   * people came, but how many of them booked. Nothing else on this site can
+   * report it — a booking here ends on an ordinary page, with no payment step
+   * and no return from a card processor to mark the moment.
+   *
+   * `useEffect` keyed on the reference, not a call inside the render: a render
+   * can run more than once for the same result, and a booking counted twice is
+   * worse than one not counted at all — it is a number that looks right.
+   *
+   * The reference itself is the key and is never sent. It goes to Google as
+   * nothing; what goes is the shape of the booking — which hotel, how many
+   * nights, how many guests, what it came to. See src/utilities/track.ts.
+   */
+  // Pulled out before the effect because a dependency array cannot narrow a
+  // union: `state.reference` only exists on the success branch, and naming it
+  // in the array is outside the `if` that proves we are on it.
+  const bookedReference = state?.status === 'success' ? state.reference : null
+
+  useEffect(() => {
+    if (!bookedReference) return
+    track(EVENTS.bookingConfirmed, {
+      hotel: hotelName,
+      room: room.name,
+      nights,
+      guests: guests ?? undefined,
+      value: total ?? undefined,
+      currency: room.currency ?? undefined,
+      locale,
+    })
+  }, [bookedReference, room, hotelName, nights, guests, total, locale])
 
   if (state?.status === 'success') {
     return (
@@ -116,7 +154,28 @@ export function BookingForm({
   const label = 'block text-[0.72rem] font-semibold text-ink'
 
   return (
-    <form action={action} className="rounded-2xl border border-line bg-card p-7 sm:p-9">
+    <form
+      action={action}
+      // The step before the booking, and the pair is what makes either
+      // readable: on its own "22 bookings" says nothing about whether the form
+      // is working. Against "60 people filled it in" it says the form loses
+      // two thirds of them, which is a thing that can be fixed.
+      //
+      // onSubmit rather than the button's onClick, so a guest who finishes the
+      // last field and presses Enter is counted like everyone else.
+      onSubmit={() =>
+        track(EVENTS.bookingStarted, {
+          hotel: hotelName,
+          room: room.name,
+          nights,
+          guests: guests ?? undefined,
+          value: total ?? undefined,
+          currency: room.currency ?? undefined,
+          locale,
+        })
+      }
+      className="rounded-2xl border border-line bg-card p-7 sm:p-9"
+    >
       <h2 className="font-display text-2xl text-ink sm:text-3xl">{t.booking.confirmTitle}</h2>
       <p className="mt-3 text-[0.98rem] leading-relaxed text-muted-ink">{t.booking.confirmLead}</p>
 

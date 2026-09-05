@@ -1,12 +1,13 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
-import { useActionState } from 'react'
+import { useActionState, useEffect } from 'react'
 import { useFormStatus } from 'react-dom'
 
 import type { Dictionary } from '@/i18n/dictionaries'
 import { submitEnquiry, type EnquiryState } from '@/actions/enquiry'
 import { cn } from '@/utilities/ui'
+import { EVENTS, track } from '@/utilities/track'
 import { WhatsAppMark } from './WhatsAppMark'
 import { btnPrimary, btnWhatsApp, btnSmall } from './ui'
 
@@ -68,6 +69,15 @@ export function EnquiryForm({
     checkOut: search?.get('checkOut') ?? '',
     guests: search?.get('guests') ?? '',
   }
+
+  // The other way a guest asks for a room. Counted alongside bookings so the
+  // funnel is not reading half the demand: plenty of people here send a
+  // question rather than filling in dates, and a site judged only on completed
+  // bookings undercounts what it is actually producing for the hotel.
+  useEffect(() => {
+    if (state.status !== 'success') return
+    track(EVENTS.enquiry, { page: window.location.pathname })
+  }, [state.status])
 
   if (state.status === 'success') {
     return (

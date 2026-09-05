@@ -6,6 +6,7 @@ import { useState } from 'react'
 import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
 import { cn } from '@/utilities/ui'
+import { EVENTS, track } from '@/utilities/track'
 import { btnPrimary } from './ui'
 
 export type FinderHotel = { slug: string; name: string; openingSoon?: boolean }
@@ -144,6 +145,28 @@ export function StayFinder({
     // No hotel chosen searches all of them, which is what "Any hotel" says on
     // the tin and what a guest who does not know the city yet actually wants.
     if (hotel) params.set('hotel', hotel)
+
+    // The top of the funnel. Without it the reports can say how many people
+    // arrived and how many booked, and nothing about the step in between — so
+    // a month where nobody books reads the same whether the site is failing to
+    // interest anyone or failing to sell rooms to people who are already
+    // looking. Those have opposite fixes.
+    //
+    // The dates are counted, not sent: how far ahead somebody is searching is
+    // a fact about the business, while the exact nights one person picked is a
+    // fact about them.
+    track(EVENTS.search, {
+      hotel: hotel || 'any',
+      nights: Math.max(
+        1,
+        Math.round(
+          (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86_400_000,
+        ),
+      ),
+      guests: guests || undefined,
+      locale,
+    })
+
     router.push(`/${locale}/book?${params.toString()}`)
   }
 

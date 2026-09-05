@@ -256,6 +256,7 @@ export default async function BookPage({ params, searchParams }: Args) {
               locale={locale}
               room={chosen}
               branchId={chosen.branchId}
+              hotelName={chosenBranch?.name}
               checkIn={checkInRaw}
               checkOut={checkOutRaw}
               guests={guests}
