@@ -4,6 +4,7 @@ import configPromise from '@payload-config'
 import { getPayload, type Payload } from 'payload'
 
 import { sendCancellationEmails } from '@/utilities/bookingEmail'
+import { reportBookingEvent } from '@/utilities/analyticsServer'
 import { allow, callerKey } from '@/utilities/throttle'
 import { currentGuest } from './account'
 import { awardPointsForBooking } from '@/utilities/points'
@@ -204,6 +205,30 @@ export async function cancelBooking(
     // while the front desk still has the guest written down is how a cancelled
     // booking turns into a room sold twice on paper.
     void sendCancellationEmails(found.payload, current.reference).catch(() => {})
+
+    // Reported too, or the figures only ever climb.
+    //
+    // Bookings are counted as they are made and nothing would ever take one
+    // back, so a month where half of them cancelled would read exactly like a
+    // month where none did — and the site would be judged on a number that
+    // cannot go down. The value is sent as a negative so the two cancel out
+    // where they are added up.
+    //
+    // No client id: a cancellation is usually made days later, often on a
+    // different device, and guessing at which browser it was would attach it
+    // to the wrong visit. It stands on its own, as the fact it is.
+    const cancelled = found.booking
+    const refunded = Number(cancelled.totalAmount) || 0
+    void reportBookingEvent(found.payload, 'booking_cancelled', null, {
+      // "—" is what `shape` puts in when the relationship did not come back;
+      // it reads as a hotel called "—" in a report, so it is dropped.
+      hotel: current.hotel === '—' ? null : current.hotel,
+      room: current.room === '—' ? null : current.room,
+      nights: current.nights,
+      guests: Number(cancelled.guests) || null,
+      value: refunded > 0 ? -refunded : null,
+      currency: cancelled.currency ?? null,
+    }).catch(() => {})
 
     return { status: 'cancelled', booking: { ...current, status: 'cancelled', cancellable: false } }
   } catch {

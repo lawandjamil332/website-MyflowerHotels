@@ -254,9 +254,24 @@ console.log(
 // above: it is invisible from the outside, and the cost of it being off is
 // paid silently in months of figures nobody can ever get back.
 const ga = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim()
+const gaSecret = process.env.GA_API_SECRET?.trim()
 console.log(
   ga
-    ? [`  Visitors: counted, Google Analytics ${ga}.`, ''].join('\n')
+    ? [
+        `  Visitors: counted, Google Analytics ${ga}.`,
+        gaSecret
+          ? '  Bookings are reported from the server, so a guest whose phone blocks'
+          : '  Bookings are reported from the browser only. On a phone that blocks',
+        gaSecret
+          ? "  Google's script is still counted."
+          : "  Google's script the visit counts and the booking does not, which reads",
+        gaSecret ? '' : '  as a site that cannot sell. Set GA_API_SECRET to close that gap:',
+        gaSecret ? '' : '  Analytics > Admin > Data streams > the stream > Measurement Protocol',
+        gaSecret ? '' : '  API secrets > Create.',
+        '',
+      ]
+        .filter((line, i, all) => line !== '' || all[i - 1] !== '')
+        .join('\n')
     : [
         '  Visitors: NOT COUNTED. Nobody is measuring who visits the site.',
         '',

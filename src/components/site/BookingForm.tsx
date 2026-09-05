@@ -9,6 +9,7 @@ import { formatNumber } from '@/utilities/format'
 import type { AvailableRoom } from '@/utilities/booking'
 import { cn } from '@/utilities/ui'
 import { EVENTS, track } from '@/utilities/track'
+import { gaClientId } from '@/utilities/gaClientId'
 import { submitBooking, type BookingResult } from '@/actions/booking'
 import { SignUpForm } from './AccountForms'
 import { btnPrimary } from './ui'
@@ -73,38 +74,32 @@ export function BookingForm({
   )
 
   /**
-   * The booking, counted once.
+   * The id Google gave this browser, carried with the booking.
    *
-   * This is the number the whole of Analytics exists to produce: not how many
-   * people came, but how many of them booked. Nothing else on this site can
-   * report it — a booking here ends on an ordinary page, with no payment step
-   * and no return from a card processor to mark the moment.
+   * The confirmed booking is no longer reported from here. It is reported by
+   * the server, from the moment the row is written — see
+   * src/utilities/analyticsServer.ts for why. But a server event with no
+   * client id arrives as a stranger who booked without ever visiting, which
+   * severs the booking from the search and the form-fill that led to it. So
+   * the id is read here, where the cookie is, and posted with the form.
    *
-   * `useEffect` keyed on the reference, not a call inside the render: a render
-   * can run more than once for the same result, and a booking counted twice is
-   * worse than one not counted at all — it is a number that looks right.
-   *
-   * The reference itself is the key and is never sent. It goes to Google as
-   * nothing; what goes is the shape of the booking — which hotel, how many
-   * nights, how many guests, what it came to. See src/utilities/track.ts.
+   * Read once when the form mounts rather than at submit, so the reading has
+   * finished long before a guest presses the button and nothing waits on
+   * Google at the moment that matters most.
    */
-  // Pulled out before the effect because a dependency array cannot narrow a
-  // union: `state.reference` only exists on the success branch, and naming it
-  // in the array is outside the `if` that proves we are on it.
-  const bookedReference = state?.status === 'success' ? state.reference : null
+  const [clientId, setClientId] = useState('')
 
   useEffect(() => {
-    if (!bookedReference) return
-    track(EVENTS.bookingConfirmed, {
-      hotel: hotelName,
-      room: room.name,
-      nights,
-      guests: guests ?? undefined,
-      value: total ?? undefined,
-      currency: room.currency ?? undefined,
-      locale,
+    const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
+    if (!measurementId) return
+    let live = true
+    void gaClientId(measurementId).then((id) => {
+      if (live && id) setClientId(id)
     })
-  }, [bookedReference, room, hotelName, nights, guests, total, locale])
+    return () => {
+      live = false
+    }
+  }, [])
 
   if (state?.status === 'success') {
     return (
@@ -188,6 +183,9 @@ export function BookingForm({
       <input type="hidden" name="currency" value={room.currency} />
       {/* So the confirmation can be written in the language they booked in. */}
       <input type="hidden" name="locale" value={locale} />
+      {/* Empty when Google's script is blocked, which is common — the server
+          reports the booking either way. See analyticsServer.ts. */}
+      <input type="hidden" name="gaClientId" value={clientId} />
 
       <div className="mt-8 grid gap-6 sm:grid-cols-2">
         <div>

@@ -7,10 +7,12 @@ import {
   CapacityError,
   createBooking,
   InvalidDatesError,
+  nightsBetween,
   NoAvailabilityError,
 } from '@/utilities/booking'
 import { currentGuest } from '@/actions/account'
 import { sendBookingEmails } from '@/utilities/bookingEmail'
+import { reportBookingEvent } from '@/utilities/analyticsServer'
 import { allow, callerKey } from '@/utilities/throttle'
 
 export type BookingResult =
@@ -117,6 +119,43 @@ export async function submitBooking(
     // staring at a spinner while a mail server thinks about it is the worst
     // possible moment to be slow.
     void sendBookingEmails(payload, booking.reference).catch(() => {})
+
+    // Reported from here rather than from the browser, and not awaited for the
+    // same reason as the emails above.
+    //
+    // A large share of phones block Google's script. Reported from the browser
+    // alone, every booking made on one of those is invisible, while the visit
+    // that produced it still counts — so the figures show plenty of visitors
+    // and far too few bookings, and the site appears to be failing at the one
+    // thing it is succeeding at. Here, it is reported from the row being
+    // written, which no phone can prevent.
+    //
+    // The room and hotel are named rather than numbered because these are read
+    // by a person: "My Flower 2" tells them something, "3" does not.
+    const gaClientId = text(formData.get('gaClientId')) || null
+    void (async () => {
+      // Looked up inside the detached task, never before the return: these are
+      // two queries whose only purpose is to make a report readable, and the
+      // guest is not waiting on them.
+      const [branch, room] = await Promise.all([
+        payload
+          .findByID({ collection: 'branches', id: branchId, depth: 0, overrideAccess: true })
+          .catch(() => null),
+        payload
+          .findByID({ collection: 'rooms', id: roomId, depth: 0, overrideAccess: true })
+          .catch(() => null),
+      ])
+
+      await reportBookingEvent(payload, 'booking_confirmed', gaClientId, {
+        hotel: branch?.name ?? null,
+        room: room?.name ?? null,
+        nights: nightsBetween(checkIn, checkOut),
+        guests: Number.isFinite(guests) && guests > 0 ? guests : null,
+        value: Number.isFinite(totalAmount) && totalAmount > 0 ? totalAmount : null,
+        currency,
+        locale,
+      })
+    })().catch(() => {})
 
     return { status: 'success', reference: booking.reference }
   } catch (error) {
