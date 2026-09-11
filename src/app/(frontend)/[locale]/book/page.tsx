@@ -21,7 +21,10 @@ import { BookingForm } from '@/components/site/BookingForm'
 import { StayFinder } from '@/components/site/StayFinder'
 import { PageHero } from '@/components/site/PageHero'
 import { SectionHeading } from '@/components/site/SectionHeading'
-import { btnOutline, btnPrimary, sectionY, shell } from '@/components/site/ui'
+import { btnOutline, btnPrimary, btnSmall, btnWhatsApp, sectionY, shell } from '@/components/site/ui'
+import { WhatsAppMark } from '@/components/site/WhatsAppMark'
+import { toWhatsAppHref, whatsappMessage } from '@/utilities/contact'
+import { formatDateLong } from '@/utilities/format'
 
 /**
  * What these nights cost, and what one of them costs.
@@ -151,6 +154,40 @@ export default async function BookPage({ params, searchParams }: Args) {
   const settings = await getSettings(locale)
   const lowStockAt = settings.lowStockAt ?? 3
   const isLow = (left: number) => lowStockAt > 0 && left > 0 && left <= lowStockAt
+
+  // The nights, written out for a person rather than as the ISO dates in the
+  // address bar. This is what goes into the WhatsApp message, so it has to
+  // read the way the guest's own language writes a date.
+  const stayDates =
+    checkInRaw && checkOutRaw
+      ? `${formatDateLong(new Date(`${checkInRaw}T00:00:00Z`), locale)} → ${formatDateLong(
+          new Date(`${checkOutRaw}T00:00:00Z`),
+          locale,
+        )}`
+      : null
+
+  /**
+   * That hotel's own WhatsApp, carrying the room and the nights.
+   *
+   * Per hotel, never the group number: four hotels have four front desks, and
+   * a button that opened My Flower 1's chat from a My Flower 3 room is the
+   * same fault the floating button had before it was split. Empty when the
+   * hotel has no number entered, and the button is then not drawn at all.
+   */
+  const hotelWhatsApp = (
+    hotel: { name: string; whatsapp?: string | null },
+    roomName: string,
+    dates: string | null,
+  ): string =>
+    toWhatsAppHref(
+      hotel.whatsapp,
+      whatsappMessage(t, {
+        siteName: settings.siteName || 'My Flower Hotels',
+        hotel: hotel.name,
+        room: roomName,
+        dates,
+      }),
+    )
 
   const byHotel = targets
     .map((b) => ({ hotel: b, rooms: rooms.filter((r) => r.branchId === b.id) }))
@@ -397,6 +434,33 @@ export default async function BookPage({ params, searchParams }: Args) {
                                 </p>
                               </div>
                             ) : null}
+                            {/* The other way to book, on the page where it
+                                is actually decided.
+                                Guests here press WhatsApp roughly fifteen
+                                times for every one who searches, and this was
+                                the one page in the site with no way to do it —
+                                so a guest who had already chosen dates, seen a
+                                price and decided to ask instead had to go back
+                                to a hotel page, and the message they finally
+                                sent named neither the room nor the nights. The
+                                front desk began every conversation by asking
+                                for both.
+
+                                Quiet beside the booking button, not competing
+                                with it: the form is still the faster path for
+                                anyone willing to use it. */}
+                            {hotelWhatsApp(hotel, room.name, stayDates) && (
+                              <a
+                                href={hotelWhatsApp(hotel, room.name, stayDates)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                data-hotel={hotel.name}
+                                className={cn(btnWhatsApp, btnSmall)}
+                              >
+                                <WhatsAppMark />
+                                {t.common.whatsapp}
+                              </a>
+                            )}
                             <Link href={`${back}&room=${room.id}`} className={btnPrimary}>
                               {t.booking.reserve}
                             </Link>

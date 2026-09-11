@@ -500,6 +500,16 @@ export type Dictionary = {
      * language.
      */
     waRoomOnly: string
+    /**
+     * A room *and* the nights, for the guest writing from the results page.
+     *
+     * Its own message because that guest has already done the work: they
+     * picked dates, saw a price, and chose to ask rather than fill in a form.
+     * Sending "I want to ask about Deluxe Double" from there throws the dates
+     * away and the first thing the hotel has to do is ask for them back.
+     * Carries {site}, {room} and {dates}.
+     */
+    waRoomDates: string
     waBooking: string
     /**
      * Spoken labels, never printed. The arrows on a row of cards, the picture
@@ -1013,6 +1023,8 @@ const en: Dictionary = {
     waRoom:
       'Hello — I came from the {site} website. I would like to ask about {room} at {hotel}.',
     waRoomOnly: 'Hello — I came from the {site} website. I would like to ask about {room}.',
+    waRoomDates:
+      'Hello — I came from the {site} website. I would like to ask about {room}, for {dates}.',
     waBooking: 'Hello — I came from the {site} website. My booking reference is {ref}.',
     previous: 'Previous',
     next: 'Next',
@@ -1519,6 +1531,8 @@ const ku: Dictionary = {
     waRoom:
       'سڵاو — لە ماڵپەڕی {site}ـەوە هاتووم. دەمەوێت دەربارەی {room} لە {hotel} بپرسم.',
     waRoomOnly: 'سڵاو — لە ماڵپەڕی {site}ـەوە هاتووم. دەمەوێت دەربارەی {room} بپرسم.',
+    waRoomDates:
+      'سڵاو — لە ماڵپەڕی {site}ـەوە هاتووم. دەمەوێت دەربارەی {room} بپرسم، بۆ {dates}.',
     waBooking: 'سڵاو — لە ماڵپەڕی {site}ـەوە هاتووم. ژمارەی حیجزەکەم {ref}ـە.',
     previous: 'پێشوو',
     next: 'دواتر',
@@ -2012,6 +2026,8 @@ const ar: Dictionary = {
     waAskGroup: 'مرحباً — جئت من موقع {site}. أود الاستفسار عن الإقامة.',
     waRoom: 'مرحباً — جئت من موقع {site}. أود الاستفسار عن {room} في {hotel}.',
     waRoomOnly: 'مرحباً — جئت من موقع {site}. أود الاستفسار عن {room}.',
+    waRoomDates:
+      'مرحباً — جئت من موقع {site}. أود الاستفسار عن {room}، للفترة {dates}.',
     waBooking: 'مرحباً — جئت من موقع {site}. رقم حجزي هو {ref}.',
     previous: 'السابق',
     next: 'التالي',

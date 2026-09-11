@@ -34,6 +34,7 @@ export const whatsappMessage = (
       waAskGroup: string
       waRoom: string
       waRoomOnly: string
+      waRoomDates: string
       waBooking: string
     }
   },
@@ -42,7 +43,19 @@ export const whatsappMessage = (
     hotel,
     room,
     reference,
-  }: { siteName: string; hotel?: string | null; room?: string | null; reference?: string | null },
+    dates,
+  }: {
+    siteName: string
+    hotel?: string | null
+    room?: string | null
+    reference?: string | null
+    /**
+     * The nights the guest has already chosen, written out for a person to
+     * read. Only the results page has these; everywhere else it is absent and
+     * the message is the one it always was.
+     */
+    dates?: string | null
+  },
 ): string => {
   const fill = (template: string) =>
     template
@@ -50,6 +63,7 @@ export const whatsappMessage = (
       .replace('{hotel}', hotel ?? '')
       .replace('{room}', room ?? '')
       .replace('{ref}', reference ?? '')
+      .replace('{dates}', dates ?? '')
 
   // Does the room's name already carry its hotel?
   //
@@ -63,6 +77,10 @@ export const whatsappMessage = (
   const roomNamesItsHotel = Boolean(room && /\s[—–]\s/u.test(room))
 
   if (reference) return fill(t.common.waBooking)
+  // Dates first, because a guest who has picked their nights has told us the
+  // most useful thing about their enquiry and it should not be dropped on the
+  // way to WhatsApp. Only with a room: dates alone name no room to ask about.
+  if (room && dates) return fill(t.common.waRoomDates)
   if (room && roomNamesItsHotel) return fill(t.common.waRoomOnly)
   if (room && hotel) return fill(t.common.waRoom)
   if (hotel) return fill(t.common.waAsk)
