@@ -28,6 +28,17 @@ export const dynamic = 'force-dynamic'
 const CLOSED = ['/admin', '/api', '/next', '/*/account', '/*/booking']
 
 /**
+ * The search engines, named rather than left to the wildcard.
+ *
+ * Same rules as everybody else. Named because a robots.txt that mentions the
+ * assistants by name and not the two search engines that still send most of
+ * the traffic reads like somebody was experimenting, and because a crawler
+ * that finds its own name follows that group and stops reading — so if a
+ * future edit ever narrows the wildcard group, these two keep working.
+ */
+const SEARCH = ['Googlebot', 'Googlebot-Image', 'Bingbot']
+
+/**
  * The assistants, named rather than left to the wildcard.
  *
  * They are already allowed by the rule above them — this changes nothing
@@ -36,6 +47,17 @@ const CLOSED = ['/admin', '/api', '/next', '/*/account', '/*/booking']
  * somebody asks an assistant where to stay in Erbil cannot afford to block the
  * things doing the answering, and that is exactly the kind of line that gets
  * added by accident.
+ *
+ * Two kinds are listed together, and the difference is worth knowing. Most of
+ * these fetch a page *because a person just asked a question* — Claude-User,
+ * ChatGPT-User, Perplexity-User — so blocking one does not remove this hotel
+ * from a training set, it removes it from the answer a guest is reading right
+ * now. The rest are the crawlers that build the index those answers are drawn
+ * from. Both have to be open for the site to be quotable.
+ *
+ * CCBot is Common Crawl. It is not an assistant at all; it is the public
+ * archive that a great many of them are built from, which makes it the one
+ * name here that reaches models nobody has heard of yet.
  */
 const ASSISTANTS = [
   'GPTBot',
@@ -43,9 +65,15 @@ const ASSISTANTS = [
   'ChatGPT-User',
   'ClaudeBot',
   'Claude-User',
+  'Claude-SearchBot',
   'PerplexityBot',
+  'Perplexity-User',
   'Google-Extended',
+  'Applebot',
   'Applebot-Extended',
+  'Amazonbot',
+  'meta-externalagent',
+  'CCBot',
 ]
 
 const block = (agents: string[]): string =>
@@ -61,6 +89,7 @@ export async function GET(): Promise<Response> {
 
   const body = [
     block(['*']),
+    block(SEARCH),
     block(ASSISTANTS),
     `Host: ${base}`,
     `Sitemap: ${base}/sitemap.xml`,

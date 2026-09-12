@@ -225,6 +225,7 @@ export default async function HomePage({ params }: Args) {
         siteName={siteName}
         locale={locale}
         branches={branches}
+        rooms={everyRoom}
         phone={settings.phone}
         email={settings.email}
         establishedYear={settings.establishedYear}

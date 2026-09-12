@@ -24,6 +24,21 @@
 /** Shape enough of a room to count it, without needing Payload's full type. */
 type Countable = { branch?: unknown; quantity?: number | null }
 
+/**
+ * Rooms in a list of room types.
+ *
+ * The room *page* already has one hotel's rooms in hand and does not need them
+ * grouped — it needs the same arithmetic, so that the number under a hotel's
+ * structured data and the number on the homepage can never disagree. They did
+ * before this existed: one counted a room type with no quantity as zero and
+ * the other as one.
+ */
+export const countRooms = (rooms: Countable[]): number =>
+  rooms.reduce((sum, room) => {
+    const q = room.quantity
+    return sum + (typeof q === 'number' && Number.isFinite(q) && q > 0 ? Math.floor(q) : 1)
+  }, 0)
+
 /** Branch id → rooms in that hotel. */
 export const roomsPerBranch = (rooms: Countable[]): Map<number, number> => {
   const out = new Map<number, number>()
@@ -36,12 +51,7 @@ export const roomsPerBranch = (rooms: Countable[]): Map<number, number> => {
     // A room type with no quantity set is at least one room — it exists, it is
     // on sale, and counting it as zero would understate the hotel. Anything
     // that is not a sane positive number falls back the same way.
-    const quantity =
-      typeof room.quantity === 'number' && Number.isFinite(room.quantity) && room.quantity > 0
-        ? Math.floor(room.quantity)
-        : 1
-
-    out.set(id, (out.get(id) ?? 0) + quantity)
+    out.set(id, (out.get(id) ?? 0) + countRooms([room]))
   }
 
   return out

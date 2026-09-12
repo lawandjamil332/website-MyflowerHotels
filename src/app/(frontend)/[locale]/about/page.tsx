@@ -8,7 +8,7 @@ import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { countWord, fillCount } from '@/i18n/count'
 import { getSettings } from '@/utilities/getSettings'
-import { getBranches } from '@/utilities/branches'
+import { getAllRooms, getBranches } from '@/utilities/branches'
 import { groupIdentity, localClaim } from '@/utilities/group'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { cn } from '@/utilities/ui'
@@ -31,7 +31,11 @@ export default async function AboutPage({ params }: Args) {
   const locale = raw as Locale
 
   const t = getDictionary(locale)
-  const [settings, branches] = await Promise.all([getSettings(locale), getBranches(locale)])
+  const [settings, branches, everyRoom] = await Promise.all([
+    getSettings(locale),
+    getBranches(locale),
+    getAllRooms(locale),
+  ])
   const siteName = settings.siteName || 'My Flower Hotels'
 
   // Falls back through the branches, so the page still opens on a photograph
@@ -68,6 +72,7 @@ export default async function AboutPage({ params }: Args) {
         siteName={siteName}
         locale={locale}
         branches={branches}
+        rooms={everyRoom}
         phone={settings.phone}
         email={settings.email}
         establishedYear={settings.establishedYear}

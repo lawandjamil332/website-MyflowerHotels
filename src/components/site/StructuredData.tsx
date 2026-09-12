@@ -4,6 +4,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { mediaUrl } from '@/utilities/media'
 import { mapsPlaceUrl } from '@/utilities/mapsUrl'
 import { nameVariants } from '@/utilities/nameVariants'
+import { countRooms, roomsPerBranch } from '@/utilities/roomCount'
 
 /**
  * schema.org markup, so a search result for one of these hotels can carry its
@@ -113,7 +114,9 @@ export function HotelSchema({
         })()
       : undefined
 
-  const roomCount = rooms.reduce((sum, r) => sum + (r.quantity ?? 0), 0)
+  // Counted the same way the homepage counts, so the hotel's own number and
+  // the group's total can never contradict each other. See roomCount.ts.
+  const roomCount = countRooms(rooms)
 
   return json(
     clean({
@@ -380,6 +383,7 @@ export function GroupSchema({
   imageUrl,
   social = [],
   description,
+  rooms = [],
 }: {
   siteName: string
   locale: Locale
@@ -393,8 +397,22 @@ export function GroupSchema({
   social?: (string | null | undefined)[]
   /** What this company is, in one sentence, in the reader's language. */
   description?: string
+  /**
+   * Every room the group publishes, so each hotel below can say how big it is.
+   *
+   * "How many rooms does My Flower Hotels have?" is one of the two or three
+   * questions anybody actually asks about a hotel group, and the answer was
+   * only ever on the four hotel pages — one number each, four separate crawls,
+   * and nothing here that adds up. Stating it beside each hotel in the block
+   * that already lists all four makes the group's size readable in one fetch.
+   *
+   * Optional: a caller with no rooms in hand emits the list exactly as before
+   * rather than a set of zeroes.
+   */
+  rooms?: Room[]
 }) {
   const base = getServerSideURL()
+  const roomsByBranch = roomsPerBranch(rooms)
 
   return json(
     clean({
@@ -453,6 +471,7 @@ export function GroupSchema({
           name: b.name,
           url: `${base}/${locale}/branches/${b.slug}`,
           telephone: b.phone ?? undefined,
+          numberOfRooms: roomsByBranch.get(Number(b.id)) || undefined,
           address: clean({
             '@type': 'PostalAddress',
             streetAddress: b.neighbourhood ?? b.address ?? undefined,
