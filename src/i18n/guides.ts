@@ -246,7 +246,7 @@ const en: GuideDictionary = {
     eyebrow: 'Erbil',
     title: 'Where should you stay in Erbil?',
     lead:
-      'It depends on why you have come. Erbil is built in rings around its Citadel, and most visitors end up choosing between four parts of it. The centre, around the Citadel and the bazaar beneath it, is where you want to be if you are here to see the old city. Ankawa, to the north, is the Christian quarter — most of the bars and restaurants, most of the foreign offices, and the part of the city that feels walkable. The Gulan and Bakhtiari districts, on the way out to the airport, hold most of the large five-star hotels. And the ring roads — Kirkuk Street and the 100 metre road — are where the ordinary, mid-priced hotels are, close to the university, the courthouse and the malls, and about twenty minutes from the airport. My Flower Hotels runs {count} hotels on those last two roads, which is the part of this page to read most sceptically: we wrote it.',
+      'It depends on why you have come. Erbil is built in rings around its Citadel, and most visitors end up choosing between four parts of it. The centre, around the Citadel and the bazaar beneath it, is where you want to be if you are here to see the old city. Ankawa, to the north, is the Christian quarter — most of the bars and restaurants, most of the foreign offices, and the part of the city that feels walkable. The Gulan and Bakhtiari districts, on the way out to the airport, hold most of the large five-star hotels. And the two big roads out of the centre — Kirkuk Street and the 100 metre ring — are where the ordinary, mid-priced hotels are, close to the university, the courthouse and the malls, and about twenty minutes from the airport. My Flower Hotels runs {count} hotels on those last two roads, which is the part of this page to read most sceptically: we wrote it.',
     metaTitle: 'Where to stay in Erbil — the areas, and what each one suits',
     metaDescription:
       'The parts of Erbil a visitor chooses between — the Citadel and the centre, Ankawa, Gulan and Bakhtiari, Kirkuk Street and the 100 metre road — what each suits, and how far each is from the airport and the old city.',
@@ -272,7 +272,7 @@ const en: GuideDictionary = {
       {
         heading: 'Kirkuk Street and the 100 metre road',
         paragraphs: [
-          'The ring roads that carry most of the city’s ordinary traffic, and most of its ordinary hotels. Kirkuk Street runs south from near the centre past Tablo Mall; the 100 metre road is the inner ring, passing the courthouse quarter, the central library and Salahaddin University.',
+          'The two roads that carry most of the city’s ordinary traffic, and most of its ordinary hotels. Erbil’s ring roads are named for their width and run in circles out from the Citadel — 30, 40, 60, 100 and 120 metres — so the 100 metre is the fourth one out, about four kilometres from the centre, passing the courthouse quarter, the central library and Salahaddin University. Kirkuk Street is not a ring at all but a radial, running south from near the centre past Tablo Mall.',
           'This is where to stay if you are in Erbil for something specific rather than for the city — a university visit, a court date, business at one of the malls, a night between flights — and where the price of a room is a fraction of Gulan for a similar amount of room. It is also where all {count} My Flower hotels are.',
         ],
       },
@@ -300,7 +300,7 @@ const en: GuideDictionary = {
     faq: [
       {
         q: 'Which part of Erbil is best to stay in?',
-        a: 'The centre near the Citadel for the old city, Ankawa for restaurants, bars and the expatriate quarter, Gulan and Bakhtiari for the large five-star hotels and the airport, and the ring roads — Kirkuk Street and the 100 metre road — for ordinary mid-priced hotels close to the university and the malls.',
+        a: 'The centre near the Citadel for the old city, Ankawa for restaurants, bars and the expatriate quarter, Gulan and Bakhtiari for the large five-star hotels and the airport, and the two big roads out of the centre — Kirkuk Street and the 100 metre ring — for ordinary mid-priced hotels close to the university and the malls.',
       },
       {
         q: 'How far is Erbil airport from the city?',
@@ -464,7 +464,7 @@ const ku: GuideDictionary = {
     eyebrow: 'هەولێر',
     title: 'لە هەولێر لە کوێ بمێنیتەوە؟',
     lead:
-      'ئەوە بەوە بەندە کە بۆچی هاتوویت. هەولێر بە بازنە لە دەوری قەڵاکەی دروست بووە، و زۆربەی سەردانکەران لە نێوان چوار بەشیدا هەڵدەبژێرن. ناوەندەکە، لە دەوری قەڵا و بازاڕەکەی ژێری، ئەو شوێنەیە کە دەتەوێت لێی بیت ئەگەر بۆ بینینی شاری کۆن هاتوویت. عەنکاوە، لە باکوور، گەڕەکی مەسیحییەکانە — زۆربەی بار و چێشتخانەکان، زۆربەی نووسینگە بیانییەکان، و ئەو بەشەی شارەکە کە بە پێ دەگەڕێت. ناوچەکانی گوڵان و بەختیاری، لە ڕێگای فڕۆکەخانە، زۆربەی هۆتێلە گەورە پێنج ئەستێرەکانیان تێدایە. و شەقامە بازنەییەکان — شەقامی کەرکووک و شەقامی 100 مەتری — ئەو شوێنەن کە هۆتێلە ئاسایی و مامناوەندەکان لێن، نزیک زانکۆ و دادگا و مۆڵەکان، و نزیکەی بیست خولەک لە فڕۆکەخانەوە. ماي فلاوەر هۆتێلز {count} هۆتێل لەسەر ئەم دوو شەقامە بەڕێوەدەبات، کە ئەوە ئەو بەشەی ئەم پەڕەیەیە کە دەبێت بە گومانەوە بیخوێنیتەوە: ئێمە نووسیومانە.',
+      'ئەوە بەوە بەندە کە بۆچی هاتوویت. هەولێر بە بازنە لە دەوری قەڵاکەی دروست بووە، و زۆربەی سەردانکەران لە نێوان چوار بەشیدا هەڵدەبژێرن. ناوەندەکە، لە دەوری قەڵا و بازاڕەکەی ژێری، ئەو شوێنەیە کە دەتەوێت لێی بیت ئەگەر بۆ بینینی شاری کۆن هاتوویت. عەنکاوە، لە باکوور، گەڕەکی مەسیحییەکانە — زۆربەی بار و چێشتخانەکان، زۆربەی نووسینگە بیانییەکان، و ئەو بەشەی شارەکە کە بە پێ دەگەڕێت. ناوچەکانی گوڵان و بەختیاری، لە ڕێگای فڕۆکەخانە، زۆربەی هۆتێلە گەورە پێنج ئەستێرەکانیان تێدایە. و دوو شەقامە گەورەکەی دەرچوون لە ناوەند — شەقامی کەرکووک و بازنەی 100 مەتری — ئەو شوێنەن کە هۆتێلە ئاسایی و مامناوەندەکان لێن، نزیک زانکۆ و دادگا و مۆڵەکان، و نزیکەی بیست خولەک لە فڕۆکەخانەوە. ماي فلاوەر هۆتێلز {count} هۆتێل لەسەر ئەم دوو شەقامە بەڕێوەدەبات، کە ئەوە ئەو بەشەی ئەم پەڕەیەیە کە دەبێت بە گومانەوە بیخوێنیتەوە: ئێمە نووسیومانە.',
     metaTitle: 'لە هەولێر لە کوێ بمێنیتەوە — ناوچەکان و گونجاوی هەریەکەیان',
     metaDescription:
       'ئەو بەشانەی هەولێر کە سەردانکەرێک لە نێوانیاندا هەڵدەبژێرێت — قەڵا و ناوەندەکە، عەنکاوە، گوڵان و بەختیاری، شەقامی کەرکووک و شەقامی 100 مەتری — هەریەکەیان بۆ چی گونجاوە، و چەند لە فڕۆکەخانە و شاری کۆن دوورن.',
@@ -490,7 +490,7 @@ const ku: GuideDictionary = {
       {
         heading: 'شەقامی کەرکووک و شەقامی 100 مەتری',
         paragraphs: [
-          'ئەو شەقامە بازنەییانەی زۆربەی هاتووچۆی ئاسایی شارەکە هەڵدەگرن، و زۆربەی هۆتێلە ئاسایییەکانی. شەقامی کەرکووک لە نزیک ناوەندەوە بەرەو باشوور دەڕوات بە تابلۆ مۆڵدا؛ شەقامی 100 مەتریش بازنەی ناوەوەیە، بە ناوچەی دادگا و کتێبخانەی ناوەندی و زانکۆی سەڵاحەدیندا تێدەپەڕێت.',
+          'ئەو دوو شەقامەی زۆربەی هاتووچۆی ئاسایی شارەکە هەڵدەگرن، و زۆربەی هۆتێلە ئاسایییەکانی. شەقامە بازنەییەکانی هەولێر بە پانییان ناودەنرێن و بە بازنە لە قەڵاوە بەرەو دەرەوە دەڕۆن — 30، 40، 60، 100 و 120 مەتری — بۆیە بازنەی 100 مەتری چوارەمیانە، نزیکەی 4 کیلۆمەتر لە ناوەندەوە، و بە ناوچەی دادگا و کتێبخانەی ناوەندی و زانکۆی سەڵاحەدیندا تێدەپەڕێت. شەقامی کەرکووک بازنە نییە بەڵکو ڕادیاڵێکە، لە نزیک ناوەندەوە بەرەو باشوور دەڕوات بە تابلۆ مۆڵدا.',
           'ئەمە ئەو شوێنەیە کە لێی دەمێنیتەوە ئەگەر بۆ کارێکی دیاریکراو هاتوویتە هەولێر نەک بۆ شارەکە — سەردانی زانکۆ، ڕۆژێکی دادگا، کارێک لە یەکێک لە مۆڵەکان، شەوێک لە نێوان دوو فڕینەوە — و ئەو شوێنەی نرخی ژوور بەشێکی بچووکی گوڵانە بۆ هەمان قەبارەی ژوور. هەروەها ئەو شوێنەیە کە هەر {count} هۆتێلەکەی ماي فلاوەری لێیە.',
         ],
       },
@@ -518,7 +518,7 @@ const ku: GuideDictionary = {
     faq: [
       {
         q: 'باشترین بەشی هەولێر بۆ مانەوە کامەیە؟',
-        a: 'ناوەندەکە لە نزیک قەڵا بۆ شاری کۆن، عەنکاوە بۆ چێشتخانە و بار و گەڕەکی بیانییەکان، گوڵان و بەختیاری بۆ هۆتێلە گەورە پێنج ئەستێرەکان و فڕۆکەخانە، و شەقامە بازنەییەکان — شەقامی کەرکووک و شەقامی 100 مەتری — بۆ هۆتێلی ئاسایی و مامناوەند نزیک زانکۆ و مۆڵەکان.',
+        a: 'ناوەندەکە لە نزیک قەڵا بۆ شاری کۆن، عەنکاوە بۆ چێشتخانە و بار و گەڕەکی بیانییەکان، گوڵان و بەختیاری بۆ هۆتێلە گەورە پێنج ئەستێرەکان و فڕۆکەخانە، و دوو شەقامە گەورەکەی دەرچوون لە ناوەند — شەقامی کەرکووک و بازنەی 100 مەتری — بۆ هۆتێلی ئاسایی و مامناوەند نزیک زانکۆ و مۆڵەکان.',
       },
       {
         q: 'فڕۆکەخانەی هەولێر چەند لە شارەوە دوورە؟',
@@ -682,7 +682,7 @@ const ar: GuideDictionary = {
     eyebrow: 'أربيل',
     title: 'أين تقيم في أربيل؟',
     lead:
-      'يعتمد ذلك على سبب قدومك. بُنيت أربيل في حلقات حول قلعتها، وينتهي معظم الزائرين إلى الاختيار بين أربعة أجزاء منها. المركز، حول القلعة والبازار تحتها، هو ما تريده إن جئت لرؤية المدينة القديمة. وعنكاوا في الشمال هي الحي المسيحي — معظم الحانات والمطاعم، ومعظم المكاتب الأجنبية، والجزء الذي يمكن التجول فيه سيراً. وحيّا گولان وبختياري، على الطريق إلى المطار، يضمّان معظم فنادق الخمس نجوم الكبيرة. أما الشوارع الحلقية — شارع كركوك وشارع 100 متر — ففيها الفنادق العادية متوسطة السعر، قرب الجامعة والمحكمة والمولات، وعلى نحو عشرين دقيقة من المطار. وتدير ماي فلاور للفنادق {count} فنادق على هذين الشارعين، وهذا هو الجزء الذي ينبغي أن تقرأه في هذه الصفحة بأكبر قدر من الشك: نحن من كتبها.',
+      'يعتمد ذلك على سبب قدومك. بُنيت أربيل في حلقات حول قلعتها، وينتهي معظم الزائرين إلى الاختيار بين أربعة أجزاء منها. المركز، حول القلعة والبازار تحتها، هو ما تريده إن جئت لرؤية المدينة القديمة. وعنكاوا في الشمال هي الحي المسيحي — معظم الحانات والمطاعم، ومعظم المكاتب الأجنبية، والجزء الذي يمكن التجول فيه سيراً. وحيّا گولان وبختياري، على الطريق إلى المطار، يضمّان معظم فنادق الخمس نجوم الكبيرة. أما الطريقان الكبيران الخارجان من المركز — شارع كركوك وحلقة 100 متر — ففيهما الفنادق العادية متوسطة السعر، قرب الجامعة والمحكمة والمولات، وعلى نحو عشرين دقيقة من المطار. وتدير ماي فلاور للفنادق {count} فنادق على هذين الشارعين، وهذا هو الجزء الذي ينبغي أن تقرأه في هذه الصفحة بأكبر قدر من الشك: نحن من كتبها.',
     metaTitle: 'أين تقيم في أربيل — الأحياء وما يناسبه كل منها',
     metaDescription:
       'أجزاء أربيل التي يختار بينها الزائر — القلعة والمركز، وعنكاوا، وگولان وبختياري، وشارع كركوك وشارع 100 متر — ما يناسبه كل منها، وكم يبعد كل منها عن المطار والمدينة القديمة.',
@@ -708,7 +708,7 @@ const ar: GuideDictionary = {
       {
         heading: 'شارع كركوك وشارع 100 متر',
         paragraphs: [
-          'الشارعان الحلقيان اللذان يحملان معظم حركة المدينة العادية، ومعظم فنادقها العادية. يمتد شارع كركوك جنوباً من قرب المركز مروراً بتابلو مول؛ وشارع 100 متر هو الحلقة الداخلية، يمر بحي المحكمة والمكتبة المركزية وجامعة صلاح الدين.',
+          'الشارعان اللذان يحملان معظم حركة المدينة العادية، ومعظم فنادقها العادية. وشوارع أربيل الحلقية تُسمّى بعرضها وتدور خارجةً من القلعة — 30 و40 و60 و100 و120 متراً — فحلقة 100 متر هي الرابعة من المركز، على نحو أربعة كيلومترات منه، وتمر بحي المحكمة والمكتبة المركزية وجامعة صلاح الدين. أما شارع كركوك فليس حلقة بل شعاع، يمتد جنوباً من قرب المركز مروراً بتابلو مول.',
           'هنا تقيم إن جئت أربيل لأمر بعينه لا من أجل المدينة — زيارة جامعية، أو موعد في المحكمة، أو عمل في أحد المولات، أو ليلة بين رحلتين — وهنا يكون سعر الغرفة جزءاً يسيراً من سعر گولان لغرفة مماثلة. وهنا أيضاً فنادق ماي فلاور {count} جميعها.',
         ],
       },
@@ -736,7 +736,7 @@ const ar: GuideDictionary = {
     faq: [
       {
         q: 'ما أفضل حي للإقامة في أربيل؟',
-        a: 'المركز قرب القلعة للمدينة القديمة، وعنكاوا للمطاعم والحانات وحي الأجانب، وگولان وبختياري لفنادق الخمس نجوم الكبيرة وللمطار، والشوارع الحلقية — شارع كركوك وشارع 100 متر — للفنادق العادية متوسطة السعر قرب الجامعة والمولات.',
+        a: 'المركز قرب القلعة للمدينة القديمة، وعنكاوا للمطاعم والحانات وحي الأجانب، وگولان وبختياري لفنادق الخمس نجوم الكبيرة وللمطار، والطريقان الكبيران الخارجان من المركز — شارع كركوك وحلقة 100 متر — للفنادق العادية متوسطة السعر قرب الجامعة والمولات.',
       },
       {
         q: 'كم يبعد مطار أربيل عن المدينة؟',
