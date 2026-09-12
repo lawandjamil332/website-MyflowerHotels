@@ -10,6 +10,7 @@ import { getDictionary } from '@/i18n/dictionaries'
 import { countWord, fillCount } from '@/i18n/count'
 import { getAllRooms, getBranches, getFeaturedRooms, getOffers } from '@/utilities/branches'
 import { cheapestPerBranch } from '@/utilities/fromPrice'
+import { roomsAcross } from '@/utilities/roomCount'
 import { Price } from '@/components/site/Currency'
 import { groupIdentity } from '@/utilities/group'
 import { getSettings } from '@/utilities/getSettings'
@@ -195,6 +196,14 @@ export default async function HomePage({ params }: Args) {
   // number given the wrong scope is the fault this whole band is fixing.
   const openWord = countWord(openCount, locale).toLocaleLowerCase(
     locale === 'en' ? 'en' : undefined,
+  )
+
+  // Rooms in the hotels a guest can book tonight. The tile beside it counts
+  // open hotels, so counting rooms in a building nobody can stay in yet would
+  // put two scopes in one band.
+  const openRooms = roomsAcross(
+    everyRoom,
+    branches.filter((b) => b.status !== 'openingSoon').map((b) => Number(b.id)),
   )
 
   // Written once and used three times — the schema description, the site
@@ -455,23 +464,24 @@ export default async function HomePage({ params }: Args) {
                 settings.establishedYear
                   ? { value: String(settings.establishedYear), label: t.home.creditSince }
                   : null,
-                {
-                  value: t.home.creditGuestsValue,
-                  // "2 million" on its own is a number with no scope, which is
-                  // the kind of figure a reader discounts entirely. Saying
-                  // which hotels it covers costs four words and makes it a
-                  // claim somebody could check.
-                  label: t.home.creditGuests.replace('{count}', openWord),
-                },
+                // Counted from the rooms the site sells rather than typed
+                // here — see src/utilities/roomCount.ts for why the figure
+                // that used to sit in this tile could not have been true.
+                openRooms > 0
+                  ? {
+                      value: String(openRooms),
+                      label: t.home.creditRooms.replace('{count}', openWord),
+                    }
+                  : null,
                 { value: settings.stars ?? '4', label: t.home.creditStars },
                 { value: t.branch.anyTime, label: t.home.creditReception },
               ]
                 .filter((c): c is { value: string; label: string; note?: string } => c !== null)
                 .map((credit, i) => (
                   <Reveal key={credit.label} delay={i * 80} className="bg-sand px-4 py-7 sm:px-5">
-                    {/* Sized down from the four-item version: "2 million" is
-                        several times the width of "4", and at the old size it
-                        broke its column before it broke the line. */}
+                    {/* Sized down from the four-item version: the room count
+                        and the year are several times the width of "4", and at
+                        the old size they broke their column before the line. */}
                     <p className="font-display text-[1.9rem] leading-none text-balance text-ink sm:text-[2.15rem]">
                       {credit.value}
                     </p>
