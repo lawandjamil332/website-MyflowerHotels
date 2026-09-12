@@ -10,6 +10,7 @@ import { getSettings } from '@/utilities/getSettings'
 import { SITE_NAME } from '@/utilities/site'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { toMapsHref, toTelHref, toWhatsAppHref, whatsappMessage } from '@/utilities/contact'
+import { formatKm, landmarksFrom } from '@/utilities/landmarks'
 import { branchLocative } from '@/utilities/teasers'
 import { comma, formatDateLong, formatNumber } from '@/utilities/format'
 import { shippedPhoto } from '@/utilities/shippedPhoto'
@@ -79,6 +80,10 @@ export default async function BranchPage({ params }: Args) {
   // Not open yet: the page still shows the hotel, but must not offer a phone
   // line nobody is answering or a room list that does not exist.
   const openingSoon = isOpeningSoon(branch)
+
+  // Computed from this hotel's own map pin. Empty when it has no coordinates,
+  // which is the honest answer rather than a guess.
+  const distances = landmarksFrom(branch.latitude, branch.longitude, locale)
   const opening = openingLabel(branch, t.branch.openingSoon)
   const hasOverview = Boolean(branch.description) || (branch.amenities?.length ?? 0) > 0
 
@@ -208,6 +213,35 @@ export default async function BranchPage({ params }: Args) {
                         {branch.nearby && (
                           <dd className="mt-3 leading-relaxed whitespace-pre-line text-muted-ink">
                             {branch.nearby}
+                          </dd>
+                        )}
+                        {/* The same question, answered from the map pin
+                            instead of from a sentence somebody remembered to
+                            write. "Hotel near Erbil airport" is one of the
+                            commonest ways a room is looked for here, and the
+                            field above answers it only for whichever hotels
+                            have had the line typed into them. This answers it
+                            for every hotel that has coordinates, in all three
+                            languages, and cannot go stale. */}
+                        {distances.length > 0 && (
+                          <dd className="mt-4">
+                            <span className={factLabel}>{t.branch.distancesLabel}</span>
+                            <ul className="mt-2 space-y-1">
+                              {distances.map((place) => (
+                                <li
+                                  key={place.id}
+                                  className="flex flex-wrap items-baseline gap-x-2 text-ink-soft"
+                                >
+                                  <span>{place.name}</span>
+                                  <span className="font-semibold text-ink" dir="ltr">
+                                    {formatKm(place.km)}
+                                  </span>
+                                </li>
+                              ))}
+                            </ul>
+                            <span className="mt-2 block text-[0.8rem] text-muted-ink">
+                              {t.branch.distancesNote}
+                            </span>
                           </dd>
                         )}
                       </div>

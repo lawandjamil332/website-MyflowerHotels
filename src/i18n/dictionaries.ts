@@ -56,6 +56,16 @@ export type Dictionary = {
     stayEyebrow: string
     galleryEyebrow: string
     locationEyebrow: string
+    /**
+     * How far this hotel is from the places guests search for.
+     *
+     * Computed from the hotel's own coordinates rather than written by hand —
+     * see src/utilities/landmarks.ts. The note says plainly that these are
+     * straight-line distances, because a guest who measures the taxi ride
+     * against them deserves to have been told.
+     */
+    distancesLabel: string
+    distancesNote: string
     contactTitle: string
     rooms: string
     amenities: string
@@ -588,6 +598,8 @@ const en: Dictionary = {
     stayEyebrow: 'Your stay',
     galleryEyebrow: 'In pictures',
     locationEyebrow: 'Location',
+    distancesLabel: 'How far',
+    distancesNote: 'Straight-line distances — the road is a little longer.',
     contactTitle: 'Reserve a room',
     rooms: 'Rooms at this hotel',
     amenities: 'What this hotel offers',
@@ -1097,6 +1109,8 @@ const ku: Dictionary = {
     stayEyebrow: 'مانەوەکەت',
     galleryEyebrow: 'بە وێنە',
     locationEyebrow: 'شوێن',
+    distancesLabel: 'دووری',
+    distancesNote: 'دووری ڕاستەوخۆ — ڕێگاکە کەمێک درێژترە.',
     contactTitle: 'ژوورێک حیجز بکە',
     rooms: 'ژوورەکانی ئەم هۆتێلە',
     amenities: 'ئەم هۆتێلە چی پێشکەش دەکات',
@@ -1603,6 +1617,8 @@ const ar: Dictionary = {
     stayEyebrow: 'إقامتك',
     galleryEyebrow: 'بالصور',
     locationEyebrow: 'الموقع',
+    distancesLabel: 'كم يبعد',
+    distancesNote: 'مسافات بخط مستقيم — والطريق أطول قليلاً.',
     contactTitle: 'احجز غرفة',
     rooms: 'غرف هذا الفندق',
     amenities: 'ما يقدمه هذا الفندق',

@@ -4,6 +4,7 @@ import { getBranches, getAllRooms } from '@/utilities/branches'
 import { getSettings } from '@/utilities/getSettings'
 import { getServerSideURL } from '@/utilities/getURL'
 import { groupIdentity } from '@/utilities/group'
+import { formatKm, landmarksFrom } from '@/utilities/landmarks'
 import { formatPrice } from '@/utilities/format'
 
 /**
@@ -74,6 +75,19 @@ export async function GET(): Promise<Response> {
       // shapes this question takes, and it is unanswerable from a street name.
       b.nearby?.replace(/\s*\n\s*/g, ' '),
       b.status === 'openingSoon' ? 'opening soon, not yet taking guests' : null,
+      // The question this file exists to answer, for the commonest shape it
+      // takes: "a hotel near Erbil airport". Computed from the hotel's own
+      // coordinates, so it is right for every hotel rather than for the ones
+      // somebody remembered to write a sentence about. Straight-line, and it
+      // says so — an assistant quoting it should quote that too.
+      (() => {
+        const near = landmarksFrom(b.latitude, b.longitude, locale)
+        return near.length > 0
+          ? `distances in a straight line (a road route is longer): ${near
+              .map((place) => `${place.name} ${formatKm(place.km)}`)
+              .join(', ')}`
+          : null
+      })(),
       b.phone ? `telephone ${b.phone}` : null,
       // Where this hotel's reputation actually lives. Attributed, because
       // these are Booking.com's reviews and not this site's.
