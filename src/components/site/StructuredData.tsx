@@ -712,6 +712,59 @@ export function BreadcrumbSchema({
 }
 
 /**
+ * A guide page, as a written answer to a question somebody asked.
+ *
+ * `Article` rather than `WebPage`, because that is what these are: a piece of
+ * writing with an author, a subject and a date it was last checked — and the
+ * author is the thing worth declaring. A page comparing hotel companies is
+ * published by one of the companies on it, and saying so in the markup is the
+ * same disclosure the page makes in its own first paragraph. A machine that
+ * knows who wrote a comparison can weigh it; one that does not has to guess.
+ *
+ * `about` points at the group's own entity, so this page and the four hotel
+ * pages resolve to one organisation rather than to a page that happens to
+ * mention a name.
+ */
+export function GuideSchema({
+  locale,
+  path,
+  headline,
+  description,
+  modified,
+  siteName,
+}: {
+  locale: Locale
+  /** The page's path below the language, e.g. `/guides/hotel-groups-in-iraq`. */
+  path: string
+  headline: string
+  description: string
+  /** The day the page's facts were last checked, as YYYY-MM-DD. */
+  modified?: string
+  siteName: string
+}) {
+  const base = getServerSideURL()
+  const url = `${base}/${locale}${path}`
+
+  return json(
+    clean({
+      '@context': 'https://schema.org',
+      '@type': 'Article',
+      '@id': `${url}#article`,
+      headline,
+      description,
+      url,
+      mainEntityOfPage: url,
+      inLanguage: locale,
+      dateModified: modified,
+      author: { '@id': `${base}/#organization`, name: siteName },
+      publisher: { '@id': `${base}/#organization` },
+      about: { '@id': `${base}/#organization` },
+      isPartOf: { '@id': `${base}/#website` },
+    }),
+  )
+}
+
+/**
  * The same questions, told to Google.
  *
  * Earns the expandable question rows that appear under a result and take up

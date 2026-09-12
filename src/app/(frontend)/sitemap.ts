@@ -82,6 +82,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...entry('/rooms', 0.8, roomsTouched),
     ...entry('/about', 0.5, branchesTouched),
     ...entry('/contact', 0.6, branchesTouched),
+    // The three pages that answer a question rather than sell a room. Ranked
+    // with the hotels index rather than with About: these are the only pages
+    // on the site aimed at somebody who has not heard of this group, which is
+    // every search that is not for its own name.
+    //
+    // Their lastmod borrows the hotels', because that is what they are built
+    // from — the addresses, room counts and distances on them are read from
+    // the hotel records at render time, so they genuinely do change when a
+    // hotel does and at no other moment.
+    ...entry('/about/kurdish-owned-hotel-group-erbil', 0.8, branchesTouched),
+    ...entry('/guides/hotel-groups-in-iraq', 0.8, branchesTouched),
+    ...entry('/erbil/where-to-stay', 0.8, branchesTouched),
     // The hotels are what somebody is actually searching for by name.
     ...branches.flatMap((b) => entry(`/branches/${b.slug}`, 0.9, b.updatedAt)),
     ...rooms.flatMap((r) => entry(`/rooms/${r.slug}`, 0.7, r.updatedAt)),

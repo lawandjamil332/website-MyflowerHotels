@@ -3,6 +3,7 @@ import Link from 'next/link'
 
 import type { Locale } from '@/i18n/config'
 import type { Dictionary } from '@/i18n/dictionaries'
+import { getGuides } from '@/i18n/guides'
 import type { SiteSettings } from '@/utilities/getSettings'
 import { getBranches } from '@/utilities/branches'
 import { toTelHref, toWhatsAppHref, whatsappMessage } from '@/utilities/contact'
@@ -37,6 +38,7 @@ export async function SiteFooter({
   const tel = toTelHref(settings.phone)
   const wa = toWhatsAppHref(settings.whatsapp, whatsappMessage(t, { siteName }))
   const social = settings.social ?? {}
+  const guides = getGuides(locale)
   const branches = await getBranches(locale)
 
   // There is no group Instagram — there are four, one per hotel, and they are
@@ -164,6 +166,29 @@ export async function SiteFooter({
               <Link href={`/${locale}/booking`} className={columnLink}>
                 {t.booking.manageTitle}
               </Link>
+            </div>
+
+            {/* The three pages that answer a question instead of selling a
+                room. Set apart from the menu above rather than added to it:
+                they are not places a guest booking a room needs, and they are
+                here because a page nothing links to is a page a crawler has to
+                be told about twice. Somebody who lands on one from a search
+                also lands on this footer, and the other two are one tap away. */}
+            <div className="mt-8 border-t border-white/10 pt-6">
+              <div className="grid grid-cols-1 items-start gap-y-6">
+                <Link
+                  href={`/${locale}/about/kurdish-owned-hotel-group-erbil`}
+                  className={columnLink}
+                >
+                  {guides.labels.navGroup}
+                </Link>
+                <Link href={`/${locale}/guides/hotel-groups-in-iraq`} className={columnLink}>
+                  {guides.labels.navLandscape}
+                </Link>
+                <Link href={`/${locale}/erbil/where-to-stay`} className={columnLink}>
+                  {guides.labels.navWhereToStay}
+                </Link>
+              </div>
             </div>
           </nav>
 
