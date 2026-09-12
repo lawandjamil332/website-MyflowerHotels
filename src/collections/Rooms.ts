@@ -32,10 +32,27 @@ export const Rooms: CollectionConfig = {
     afterChange: [
       ({ doc, req }) => {
         const branch = doc?.branch as { slug?: string } | number | null | undefined
-        pingIndexNow(
-          req.payload,
-          pathsForRoom(doc?.slug, typeof branch === 'object' ? branch?.slug : null),
-        )
+
+        if (branch && typeof branch === 'object') {
+          pingIndexNow(req.payload, pathsForRoom(doc?.slug, branch.slug))
+          return doc
+        }
+
+        // The relationship usually comes back from a save as a bare id, not as
+        // the hotel — so reading a slug off it gives nothing and the hotel's own
+        // page, the one page a new room most obviously changes, would be left
+        // out of the submission. Looked up here rather than before the ping, so
+        // the save still never waits on any of this, and falling back to the
+        // pages that need no lookup if the hotel cannot be read.
+        if (typeof branch === 'number') {
+          void req.payload
+            .findByID({ collection: 'branches', id: branch, depth: 0 })
+            .then((found) => pingIndexNow(req.payload, pathsForRoom(doc?.slug, found?.slug)))
+            .catch(() => pingIndexNow(req.payload, pathsForRoom(doc?.slug)))
+          return doc
+        }
+
+        pingIndexNow(req.payload, pathsForRoom(doc?.slug))
         return doc
       },
     ],

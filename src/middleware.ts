@@ -77,6 +77,26 @@ export function middleware(request: NextRequest) {
     return NextResponse.next({ request: { headers } })
   }
 
+  /**
+   * A path with no language on it gets the default one.
+   *
+   * Deliberately a 307 and not a 308, which looks like an oversight and is not.
+   *
+   * The case for a permanent redirect is that it is the stronger signal to
+   * Google that `/en` is the real homepage. That signal is already being sent,
+   * twice: `/en` carries its own `rel=canonical`, and every page on the site
+   * declares `hreflang="x-default"` pointing at the English one. There is
+   * nothing left for a 308 to say.
+   *
+   * The case against is that browsers cache a permanent redirect hard, and
+   * sometimes indefinitely. The day this site starts reading a visitor's
+   * language and sending an Arabic browser to `/ar` — which is the obvious next
+   * thing to want — every returning visitor who ever hit `/` would keep going
+   * to `/en` from their own cache, with no request reaching this code to say
+   * otherwise. That is a bug that cannot be deployed away.
+   *
+   * A signal worth nothing against a trap worth a lot. It stays temporary.
+   */
   const url = request.nextUrl.clone()
   url.pathname = `/${defaultLocale}${pathname === '/' ? '' : pathname}`
   return NextResponse.redirect(url)
