@@ -8,7 +8,8 @@ import type { Metadata } from 'next'
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { countWord, fillCount } from '@/i18n/count'
-import { getBranches, getFeaturedRooms, getOffers } from '@/utilities/branches'
+import { getAllRooms, getBranches, getFeaturedRooms, getOffers } from '@/utilities/branches'
+import { Price } from '@/components/site/Currency'
 import { groupIdentity } from '@/utilities/group'
 import { getSettings } from '@/utilities/getSettings'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
@@ -103,12 +104,56 @@ export default async function HomePage({ params }: Args) {
   const locale = raw as Locale
 
   const t = getDictionary(locale)
-  const [branches, rooms, offers, settings] = await Promise.all([
+  const [branches, rooms, offers, settings, everyRoom] = await Promise.all([
     getBranches(locale),
     getFeaturedRooms(locale, 4),
     getOffers(locale),
     getSettings(locale),
+    getAllRooms(locale),
   ])
+
+  /**
+   * The cheapest night each hotel can actually be booked at.
+   *
+   * Here because of what the first week of figures showed. On a phone the
+   * opening screen carried the search bar, the group's name and a line about
+   * hospitality — and no hotel and no price anywhere on it. The first price on
+   * the page was four thousand pixels down, five screens, and the deep-scroll
+   * count said almost nobody got there. So a guest arriving from Google or
+   * Instagram was asked to pick dates before being told what a room costs or
+   * even which four hotels these are. Eighty-five of them came in a week and
+   * one used the search.
+   *
+   * `getAllRooms` already reads the calendar, so these are the rates the
+   * booking flow would actually charge rather than a second number kept
+   * somewhere else — see src/utilities/fromPrice.ts for why that distinction
+   * is the whole point.
+   */
+  /**
+   * Only hotels a guest can actually book tonight.
+   *
+   * One still being built has no price to quote and a tap on it would land on
+   * a page with no way through, which is a worse first impression than not
+   * being listed on the opening screen at all. It is named further down the
+   * page with its own "opening soon" mark, where the context explains it.
+   */
+  const fromByBranch = new Map<number, { amount: number; currency: string }>()
+  for (const room of everyRoom) {
+    const branchId = typeof room.branch === 'object' ? room.branch?.id : room.branch
+    const amount = Number(room.priceFrom)
+    if (!branchId || !Number.isFinite(amount) || amount <= 0) continue
+    const held = fromByBranch.get(Number(branchId))
+    if (!held || amount < held.amount) {
+      fromByBranch.set(Number(branchId), { amount, currency: room.currency ?? 'IQD' })
+    }
+  }
+
+  const withPrices = branches
+    .filter((b) => b.status !== 'openingSoon')
+    .map((branch) => ({ branch, from: fromByBranch.get(Number(branch.id)) }))
+    .filter((entry): entry is { branch: (typeof branches)[number]; from: { amount: number; currency: string } } =>
+      Boolean(entry.from),
+    )
 
   // The hero borrows the first branch's photograph. Photography is the design,
   // and this avoids a stock image standing in for the group's real hotels.
@@ -272,6 +317,46 @@ export default async function HomePage({ params }: Args) {
               locale={locale}
               t={t}
             />
+
+            {/* The four hotels and what they cost, on the screen a guest
+                lands on.
+                This is the answer to the two questions every hotel visitor
+                arrives with — which hotels are these, and how much — and
+                neither was on the opening screen. The search bar asked them
+                to commit to dates first, and a week of figures says they
+                will not: eighty-five visitors, one search. A name and a price
+                need nothing from the guest, and either one is a reason to
+                tap.
+
+                It is a row that scrolls sideways on a phone rather than a
+                grid that stacks, so four hotels cost about ninety pixels
+                instead of four hundred and stay inside the first screen —
+                which is the only reason any of this helps. */}
+            {withPrices.length > 0 && (
+              <ul className="-mx-5 mt-4 flex gap-2.5 overflow-x-auto px-5 pb-1 sm:mx-0 sm:px-0 lg:mt-5">
+                {withPrices.map(({ branch, from }) => (
+                  <li key={branch.id} className="shrink-0">
+                    <Link
+                      href={`/${locale}/branches/${branch.slug}`}
+                      className="tap-safe block rounded-xl border border-white/25 bg-black/30 px-4 py-2.5 backdrop-blur-sm transition-colors duration-500 ease-luxe hover:bg-black/45"
+                    >
+                      <span className="block text-[0.82rem] font-semibold text-white">
+                        {branch.name}
+                      </span>
+                      <span className="mt-0.5 flex items-baseline gap-1 text-[0.78rem] text-white/80">
+                        {t.room.from}
+                        <Price
+                          amount={from.amount}
+                          currency={from.currency}
+                          locale={locale}
+                          className="font-semibold text-white"
+                        />
+                      </span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         )}
 
