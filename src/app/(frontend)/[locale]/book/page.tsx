@@ -294,6 +294,9 @@ export default async function BookPage({ params, searchParams }: Args) {
               room={chosen}
               branchId={chosen.branchId}
               hotelName={chosenBranch?.name}
+              // Read here, on the server, at the moment of the request — see
+              // the prop's own note for what reading it in the browser costs.
+              measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID}
               checkIn={checkInRaw}
               checkOut={checkOutRaw}
               guests={guests}

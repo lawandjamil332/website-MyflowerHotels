@@ -128,3 +128,51 @@ export const withCalendarPrices = async <T extends Room>(
     return found === undefined ? room : { ...room, priceFrom: found }
   })
 }
+
+/**
+ * The cheapest room at each hotel, without comparing two currencies.
+ *
+ * `Math.min` over a hotel's prices is wrong the moment one room is priced in
+ * dollars: a 80 USD suite beats a 100,000 IQD double on the number alone, and
+ * the homepage then advertises the most expensive room in the building as the
+ * cheapest. Nobody notices until a guest arrives expecting eighty of something.
+ *
+ * So the comparison happens inside one currency. The one chosen is whichever
+ * the hotel prices most of its rooms in, which is the currency it actually
+ * trades in; rooms priced in the other are left out of the "from" figure
+ * rather than converted, because a converted number is a rate this site made
+ * up and the booking page would charge something else.
+ *
+ * Written once and used by both the homepage and the hotels index, which had
+ * the same loop copied into each with the same fault in both.
+ */
+export const cheapestPerBranch = <T extends { branch?: unknown; priceFrom?: number | null; currency?: string | null }>(
+  rooms: T[],
+): Map<number, { amount: number; currency: string }> => {
+  const byBranch = new Map<number, { amount: number; currency: string }[]>()
+
+  for (const room of rooms) {
+    const branch = room.branch as { id?: number } | number | null | undefined
+    const id = typeof branch === 'number' ? branch : branch?.id
+    if (typeof id !== 'number') continue
+    if (typeof room.priceFrom !== 'number' || room.priceFrom <= 0) continue
+    const list = byBranch.get(id) ?? []
+    list.push({ amount: room.priceFrom, currency: room.currency || 'IQD' })
+    byBranch.set(id, list)
+  }
+
+  const out = new Map<number, { amount: number; currency: string }>()
+  for (const [id, list] of byBranch) {
+    const counts = new Map<string, number>()
+    for (const entry of list) counts.set(entry.currency, (counts.get(entry.currency) ?? 0) + 1)
+    // Ties go to the currency of the cheaper room, so the answer is stable
+    // rather than depending on which order the rooms came back in.
+    const main = [...counts.entries()].sort(
+      (a, b) => b[1] - a[1] || (a[0] < b[0] ? -1 : 1),
+    )[0][0]
+    const inMain = list.filter((entry) => entry.currency === main)
+    const cheapest = inMain.reduce((low, entry) => (entry.amount < low.amount ? entry : low))
+    out.set(id, cheapest)
+  }
+  return out
+}

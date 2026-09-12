@@ -219,7 +219,7 @@ export async function cancelBooking(
     // to the wrong visit. It stands on its own, as the fact it is.
     const cancelled = found.booking
     const refunded = Number(cancelled.totalAmount) || 0
-    void reportBookingEvent(found.payload, 'booking_cancelled', null, {
+    void reportBookingEvent(found.payload, 'booking_cancelled', null, null, {
       // "—" is what `shape` puts in when the relationship did not come back;
       // it reads as a hotel called "—" in a report, so it is dropped.
       hotel: current.hotel === '—' ? null : current.hotel,

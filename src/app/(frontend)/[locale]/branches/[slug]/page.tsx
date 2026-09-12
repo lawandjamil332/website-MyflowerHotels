@@ -215,37 +215,46 @@ export default async function BranchPage({ params }: Args) {
                             {branch.nearby}
                           </dd>
                         )}
-                        {/* The same question, answered from the map pin
-                            instead of from a sentence somebody remembered to
-                            write. "Hotel near Erbil airport" is one of the
-                            commonest ways a room is looked for here, and the
-                            field above answers it only for whichever hotels
-                            have had the line typed into them. This answers it
-                            for every hotel that has coordinates, in all three
-                            languages, and cannot go stale. */}
-                        {distances.length > 0 && (
-                          <dd className="mt-4">
-                            <span className={factLabel}>{t.branch.distancesLabel}</span>
-                            <ul className="mt-2 space-y-1">
-                              {distances.map((place) => (
-                                <li
-                                  key={place.id}
-                                  className="flex flex-wrap items-baseline gap-x-2 text-ink-soft"
-                                >
-                                  <span>{place.name}</span>
-                                  <span className="font-semibold text-ink" dir="ltr">
-                                    {formatKm(place.km)}
-                                  </span>
-                                </li>
-                              ))}
-                            </ul>
-                            <span className="mt-2 block text-[0.8rem] text-muted-ink">
-                              {t.branch.distancesNote}
-                            </span>
-                          </dd>
-                        )}
                       </div>
                     )}
+                    {/* How far this hotel is from the places guests search
+                        for, computed from its own map pin.
+
+                        "Hotel near Erbil airport" is one of the commonest ways
+                        a room is looked for here, and the `nearby` field above
+                        answers it only for the hotels somebody remembered to
+                        write a sentence into. This answers it for every hotel
+                        that has coordinates, in all three languages, and
+                        cannot go stale.
+
+                        Its own cell, deliberately. It began life nested inside
+                        the address block, which meant a hotel with a map pin
+                        and no address typed in published nothing — exactly the
+                        hotel this exists for. */}
+                    {distances.length > 0 && (
+                      <div>
+                        <dt className={factLabel}>{t.branch.distancesLabel}</dt>
+                        <dd className="mt-2.5">
+                          <ul className="space-y-1">
+                            {distances.map((place) => (
+                              <li
+                                key={place.id}
+                                className="flex flex-wrap items-baseline gap-x-2 text-ink-soft"
+                              >
+                                <span>{place.name}</span>
+                                <span className="font-semibold text-ink" dir="ltr">
+                                  {formatKm(place.km)}
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                          <span className="mt-2 block text-[0.8rem] text-muted-ink">
+                            {t.branch.distancesNote}
+                          </span>
+                        </dd>
+                      </div>
+                    )}
+
                     {!openingSoon && (branch.checkInAnyTime || branch.checkInTime) && (
                       <div>
                         <dt className={factLabel}>{t.branch.checkIn}</dt>

@@ -26,6 +26,21 @@ type Gtag = (
 ) => void
 
 export const gaClientId = (measurementId: string, timeoutMs = 800): Promise<string | null> =>
+  gaField(measurementId, 'client_id', timeoutMs)
+
+/**
+ * The id of the visit, as distinct from the browser.
+ *
+ * Without it a booking reported from the server belongs to the right person
+ * and to no particular visit, and every session-scoped figure — "how many of
+ * the people who searched went on to book" — reads zero while the bookings
+ * themselves are counted correctly. That is the most misleading of the two
+ * failures, because nothing looks broken.
+ */
+export const gaSessionId = (measurementId: string, timeoutMs = 800): Promise<string | null> =>
+  gaField(measurementId, 'session_id', timeoutMs)
+
+const gaField = (measurementId: string, field: string, timeoutMs: number): Promise<string | null> =>
   new Promise((resolve) => {
     if (typeof window === 'undefined') return resolve(null)
 
@@ -44,7 +59,7 @@ export const gaClientId = (measurementId: string, timeoutMs = 800): Promise<stri
     const timer = window.setTimeout(() => finish(null), timeoutMs)
 
     try {
-      gtag('get', measurementId, 'client_id', (value) => {
+      gtag('get', measurementId, field, (value) => {
         window.clearTimeout(timer)
         finish(value ?? null)
       })

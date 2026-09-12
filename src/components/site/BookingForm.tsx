@@ -9,7 +9,7 @@ import { formatNumber } from '@/utilities/format'
 import type { AvailableRoom } from '@/utilities/booking'
 import { cn } from '@/utilities/ui'
 import { EVENTS, track } from '@/utilities/track'
-import { gaClientId } from '@/utilities/gaClientId'
+import { gaClientId, gaSessionId } from '@/utilities/gaClientId'
 import { submitBooking, type BookingResult } from '@/actions/booking'
 import { SignUpForm } from './AccountForms'
 import { btnPrimary } from './ui'
@@ -28,6 +28,7 @@ export function BookingForm({
   room,
   branchId,
   hotelName,
+  measurementId,
   checkIn,
   checkOut,
   guests,
@@ -42,6 +43,17 @@ export function BookingForm({
   branchId: number
   /** Only for the analytics event — "My Flower 3" reads where an id does not. */
   hotelName?: string
+  /**
+   * Passed in rather than read here.
+   *
+   * NEXT_PUBLIC_ variables are substituted into client code when the site is
+   * built, while the server reads them per request. A deployment built without
+   * the variable and started with it — which is exactly what Railway does when
+   * the variable is added after the fact — had working analytics and a client
+   * id that was permanently empty, so every booking arrived detached from the
+   * visit that made it.
+   */
+  measurementId?: string
   checkIn: string
   checkOut: string
   guests?: number | null
@@ -88,18 +100,53 @@ export function BookingForm({
    * Google at the moment that matters most.
    */
   const [clientId, setClientId] = useState('')
+  const [sessionId, setSessionId] = useState('')
 
   useEffect(() => {
-    const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
     if (!measurementId) return
     let live = true
-    void gaClientId(measurementId).then((id) => {
-      if (live && id) setClientId(id)
-    })
+    void Promise.all([gaClientId(measurementId), gaSessionId(measurementId)]).then(
+      ([client, session]) => {
+        if (!live) return
+        if (client) setClientId(client)
+        if (session) setSessionId(session)
+      },
+    )
     return () => {
       live = false
     }
-  }, [])
+  }, [measurementId])
+
+  /**
+   * The booking, counted from here only when the server did not count it.
+   *
+   * The server reports this event from the row it has just written, which no
+   * ad blocker can prevent — that is why it moved there. But it can only do so
+   * with GA_API_SECRET set, and when the browser's copy was removed on the day
+   * the server's was added, a deployment without that secret was left
+   * recording no bookings at all. The site's one conversion event, silently
+   * zero, which is worse than the ad-blocker problem it was meant to solve.
+   *
+   * So the server says which of the two happened, and exactly one of them
+   * fires. Never both: a booking counted twice looks right and is not.
+   *
+   * Keyed on the reference so a re-render of the same result cannot send it
+   * again.
+   */
+  const unreported = state?.status === 'success' && !state.reported ? state.reference : null
+
+  useEffect(() => {
+    if (!unreported) return
+    track(EVENTS.bookingConfirmed, {
+      hotel: hotelName,
+      room: room.name,
+      nights,
+      guests: guests ?? undefined,
+      value: total ?? undefined,
+      currency: room.currency ?? undefined,
+      locale,
+    })
+  }, [unreported, hotelName, room, nights, guests, total, locale])
 
   if (state?.status === 'success') {
     return (
@@ -186,6 +233,7 @@ export function BookingForm({
       {/* Empty when Google's script is blocked, which is common — the server
           reports the booking either way. See analyticsServer.ts. */}
       <input type="hidden" name="gaClientId" value={clientId} />
+      <input type="hidden" name="gaSessionId" value={sessionId} />
 
       <div className="mt-8 grid gap-6 sm:grid-cols-2">
         <div>

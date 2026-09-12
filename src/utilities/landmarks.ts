@@ -107,8 +107,14 @@ export const landmarksFrom = (
   longitude: number | null | undefined,
   locale: Locale,
 ): LandmarkDistance[] => {
-  const lat = Number(latitude)
-  const lon = Number(longitude)
+  // `typeof`, not `Number()`. Number(null) is 0 and Number(undefined) is NaN,
+  // so a hotel with a latitude typed in and the longitude still blank slipped
+  // through as (36.17, 0) and published distances measured from a point in the
+  // Atlantic. Both have to be actual numbers, and a pair of exact zeroes is the
+  // empty map pin rather than a hotel in the Gulf of Guinea.
+  if (typeof latitude !== 'number' || typeof longitude !== 'number') return []
+  const lat = latitude
+  const lon = longitude
   if (!Number.isFinite(lat) || !Number.isFinite(lon) || (lat === 0 && lon === 0)) return []
 
   return ERBIL_LANDMARKS.map((landmark) => ({

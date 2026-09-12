@@ -16,7 +16,21 @@ import { reportBookingEvent } from '@/utilities/analyticsServer'
 import { allow, callerKey } from '@/utilities/throttle'
 
 export type BookingResult =
-  | { status: 'success'; reference: string }
+  | {
+      status: 'success'
+      reference: string
+      /**
+       * Whether the server reported this booking to Analytics itself.
+       *
+       * False when GA_API_SECRET is not set, and then the browser sends the
+       * event instead. Without this the two would both fire and every booking
+       * would be counted twice — or, as happened, neither would: the
+       * browser's copy was removed the day the server's was added, and with
+       * the secret unset that left the site's one conversion event recording
+       * nothing at all.
+       */
+      reported: boolean
+    }
   | {
       status: 'error'
       message: 'gone' | 'generic' | 'required' | 'dates' | 'guests'
@@ -133,6 +147,12 @@ export async function submitBooking(
     // The room and hotel are named rather than numbered because these are read
     // by a person: "My Flower 2" tells them something, "3" does not.
     const gaClientId = text(formData.get('gaClientId')) || null
+    const gaSessionId = text(formData.get('gaSessionId')) || null
+    // Known synchronously, so the browser can be told whether to send its own.
+    const reported = Boolean(
+      process.env.GA_API_SECRET?.trim() && process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim(),
+    )
+
     void (async () => {
       // Looked up inside the detached task, never before the return: these are
       // two queries whose only purpose is to make a report readable, and the
@@ -146,7 +166,7 @@ export async function submitBooking(
           .catch(() => null),
       ])
 
-      await reportBookingEvent(payload, 'booking_confirmed', gaClientId, {
+      await reportBookingEvent(payload, 'booking_confirmed', gaClientId, gaSessionId, {
         hotel: branch?.name ?? null,
         room: room?.name ?? null,
         nights: nightsBetween(checkIn, checkOut),
@@ -157,7 +177,7 @@ export async function submitBooking(
       })
     })().catch(() => {})
 
-    return { status: 'success', reference: booking.reference }
+    return { status: 'success', reference: booking.reference, reported }
   } catch (error) {
     // The one refusal a guest can do something about: the room went while they
     // were typing. Everything else is ours, not theirs.

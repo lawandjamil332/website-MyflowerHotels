@@ -25,7 +25,7 @@ import type { Payload } from 'payload'
  * request from this server to Google, with nothing in the guest's browser able
  * to stop it.
  *
- * THE CLIENT ID IS WHAT MAKES IT ONE STORY. Google identifies a browser by a
+ * THE CLIENT ID AND THE SESSION ID ARE WHAT MAKE IT ONE STORY. Google identifies a browser by a
  * client id it puts in a cookie. A server event sent without one arrives as a
  * booking by a person who never visited the site — a phantom user, unattached
  * to the search and the form-fill that led to it, and the funnel breaks in
@@ -67,6 +67,7 @@ export const reportBookingEvent = async (
   payload: Payload,
   event: 'booking_confirmed' | 'booking_cancelled',
   clientId: string | null | undefined,
+  sessionId: string | null | undefined,
   params: BookingEventParams,
 ): Promise<void> => {
   const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID?.trim()
@@ -92,11 +93,27 @@ export const reportBookingEvent = async (
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
           client_id: clientId || anonymousClientId(),
-          // Marks the event as having happened without the guest present, so
-          // Google does not treat it as a sign of life and extend a session
-          // that ended when they closed the page.
-          non_personalized_ads: true,
-          events: [{ name: event, params: clean }],
+          // These two belong on the event, and leaving them off is the quiet
+          // way to make a conversion rate read zero forever.
+          //
+          // A Measurement Protocol event with no session_id joins the right
+          // person and no particular visit. Google's session-scoped reports —
+          // which is where "how many of the people who searched went on to
+          // book" is answered — then see a booking that belongs to no session
+          // and a session that produced no booking. Every funnel reads 0%
+          // while the bookings themselves are counted correctly, which is the
+          // most confusing failure of the two.
+          //
+          // engagement_time_msec has to be present and non-zero or the event
+          // is not counted as engagement at all. One millisecond is the
+          // conventional value for a server-sent event: the guest did spend
+          // time, just not measurably here.
+          events: [
+            {
+              name: event,
+              params: { ...clean, ...(sessionId ? { session_id: sessionId } : {}), engagement_time_msec: 1 },
+            },
+          ],
         }),
         // A booking must never wait on Google. This is already called without
         // being awaited; the timeout is the second guarantee, for the case

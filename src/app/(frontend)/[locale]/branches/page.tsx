@@ -9,6 +9,7 @@ import { getDictionary } from '@/i18n/dictionaries'
 import { fillCount } from '@/i18n/count'
 import { getSettings } from '@/utilities/getSettings'
 import { getAllRooms, getBranches } from '@/utilities/branches'
+import { cheapestPerBranch } from '@/utilities/fromPrice'
 import { groupIdentity } from '@/utilities/group'
 import { formatPrice } from '@/utilities/format'
 import { branchLocative } from '@/utilities/teasers'
@@ -76,16 +77,9 @@ export default async function BranchesPage({ params }: Args) {
   // The cheapest published room at each hotel. Rooms carry their branch as a
   // relationship, populated at depth 2, so this is read from the same rows the
   // rooms index prints rather than typed in beside them and left to rot.
-  const cheapest = new Map<number, { amount: number; currency?: string | null }>()
-  for (const room of rooms) {
-    const id = typeof room.branch === 'number' ? room.branch : room.branch?.id
-    if (typeof id !== 'number') continue
-    if (typeof room.priceFrom !== 'number' || room.priceFrom <= 0) continue
-    const current = cheapest.get(id)
-    if (!current || room.priceFrom < current.amount) {
-      cheapest.set(id, { amount: room.priceFrom, currency: room.currency })
-    }
-  }
+  // Shared with the homepage, and it compares inside one currency rather than
+  // taking a bare minimum — see cheapestPerBranch for why that matters.
+  const cheapest = cheapestPerBranch(rooms)
 
   const payload = await getPayload({ config: configPromise })
   const rate = await pointsRate(payload)

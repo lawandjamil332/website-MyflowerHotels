@@ -163,7 +163,10 @@ export function StayFinder({
           (new Date(checkOut).getTime() - new Date(checkIn).getTime()) / 86_400_000,
         ),
       ),
-      guests: guests || undefined,
+      // A number, as it is on booking_started. Sent as a string here, GA4
+      // types the same parameter as a dimension on one event and a metric on
+      // the other, and then refuses to total it.
+      guests: guests ? Number(guests) : undefined,
       locale,
     })
 

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { defaultLocale, locales } from './i18n/config'
+import { SITE_URL } from './utilities/site'
 
 /**
  * Every guest-facing URL carries its language: /en/..., /ku/..., /ar/...
@@ -40,13 +41,23 @@ export function middleware(request: NextRequest) {
    * 308 rather than 302: permanent, and it preserves the method, so a form
    * posted to the www address still arrives as a POST.
    */
-  const host = request.headers.get('host') ?? ''
-  if (host.toLowerCase().startsWith('www.')) {
+  const host = (request.headers.get('host') ?? '').toLowerCase()
+  const canonicalHost = new URL(SITE_URL).host
+
+  // Compared against the site's own address rather than stripped from the
+  // header, and this is the whole of the difference between a redirect and a
+  // hole. `Host` is supplied by whoever is asking: given
+  // www.somewhere-else.example, stripping four characters would have this
+  // server issue a redirect to somewhere-else.example — our domain sending
+  // visitors to theirs, over a link that looks like ours. Anything that is not
+  // exactly `www.` in front of the real host is left alone to 404 as it should.
+  if (host === `www.${canonicalHost}`) {
     const url = request.nextUrl.clone()
-    url.host = host.slice(4)
-    // Cleared so Next builds the address from `host` alone. Left set, the port
-    // of the incoming request is carried onto the redirect and a guest is sent
-    // to myflowerhotels.com:3000.
+    url.host = canonicalHost
+    url.protocol = 'https:'
+    // Cleared so the address is built from `host` alone. Left set, the port of
+    // the incoming request rides along and a guest is sent to
+    // myflowerhotels.com:3000.
     url.port = ''
     return NextResponse.redirect(url, 308)
   }

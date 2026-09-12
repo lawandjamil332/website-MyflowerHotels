@@ -9,6 +9,7 @@ import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { countWord, fillCount } from '@/i18n/count'
 import { getAllRooms, getBranches, getFeaturedRooms, getOffers } from '@/utilities/branches'
+import { cheapestPerBranch } from '@/utilities/fromPrice'
 import { Price } from '@/components/site/Currency'
 import { groupIdentity } from '@/utilities/group'
 import { getSettings } from '@/utilities/getSettings'
@@ -137,16 +138,7 @@ export default async function HomePage({ params }: Args) {
    * being listed on the opening screen at all. It is named further down the
    * page with its own "opening soon" mark, where the context explains it.
    */
-  const fromByBranch = new Map<number, { amount: number; currency: string }>()
-  for (const room of everyRoom) {
-    const branchId = typeof room.branch === 'object' ? room.branch?.id : room.branch
-    const amount = Number(room.priceFrom)
-    if (!branchId || !Number.isFinite(amount) || amount <= 0) continue
-    const held = fromByBranch.get(Number(branchId))
-    if (!held || amount < held.amount) {
-      fromByBranch.set(Number(branchId), { amount, currency: room.currency ?? 'IQD' })
-    }
-  }
+  const fromByBranch = cheapestPerBranch(everyRoom)
 
   const withPrices = branches
     .filter((b) => b.status !== 'openingSoon')
