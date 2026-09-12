@@ -637,3 +637,30 @@ html[data-theme='light'] {
     color: inherit !important;
   }
 }
+
+/**
+ * Arabic script drawn by the device rather than by a downloaded font.
+ *
+ * For the handful of places an otherwise-Latin page shows a few Arabic
+ * characters — the language switcher names its languages in their own
+ * scripts. Without this the browser fetches a 44KB Arabic webfont to set two
+ * words, which on an English page is about a fifth of everything it
+ * downloads.
+ *
+ * Every phone and desktop ships a competent Arabic face, so the words render
+ * correctly; they simply are not set in the site's own face. For two words in
+ * a navigation control that is a trade worth making, and it is deliberately
+ * not used anywhere a sentence is read.
+ */
+.font-fallback-arabic {
+  /* The site's own Arabic face is last, and that is the whole trick. A browser
+     downloads a webfont only if it actually needs it to draw something, so on
+     any device carrying an Arabic font of its own — every phone, every current
+     desktop — the list is satisfied before it gets there and nothing is
+     fetched. On a machine with no Arabic font at all it falls through to the
+     webfont and pays the 44KB, which is the right answer for that machine:
+     two words set in the site's face beats two words set in empty boxes. */
+  font-family:
+    system-ui, 'Segoe UI', Tahoma, 'Noto Sans Arabic', 'Geeza Pro', 'IBM Plex Sans Arabic',
+    sans-serif;
+}

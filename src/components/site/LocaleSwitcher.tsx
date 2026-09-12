@@ -70,6 +70,20 @@ export function LocaleSwitcher({
                     ? 'text-ink'
                     : 'text-muted-ink hover:text-ink',
                 isCurrent && 'underline decoration-brand decoration-1 underline-offset-[6px]',
+                // Two words that were costing 44KB on every English page.
+                //
+                // The footer names each language in its own script — کوردی,
+                // العربية — so an English page contained Arabic characters,
+                // and the browser dutifully fetched a 44KB Arabic webfont to
+                // draw them. A third of that page's font weight, and about a
+                // fifth of everything it downloads, for two words in a
+                // language switcher.
+                //
+                // Only on English pages. A Kurdish or Arabic page is set in
+                // that face throughout and has already paid for it, so there
+                // is nothing to save and a switcher in a different font from
+                // the page around it would be the only thing gained.
+                current === 'en' && locale !== 'en' && 'font-fallback-arabic',
               )}
             >
               {size === 'full' ? localeNames[locale] : localeShort[locale]}
