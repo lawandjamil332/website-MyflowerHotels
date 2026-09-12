@@ -30,7 +30,23 @@
 import { chromium } from 'playwright-core'
 
 const BASE = process.env.BASE_URL || 'http://localhost:3000'
-const PATHS = ['', '/branches', '/branches/my-flower-3', '/rooms', '/about', '/contact', '/booking', '/account']
+const PATHS = [
+  '',
+  '/branches',
+  '/branches/my-flower-3',
+  '/rooms',
+  '/about',
+  '/contact',
+  '/booking',
+  '/account',
+  // The three guide pages. Included because they are the only pages on the
+  // site made almost entirely of running prose and generated tables, which is
+  // exactly the shape that breaks a narrow screen: a four-column table is the
+  // classic way a page starts scrolling sideways on a phone.
+  '/about/kurdish-owned-hotel-group-erbil',
+  '/guides/hotel-groups-in-iraq',
+  '/erbil/where-to-stay',
+]
 const LOCALES = ['en', 'ku', 'ar']
 const WIDTHS = [{ w: 390, h: 844, name: 'phone' }, { w: 1280, h: 900, name: 'desktop' }]
 

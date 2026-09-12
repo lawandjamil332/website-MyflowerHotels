@@ -44,6 +44,7 @@ import * as migration_20260830_120000_pin_hotels_2_and_4 from './20260830_120000
 import * as migration_20260831_090000_my_flower_4_address from './20260831_090000_my_flower_4_address'
 import * as migration_20260831_100000_nearby from './20260831_100000_nearby'
 import * as migration_20260904_120000_central_reservations_email from './20260904_120000_central_reservations_email'
+import * as migration_20260912_100000_salahaddin_spelling from './20260912_100000_salahaddin_spelling'
 
 export const migrations = [
   {
@@ -277,5 +278,10 @@ export const migrations = [
     up: migration_20260904_120000_central_reservations_email.up,
     down: migration_20260904_120000_central_reservations_email.down,
     name: '20260904_120000_central_reservations_email',
+  },
+  {
+    up: migration_20260912_100000_salahaddin_spelling.up,
+    down: migration_20260912_100000_salahaddin_spelling.down,
+    name: '20260912_100000_salahaddin_spelling',
   },
 ]
