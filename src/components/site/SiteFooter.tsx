@@ -174,7 +174,11 @@ export async function SiteFooter({
                 here because a page nothing links to is a page a crawler has to
                 be told about twice. Somebody who lands on one from a search
                 also lands on this footer, and the other two are one tap away. */}
-            <div className="mt-8 border-t border-white/10 pt-6">
+            {/* border-line, not white at a tenth. This footer sits on the
+                page's sand rather than on the near-black it used to, so a
+                white rule on it is invisible — which is how a divider ends up
+                shipping as a gap nobody can see. */}
+            <div className="mt-8 border-t border-line pt-6">
               <div className="grid grid-cols-1 items-start gap-y-6">
                 <Link
                   href={`/${locale}/about/kurdish-owned-hotel-group-erbil`}

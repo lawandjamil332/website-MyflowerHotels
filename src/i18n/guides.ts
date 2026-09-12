@@ -200,7 +200,7 @@ const en: GuideDictionary = {
         ],
       },
       {
-        heading: 'The Iraqi and Kurdish groups behind them',
+        heading: 'The companies that own the buildings',
         paragraphs: [
           '**Faruk Group Holding** — founded in 2008 by Faruk Mustafa Rasool and based in Sulaymaniyah, with interests in telecoms, medical services, real estate and contracting alongside its hotels.',
           '**Falcon Group** — one of the larger business groups operating in the Kurdistan Region and across Iraq, and Marriott’s partner for the region.',
@@ -418,7 +418,7 @@ const ku: GuideDictionary = {
         ],
       },
       {
-        heading: 'گرووپە عێراقی و کوردییەکانی پشتیان',
+        heading: 'ئەو کۆمپانیایانەی خاوەنی بیناکانن',
         paragraphs: [
           '**گرووپی فاروق** — لە 2008 لەلایەن فاروق مستەفا ڕەسووڵەوە دامەزراوە و لە سلێمانییە، لەگەڵ بەرژەوەندی لە تەلەکۆم و خزمەتگوزاریی پزیشکی و خانووبەرە و پەیمانکاری بەردەم هۆتێلەکانی.',
           '**گرووپی فاڵکۆن** — یەکێک لە گەورەترین گرووپە بازرگانییەکانی هەرێمی کوردستان و سەرانسەری عێراق، و هاوبەشی ماریۆت بۆ هەرێمەکە.',
@@ -636,7 +636,7 @@ const ar: GuideDictionary = {
         ],
       },
       {
-        heading: 'المجموعات العراقية والكردية خلفها',
+        heading: 'الشركات التي تملك المباني',
         paragraphs: [
           '**مجموعة فاروق القابضة** — تأسست عام 2008 على يد فاروق مصطفى رسول ومقرها السليمانية، ولها أنشطة في الاتصالات والخدمات الطبية والعقارات والمقاولات إلى جانب فنادقها.',
           '**مجموعة فالكون** — من أكبر المجموعات العاملة في إقليم كردستان وعموم العراق، وشريكة ماريوت في الإقليم.',
