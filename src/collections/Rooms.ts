@@ -4,6 +4,7 @@ import { slugField } from 'payload'
 import { anyone } from '../access/anyone'
 import { authenticated } from '../access/authenticated'
 import { roomAmenityOptions } from '../fields/amenities'
+import { pathsForRoom, pingIndexNow } from '../utilities/indexNow'
 
 export const Rooms: CollectionConfig = {
   slug: 'rooms',
@@ -22,6 +23,22 @@ export const Rooms: CollectionConfig = {
     defaultColumns: ['name', 'branch', 'priceFrom', 'isAvailable'],
     description: 'Room types. Each one belongs to a branch.',
     group: 'Property',
+  },
+  hooks: {
+    // The same notification the hotels send, for the same reason: adding a room
+    // type changes the room count the group's pages open with, and changing a
+    // price changes the rate the rooms index quotes. Does nothing without
+    // INDEXNOW_KEY, never blocks the save. See utilities/indexNow.ts.
+    afterChange: [
+      ({ doc, req }) => {
+        const branch = doc?.branch as { slug?: string } | number | null | undefined
+        pingIndexNow(
+          req.payload,
+          pathsForRoom(doc?.slug, typeof branch === 'object' ? branch?.slug : null),
+        )
+        return doc
+      },
+    ],
   },
   fields: [
     {

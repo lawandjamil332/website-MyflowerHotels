@@ -309,6 +309,40 @@ console.log(
       ].join('\n'),
 )
 
+// Whether Bing and the assistants that read its index hear about a change on
+// the day it is made, or weeks later when a crawler next happens past.
+//
+// Bing's own traffic here is close to nothing. The reason to care is that
+// assistants searching the live web draw a meaningful share of their results
+// from that index, so a page Bing has not re-read is a page an assistant cannot
+// cite — whatever Google thinks of it.
+const indexNow = process.env.INDEXNOW_KEY?.trim()
+const indexNowUsable = indexNow && /^[0-9a-f]{8,128}$/i.test(indexNow)
+console.log(
+  indexNowUsable
+    ? ['  Search engines: told the moment a hotel or a room changes.', ''].join('\n')
+    : indexNow
+      ? [
+          '  Search engines: INDEXNOW_KEY IS SET BUT UNUSABLE.',
+          '',
+          '  It has to be 8 to 128 characters, and only the digits 0-9 and the',
+          '  letters a-f. What is there now has something else in it — usually a',
+          '  space or a quotation mark picked up when it was pasted. Nothing is',
+          '  being submitted until it is fixed.',
+          '',
+        ].join('\n')
+      : [
+          '  Search engines: NOT TOLD. They find changes when they next crawl.',
+          '',
+          '  Bing re-reads a site this size every few weeks, and the assistants',
+          '  that search the web read its index — so a new page can be invisible',
+          '  to them for a month. Set INDEXNOW_KEY to any random string of 8 to',
+          '  128 characters using only 0-9 and a-f, and every saved hotel or room',
+          '  is submitted within seconds. Nothing else to configure.',
+          '',
+        ].join('\n'),
+)
+
 if (problems.length > 0) {
   const lines = [
     '',

@@ -13,6 +13,7 @@ import {
   placeIdFrom,
   resolveShortMapsLink,
 } from '../utilities/mapsUrl'
+import { pathsForBranch, pingIndexNow } from '../utilities/indexNow'
 
 /**
  * The three properties. Prose is localized so each branch reads naturally in
@@ -84,6 +85,26 @@ export const Branches: CollectionConfig = {
           data.longitude = coords.longitude
         }
         return data
+      },
+    ],
+    /**
+     * Tell the search engines that read IndexNow, rather than waiting weeks to
+     * be crawled.
+     *
+     * A hotel's own page is the obvious one, but almost every page on this site
+     * is assembled from the list of hotels — including the three guide pages,
+     * whose addresses and room counts are read from these records when they are
+     * served. So editing one hotel really does change what eight pages say, in
+     * three languages each.
+     *
+     * Fired and forgotten. The save has already happened by the time this runs;
+     * nothing here may make somebody wait or fail a write, and without
+     * INDEXNOW_KEY it returns without doing anything at all.
+     */
+    afterChange: [
+      ({ doc, req }) => {
+        pingIndexNow(req.payload, pathsForBranch(doc?.slug))
+        return doc
       },
     ],
   },

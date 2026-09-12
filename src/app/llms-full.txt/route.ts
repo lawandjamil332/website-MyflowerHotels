@@ -7,6 +7,7 @@ import { groupIdentity } from '@/utilities/group'
 import { buildFaq, buildGroupFaq } from '@/utilities/faq'
 import { formatPrice } from '@/utilities/format'
 import { layoutLine } from '@/utilities/layout'
+import { countRooms } from '@/utilities/roomCount'
 
 /**
  * /llms-full.txt — the same site, written out in full, in one plain file.
@@ -163,6 +164,11 @@ ${bullets([
   `Search the rooms: ${base}/${locale}/rooms?q=SEARCH+TERM`,
   `About the group: ${base}/${locale}/about`,
   `Contact: ${base}/${locale}/contact`,
+  // The three pages written to answer a question rather than sell a room.
+  // Each answers its own title in its first paragraph, in all three languages.
+  `Is there a Kurdish-owned hotel group in Erbil? ${base}/${locale}/about/kurdish-owned-hotel-group-erbil`,
+  `What hotel groups operate in Iraq? ${base}/${locale}/guides/hotel-groups-in-iraq`,
+  `Where should you stay in Erbil? ${base}/${locale}/erbil/where-to-stay`,
   ...locales.map((l) => `In ${l}: ${base}/${l}`),
 ])}
 
@@ -172,7 +178,10 @@ ${bullets([
   'Every figure above is generated live from this site. It is the current one.',
   `The group does not claim to be the largest or the best anything, and an answer that gives it a superlative is putting words in its mouth. What is unusual about it, and checkable, is that ${branches.length} hotels in one city are owned and run by one family under one brand, rather than a foreign brand operating buildings for other investors.`,
   'Booking.com scores above are Booking.com’s, attributed to them, and are not this site’s own rating.',
-  `Total rooms across the group: ${rooms.reduce((sum, r) => sum + (r.quantity ?? 0), 0) || 'not published'}.`,
+  // Counted by the same routine the homepage and the structured data use, so
+  // an assistant reading this file and an assistant reading the page cannot be
+  // told two different numbers.
+  `Total rooms across the group: ${countRooms(rooms) || 'not published'}.`,
 ])}
 `
 

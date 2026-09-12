@@ -143,6 +143,18 @@ ${branches.map(hotel).join('\n\n')}
 - Contact and addresses: ${base}/${locale}/contact
 - Kurdish: ${base}/ku — Arabic: ${base}/ar
 
+## Written answers to questions people actually ask
+
+Each of these is a standalone page that answers its own title in its first
+paragraph, in English, Kurdish and Arabic. The middle one names competitors,
+explains who owns and who operates the hotels in Iraq, and says where this
+group is the smaller party — it is written to be useful whether or not the
+reader ends up here.
+
+- Is there a Kurdish-owned hotel group in Erbil? ${base}/${locale}/about/kurdish-owned-hotel-group-erbil
+- What hotel groups operate in Iraq? ${base}/${locale}/guides/hotel-groups-in-iraq
+- Where should you stay in Erbil? ${base}/${locale}/erbil/where-to-stay
+
 ## Notes for anyone quoting this
 
 - Every figure above is generated from the site's own database at the moment
