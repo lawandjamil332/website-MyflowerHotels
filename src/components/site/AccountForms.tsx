@@ -80,7 +80,14 @@ function PasswordField({
           // land on "Sign in", not on a toggle they did not ask for.
           tabIndex={-1}
           aria-pressed={shown}
-          className="absolute end-0 bottom-2 text-[0.75rem] font-semibold text-brand"
+          // A 31x18 target, which is under the 24px floor WCAG sets and well
+          // under what a thumb needs. The type stays the size it was — it is a
+          // quiet control beside a field, not a button competing with "Sign
+          // in" — and only the area that answers a tap grows. The negative
+          // inline margin lets it grow without pushing itself off the end of
+          // the field, and `bottom-0` with a fixed height keeps the text on the
+          // same baseline it sat on before.
+          className="absolute end-0 bottom-0 -me-2 flex h-11 items-center px-2 text-[0.75rem] font-semibold text-brand"
         >
           {shown ? t.account.hide : t.account.show}
         </button>

@@ -199,7 +199,13 @@ export default async function BranchesPage({ params }: Args) {
                         <th scope="row" className={cn(cell, 'text-start font-normal')}>
                           <Link
                             href={`/${locale}/branches/${branch.slug}`}
-                            className="font-medium text-ink underline decoration-line underline-offset-4 transition-colors hover:text-brand"
+                            // tap-safe, because a line of text in a table row
+                            // is 20px tall and 20px is under the floor any
+                            // pointer guideline sets. It grows the area that
+                            // answers a tap with an invisible ::before rather
+                            // than the link itself, so the table's rhythm is
+                            // untouched — the same trick the footer uses.
+                            className="tap-safe font-medium text-ink underline decoration-line underline-offset-4 transition-colors hover:text-brand"
                           >
                             {branch.name}
                           </Link>
@@ -216,7 +222,7 @@ export default async function BranchesPage({ params }: Args) {
                             <a
                               href={`tel:${branch.phone.replace(/\s+/g, '')}`}
                               dir="ltr"
-                              className="inline-block transition-colors hover:text-brand"
+                              className="tap-safe inline-block transition-colors hover:text-brand"
                             >
                               {branch.phone}
                             </a>
