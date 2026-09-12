@@ -286,6 +286,29 @@ console.log(
       ].join('\n'),
 )
 
+// Whether finished stays are ever closed out, which is the difference between
+// a loyalty scheme and a promise on a homepage.
+//
+// A booking is created `confirmed` and nothing in the site moves it on, so
+// without a scheduler calling /next/close-stays every stay ever taken stays
+// filed as an upcoming arrival — and points are only credited on a `completed`
+// one. Silent, and it costs the guest something the site said they had earned.
+console.log(
+  process.env.JOB_SECRET?.trim()
+    ? ['  Finished stays: closed by a scheduler, and points paid when they are.', ''].join('\n')
+    : [
+        '  Finished stays: NOT CLOSED. Points are never paid.',
+        '',
+        '  Every stay stays filed as an upcoming arrival however long ago the',
+        '  guest left, and points are only credited on a finished one — so the',
+        '  loyalty rate in the admin panel has never paid anybody anything.',
+        '',
+        '  Set JOB_SECRET, then have anything call POST /next/close-stays once a',
+        '  day with it as a Bearer token. .env.example spells out two ways.',
+        '',
+      ].join('\n'),
+)
+
 if (problems.length > 0) {
   const lines = [
     '',
