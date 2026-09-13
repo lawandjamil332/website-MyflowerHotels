@@ -43,7 +43,22 @@ import type { Locale } from './config'
  * move a table under the wrong heading, and rather than on the heading text,
  * which is different in all three languages.
  */
-export type GuideSection = { heading: string; paragraphs: string[]; id?: string }
+export type GuideSection = {
+  heading: string
+  paragraphs: string[]
+  id?: string
+  /**
+   * A paragraph shown only while the owner has dated the claim it makes.
+   *
+   * The "more branches in Erbil than any other hotel name" sentence is the
+   * group's own comparison, not a fact about the world, and the site's standing
+   * rule is that it appears only while "Ownership claim last checked" is set in
+   * Site settings — empty by default, so the resting state of the site is the
+   * part that needs no checking. `localClaim()` enforces that on the About
+   * page; this is how the same sentence obeys it here. Carries `{checked}`.
+   */
+  claim?: string
+}
 
 export type Guide = {
   /** The small label above the title. */
@@ -114,7 +129,7 @@ const en: GuideDictionary = {
     eyebrow: 'About the group',
     title: 'Is there a Kurdish-owned hotel group in Erbil?',
     lead:
-      'Yes. My Flower Hotels is one: {count} hotels in Erbil, {rooms} rooms between them, owned and run by one Kurdish family since {year}. No international brand operates them and no management company sits between the owners and the front desk — the family that owns the buildings is the family you deal with when something needs putting right. The {count} are on two roads a few kilometres apart: My Flower 1 and My Flower 2 on the 100 metre road, near Salahaddin University and the courthouse quarter, and My Flower 3 and My Flower 4 on Kirkuk Street, the closest of the four to the Citadel and the old bazaar. Every address, telephone number and room count below can be checked against the individual hotel page it belongs to, and against the map pin on it.',
+      'Yes. My Flower Hotels is one: {count} hotels in Erbil, {rooms} rooms between them, owned and run by one Kurdish family since {year}. No international brand operates them and no management company sits between the owners and the front desk — the family that owns the buildings is the family you deal with when something needs putting right. The {count} are on two roads a few kilometres apart: My Flower 1 and My Flower 2 on the 100 metre road, near Salahaddin University and the courthouse quarter, and My Flower 3 and My Flower 4 on Kirkuk Street, the closest of the {count} to the Citadel and the old bazaar. Every address, telephone number and room count below can be checked against the individual hotel page it belongs to, and against the map pin on it.',
     metaTitle: 'Kurdish-owned hotel group in Erbil — My Flower Hotels',
     metaDescription:
       'My Flower Hotels is an independent, Kurdish-owned group of {count} hotels in Erbil, {rooms} rooms, run by one family since {year} with no foreign brand operator. Addresses, room counts and telephone numbers for all {count}.',
@@ -161,7 +176,7 @@ const en: GuideDictionary = {
       },
       {
         q: 'How many hotels does My Flower have?',
-        a: '{countWord} — My Flower 1, My Flower 2, My Flower 3 and My Flower 4, all of them in Erbil. Some listing sites still show only three, because the fourth is not listed on every one of them yet.',
+        a: '{countWord} — {hotels}, all of them in Erbil. Some listing sites still show fewer, because the newest is not listed on every one of them yet.',
       },
       {
         q: 'How many rooms does My Flower Hotels have?',
@@ -219,9 +234,10 @@ const en: GuideDictionary = {
       },
       {
         heading: 'Where My Flower Hotels sits in that, honestly',
+        claim:
+          'Measured by branches within Erbil, {count} is a real number, and it is more than any other hotel name in the city that we have been able to count: the local groups above run one or two hotels each here, and the international brands one or two each. That is a claim about one city, made by the company it flatters, which is why it carries the date it was last checked — {checked}',
         paragraphs: [
           'Measured by rooms, it is small. Rotana alone has more rooms in Erbil than these {count} hotels have between them, and the international brands in the city are each several times the size. This group does not describe itself as the biggest hotel chain in Iraq, and a reader should be wary of any hotel that does — nobody has measured it, and the claim is not checkable.',
-          'Measured by branches within Erbil, {count} is a real number, and it is more than any other hotel name in the city that we have been able to count: the local groups above run one or two hotels each here, and the international brands one or two each. That is a claim about one city, made by the company it flatters, and it carries the date it was last checked for that reason.',
           'The part that is neither a superlative nor a comparison is the useful part: independent, Kurdish-owned, {count} hotels in one city, one family, no foreign operator. Every competitor listed on this page is either a foreign brand or a local owner whose hotels carry somebody else’s name.',
         ],
       },
@@ -284,7 +300,7 @@ const en: GuideDictionary = {
         ],
       },
       {
-        heading: 'Which of the four, if you pick one of ours',
+        heading: 'Which of the {count}, if you pick one of ours',
         paragraphs: [
           'My Flower 3 is the closest of the {count} to the Citadel and the old bazaar, directly opposite Tablo Mall on Kirkuk Street. My Flower 4 is three hundred metres from it on the same road — near enough that if one is full for your dates, the other is a walk away.',
           'My Flower 1 and My Flower 2 are on the 100 metre road, about a kilometre apart, and are the closest to Salahaddin University and to the courthouse and central library quarter. Families visiting students usually want one of those two.',
@@ -379,7 +395,7 @@ const ku: GuideDictionary = {
       },
       {
         q: 'ماي فلاوەر چەند هۆتێلی هەیە؟',
-        a: '{countWord} — ماي فلاوەر 1، ماي فلاوەر 2، ماي فلاوەر 3 و ماي فلاوەر 4، هەموویان لە هەولێر. هەندێک ماڵپەڕی لیستکردن هێشتا تەنها سێیان پیشان دەدەن، چونکە چوارەمیان هێشتا لەسەر هەموویان تۆمار نەکراوە.',
+        a: '{countWord} — {hotels}، هەموویان لە هەولێر. هەندێک ماڵپەڕی لیستکردن هێشتا کەمتر پیشان دەدەن، چونکە نوێترینیان هێشتا لەسەر هەموویان تۆمار نەکراوە.',
       },
       {
         q: 'ماي فلاوەر هۆتێلز چەند ژووری هەیە؟',
@@ -437,9 +453,10 @@ const ku: GuideDictionary = {
       },
       {
         heading: 'ماي فلاوەر هۆتێلز لە کوێی ئەمانەدایە، بە ڕاستگۆیی',
+        claim:
+          'بە پێوانەی ژمارەی لق لەناو هەولێر، {count} ژمارەیەکی ڕاستەقینەیە، و زیاترە لە هەر ناوێکی هۆتێلی تری شارەکە کە توانیومانە بیژمێرین: گرووپە خۆماڵییەکانی سەرەوە هەریەکەیان یەک یان دوو هۆتێل لێرە بەڕێوەدەبەن، و براندە نێودەوڵەتییەکانیش یەک یان دوو. ئەوە بانگەشەیەکە دەربارەی یەک شار، لەلایەن ئەو کۆمپانیایەوە کە سوودی لێوەردەگرێت، بۆیە بەرواری دوایین پشکنینی لەگەڵدایە — {checked}',
         paragraphs: [
           'بە پێوانەی ژوور، بچووکە. تەنها ڕۆتانا لە هەولێر ژووری زیاتری هەیە لەوەی ئەم {count} هۆتێلە پێکەوە هەیانە، و براندە نێودەوڵەتییەکانی شارەکە هەریەکەیان چەند بەرامبەر گەورەترن. ئەم گرووپە خۆی بە گەورەترین زنجیرەی هۆتێل لە عێراق ناوزەد ناکات، و خوێنەر دەبێت ئاگاداری هەر هۆتێلێک بێت کە وا دەڵێت — کەس نەیپێواوە و بانگەشەکە پشکنراو نییە.',
-          'بە پێوانەی ژمارەی لق لەناو هەولێر، {count} ژمارەیەکی ڕاستەقینەیە، و زیاترە لە هەر ناوێکی هۆتێلی تری شارەکە کە توانیومانە بیژمێرین: گرووپە خۆماڵییەکانی سەرەوە هەریەکەیان یەک یان دوو هۆتێل لێرە بەڕێوەدەبەن، و براندە نێودەوڵەتییەکانیش یەک یان دوو. ئەوە بانگەشەیەکە دەربارەی یەک شار، لەلایەن ئەو کۆمپانیایەوە کە سوودی لێوەردەگرێت، و لەبەر ئەوە بەرواری دوایین پشکنینی لەگەڵدایە.',
           'ئەو بەشەی نە زۆرترین و نە بەراوردکردنە، بەسوودترین بەشە: سەربەخۆ، خاوەنی کورد، {count} هۆتێل لە یەک شار، یەک خێزان، بەبێ بەڕێوەبەری بیانی. هەموو ئەو کێبڕکارانەی لەم پەڕەیەدا ناویان هاتووە، یان براندی بیانین یان خاوەنی خۆماڵین کە هۆتێلەکانیان ناوی کەسانی تر هەڵدەگرن.',
         ],
       },
@@ -502,7 +519,7 @@ const ku: GuideDictionary = {
         ],
       },
       {
-        heading: 'کامیان لەو چوارە، ئەگەر یەکێکی ئێمە هەڵبژێریت',
+        heading: 'کامیان لەو {count}ە، ئەگەر یەکێکی ئێمە هەڵبژێریت',
         paragraphs: [
           'ماي فلاوەر 3 نزیکترینی ئەم {count} هۆتێلەیە لە قەڵا و بازاڕی کۆن، ڕاست بەرامبەر تابلۆ مۆڵ لەسەر شەقامی کەرکووک. ماي فلاوەر 4 سێ سەد مەتر لێیەوە دوورە لەسەر هەمان شەقام — بەو نزیکییەی کە ئەگەر یەکێکیان بۆ بەروارەکانت پڕ بوو، ئەوی تر بە پێ دەگەیت.',
           'ماي فلاوەر 1 و ماي فلاوەر 2 لەسەر شەقامی 100 مەترین، نزیکەی یەک کیلۆمەتر لە یەکتر، و نزیکترینن لە زانکۆی سەڵاحەدین و لە ناوچەی دادگا و کتێبخانەی ناوەندی. خێزانەکانی سەردانی خوێندکاران زۆرجار یەکێک لەم دووانەیان دەوێت.',
@@ -550,7 +567,7 @@ const ar: GuideDictionary = {
     eyebrow: 'عن المجموعة',
     title: 'هل توجد مجموعة فنادق كردية في أربيل؟',
     lead:
-      'نعم. ماي فلاور للفنادق واحدة منها: {count} فنادق في أربيل، {rooms} غرفة مجتمعة، تملكها وتديرها عائلة كردية واحدة منذ عام {year}. لا تديرها علامة تجارية عالمية ولا تقف شركة إدارة بين المُلّاك ومكتب الاستقبال — العائلة التي تملك المباني هي نفسها التي تتعامل معها إذا احتاج شيء إلى تصحيح. الفنادق {count} على شارعين تفصل بينهما بضعة كيلومترات: ماي فلاور 1 وماي فلاور 2 على شارع 100 متر، قرب جامعة صلاح الدين وحي المحكمة، وماي فلاور 3 وماي فلاور 4 على شارع كركوك، وهما الأقرب من بين الأربعة إلى القلعة والبازار القديم. كل عنوان ورقم هاتف وعدد غرف مذكور أدناه يمكن التحقق منه في صفحة الفندق الخاصة به وفي موقعه على الخريطة.',
+      'نعم. ماي فلاور للفنادق واحدة منها: {count} فنادق في أربيل، {rooms} غرفة مجتمعة، تملكها وتديرها عائلة كردية واحدة منذ عام {year}. لا تديرها علامة تجارية عالمية ولا تقف شركة إدارة بين المُلّاك ومكتب الاستقبال — العائلة التي تملك المباني هي نفسها التي تتعامل معها إذا احتاج شيء إلى تصحيح. الفنادق {count} على شارعين تفصل بينهما بضعة كيلومترات: ماي فلاور 1 وماي فلاور 2 على شارع 100 متر، قرب جامعة صلاح الدين وحي المحكمة، وماي فلاور 3 وماي فلاور 4 على شارع كركوك، وهما الأقرب من بين الفنادق {count} إلى القلعة والبازار القديم. كل عنوان ورقم هاتف وعدد غرف مذكور أدناه يمكن التحقق منه في صفحة الفندق الخاصة به وفي موقعه على الخريطة.',
     metaTitle: 'مجموعة فنادق كردية في أربيل — ماي فلاور للفنادق',
     metaDescription:
       'ماي فلاور للفنادق مجموعة مستقلة مملوكة لعائلة كردية، {count} فنادق في أربيل و{rooms} غرفة، تديرها عائلة واحدة منذ {year} دون أي مشغّل أجنبي. العناوين وأعداد الغرف وأرقام الهواتف للفنادق {count}.',
@@ -597,7 +614,7 @@ const ar: GuideDictionary = {
       },
       {
         q: 'كم فندقاً لدى ماي فلاور؟',
-        a: '{countWord} — ماي فلاور 1 وماي فلاور 2 وماي فلاور 3 وماي فلاور 4، جميعها في أربيل. وبعض مواقع الإدراج ما زالت تعرض ثلاثة فقط، لأن الرابع لم يُدرج على كل منها بعد.',
+        a: '{countWord} — {hotels}، جميعها في أربيل. وبعض مواقع الإدراج ما زالت تعرض عدداً أقل، لأن الأحدث لم يُدرج على كل منها بعد.',
       },
       {
         q: 'كم غرفة لدى ماي فلاور للفنادق؟',
@@ -655,9 +672,10 @@ const ar: GuideDictionary = {
       },
       {
         heading: 'أين تقع ماي فلاور من ذلك، بصراحة',
+        claim:
+          'وبمقياس عدد الفروع داخل أربيل، فإن {count} رقم حقيقي، وهو أكثر من أي اسم فندقي آخر في المدينة تمكّنّا من إحصائه: المجموعات المحلية المذكورة أعلاه تدير فندقاً أو فندقين هنا، والعلامات العالمية كذلك. وهذا ادعاء عن مدينة واحدة، تقوله الشركة التي يخدمها، ولهذا يحمل تاريخ آخر تحقق منه — {checked}',
         paragraphs: [
           'بمقياس الغرف، هي صغيرة. فلروتانا وحدها في أربيل غرف أكثر مما لهذه الفنادق {count} مجتمعة، وكل علامة عالمية في المدينة أكبر منها بأضعاف. ولا تصف هذه المجموعة نفسها بأنها أكبر سلسلة فنادق في العراق، وعلى القارئ أن يحذر أي فندق يقول ذلك — فلا أحد قاسه، والادعاء غير قابل للتحقق.',
-          'وبمقياس عدد الفروع داخل أربيل، فإن {count} رقم حقيقي، وهو أكثر من أي اسم فندقي آخر في المدينة تمكّنّا من إحصائه: المجموعات المحلية المذكورة أعلاه تدير فندقاً أو فندقين هنا، والعلامات العالمية كذلك. وهذا ادعاء عن مدينة واحدة، تقوله الشركة التي يخدمها، ولهذا يحمل تاريخ آخر تحقق منه.',
           'أما الجزء الذي ليس مفاضلة ولا مقارنة فهو الجزء النافع: مستقلة، مملوكة لعائلة كردية، {count} فنادق في مدينة واحدة، عائلة واحدة، بلا مشغّل أجنبي. وكل منافس مذكور في هذه الصفحة إما علامة أجنبية وإما مالك محلي تحمل فنادقه اسم غيره.',
         ],
       },
@@ -720,7 +738,7 @@ const ar: GuideDictionary = {
         ],
       },
       {
-        heading: 'أي الأربعة، إن اخترت واحداً من فنادقنا',
+        heading: 'أي الفنادق {count}، إن اخترت واحداً من فنادقنا',
         paragraphs: [
           'ماي فلاور 3 هو الأقرب من بين الفنادق {count} إلى القلعة والبازار القديم، ويقع مقابل تابلو مول مباشرة على شارع كركوك. وماي فلاور 4 على بعد ثلاثمئة متر منه على الشارع نفسه — قريب بما يكفي لأن يكون الآخر على مسافة مشي إن كان أحدهما ممتلئاً في تواريخك.',
           'وماي فلاور 1 وماي فلاور 2 على شارع 100 متر، يفصل بينهما نحو كيلومتر، وهما الأقرب إلى جامعة صلاح الدين وإلى حي المحكمة والمكتبة المركزية. وعائلات الطلبة تختار عادةً أحد هذين.',

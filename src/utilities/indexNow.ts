@@ -194,6 +194,11 @@ export const pathsForBranch = (slug?: string | null): string[] => [
 export const pathsForRoom = (slug?: string | null, branchSlug?: string | null): string[] => [
   '',
   '/rooms',
+  // The hotels index too. It prints a "from" price for each hotel, worked out
+  // from every room that hotel sells — so editing one room's rate changes a
+  // page that has nothing to do with that room's own URL, and this was the one
+  // page a price edit changed without ever being submitted.
+  '/branches',
   ...(slug ? [`/rooms/${slug}`] : []),
   // Both of these open by stating how many rooms the group has, summed from the
   // rooms on sale — so adding or withdrawing a room type changes their first

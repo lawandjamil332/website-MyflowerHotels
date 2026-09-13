@@ -1,6 +1,7 @@
 import { cache } from 'react'
 
 import { countWord } from '@/i18n/count'
+import { comma } from '@/utilities/format'
 import type { Locale } from '@/i18n/config'
 import { getAllRooms, getBranches } from '@/utilities/branches'
 import { getSettings } from '@/utilities/getSettings'
@@ -82,10 +83,25 @@ export const getGuideFacts = cache(async (locale: Locale): Promise<GuideFacts> =
   // changes nothing in either — the argument is only passed for English.
   const lower = word.toLocaleLowerCase(locale === 'en' ? 'en' : undefined)
 
+  /**
+   * The hotels by name, listed the way the language lists things.
+   *
+   * Read from the database rather than written into the answer, because the
+   * question it answers is "how many hotels does My Flower have" — and a list
+   * typed into three translations is the one place that question could still be
+   * answered wrongly on the day a fifth opens. Arabic and Kurdish take `،`, and
+   * `comma()` is what knows that.
+   */
+  const hotels = openBranches
+    .map((b) => b.name)
+    .filter(Boolean)
+    .join(`${comma(locale)} `)
+
   const fill = (text: string): string =>
     text
       .replaceAll('{countWord}', word)
       .replaceAll('{count}', lower)
+      .replaceAll('{hotels}', hotels)
       .replaceAll('{rooms}', String(totalRooms))
       .replaceAll(
         '{year}',

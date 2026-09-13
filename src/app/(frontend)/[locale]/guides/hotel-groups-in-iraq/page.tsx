@@ -6,6 +6,7 @@ import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { getGuides, LANDSCAPE_CHECKED } from '@/i18n/guides'
 import { getGuideFacts } from '@/utilities/guideFacts'
+import { getSettings } from '@/utilities/getSettings'
 import { formatDateLong } from '@/utilities/format'
 import { mediaAlt, mediaUrl } from '@/utilities/media'
 import { photoPool, heroFor } from '@/utilities/heroPhoto'
@@ -56,6 +57,20 @@ export default async function HotelGroupsInIraqPage({ params }: Args) {
   const pool = photoPool(facts.branches, facts.rooms)
   const hero = heroFor(pool, Math.floor(pool.length / 2))
 
+  /**
+   * The date the owner last checked the branches claim, or nothing.
+   *
+   * Two different dates live on this page and they are not interchangeable.
+   * LANDSCAPE_CHECKED is when this page's account of *other* companies was last
+   * verified against their own material — a fact about the writing, so it
+   * belongs in the source. This one is when the owner last checked the claim
+   * about his own group, it lives in Site settings, and while it is empty the
+   * claim is not made at all.
+   */
+  const settings = await getSettings(locale)
+  const claimed = settings.localClaimCheckedOn
+  const claimedOn = claimed && !Number.isNaN(new Date(claimed).getTime()) ? claimed : null
+
   const faq = guide.faq.map((entry) => ({
     q: facts.fill(entry.q),
     a: facts.fill(entry.a),
@@ -86,7 +101,21 @@ export default async function HotelGroupsInIraqPage({ params }: Args) {
       <GuideArticle
         sections={guide.sections.map((s) => ({
           heading: facts.fill(s.heading),
-          paragraphs: s.paragraphs.map(facts.fill),
+          paragraphs: [
+            ...s.paragraphs.map(facts.fill),
+            // The "more branches than any other hotel name in Erbil" sentence,
+            // and only while the owner has dated it in Site settings. It is the
+            // group's own comparison rather than a fact about the world, and
+            // the site's standing rule is that it is present only while
+            // somebody has checked it — `localClaim()` enforces that on the
+            // About page, and this page was quietly ignoring it, publishing the
+            // claim from a constant in the source and in three languages.
+            // Clearing the setting now retracts it everywhere, which is what
+            // the setting is for.
+            ...(claimedOn && s.claim
+              ? [facts.fill(s.claim).replace('{checked}', formatDateLong(claimedOn, locale))]
+              : []),
+          ],
         }))}
       >
         {/* When this was last checked, and an invitation to correct it.

@@ -438,6 +438,10 @@ export function GroupSchema({
 }) {
   const base = getServerSideURL()
   const roomsByBranch = roomsPerBranch(rooms)
+  // The hotels open to guests, for the group total below.
+  const openIds = new Set(
+    branches.filter((b) => b.status !== 'openingSoon').map((b) => Number(b.id)),
+  )
 
   return json(
     clean({
@@ -516,7 +520,19 @@ export function GroupSchema({
        * Flower Hotels have". Until now that took four separate crawls and an
        * addition nobody was going to do.
        */
-      numberOfRooms: rooms.length > 0 ? countRooms(rooms) || undefined : undefined,
+      //
+      // Scoped to the hotels a guest can actually book, the same way the guide
+      // pages scope their total. Counting a hotel that has not opened would
+      // make this block and the page around it state two different numbers the
+      // day a fifth is entered in the panel before its doors open.
+      numberOfRooms:
+        countRooms(
+          rooms.filter((room) => {
+            const branch = room.branch as { id?: number | string; status?: string } | number | string | null
+            const id = Number(typeof branch === 'object' && branch !== null ? branch.id : branch)
+            return openIds.has(id)
+          }),
+        ) || undefined,
       // Each hotel with its own address, so this one block establishes four
       // places rather than four names.
       subOrganization: branches.map((b) =>

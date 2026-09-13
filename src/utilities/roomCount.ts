@@ -34,8 +34,19 @@ type Countable = { branch?: unknown; quantity?: number | null }
  */
 export const countRooms = (rooms: Countable[]): number =>
   rooms.reduce((sum, room) => {
-    const q = room.quantity
-    return sum + (typeof q === 'number' && Number.isFinite(q) && q > 0 ? Math.floor(q) : 1)
+    const q = Number(room.quantity)
+    // Zero counts as zero. This used to fall back to 1 for "a room type with no
+    // quantity set", which sounded reasonable and was exactly wrong: the field
+    // is required, with a minimum of 0 and a default of 1, so there is no such
+    // thing as unset — the only value that fallback could ever fire on was a
+    // deliberate 0, which is somebody withdrawing a room type. Rounding that up
+    // published a room the hotel does not have, on the hotel page, in both
+    // numberOfRooms blocks, in the guide totals and in llms-full.txt.
+    //
+    // A value that is not a number at all is a broken record rather than a
+    // hotel, and is skipped as zero: understating is the safe direction for
+    // every figure this feeds.
+    return sum + (Number.isFinite(q) && q > 0 ? Math.floor(q) : 0)
   }, 0)
 
 /** Branch id → rooms in that hotel. */
@@ -53,9 +64,6 @@ export const roomsPerBranch = (rooms: Countable[]): Map<number, number> => {
     const id = Number(raw)
     if (!Number.isFinite(id)) continue
 
-    // A room type with no quantity set is at least one room — it exists, it is
-    // on sale, and counting it as zero would understate the hotel. Anything
-    // that is not a sane positive number falls back the same way.
     out.set(id, (out.get(id) ?? 0) + countRooms([room]))
   }
 
