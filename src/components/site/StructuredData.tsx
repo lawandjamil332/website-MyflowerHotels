@@ -417,7 +417,24 @@ export function GroupSchema({
   return json(
     clean({
       '@context': 'https://schema.org',
-      '@type': 'HotelGroup',
+      /**
+       * Two real types, not one invented one.
+       *
+       * This said `HotelGroup`, which reads perfectly and does not exist —
+       * schema.org has Hotel, LodgingBusiness, HotelRoom and Organization, and
+       * no HotelGroup at all. An undefined type is not a validation nicety: it
+       * is the single statement on this site that says four buildings are one
+       * company, and it was written in a word no machine has a definition for.
+       * A reader that cannot resolve the type falls back to a bare Thing with a
+       * name, which is exactly the "four unrelated hotels with a word in common"
+       * problem the `@id` below exists to solve.
+       *
+       * `Organization` is what carries subOrganization, foundingDate and the
+       * sameAs profiles. `LodgingBusiness` is what makes it a hotel company
+       * rather than any company, and is the type that gives `numberOfRooms`
+       * below a meaning.
+       */
+      '@type': ['Organization', 'LodgingBusiness'],
       // The identity every hotel page points its parentOrganization at. One
       // company stated once, in a place four pages can all refer to, is the
       // difference between a group and four hotels with a word in common.
@@ -459,11 +476,24 @@ export function GroupSchema({
       foundingDate: establishedYear ? String(establishedYear) : undefined,
       areaServed: 'Erbil, Kurdistan Region, Iraq',
       sameAs: social.filter(Boolean) as string[],
+      /**
+       * How big the group is, in the one property that actually exists.
+       *
+       * This was `numberOfLocations`, which is not a schema.org property either
+       * — invented alongside the type above, and silently ignored by everything
+       * that read it. The count of hotels is not lost by dropping it: the
+       * `subOrganization` list below states all four, each with its own `@id`
+       * and address, which is the countable form rather than an assertion about
+       * a number.
+       *
+       * `numberOfRooms` is real, belongs to LodgingBusiness, and answers the
+       * question the count of buildings does not: "how many rooms does My
+       * Flower Hotels have". Until now that took four separate crawls and an
+       * addition nobody was going to do.
+       */
+      numberOfRooms: rooms.length > 0 ? countRooms(rooms) || undefined : undefined,
       // Each hotel with its own address, so this one block establishes four
       // places rather than four names.
-      // How many hotels this actually is, stated as a number rather than left
-      // to be counted off a list.
-      numberOfLocations: branches.length,
       subOrganization: branches.map((b) =>
         clean({
           '@type': 'Hotel',
@@ -563,7 +593,11 @@ export function ContactSchema({
     name: siteName,
     url: `${base}/${locale}/contact`,
     mainEntity: clean({
-      '@type': 'HotelGroup',
+      // The same two real types as the group block, and the same `@id`, so the
+      // company described on the contact page and the company every hotel
+      // points its parentOrganization at are one record rather than two.
+      '@type': ['Organization', 'LodgingBusiness'],
+      '@id': `${base}/#organization`,
       name: siteName,
       telephone: phone ?? undefined,
       email: email ?? undefined,

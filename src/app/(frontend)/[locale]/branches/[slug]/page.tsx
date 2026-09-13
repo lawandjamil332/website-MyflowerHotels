@@ -5,6 +5,8 @@ import type { Metadata } from 'next'
 
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
+import { getGuides } from '@/i18n/guides'
+import { countRooms } from '@/utilities/roomCount'
 import { getBranchBySlug, getBranches, getRoomsForBranch } from '@/utilities/branches'
 import { getSettings } from '@/utilities/getSettings'
 import { SITE_NAME } from '@/utilities/site'
@@ -64,6 +66,12 @@ export default async function BranchPage({ params }: Args) {
     getBranches(locale),
   ])
   const otherBranches = allBranches.filter((b) => b.id !== branch.id)
+
+  // Counted by the same routine the homepage, the group's markup and this
+  // page's own structured data use, so the four places this hotel's size is
+  // stated can never disagree with each other.
+  const roomCount = countRooms(rooms)
+  const guides = getGuides(locale)
 
   // Answered from what this hotel has actually been told about itself, so a
   // question only appears where there is a true answer for it.
@@ -252,6 +260,23 @@ export default async function BranchPage({ params }: Args) {
                             {t.branch.distancesNote}
                           </span>
                         </dd>
+                      </div>
+                    )}
+
+                    {/* How many rooms this hotel has, where a reader can see it.
+                        It was already in this page's structured data and
+                        nowhere on the page itself, which is the wrong way
+                        round twice over: "how many rooms" is one of the two or
+                        three things anybody asks about a hotel, and a number
+                        stated only in markup is a number Google is entitled to
+                        distrust — it asks that structured data describe content
+                        the visitor can actually find. Summed from the rooms
+                        this hotel sells, so it needs no field and cannot drift
+                        from the list of rooms further down the page. */}
+                    {!openingSoon && roomCount > 0 && (
+                      <div>
+                        <dt className={factLabel}>{guides.labels.rooms}</dt>
+                        <dd className="font-display mt-2 text-2xl text-ink">{roomCount}</dd>
                       </div>
                     )}
 
