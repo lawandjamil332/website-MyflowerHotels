@@ -22,16 +22,16 @@ export type Dictionary = {
     chooseBranch: string
     interlude: string
     /**
-     * Carries `{count}` — the hotels actually open, not the four that exist.
+     * The owner's own figure for guests welcomed, written by hand.
      *
-     * This tile used to read "2 million guests". Fifty-seven rooms, filled
-     * every night since 2012, comes to about 291,000 room-nights — so the
-     * figure was roughly three and a half times the physical ceiling of the
-     * buildings. It is now the room count, which anyone can add up from the
-     * rooms the site sells, and which is summed from the rooms themselves
-     * rather than typed anywhere.
+     * Not computed from anything on this site, and deliberately so — it is his
+     * number, from his records, and the homepage states it as the group's
+     * claim. Do not "correct" it by summing rooms or bookings: that has been
+     * tried, and the figure here is the one he wants.
      */
-    creditRooms: string
+    creditGuestsValue: string
+    /** Carries `{count}` — the hotels actually open, not the four that exist. */
+    creditGuests: string
     creditHotels: string
     /** Shown under the hotel count while one of them has not opened yet. */
     creditHotelsNote: string
@@ -559,7 +559,8 @@ const en: Dictionary = {
     chooseBranch: '{count} hotels in Erbil',
     chooseBranchLead: 'Choose the one that suits your stay.',
     interlude: '{count} addresses in one city.',
-    creditRooms: 'Rooms across our {count} hotels',
+    creditGuestsValue: '2 million+',
+    creditGuests: 'Guests welcomed across our {count} hotels',
     creditHotels: 'Hotels in Erbil',
     creditHotelsNote: '{open} open, {soon} opening soon',
     creditSince: 'Welcoming guests since',
@@ -1068,7 +1069,8 @@ const ku: Dictionary = {
     chooseBranch: '{count} هۆتێل لە هەولێر',
     chooseBranchLead: 'ئەوەی گونجاوە بۆ مانەوەت هەڵبژێرە.',
     interlude: '{count} ناونیشان لە یەک شاردا.',
-    creditRooms: 'ژوور لە {count} هۆتێلماندا',
+    creditGuestsValue: '2 ملیۆن+',
+    creditGuests: 'میوان لە {count} هۆتێلماندا پێشوازیمان لێکردوون',
     creditHotels: 'هۆتێل لە هەولێر',
     creditHotelsNote: '{open} کراوەن، {soon} بەم زووانە دەکرێتەوە',
     creditSince: 'پێشوازی لە میوان لە',
@@ -1577,7 +1579,8 @@ const ar: Dictionary = {
     chooseBranch: '{count} فنادق في أربيل',
     chooseBranchLead: 'اختر ما يناسب إقامتك.',
     interlude: '{count} عناوين في مدينة واحدة.',
-    creditRooms: 'غرفة في فنادقنا ال{count}',
+    creditGuestsValue: '+2 مليون',
+    creditGuests: 'ضيف استقبلناهم في فنادقنا ال{count}',
     creditHotels: 'فنادق في أربيل',
     creditHotelsNote: '{open} مفتوحة، {soon} يفتتح قريباً',
     creditSince: 'نستقبل الضيوف منذ',

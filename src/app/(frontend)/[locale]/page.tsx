@@ -10,7 +10,6 @@ import { getDictionary } from '@/i18n/dictionaries'
 import { countWord, fillCount } from '@/i18n/count'
 import { getAllRooms, getBranches, getFeaturedRooms, getOffers } from '@/utilities/branches'
 import { cheapestPerBranch } from '@/utilities/fromPrice'
-import { roomsAcross } from '@/utilities/roomCount'
 import { Price } from '@/components/site/Currency'
 import { groupIdentity } from '@/utilities/group'
 import { getSettings } from '@/utilities/getSettings'
@@ -196,14 +195,6 @@ export default async function HomePage({ params }: Args) {
   // number given the wrong scope is the fault this whole band is fixing.
   const openWord = countWord(openCount, locale).toLocaleLowerCase(
     locale === 'en' ? 'en' : undefined,
-  )
-
-  // Rooms in the hotels a guest can book tonight. The tile beside it counts
-  // open hotels, so counting rooms in a building nobody can stay in yet would
-  // put two scopes in one band.
-  const openRooms = roomsAcross(
-    everyRoom,
-    branches.filter((b) => b.status !== 'openingSoon').map((b) => Number(b.id)),
   )
 
   // Written once and used three times — the schema description, the site
@@ -465,15 +456,17 @@ export default async function HomePage({ params }: Args) {
                 settings.establishedYear
                   ? { value: String(settings.establishedYear), label: t.home.creditSince }
                   : null,
-                // Counted from the rooms the site sells rather than typed
-                // here — see src/utilities/roomCount.ts for why the figure
-                // that used to sit in this tile could not have been true.
-                openRooms > 0
-                  ? {
-                      value: String(openRooms),
-                      label: t.home.creditRooms.replace('{count}', openWord),
-                    }
-                  : null,
+                {
+                  // The owner's own figure, from his records, written by hand
+                  // in the dictionary. It is not derived from anything on this
+                  // site and must not be replaced by a count of rooms or of
+                  // bookings — that has been tried and reverted.
+                  value: t.home.creditGuestsValue,
+                  // "2 million+" on its own is a number with no scope, which is
+                  // the kind of figure a reader discounts entirely. Saying
+                  // which hotels it covers costs four words.
+                  label: t.home.creditGuests.replace('{count}', openWord),
+                },
                 { value: settings.stars ?? '4', label: t.home.creditStars },
                 { value: t.branch.anyTime, label: t.home.creditReception },
               ]
