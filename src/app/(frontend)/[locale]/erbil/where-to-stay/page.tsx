@@ -50,9 +50,10 @@ export default async function WhereToStayPage({ params }: Args) {
   const hero = heroFor(pool, Math.floor(pool.length / 3))
   const cell = 'px-4 py-4 align-top text-[0.95rem] leading-[1.5] sm:px-6'
 
-  // One column per landmark, in the order landmarksFrom returns them for the
-  // first hotel — nearest first, so the columns are stable across rows rather
-  // than re-sorted per hotel, which would make the table unreadable.
+  // One column per landmark, in the order they are declared rather than in the
+  // nearest-first order landmarksFrom returns. The columns have to mean the
+  // same thing on every row: sorted per hotel, the second column would be the
+  // airport on one line and the Citadel on the next.
   const columns = ERBIL_LANDMARKS.map((l) => ({ id: l.id, name: l.name[locale] ?? l.name.en }))
 
   const rows = facts.openBranches.map((branch) => ({

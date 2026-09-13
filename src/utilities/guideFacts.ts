@@ -1,3 +1,5 @@
+import { cache } from 'react'
+
 import { countWord } from '@/i18n/count'
 import type { Locale } from '@/i18n/config'
 import { getAllRooms, getBranches } from '@/utilities/branches'
@@ -39,7 +41,28 @@ export type GuideFacts = {
   fill: (text: string) => string
 }
 
-export const getGuideFacts = async (locale: Locale): Promise<GuideFacts> => {
+/**
+ * The founding year to fall back on when Site settings has none.
+ *
+ * Named rather than written into the sentence, because it is the one fact on
+ * these pages that is not read from the database and it should be obvious to
+ * anybody grepping for it. It matches what the About copy and the seeded
+ * records already say, so a blank field cannot make three pages disagree with
+ * the rest of the site — but the field is the source, and this is the floor.
+ */
+const FOUNDED_FALLBACK = 2012
+
+/**
+ * Wrapped in React's `cache`, which deduplicates it within one request.
+ *
+ * Every guide page calls this twice — once in `generateMetadata` for the title
+ * and description, once in the page itself — and each call was four database
+ * queries, so nine URLs were each doing eight where four would do. `cache`
+ * makes the second call return the first one's result. Deliberately not
+ * `unstable_cache`: that would hold the answer between requests, and these
+ * pages quote prices and room counts that have to be live.
+ */
+export const getGuideFacts = cache(async (locale: Locale): Promise<GuideFacts> => {
   const [branches, rooms, settings] = await Promise.all([
     getBranches(locale),
     getAllRooms(locale),
@@ -64,7 +87,10 @@ export const getGuideFacts = async (locale: Locale): Promise<GuideFacts> => {
       .replaceAll('{countWord}', word)
       .replaceAll('{count}', lower)
       .replaceAll('{rooms}', String(totalRooms))
-      .replaceAll('{year}', settings.establishedYear ? String(settings.establishedYear) : '2012')
+      .replaceAll(
+        '{year}',
+        String(settings.establishedYear || FOUNDED_FALLBACK),
+      )
 
   return {
     branches,
@@ -76,4 +102,4 @@ export const getGuideFacts = async (locale: Locale): Promise<GuideFacts> => {
     siteName: settings.siteName || 'My Flower Hotels',
     fill,
   }
-}
+})

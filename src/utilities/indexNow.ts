@@ -88,23 +88,34 @@ export const submitToIndexNow = async (
   const base = getServerSideURL().replace(/\/$/, '')
 
   // Never submit from a development machine. IndexNow keys are per-host, and a
-  // submission naming localhost is either rejected or — worse, if somebody has
-  // a tunnel open — tells Bing to crawl a laptop.
+  // submission naming a laptop is either rejected or — worse, if somebody has a
+  // tunnel open — tells Bing to go and crawl it.
   let host: string
   try {
     host = new URL(base).host
   } catch {
     return { sent: 0, why: `Cannot read a host out of ${base}.` }
   }
-  if (!host.includes('.') || host.startsWith('localhost')) {
+  // A dot is not enough on its own: 127.0.0.1 and 192.168.1.5 both have three
+  // of them and are both a development machine. Anything that is an IP address
+  // rather than a name is refused alongside localhost.
+  const hostname = host.split(':')[0]
+  const isIpLiteral = /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname) || hostname.includes(':')
+  if (!hostname.includes('.') || hostname === 'localhost' || isIpLiteral) {
     return { sent: 0, why: `${host} is not a public host, so nothing is submitted.` }
   }
 
   const urlList = [
     ...new Set(
-      paths.flatMap((path) =>
-        locales.map((locale) => `${base}/${locale}${path.startsWith('/') ? path : `/${path}`}`),
-      ),
+      paths.flatMap((path) => {
+        // The homepage is passed as an empty path, and `/${''}` is a trailing
+        // slash — so every submission was naming `/en/`, which is not the URL
+        // this site canonicalises to and which answers with a redirect rather
+        // than a page. A crawler handed a redirect learns nothing and may drop
+        // the submission entirely.
+        const tail = path === '' || path === '/' ? '' : path.startsWith('/') ? path : `/${path}`
+        return locales.map((locale) => `${base}/${locale}${tail}`)
+      }),
     ),
   ].slice(0, 10000)
 
@@ -184,8 +195,9 @@ export const pathsForRoom = (slug?: string | null, branchSlug?: string | null): 
   '',
   '/rooms',
   ...(slug ? [`/rooms/${slug}`] : []),
-  // The room count on these three is the sum of the rooms on sale, so adding a
-  // room type genuinely changes the sentence they open with.
+  // Both of these open by stating how many rooms the group has, summed from the
+  // rooms on sale — so adding or withdrawing a room type changes their first
+  // paragraph, which is the part a search engine quotes.
   '/about/kurdish-owned-hotel-group-erbil',
   '/guides/hotel-groups-in-iraq',
   ...(branchSlug ? [`/branches/${branchSlug}`] : []),

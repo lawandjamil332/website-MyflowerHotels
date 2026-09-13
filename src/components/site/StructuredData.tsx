@@ -18,11 +18,36 @@ import { countRooms, roomsPerBranch } from '@/utilities/roomCount'
  * Only fields that actually hold a value are emitted. Structured data
  * asserting a rating or a price the group never entered is worse than none.
  */
+/**
+ * Serialised with every `<` escaped, which is the whole of the safety here.
+ *
+ * This used to carry a comment saying the payload is built from typed documents
+ * rather than from user input. That was wrong twice over. The hotel names,
+ * taglines and addresses come from the admin panel, and the `review` block on
+ * every hotel page carries **guest-written text** — a name and a comment typed
+ * into a public form by anybody who has stayed.
+ *
+ * `JSON.stringify` does not escape `<`. An HTML parser ends a script element at
+ * the first `</script`, wherever it appears and whatever the element's type is,
+ * so a review reading `</script><script>…` would have closed this tag and run
+ * as script on the hotel's own page. Moderation made that unlikely, not
+ * impossible: it needs one approval of a review whose opening sentence reads
+ * perfectly normally.
+ *
+ * `<` is a valid JSON escape for `<` and every consumer decodes it back,
+ * so the markup Google reads is unchanged and the tag can no longer be closed
+ * from inside its own data. U+2028 and U+2029 go with it: legal inside a JSON
+ * string, and a syntax error to anything that evaluates this as JavaScript.
+ */
 const json = (data: unknown) => (
   <script
     type="application/ld+json"
-    // The payload is built here from typed documents, not from user input.
-    dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+    dangerouslySetInnerHTML={{
+      __html: JSON.stringify(data)
+        .replace(/</g, '\\u003c')
+        .replace(/\u2028/g, '\\u2028')
+        .replace(/\u2029/g, '\\u2029'),
+    }}
   />
 )
 

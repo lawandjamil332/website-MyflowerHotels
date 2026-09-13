@@ -3,22 +3,23 @@
  *
  * A room *type* is not a room. "Double room" with a quantity of nine is nine
  * rooms in the building and one row in the admin panel, so counting rows gives
- * a hotel of four rooms and counting quantities gives the truth. Every figure
- * the site publishes about its own size — the homepage tile, the
- * `numberOfRooms` in each hotel's structured data — comes through here, so
- * there is one number and nobody types it anywhere.
+ * a hotel of four rooms and counting quantities gives the truth.
  *
- * This matters more than it sounds. The homepage used to claim two million
- * guests. Fifty-seven rooms, full every single night since 2012, is about
- * 291,000 room-nights — the figure was three and a half times what the
- * buildings can physically hold, and an assistant asked about this group can
- * do that arithmetic in one line. A number a reader can check and finds wrong
- * costs the page every other number on it.
+ * Every room count the site publishes comes through here: the figure on each
+ * hotel's own page, the `numberOfRooms` in its structured data, the group total
+ * in the organisation block, the totals the guide pages open with, and the line
+ * in llms-full.txt. One routine, so those five can never disagree — they did
+ * before it existed, when one of them counted a room type with no quantity as
+ * zero and another as one.
  *
- * Counted from the rooms the site actually sells (`isAvailable` is what
- * `getAllRooms` filters on), which is the honest scope: it is the rooms a
- * guest could book, and it can only ever be lower than the true total, never
- * higher.
+ * SCOPE. Counted from the rooms the site actually sells: `getAllRooms` and
+ * `getRoomsForBranch` both filter on `isAvailable`, so a room type withdrawn
+ * from sale is not counted. That makes every number here a floor rather than a
+ * boast — it can be lower than the building's true total, never higher.
+ *
+ * This is only ever the room count. The homepage's guests-welcomed figure is
+ * the owner's own, written by hand in the dictionary, and is not derived from
+ * anything here — see `creditGuestsValue` in src/i18n/dictionaries.ts.
  */
 
 /** Shape enough of a room to count it, without needing Payload's full type. */
@@ -27,11 +28,9 @@ type Countable = { branch?: unknown; quantity?: number | null }
 /**
  * Rooms in a list of room types.
  *
- * The room *page* already has one hotel's rooms in hand and does not need them
- * grouped — it needs the same arithmetic, so that the number under a hotel's
- * structured data and the number on the homepage can never disagree. They did
- * before this existed: one counted a room type with no quantity as zero and
- * the other as one.
+ * For a caller that already holds one hotel's rooms and does not need them
+ * grouped — the hotel page, and the group total, which is every room in the
+ * list regardless of which hotel it belongs to.
  */
 export const countRooms = (rooms: Countable[]): number =>
   rooms.reduce((sum, room) => {
@@ -44,9 +43,15 @@ export const roomsPerBranch = (rooms: Countable[]): Map<number, number> => {
   const out = new Map<number, number>()
 
   for (const room of rooms) {
-    const branch = room.branch as { id?: number } | number | null | undefined
-    const id = typeof branch === 'number' ? branch : branch?.id
-    if (typeof id !== 'number') continue
+    const branch = room.branch as { id?: number | string } | number | string | null | undefined
+    const raw = typeof branch === 'object' && branch !== null ? branch.id : branch
+    // Coerced rather than type-checked. Payload returns a relationship as the
+    // id when it is shallow and as the document when it is populated, and the
+    // id's own type depends on the database adapter — so a strict `typeof ===
+    // 'number'` silently counted nothing at all the first time this met a
+    // string id, which looks exactly like a hotel with no rooms.
+    const id = Number(raw)
+    if (!Number.isFinite(id)) continue
 
     // A room type with no quantity set is at least one room — it exists, it is
     // on sale, and counting it as zero would understate the hotel. Anything
@@ -60,9 +65,10 @@ export const roomsPerBranch = (rooms: Countable[]): Map<number, number> => {
 /**
  * Rooms across a given set of hotels.
  *
- * Pass the hotels being counted rather than summing the whole map: the
- * homepage's tile says "across our three hotels", and the one still being
- * built has no rooms anybody can sleep in yet.
+ * Pass the hotels being counted rather than summing the whole map. The guide
+ * pages say "four hotels, fifty-seven rooms", and a hotel still being built has
+ * no rooms anybody can sleep in — counting those would put two different scopes
+ * in one sentence.
  */
 export const roomsAcross = (rooms: Countable[], branchIds: number[]): number => {
   const per = roomsPerBranch(rooms)
