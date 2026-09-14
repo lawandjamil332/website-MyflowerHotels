@@ -83,7 +83,17 @@ configuration value, not a code change.
 }
 ```
 
-We reply `200` once we have accepted it, `401` if the signature fails.
+We reply:
+
+| Code | Meaning | Should you retry? |
+|---|---|---|
+| `200` | Dealt with — recorded, or deliberately ignored (repeat, unknown reference, underpayment) | No |
+| `401` | Signature missing or wrong | Only if you fix the signature |
+| `500` | Something broke on our side | **Yes, please** |
+
+We only return `500` for transient failures on our end, and recording a payment
+is idempotent, so retrying costs you nothing and protects a captured payment
+from being lost to one bad moment on our server.
 
 ### Signature — required
 

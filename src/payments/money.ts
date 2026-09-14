@@ -126,8 +126,31 @@ export const fromMinorUnits = (minor: number, currency: string): number | null =
  * the full amount, because "0% deposit" in a settings box means somebody has
  * not chosen deposits rather than that the guest owes nothing.
  */
-export const amountToCharge = (total: number, depositPercent?: number | null): number => {
+export const amountToCharge = (
+  total: number,
+  depositPercent?: number | null,
+  currency?: string,
+): number => {
   const percent = Number(depositPercent)
   if (!Number.isFinite(percent) || percent <= 0 || percent >= 100) return total
-  return Math.ceil(total * percent) / 100
+
+  const raw = (total * percent) / 100
+
+  /**
+   * Rounded up to a whole smallest-unit, here rather than at the gateway.
+   *
+   * The page tells the guest what they are about to pay and the gateway is
+   * sent an integer, and those two have to be the same number. Left to round
+   * separately they were not: a 33% deposit on $80 is $26.40, which the price
+   * formatter showed as "$26" while 2640 cents went to the processor. Anything
+   * that advertises one figure and charges another is a chargeback waiting to
+   * be filed, however small the gap.
+   *
+   * Up rather than down, so the hotel is never a unit short — and without a
+   * confirmed exponent it falls back to whole units, which is the conservative
+   * reading everywhere it matters.
+   */
+  const exponent = currency ? currencyExponent(currency) : { ok: false as const, why: '' }
+  const factor = 10 ** (exponent.ok ? exponent.exponent : 0)
+  return Math.ceil(raw * factor) / factor
 }

@@ -13,11 +13,16 @@ import { sendReviewRequest } from '../utilities/reviewEmail'
  * Not localised: a booking is a record of something that happened, not copy to
  * be read in three languages. The guest's name is whatever they typed.
  *
- * Payment is taken at the hotel, which is why there is no payment state here
- * and no half-finished booking to reconcile — a booking is either made or it is
- * not. `held` exists for the seconds a booking is being written, and for a
- * future where a deposit is taken; `confirmed` is what a guest ends up with
- * today.
+ * Payment is taken at the hotel, and that is still the normal case: a booking is
+ * either made or it is not, and `confirmed` is what a guest ends up with. `held`
+ * exists for the seconds a booking is being written.
+ *
+ * The `payment*` fields beside it are for card payments where the hotel has
+ * switched them on, and they are a separate axis on purpose. A confirmed
+ * booking can be unpaid, a cancelled one can have been paid and be owed a
+ * refund, and a stay can complete on a deposit with the balance settled in cash
+ * at the desk. Folding the two into one status makes the first of those
+ * impossible to write down.
  *
  * Rows are created through `createBooking`, never through the admin panel's
  * ordinary create, because only that path takes the lock that stops two guests
@@ -347,6 +352,18 @@ export const Bookings: CollectionConfig = {
         {
           name: 'paymentReference',
           type: 'text',
+          /**
+           * Declared here as well as in the migration, and it has to be both.
+           *
+           * The migration creates a unique index so a redelivered webhook
+           * cannot record the same transaction twice. But Payload's Postgres
+           * adapter pushes schema in development, and what it pushes is built
+           * from these field definitions — so a field it does not know to be
+           * unique is a field whose index it will helpfully drop. The guard
+           * against being paid twice would then exist in production and not on
+           * the machine where somebody is testing being paid twice.
+           */
+          unique: true,
           admin: {
             readOnly: true,
             description:

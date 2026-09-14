@@ -99,7 +99,7 @@ export default async function BookingPassPage({ params, searchParams }: Args) {
     const amount = Number(booking.totalAmount)
     if (!Number.isFinite(amount) || amount <= 0) return null
 
-    const charge = amountToCharge(amount, settings.onlinePayments?.depositPercent)
+    const charge = amountToCharge(amount, settings.onlinePayments?.depositPercent, String(booking.currency || 'IQD'))
     // Refuses rather than guesses when the currency's unit has not been
     // confirmed with the processor — see payments/money.ts. Better no button
     // than a button that charges a thousand times too much.

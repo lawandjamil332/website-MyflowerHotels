@@ -7,7 +7,7 @@ import { getPayload } from 'payload'
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { formatPrice } from '@/utilities/format'
-import { signReference } from '@/utilities/bookingToken'
+import { verifyReference } from '@/utilities/bookingToken'
 import { cn } from '@/utilities/ui'
 import { btnPrimary, btnOutline, shell } from '@/components/site/ui'
 
@@ -48,8 +48,20 @@ export default async function BookingPaidPage({ params, searchParams }: Args) {
 
   const sp = await searchParams
   const reference = one(sp.ref).toUpperCase()
+  const token = one(sp.t)
   const problem = one(sp.problem)
-  if (!reference) notFound()
+
+  /**
+   * The same signed link the rest of this booking's pages require.
+   *
+   * This page was written without it, and that was a hole rather than an
+   * omission: it went on to *mint* a signature for whatever reference arrived
+   * in the address bar and render it as a link to the full booking. Anyone who
+   * knew a reference — they are six characters, and they are read down a
+   * telephone — could have walked from here to a guest's name, telephone
+   * number and dates. A page that hands out tokens has to check one first.
+   */
+  if (!reference || !verifyReference(reference, token)) notFound()
 
   const payload = await getPayload({ config: configPromise })
   const { docs } = await payload.find({
@@ -87,7 +99,8 @@ export default async function BookingPaidPage({ params, searchParams }: Args) {
             ? t.booking.payFailed
             : t.booking.payAtHotelInstead
 
-  const manageUrl = `/${locale}/booking/pass?ref=${encodeURIComponent(reference)}&t=${signReference(reference)}`
+  // Echoes the token that was verified above rather than making a new one.
+  const manageUrl = `/${locale}/booking/pass?ref=${encodeURIComponent(reference)}&t=${encodeURIComponent(token)}`
 
   return (
     <section className={cn(shell, 'py-16 sm:py-24')}>

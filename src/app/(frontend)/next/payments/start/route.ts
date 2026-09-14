@@ -26,9 +26,18 @@ import { activeProvider, amountToCharge, paymentsLive, toMinorUnits } from '@/pa
 
 export const dynamic = 'force-dynamic'
 
-const back = (locale: Locale, reference: string, why: string) =>
+/**
+ * Back to the guest's own page, carrying the signature they arrived with.
+ *
+ * The trailing slash is stripped for the same reason it is below: a
+ * NEXT_PUBLIC_SERVER_URL written with one turns every error path into a 404,
+ * and an error path is exactly where nobody is watching.
+ */
+const back = (locale: Locale, reference: string, token: string, why: string) =>
   NextResponse.redirect(
-    `${getServerSideURL()}/${locale}/booking/paid?ref=${encodeURIComponent(reference)}&problem=${encodeURIComponent(why)}`,
+    `${getServerSideURL().replace(/\/$/, '')}/${locale}/booking/paid` +
+      `?ref=${encodeURIComponent(reference)}&t=${encodeURIComponent(token)}` +
+      `&problem=${encodeURIComponent(why)}`,
     303,
   )
 
@@ -47,11 +56,11 @@ export async function GET(request: NextRequest): Promise<Response> {
   const settings = await getSettings(locale)
 
   if (!paymentsLive(settings)) {
-    return back(locale, reference, 'off')
+    return back(locale, reference, token, 'off')
   }
 
   const provider = activeProvider()
-  if (!provider) return back(locale, reference, 'off')
+  if (!provider) return back(locale, reference, token, 'off')
 
   const { docs } = await payload.find({
     collection: 'bookings',
@@ -61,30 +70,31 @@ export async function GET(request: NextRequest): Promise<Response> {
     overrideAccess: true,
   })
   const booking = docs[0]
-  if (!booking) return back(locale, reference, 'missing')
+  if (!booking) return back(locale, reference, token, 'missing')
 
   // Nothing is charged twice. A guest who presses Pay on a booking that is
   // already settled is shown the receipt rather than a second card form.
   if (booking.paymentStatus === 'paid') {
     return NextResponse.redirect(
-      `${getServerSideURL()}/${locale}/booking/paid?ref=${encodeURIComponent(reference)}`,
+      `${getServerSideURL().replace(/\/$/, '')}/${locale}/booking/paid` +
+        `?ref=${encodeURIComponent(reference)}&t=${encodeURIComponent(token)}`,
       303,
     )
   }
-  if (booking.status === 'cancelled') return back(locale, reference, 'cancelled')
+  if (booking.status === 'cancelled') return back(locale, reference, token, 'cancelled')
 
   const total = Number(booking.totalAmount)
   const currency = String(booking.currency || 'IQD').toUpperCase()
-  if (!Number.isFinite(total) || total <= 0) return back(locale, reference, 'amount')
+  if (!Number.isFinite(total) || total <= 0) return back(locale, reference, token, 'amount')
 
   // The deposit, if the hotel asks for one, worked out from the stored total.
-  const charge = amountToCharge(total, settings.onlinePayments?.depositPercent)
+  const charge = amountToCharge(total, settings.onlinePayments?.depositPercent, currency)
   const minor = toMinorUnits(charge, currency)
   if (!minor.ok) {
     // The likeliest reason by far is the dinar exponent not having been
     // confirmed with the processor yet, which money.ts refuses to guess at.
     payload.logger.error(`Payment for ${reference} not started: ${minor.why}`)
-    return back(locale, reference, 'config')
+    return back(locale, reference, token, 'config')
   }
 
   const base = getServerSideURL().replace(/\/$/, '')
@@ -97,14 +107,16 @@ export async function GET(request: NextRequest): Promise<Response> {
     guestPhone: booking.guestPhone,
     locale,
     description: `My Flower Hotels — booking ${reference}`,
-    returnUrl: `${base}/${locale}/booking/paid?ref=${encodeURIComponent(reference)}`,
-    cancelUrl: `${base}/${locale}/booking/paid?ref=${encodeURIComponent(reference)}&problem=cancelled`,
+    // The signature travels with the guest so the page they come back to can
+    // check it rather than mint one. It is the same token that got them here.
+    returnUrl: `${base}/${locale}/booking/paid?ref=${encodeURIComponent(reference)}&t=${encodeURIComponent(token)}`,
+    cancelUrl: `${base}/${locale}/booking/paid?ref=${encodeURIComponent(reference)}&t=${encodeURIComponent(token)}&problem=cancelled`,
     webhookUrl: `${base}/next/payments/webhook`,
   })
 
   if (!started.ok) {
     payload.logger.error(`Payment for ${reference} not started: ${started.why}`)
-    return back(locale, reference, 'gateway')
+    return back(locale, reference, token, 'gateway')
   }
 
   /**

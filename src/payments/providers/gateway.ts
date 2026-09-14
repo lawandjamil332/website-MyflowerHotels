@@ -145,9 +145,19 @@ export const gatewayProvider: PaymentProvider = {
     return config().label
   },
 
+  /**
+   * All three, or none.
+   *
+   * The webhook secret belongs in this check even though nothing in `start`
+   * uses it. Without it every callback is refused — so a deployment holding
+   * only the URL and the key would show a pay button, send guests to a real
+   * card form, take real money, and then be unable to record a single payment
+   * of it. Refusing to look configured is the only safe reading of a
+   * half-filled set of credentials.
+   */
   configured: () => {
-    const { apiUrl, apiKey } = config()
-    return Boolean(apiUrl && apiKey)
+    const { apiUrl, apiKey, webhookSecret } = config()
+    return Boolean(apiUrl && apiKey && webhookSecret)
   },
 
   async start(input: StartPaymentInput): Promise<StartPaymentResult> {
