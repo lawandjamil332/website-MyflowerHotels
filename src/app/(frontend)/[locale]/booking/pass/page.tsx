@@ -7,6 +7,8 @@ import { getPayload } from 'payload'
 import { isLocale, type Locale } from '@/i18n/config'
 import { getDictionary } from '@/i18n/dictionaries'
 import { verifyReference } from '@/utilities/bookingToken'
+import { getSettings } from '@/utilities/getSettings'
+import { amountToCharge, paymentsLive, toMinorUnits } from '@/payments'
 import { formatDateLong, formatNumber, formatPrice } from '@/utilities/format'
 import { toMapsHref, toTelHref, toWhatsAppHref, whatsappMessage } from '@/utilities/contact'
 import { SITE_NAME } from '@/utilities/site'
@@ -80,6 +82,36 @@ export default async function BookingPassPage({ params, searchParams }: Args) {
   ])
 
   const cancelled = booking.status === 'cancelled'
+
+  /**
+   * Whether to offer this guest a card payment, and for how much.
+   *
+   * Four conditions, all of which have to hold: the hotel has switched
+   * payments on, the gateway is actually configured, this booking is not
+   * cancelled, and it has not already been paid. Anything else and the block
+   * simply is not rendered — no disabled button, no explanation, nothing.
+   */
+  const settings = await getSettings(locale)
+  const payNow = (() => {
+    if (!paymentsLive(settings)) return null
+    if (cancelled || booking.paymentStatus === 'paid') return null
+
+    const amount = Number(booking.totalAmount)
+    if (!Number.isFinite(amount) || amount <= 0) return null
+
+    const charge = amountToCharge(amount, settings.onlinePayments?.depositPercent)
+    // Refuses rather than guesses when the currency's unit has not been
+    // confirmed with the processor — see payments/money.ts. Better no button
+    // than a button that charges a thousand times too much.
+    if (!toMinorUnits(charge, String(booking.currency || 'IQD')).ok) return null
+
+    return {
+      label: formatPrice(charge, booking.currency, locale) || '',
+      isDeposit: charge < amount,
+      href: `/next/payments/start?ref=${encodeURIComponent(reference)}&t=${token}&locale=${locale}`,
+    }
+  })()
+
   const arriving = formatDateLong(booking.checkIn, locale)
   const leaving = formatDateLong(booking.checkOut, locale)
   const total = formatPrice(Number(booking.totalAmount) || null, booking.currency, locale)
@@ -132,6 +164,48 @@ export default async function BookingPassPage({ params, searchParams }: Args) {
             {t.booking.manageTitle}
           </Link>
         </div>
+
+        {/**
+         * Paying by card, offered rather than demanded.
+         *
+         * Shown only when the hotel has switched card payments on *and* the
+         * gateway credentials are present, so the live site is unchanged until
+         * both are true. Never shown on a booking that is already paid or
+         * cancelled, and never printed — a PDF carrying a Pay button is a PDF
+         * somebody presses next year.
+         *
+         * The wording is careful on purpose. This site's whole promise is that
+         * booking takes a name and a number, no card, no fee — and a payment
+         * button that reads like a demand quietly withdraws that promise. So it
+         * leads with the room already being booked, and says the guest may pay
+         * at the hotel in the same breath.
+         */}
+        {payNow && (
+          <div className="mb-10 border border-line rounded-2xl bg-card p-6 print:hidden sm:p-7">
+            <h2 className="font-display text-xl text-ink">{t.booking.payTitle}</h2>
+            <p className="mt-3 text-[0.95rem] leading-[1.7] text-muted-ink">{t.booking.payLead}</p>
+            {payNow.isDeposit && (
+              <p className="mt-2 text-[0.9rem] leading-[1.7] text-muted-ink">
+                {t.booking.payDeposit.replace('{amount}', payNow.label)}
+              </p>
+            )}
+            <div className="mt-5 flex flex-wrap items-center gap-4">
+              <a href={payNow.href} className={cn(btnPrimary, btnSmall, 'tap-safe')}>
+                {t.booking.payNow.replace('{amount}', payNow.label)}
+              </a>
+              <span className="text-[0.85rem] text-muted-ink">{t.booking.payAtHotelInstead}</span>
+            </div>
+          </div>
+        )}
+
+        {booking.paymentStatus === 'paid' && (
+          <div className="mb-10 border border-line rounded-2xl bg-sand p-6 print:mb-6 sm:p-7">
+            <p className="font-display text-lg text-ink">{t.booking.paidTitle}</p>
+            <p className="mt-2 text-[0.95rem] leading-[1.7] text-muted-ink">
+              {t.booking.paidLead}
+            </p>
+          </div>
+        )}
 
         <article className="border border-line bg-card p-7 sm:p-10 print:border-0 print:p-0">
           <header className="border-b border-line pb-7 text-center">

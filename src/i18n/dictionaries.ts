@@ -256,6 +256,23 @@ export type Dictionary = {
   }
   booking: {
     savePdf: string
+    /**
+     * Card payment. Present in the type whatever the hotel has switched on —
+     * the strings exist so that turning payments on is a switch rather than a
+     * translation job in three languages on the day the processor goes live.
+     */
+    payTitle: string
+    payLead: string
+    payNow: string
+    payDeposit: string
+    payAtHotelInstead: string
+    paidTitle: string
+    paidLead: string
+    paidLabel: string
+    payPending: string
+    payFailed: string
+    payProblem: string
+    payBackToBooking: string
     title: string
     lead: string
     nights: string
@@ -779,6 +796,19 @@ const en: Dictionary = {
   },
   booking: {
     savePdf: 'Save as PDF',
+    payTitle: 'Pay now, if you would rather',
+    payLead:
+      'Your room is already booked and nothing is owed until you arrive. If it suits you better to settle it now by card, you can.',
+    payNow: 'Pay {amount} by card',
+    payDeposit: 'A deposit of {amount}. The rest is paid at the hotel.',
+    payAtHotelInstead: 'Or pay at the hotel when you arrive — nothing else to do.',
+    paidTitle: 'Paid. Thank you.',
+    paidLead: 'We have your payment. Show your reference at the desk and your room is ready.',
+    paidLabel: 'Paid',
+    payPending: 'Your payment is still going through. This page will show it once it is settled.',
+    payFailed: 'That payment did not go through, and nothing has been charged. Your room is still booked — you can try again or simply pay at the hotel.',
+    payProblem: 'We could not start the payment just now. Your room is still booked and you can pay at the hotel as usual.',
+    payBackToBooking: 'Back to your booking',
     title: 'Rooms free for your dates',
     lead: 'Choose a room. Nothing is charged now — you pay at the hotel.',
     nights: 'nights',
@@ -1290,6 +1320,19 @@ const ku: Dictionary = {
   },
   booking: {
     savePdf: 'وەک PDF پاشەکەوتی بکە',
+    payTitle: 'ئەگەر پێت باشترە، ئێستا پارە بدە',
+    payLead:
+      'ژوورەکەت حیجز کراوە و هیچ پارەیەک لەسەرت نییە تا دەگەیت. ئەگەر پێت باشترە ئێستا بە کارت بیدەیت، دەتوانیت.',
+    payNow: '{amount} بە کارت بدە',
+    payDeposit: 'پێشەکییەکی {amount}. پاشماوەکەی لە هۆتێلەکە دەدرێت.',
+    payAtHotelInstead: 'یان لە هۆتێلەکە بیدە کاتێک دەگەیت — هیچی تر نییە بیکەیت.',
+    paidTitle: 'پارەکە وەرگیرا. سوپاس.',
+    paidLead: 'پارەکەتمان پێگەیشت. لە پێشوازیدا ژمارەی حیجزەکەت پیشان بدە و ژوورەکەت ئامادەیە.',
+    paidLabel: 'دراوە',
+    payPending: 'پارەدانەکەت هێشتا لە پرۆسەدایە. کاتێک تەواو بوو لەم پەڕەیەدا دەردەکەوێت.',
+    payFailed: 'ئەو پارەدانە سەرنەکەوت و هیچ پارەیەک نەبڕدراوە. ژوورەکەت هێشتا حیجز کراوە — دەتوانیت دووبارە هەوڵ بدەیتەوە یان لە هۆتێلەکە بیدەیت.',
+    payProblem: 'لەم ساتەدا نەمانتوانی پارەدانەکە دەست پێ بکەین. ژوورەکەت هێشتا حیجز کراوە و وەک هەمیشە لە هۆتێلەکە دەتوانیت بیدەیت.',
+    payBackToBooking: 'گەڕانەوە بۆ حیجزەکەت',
     title: 'ژوورە بەردەستەکان بۆ ڕۆژەکانت',
     lead: 'ژوورێک هەڵبژێرە. ئێستا هیچ پارەیەک وەرناگیرێت — لە هۆتێلەکە دەدەیت.',
     nights: 'شەو',
@@ -1795,6 +1838,19 @@ const ar: Dictionary = {
   },
   booking: {
     savePdf: 'حفظ بصيغة PDF',
+    payTitle: 'ادفع الآن، إن كان ذلك أنسب لك',
+    payLead:
+      'غرفتك محجوزة بالفعل ولا شيء مستحق حتى وصولك. وإن كان يناسبك تسويتها الآن بالبطاقة، فيمكنك ذلك.',
+    payNow: 'ادفع {amount} بالبطاقة',
+    payDeposit: 'عربون قدره {amount}. والباقي يُدفع في الفندق.',
+    payAtHotelInstead: 'أو ادفع في الفندق عند وصولك — لا شيء آخر عليك فعله.',
+    paidTitle: 'تم الدفع. شكراً لك.',
+    paidLead: 'وصلنا دفعتك. اعرض رقم حجزك عند المكتب وغرفتك جاهزة.',
+    paidLabel: 'مدفوع',
+    payPending: 'دفعتك ما زالت قيد المعالجة. ستظهر في هذه الصفحة بمجرد اكتمالها.',
+    payFailed: 'لم تتم تلك الدفعة، ولم يُخصم أي مبلغ. غرفتك ما زالت محجوزة — يمكنك المحاولة مجدداً أو الدفع في الفندق ببساطة.',
+    payProblem: 'لم نتمكن من بدء الدفع في هذه اللحظة. غرفتك ما زالت محجوزة ويمكنك الدفع في الفندق كالمعتاد.',
+    payBackToBooking: 'العودة إلى حجزك',
     title: 'الغرف المتاحة في تواريخك',
     lead: 'اختر غرفة. لا يُدفع شيء الآن — الدفع في الفندق.',
     nights: 'ليالٍ',

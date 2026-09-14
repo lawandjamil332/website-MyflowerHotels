@@ -100,6 +100,55 @@ export const Settings: GlobalConfig = {
           'at /google/hotels.xml as well — this switch only makes the site willing.',
       },
     },
+    /**
+     * Whether guests can pay by card, and how much.
+     *
+     * Off until a real payment has been taken and checked. The switch is here
+     * rather than in an environment variable because turning card payments on
+     * and off is a decision the hotel makes — on the morning the processor
+     * finally goes live, or on the afternoon something looks wrong — and it
+     * should not need a developer or a redeploy either time.
+     *
+     * Both halves must be true for a guest to see a pay button: this set to
+     * something other than Off, *and* the gateway credentials present on the
+     * server. Either alone shows a button that leads to an apology.
+     */
+    {
+      name: 'onlinePayments',
+      type: 'group',
+      label: 'Card payments',
+      fields: [
+        {
+          name: 'mode',
+          type: 'select',
+          defaultValue: 'off',
+          options: [
+            { label: 'Off — everyone pays at the hotel', value: 'off' },
+            { label: 'Offer it — guests may pay now, or at the hotel', value: 'optional' },
+          ],
+          admin: {
+            description:
+              'Leave Off until you have taken one real card payment and seen the money. ' +
+              '"Offer it" cannot lose you a booking: the room is confirmed either way, and a ' +
+              'guest who does not want to pay now simply does not.',
+          },
+        },
+        {
+          name: 'depositPercent',
+          type: 'number',
+          min: 0,
+          max: 100,
+          defaultValue: 0,
+          admin: {
+            description:
+              'How much of the stay to ask for, as a percentage. Leave 0 for the whole amount. ' +
+              '30 asks for 30% now and the rest at the desk.',
+            condition: (_, siblings) => siblings?.mode && siblings.mode !== 'off',
+          },
+        },
+      ],
+      admin: { position: 'sidebar' },
+    },
     {
       name: 'localClaimCheckedOn',
       type: 'date',

@@ -343,6 +343,48 @@ console.log(
         ].join('\n'),
 )
 
+// Card payments. Reported on every boot because there are two switches — the
+// credentials here and "Card payments" in Site settings — and a hotel that has
+// turned one on and not the other sees no pay button and no reason why.
+const payUrl = process.env.PAYMENT_API_URL?.trim()
+const payKey = process.env.PAYMENT_API_KEY?.trim()
+const payHook = process.env.PAYMENT_WEBHOOK_SECRET?.trim()
+const payIqd = process.env.PAYMENT_CURRENCY_EXPONENT_IQD?.trim()
+console.log(
+  !payUrl && !payKey
+    ? [
+        '  Card payments: not set up. Guests book with a name and a telephone',
+        '  number and pay at the hotel, exactly as before.',
+        '',
+      ].join('\n')
+    : [
+        payUrl && payKey
+          ? '  Card payments: gateway configured.'
+          : '  Card payments: HALF CONFIGURED — one of PAYMENT_API_URL or',
+        payUrl && payKey ? '' : '  PAYMENT_API_KEY is missing, so no payment can be started.',
+        '',
+        payHook
+          ? '  Callbacks are signed and checked.'
+          : '  PAYMENT_WEBHOOK_SECRET IS NOT SET, so every callback is refused and no',
+        payHook ? '' : '  payment can ever be recorded. Get this secret from the processor.',
+        '',
+        payIqd
+          ? `  Dinar amounts are sent with ${payIqd} decimal places, as configured.`
+          : '  PAYMENT_CURRENCY_EXPONENT_IQD IS NOT SET, so IQD payments are refused.',
+        payIqd
+          ? ''
+          : '  Ask the processor: "do I send 250,000 IQD as 250000 or 250000000?"',
+        payIqd ? '' : '  Set 0 for the first, 3 for the second. Guessing it wrong overcharges',
+        payIqd ? '' : '  a guest a thousand times over, which is why it refuses instead.',
+        '',
+        '  Remember the second switch: Site settings -> Card payments must also',
+        '  be set to "Offer it" before any guest sees a pay button.',
+        '',
+      ]
+        .filter((line, i, all) => line !== '' || all[i - 1] !== '')
+        .join('\n'),
+)
+
 if (problems.length > 0) {
   const lines = [
     '',

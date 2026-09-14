@@ -268,6 +268,101 @@ export const Bookings: CollectionConfig = {
           'When this guest was asked to review their stay. Set once, automatically, when you mark the booking as Stayed — nobody is asked twice.',
       },
     },
+
+    /**
+     * What the card processor did, if anything.
+     *
+     * Every field read-only. These are written by the gateway's own callback
+     * and by nothing else, and a member of staff who could edit them by hand
+     * could mark a room paid that nobody paid for — which is the one thing the
+     * signature check on that callback exists to prevent. Cash taken at the
+     * desk is not a card payment and does not belong here; it goes in Notes,
+     * where it always has.
+     */
+    {
+      name: 'paymentStatus',
+      type: 'select',
+      defaultValue: 'unpaid',
+      required: true,
+      options: [
+        { label: 'Not paid online', value: 'unpaid' },
+        { label: 'Payment started', value: 'pending' },
+        { label: 'Paid', value: 'paid' },
+        { label: 'Payment failed', value: 'failed' },
+        { label: 'Refunded', value: 'refunded' },
+      ],
+      admin: {
+        readOnly: true,
+        position: 'sidebar',
+        description:
+          'Card payments only. "Not paid online" is the normal state for a guest paying at the hotel — it does not mean anybody owes anything.',
+      },
+    },
+    {
+      type: 'collapsible',
+      label: 'Card payment',
+      admin: {
+        initCollapsed: true,
+        description: 'Written by the payment gateway. Nothing here is typed by hand.',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'paymentAmount',
+              type: 'number',
+              admin: {
+                readOnly: true,
+                width: '50%',
+                description: 'What was actually taken, which may be a deposit rather than the total.',
+              },
+            },
+            {
+              name: 'paymentCurrency',
+              type: 'text',
+              admin: { readOnly: true, width: '50%' },
+            },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'paymentProvider',
+              type: 'text',
+              admin: { readOnly: true, width: '50%', description: 'Which processor took it.' },
+            },
+            {
+              name: 'paidAt',
+              type: 'date',
+              admin: {
+                readOnly: true,
+                width: '50%',
+                date: { pickerAppearance: 'dayAndTime' },
+              },
+            },
+          ],
+        },
+        {
+          name: 'paymentReference',
+          type: 'text',
+          admin: {
+            readOnly: true,
+            description:
+              "The gateway's own number for this transaction. This is what to quote to the processor if a guest disputes a charge.",
+          },
+        },
+        {
+          name: 'paymentStatusRaw',
+          type: 'text',
+          admin: {
+            readOnly: true,
+            description: "The processor's own word for the outcome, kept exactly as they sent it.",
+          },
+        },
+      ],
+    },
   ],
   timestamps: true,
 }

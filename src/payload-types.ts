@@ -239,6 +239,28 @@ export interface Booking {
    * When this guest was asked to review their stay. Set once, automatically, when you mark the booking as Stayed — nobody is asked twice.
    */
   reviewRequestedAt?: string | null;
+  /**
+   * Card payments only. "Not paid online" is the normal state for a guest paying at the hotel — it does not mean anybody owes anything.
+   */
+  paymentStatus: 'unpaid' | 'pending' | 'paid' | 'failed' | 'refunded';
+  /**
+   * What was actually taken, which may be a deposit rather than the total.
+   */
+  paymentAmount?: number | null;
+  paymentCurrency?: string | null;
+  /**
+   * Which processor took it.
+   */
+  paymentProvider?: string | null;
+  paidAt?: string | null;
+  /**
+   * The gateway's own number for this transaction. This is what to quote to the processor if a guest disputes a charge.
+   */
+  paymentReference?: string | null;
+  /**
+   * The processor's own word for the outcome, kept exactly as they sent it.
+   */
+  paymentStatusRaw?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1610,6 +1632,13 @@ export interface BookingsSelect<T extends boolean = true> {
   notes?: T;
   locale?: T;
   reviewRequestedAt?: T;
+  paymentStatus?: T;
+  paymentAmount?: T;
+  paymentCurrency?: T;
+  paymentProvider?: T;
+  paidAt?: T;
+  paymentReference?: T;
+  paymentStatusRaw?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2378,6 +2407,16 @@ export interface Setting {
    * Serves the price feed Google Hotel Center reads, so My Flower can appear beside Booking.com and Agoda on the Google listing. Needs a Hotel Center account pointed at /google/hotels.xml as well — this switch only makes the site willing.
    */
   googleFeed?: boolean | null;
+  onlinePayments?: {
+    /**
+     * Leave Off until you have taken one real card payment and seen the money. "Offer it" cannot lose you a booking: the room is confirmed either way, and a guest who does not want to pay now simply does not.
+     */
+    mode?: ('off' | 'optional') | null;
+    /**
+     * How much of the stay to ask for, as a percentage. Leave 0 for the whole amount. 30 asks for 30% now and the rest at the desk.
+     */
+    depositPercent?: number | null;
+  };
   /**
    * Set this and the About page adds: of every hotel brand in Erbil, none we know of has more branches than we do — with this date beside it. Leave empty and the line does not appear. Re-check it once a year; an out-of-date claim is worse than none.
    */
@@ -2498,6 +2537,12 @@ export interface SettingsSelect<T extends boolean = true> {
   siteName?: T;
   ratesValidUntil?: T;
   googleFeed?: T;
+  onlinePayments?:
+    | T
+    | {
+        mode?: T;
+        depositPercent?: T;
+      };
   localClaimCheckedOn?: T;
   establishedYear?: T;
   stars?: T;
