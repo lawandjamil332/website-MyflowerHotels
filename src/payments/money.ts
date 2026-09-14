@@ -134,23 +134,30 @@ export const amountToCharge = (
   const percent = Number(depositPercent)
   if (!Number.isFinite(percent) || percent <= 0 || percent >= 100) return total
 
-  const raw = (total * percent) / 100
-
   /**
-   * Rounded up to a whole smallest-unit, here rather than at the gateway.
+   * Rounded up to a whole unit of the currency — a whole dinar, a whole dollar.
    *
-   * The page tells the guest what they are about to pay and the gateway is
-   * sent an integer, and those two have to be the same number. Left to round
-   * separately they were not: a 33% deposit on $80 is $26.40, which the price
-   * formatter showed as "$26" while 2640 cents went to the processor. Anything
-   * that advertises one figure and charges another is a chargeback waiting to
-   * be filed, however small the gap.
+   * Not to the smallest unit, which was the first attempt and only half worked.
+   * The page tells the guest what they are about to pay and the gateway is sent
+   * an integer, and those two have to be the same number. This site formats
+   * every price to whole units, so a deposit of $26.40 was advertised as "$26"
+   * while 2640 cents went to the processor — a gap of forty cents between what
+   * a guest agreed to and what their statement says, which is a chargeback
+   * waiting to be filed however small it is.
    *
-   * Up rather than down, so the hotel is never a unit short — and without a
-   * confirmed exponent it falls back to whole units, which is the conservative
-   * reading everywhere it matters.
+   * Rounding the charge itself to a whole unit closes it at the source rather
+   * than by teaching the formatter about decimals, which would change every
+   * price on the site to fix one label. A deposit is an arbitrary fraction of a
+   * stay anyway; a hotel asking for $27 rather than $26.40 is normal, and for
+   * dinars — where there is no subunit in circulation — it changes nothing at
+   * all.
+   *
+   * Up rather than down, so the hotel is never short, and never more than a
+   * unit over.
+   *
+   * `currency` is unused now and kept so callers need not change; a currency
+   * whose subunit genuinely matters can be special-cased here later.
    */
-  const exponent = currency ? currencyExponent(currency) : { ok: false as const, why: '' }
-  const factor = 10 ** (exponent.ok ? exponent.exponent : 0)
-  return Math.ceil(raw * factor) / factor
+  void currency
+  return Math.ceil((total * percent) / 100)
 }

@@ -85,6 +85,24 @@ export type CallbackVerdict =
       /** Our booking reference, read back out of their message. */
       reference: string
       paid: boolean
+      /**
+       * Whether this is a final answer at all.
+       *
+       * False means the gateway is reporting a step rather than an outcome —
+       * authorized, processing, or a word nobody here recognises. The caller
+       * must not write such a message down as a failure: a guest told their
+       * payment failed while it is still running will pay again, and then both
+       * of them settle.
+       */
+      settled: boolean
+      /**
+       * Whether this site classifies the gateway's word at all.
+       *
+       * A recognised in-flight status is routine. An unrecognised one is a word
+       * the processor uses that nobody here has sorted into paid or failed, and
+       * it is the only case worth putting in the log.
+       */
+      recognised: boolean
       providerReference?: string
       /** What they say was actually taken, for checking against what we asked. */
       minorAmount?: number

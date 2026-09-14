@@ -50,15 +50,28 @@ export async function POST(request: NextRequest): Promise<Response> {
   // JSON.parse followed by JSON.stringify does not reproduce it.
   const rawBody = await request.text()
 
+  const payload = await getPayload({ config: configPromise })
+
   const verdict = await provider.verifyCallback(request.headers, rawBody)
   if (!verdict.ok) {
+    /**
+     * Logged, because the reason matters enormously and the answer cannot say it.
+     *
+     * A forged message and a genuine one we could not read look identical from
+     * outside — deliberately, since telling a forger which part was wrong helps
+     * them. But they are not the same problem: one is noise, the other is an
+     * integration that will never record a payment and will retry forever.
+     * Written down, the difference is one line in the log on go-live day
+     * instead of a week of "why has nothing been marked paid".
+     */
+    payload.logger.warn(`Payment callback refused: ${verdict.why}`)
     // 401, not 200: this one really should be retried, and if it is somebody
     // forging messages they should learn nothing from the answer.
     return new Response('No.', { status: 401 })
   }
 
-  const payload = await getPayload({ config: configPromise })
-  const { reference, paid, providerReference, minorAmount, currency, rawStatus } = verdict
+  const { reference, paid, settled, recognised, providerReference, minorAmount, currency, rawStatus } =
+    verdict
 
   try {
     const { docs } = await payload.find({
@@ -79,19 +92,39 @@ export async function POST(request: NextRequest): Promise<Response> {
 
     if (!paid) {
       /**
-       * A failure never overwrites a success.
+       * Two rules here, and both of them exist to stop a guest being charged
+       * twice.
        *
-       * Gateways send lifecycle events, not just outcomes — "pending",
-       * "authorized", "processing" — and they arrive out of order and get
-       * redelivered. Written without this guard, a stale "pending" landing a
-       * second after the capture turned a settled booking back into an unpaid
-       * one, and the desk would have asked a guest to pay twice. The success
-       * path already refused to move a paid row; this is the same rule applied
-       * to the branch that can do more damage.
+       * FIRST: a failure never overwrites a success. Gateways redeliver, and
+       * they send lifecycle events out of order. Without the guard a stale
+       * message landing after the capture turned a settled booking unpaid, and
+       * the desk would have asked for money already taken.
+       *
+       * SECOND, and the one that bit harder: a message that is not a final
+       * answer is written as `pending`, not as `failed`. Every non-success used
+       * to be a failure — so an "authorized" arriving before its capture told
+       * the guest their payment had failed, and the pass page helpfully offered
+       * the Pay button again. They pay a second time, both settle, and the
+       * hotel is refunding one of them and explaining the other.
+       *
+       * An unrecognised word counts as not final, deliberately. The two
+       * mistakes are not equally expensive: a live payment called failed invites
+       * a second charge, while a dead one called pending leaves a guest to ring
+       * the hotel — recoverable, and visible in the admin panel. The log names
+       * the word so the processor's own vocabulary can be added.
        */
+      if (!recognised) {
+        payload.logger.warn(
+          `Payment for ${reference}: "${rawStatus}" is not a status this site knows as ` +
+            `finished, so it is held as pending rather than failed. If the processor uses ` +
+            `this word for a real failure, add it to PAYMENT_FAILED_STATUSES.`,
+        )
+      }
+
+      const nextStatus = settled ? 'failed' : 'pending'
       const { rows } = await dbPool(payload).query<{ id: number }>(
         `UPDATE bookings
-            SET payment_status = 'failed',
+            SET payment_status = $5,
                 payment_provider = $2,
                 payment_status_raw = $3,
                 payment_reference = COALESCE($4, payment_reference),
@@ -99,7 +132,7 @@ export async function POST(request: NextRequest): Promise<Response> {
           WHERE id = $1
             AND payment_status <> 'paid'
         RETURNING id`,
-        [booking.id, provider.id, rawStatus ?? null, providerReference ?? null],
+        [booking.id, provider.id, rawStatus ?? null, providerReference ?? null, nextStatus],
       )
 
       if (rows.length === 0) {
@@ -167,16 +200,24 @@ export async function POST(request: NextRequest): Promise<Response> {
           `Payment for ${reference} reports ${reported} ${currency} against ${expected} expected. ` +
             `Left unpaid for a person to look at.`,
         )
-        await payload.update({
-          collection: 'bookings',
-          id: booking.id,
-          data: {
-            paymentStatus: 'failed',
-            paymentStatusRaw: `underpaid: ${rawStatus ?? 'paid'} ${reported} ${currency}`,
-            paymentProvider: provider.id,
-          },
-          overrideAccess: true,
-        })
+        // Guarded like the other two writes. A processor that reports the net
+        // figure after its fee on a later "settled" event would otherwise walk
+        // an already-paid booking back to failed, and the desk would ask a
+        // guest to pay for a room they have paid for.
+        await dbPool(payload).query(
+          `UPDATE bookings
+              SET payment_status = 'failed',
+                  payment_status_raw = $2,
+                  payment_provider = $3,
+                  updated_at = NOW()
+            WHERE id = $1
+              AND payment_status <> 'paid'`,
+          [
+            booking.id,
+            `underpaid: ${rawStatus ?? 'paid'} ${reported} ${currency}`,
+            provider.id,
+          ],
+        )
         return Response.json({ ok: true, noted: 'amount mismatch' })
       }
     }

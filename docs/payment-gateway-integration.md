@@ -103,14 +103,25 @@ address ends up in logs and support tickets.
 
 What we implement today:
 
-- `HMAC-SHA256` over the **exact raw request body**, hex encoded
-- in the header `X-Signature` (a `sha256=` prefix is accepted and stripped)
+- `HMAC-SHA256` over the **exact raw request body**
+- **hex or base64** — we accept either, so you do not have to tell us which
+- in the header `X-Signature` (a `sha256=` prefix is accepted and stripped);
+  the header name is configurable, just tell us yours
 - compared in constant time
 
-**If yours differs in any way** — a different algorithm, base64 instead of hex,
-a signature over a concatenation of fields rather than the body, a different
-header name — tell us. The header name is already configurable; the rest is a
-few lines in one function.
+**If yours differs beyond that** — a different algorithm, or a signature over a
+concatenation of named fields rather than over the body — tell us and we will
+match it. It is a few lines in one function.
+
+### Body format
+
+We accept **either JSON or `application/x-www-form-urlencoded`**, and we work it
+out from your `Content-Type` (falling back to trying the other if that header is
+not what the body actually is). You do not need to change anything for us.
+
+If you send callbacks as a **GET** with query parameters rather than a POST,
+tell us — we currently answer GET with a health check, and that is a small
+change we would rather make deliberately than discover on your first callback.
 
 ### Status words
 
