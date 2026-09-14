@@ -105,14 +105,33 @@ sql(`update rooms set quantity = 3 where branch_id = 1`)
 // in this suite rather than beside the rest of the account checks because
 // proving a per-address allowance means spending it, and a suite that spends
 // one starves every suite that runs after it. This one runs last.
+//
+// THE FLOOD GETS ITS OWN ADDRESS, and that is what makes this check mean
+// something. Written without one it inherited whatever allowance the previous
+// twenty-five suites had already spent from this machine's address, and the
+// limiter's ten-minute window then fell wherever it fell across a run of
+// varying length. The results said so: twenty refused one day, twenty-five the
+// next — one single refusal — and once all twenty-six through, failing a suite
+// while the limiter was working exactly as designed. The window had simply
+// rolled over mid-loop, splitting the attempts across two allowances that were
+// each under the limit.
+//
+// A dedicated x-forwarded-for gives this loop a window of its own that starts
+// on its first attempt, so twenty-six attempts against an allowance of twenty
+// refuse six of them every time, whatever ran before. callerKey reads that
+// header first — see src/utilities/throttle.ts.
 // ---------------------------------------------------------------------------
 const stamp = Date.now()
+// Documentation range, and unique per run so two runs cannot share a window.
+const FLOOD_IP = `198.51.100.${(stamp % 250) + 1}`
 const flood = await chromium.launch({
   args: ['--no-sandbox'],
   executablePath: process.env.CHROME_PATH || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome',
 })
 for (let i = 0; i < 26; i++) {
-  const ctx = await flood.newContext()
+  const ctx = await flood.newContext({
+    extraHTTPHeaders: { 'x-forwarded-for': FLOOD_IP },
+  })
   const pg = await ctx.newPage()
   try {
     await pg.goto(`${base}/en/account`, { waitUntil: 'networkidle', timeout: 60000 })
@@ -136,21 +155,19 @@ await flood.close()
 const opened = Number(
   sql(`select count(*) from guests where email like 'flood-${stamp}-%@example.com'`),
 )
-// Deliberately not asserting that some of them succeed, for the same reason
-// the booking checks above do not: this suite runs last, and the suites before
-// it have each opened accounts from the same address, so the allowance may be
-// spent before the loop even starts. That ordinary sign-up works is proved
-// several times over by the account, claim and finder suites. What must hold
-// here — the only thing this suite can honestly claim — is that a loop does
-// not get twenty-six of them.
+// Now that the flood has an address to itself, this can say what it means: an
+// allowance of twenty, spent from nothing, lets twenty through and refuses the
+// rest. The lower bound matters as much as the upper one — a form that silently
+// stopped submitting would open no accounts at all, which is not a limiter
+// working, and the old "fewer than twenty-six" would have called it a pass.
 //
 // The count comes from the database rather than from the page: a refused
 // sign-up leaves the browser on the same address as a successful one, so the
 // URL cannot tell them apart and reported twenty-six "landed" while none had.
 ok(
   'opening accounts in a loop is refused',
-  opened < 26,
-  `${opened} accounts created out of 26 attempts`,
+  opened > 0 && opened <= 20,
+  `${opened} accounts created out of 26 attempts, allowance is 20`,
 )
 sql(`delete from guests where email like 'flood-${stamp}-%@example.com'`)
 
